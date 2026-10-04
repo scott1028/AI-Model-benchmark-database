@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>上海天際線・日夜循環</title>
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #101e3b; }
+    body { display: grid; place-items: center; overflow: hidden; }
+    svg { display: block; width: min(100vw, 100vh * 745 / 742); height: auto; max-height: 100vh; }
+    .night { animation: night 24s ease-in-out infinite; }
+    .twilight { animation: twilight 24s ease-in-out infinite; }
+    .lamps { animation: lamps 24s ease-in-out infinite; }
+    .star { animation: stars 24s ease-in-out infinite; }
+    .sun { animation: sun 24s ease-in-out infinite; }
+    .moon { animation: moon 24s ease-in-out infinite; }
+    .water-shimmer { animation: drift 7s ease-in-out infinite alternate; }
+    @keyframes night { 0%, 23%, 100% { opacity: 0 } 43%, 75% { opacity: 1 } 91% { opacity: 0 } }
+    @keyframes twilight { 0%, 18%, 52%, 72%, 100% { opacity: 0 } 30%, 83% { opacity: .68 } }
+    @keyframes lamps { 0%, 29%, 96%, 100% { opacity: 0 } 45%, 81% { opacity: 1 } }
+    @keyframes stars { 0%, 37%, 89%, 100% { opacity: 0 } 50%, 78% { opacity: 1 } }
+    @keyframes sun { 0%, 20%, 100% { opacity: .72; transform: translateY(0) } 43%, 84% { opacity: 0; transform: translateY(85px) } }
+    @keyframes moon { 0%, 36%, 91%, 100% { opacity: 0; transform: translateY(35px) } 53%, 77% { opacity: .92; transform: translateY(0) } }
+    @keyframes drift { from { transform: translateX(-8px) } to { transform: translateX(10px) } }
+    @media (prefers-reduced-motion: reduce) { svg * { animation-duration: 1ms !important; animation-iteration-count: 1 !important; } }
+  </style>
+</head>
+<body>
+<svg viewBox="0 0 745 742" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">上海浦東天際線的日夜循環</title>
+  <desc id="desc">東方明珠塔、上海環球金融中心、金茂大廈及上海中心大廈矗立在黃浦江畔，天空漸暗、窗燈亮起，再迎來白晝。</desc>
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#2478e4"/><stop offset=".51" stop-color="#2d9de7"/><stop offset=".86" stop-color="#a5cfdb"/><stop offset="1" stop-color="#ead8b3"/></linearGradient>
+    <linearGradient id="nightSky" x2="0" y2="1"><stop stop-color="#071127"/><stop offset=".58" stop-color="#173e68"/><stop offset="1" stop-color="#b77765"/></linearGradient>
+    <linearGradient id="twilightSky" x2="0" y2="1"><stop stop-color="#592f73"/><stop offset=".55" stop-color="#ca7699" stop-opacity=".3"/><stop offset="1" stop-color="#ffc17e" stop-opacity=".9"/></linearGradient>
+    <linearGradient id="water" x2="0" y2="1"><stop stop-color="#5b8ca4"/><stop offset=".28" stop-color="#336c96"/><stop offset="1" stop-color="#244d7c"/></linearGradient>
+    <linearGradient id="nightWater" x2="0" y2="1"><stop stop-color="#25475d"/><stop offset="1" stop-color="#071c39"/></linearGradient>
+    <linearGradient id="nightShade" x2="0" y2="1"><stop stop-color="#07172d" stop-opacity="0"/><stop offset=".38" stop-color="#07172d" stop-opacity=".33"/><stop offset="1" stop-color="#07172d" stop-opacity=".55"/></linearGradient>
+    <linearGradient id="steel"><stop stop-color="#23394a"/><stop offset=".18" stop-color="#99a8a4"/><stop offset=".34" stop-color="#d3c49f"/><stop offset=".54" stop-color="#5c7882"/><stop offset=".76" stop-color="#c7ba91"/><stop offset="1" stop-color="#3f5568"/></linearGradient>
+    <linearGradient id="pearl"><stop stop-color="#482a40"/><stop offset=".2" stop-color="#a76465"/><stop offset=".5" stop-color="#d2987b"/><stop offset=".78" stop-color="#7c4552"/><stop offset="1" stop-color="#302e49"/></linearGradient>
+    <linearGradient id="tower"><stop stop-color="#344b61"/><stop offset=".19" stop-color="#9eb6bc"/><stop offset=".39" stop-color="#617f8d"/><stop offset=".59" stop-color="#bdc8ba"/><stop offset=".8" stop-color="#67828f"/><stop offset="1" stop-color="#244b63"/></linearGradient>
+    <linearGradient id="glass"><stop stop-color="#092e43"/><stop offset=".22" stop-color="#5d9ca2"/><stop offset=".5" stop-color="#174455"/><stop offset=".73" stop-color="#8aa69b"/><stop offset="1" stop-color="#163c50"/></linearGradient>
+    <linearGradient id="gold"><stop stop-color="#594d39"/><stop offset=".3" stop-color="#e4c58b"/><stop offset=".64" stop-color="#9b865a"/><stop offset="1" stop-color="#d3c299"/></linearGradient>
+    <radialGradient id="dome"><stop stop-color="#9db7a8"/><stop offset=".3" stop-color="#367c79"/><stop offset=".72" stop-color="#153e52"/><stop offset="1" stop-color="#071f33"/></radialGradient>
+    <radialGradient id="sunGlow"><stop stop-color="#fff6be" stop-opacity=".5"/><stop offset="1" stop-color="#fff4c1" stop-opacity="0"/></radialGradient>
+    <pattern id="pearlGrid" width="9" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(23)"><path d="M0 0H9M0 0V7" fill="none" stroke="#e4ae9b" stroke-opacity=".62" stroke-width=".65"/></pattern>
+    <pattern id="towerLines" width="14" height="9" patternUnits="userSpaceOnUse"><path d="M0 0H14M2 0V9M9 0V9" stroke="#263f54" stroke-opacity=".42" stroke-width=".75"/></pattern>
+    <pattern id="darkWindows" width="15" height="17" patternUnits="userSpaceOnUse"><path d="M2 2h9v10H2z" fill="#203f4f"/><path d="M3 3h2v8H3z" fill="#a3c4b7" opacity=".4"/></pattern>
+    <pattern id="heritageWindows" width="19" height="28" patternUnits="userSpaceOnUse"><path d="M3 3q6-5 12 0v19H3z" fill="#354956" stroke="#decc9a" stroke-width="2"/><path d="M9 2v20" stroke="#b0ac8a" stroke-width="1.5"/></pattern>
+    <pattern id="litWindows" width="18" height="16" patternUnits="userSpaceOnUse"><path d="M2 3h4v5H2zM11 3h4v5h-4z" fill="#ffe8a1" opacity=".75"/><path d="M2 11h4v3H2z" fill="#ffaf68" opacity=".8"/></pattern>
+    <pattern id="riverRipples" width="59" height="24" patternUnits="userSpaceOnUse"><path d="M2 5h31m10 5h17M17 17h28M0 23h16" stroke="#bbd0c0" stroke-opacity=".22" stroke-width="1.5"/></pattern>
+    <clipPath id="riverClip"><path d="M0 611Q165 601 328 610T745 604V742H0Z"/></clipPath>
+    <clipPath id="topPearl"><ellipse cx="108" cy="140" rx="38" ry="35"/></clipPath>
+    <clipPath id="lowPearl"><ellipse cx="102" cy="424" rx="43" ry="48"/></clipPath>
+    <clipPath id="leftDome"><path d="M101 557v-27a53 53 0 0 1 106 0v27z"/></clipPath>
+    <clipPath id="rightDome"><path d="M394 551v-29a53 53 0 0 1 106 0v29z"/></clipPath>
+  </defs>
+
+  <path fill="url(#sky)" d="M0 0h745v620H0z"/>
+  <path class="twilight" fill="url(#twilightSky)" d="M0 0h745v620H0z" opacity="0"/>
+  <path class="night" fill="url(#nightSky)" d="M0 0h745v620H0z" opacity="0"/>
+  <g class="sun"><circle cx="721" cy="396" r="136" fill="url(#sunGlow)"/><circle cx="721" cy="396" r="19" fill="#fff5c5" opacity=".34"/></g>
+  <g class="moon"><circle cx="604" cy="100" r="24" fill="#fff5d8"/><circle cx="612" cy="93" r="22" fill="#102444" opacity=".28"/></g>
+  <g class="star" fill="#eaf3f2"><circle cx="228" cy="74" r="1.3"/><circle cx="317" cy="103" r="1"/><circle cx="375" cy="44" r="1.4"/><circle cx="471" cy="87" r="1"/><circle cx="552" cy="38" r="1.2"/><circle cx="700" cy="172" r="1"/><circle cx="39" cy="94" r="1"/><circle cx="352" cy="176" r=".8"/></g>
+
+  <!-- Distant skyline and the west bank -->
+  <g fill="#698ca0" stroke="#344c5b" stroke-width=".7">
+    <path d="M0 393h13v174H0zm14-44h31v220H14zm31-5h15v224H45zm67 37h26v183h-26zm55-14h18v197h-18zm34 67h20v137h-20zm133-11h12v151h-12zm28-24h21v174h-21zm207-63h27v239h-27zm66 104h36v135h-36zm73-73h37v205h-37z"/>
+    <path d="M37 349l15-5 15 5v222H37zm102 0 16-6 18 7v220h-34z" fill="#bdb8a0"/>
+  </g>
+  <g fill="url(#darkWindows)" opacity=".9"><path d="M15 354h44v215H15zm110 18h59v198h-59zm567 80h53v130h-53z"/></g>
+  <path d="M222 490l14-53 11-107 15 2 12 155z" fill="url(#tower)" stroke="#29475e" stroke-width="2"/>
+  <path d="M224 488l12-53 11-103v153z" fill="#85adac" opacity=".55"/>
+  <path d="M233 346l14-4 15 3M233 353l28-1" stroke="#b7b99c" stroke-width="3"/>
+  <path d="M344 491l13-16v-25l5-11 6 12v40" fill="#7f9a9e" stroke="#536a71" stroke-width="1.5"/>
+  <path d="M362 442v-39" stroke="#75868c" stroke-width="1"/>
+
+  <!-- Shanghai World Financial Center -->
+  <path d="M478 194l64-4 14 316h-64z" fill="#203e58" stroke="#18374e" stroke-width="3"/>
+  <path d="M487 200l48-3 14 299h-52z" fill="url(#tower)"/>
+  <path d="M488 204l42-3 8 29-38 2z" fill="#163952" stroke="#a0b8b6" stroke-width="2"/>
+  <path d="M492 242l44-5 10 255h-48z" fill="url(#towerLines)" opacity=".75"/>
+  <path d="M504 239l12-1 11 256h-12z" fill="#dae0c7" opacity=".33"/>
+  <path d="M488 365h54m-52 37h55m-53 37h55" stroke="#203e58" stroke-width="4" opacity=".65"/>
+
+  <!-- Jin Mao Tower -->
+  <path d="M511 262l7-4 2-14 6-4 5 6 1 13 8 4 12 228h-50z" fill="url(#steel)" stroke="#3e5664" stroke-width="2"/>
+  <path d="M506 285l10-5h27l8 5m-47 14h44m-44 15h45m-44 17h45m-45 19h45m-45 22h47m-48 28h49m-50 33h51" fill="none" stroke="#d8cfab" stroke-width="3" opacity=".7"/>
+  <path d="M525 241v-14m-12 65v193m19-194v194" stroke="#294a60" stroke-width="2"/>
+
+  <!-- Shanghai Tower: curved taper, horizontal glass bands -->
+  <path d="M636 43q19-7 41-2 7 70 8 119 5 81 13 154 10 92 24 190l-82 3q-3-81-3-170 0-71-1-135-3-99 0-159z" fill="url(#tower)" stroke="#294d63" stroke-width="2"/>
+  <path d="M638 46q19-6 38-2 6 70 9 116 4 97 12 166 10 82 19 176l-12 2q-20-92-24-173-8-113-14-170-10-71-28-115z" fill="#a4b8b3" opacity=".36"/>
+  <path d="M639 44q26 4 40-1m-40 10q26 5 40 0m-39 10q25 5 41 0m-41 10q25 5 41 0m-41 11q25 5 42 0m-42 10q25 6 42 0m-42 11q26 6 43 0m-43 12q26 5 43 0m-43 13q27 5 44 0m-44 14q27 5 44 0m-44 15q27 6 45 1m-45 16q27 7 46 1m-46 18q28 7 47 1m-47 19q28 8 49 1m-49 21q28 8 50 1m-50 24q29 9 52 1m-52 27q29 8 54 1m-54 30q29 9 57 1m-57 32q31 9 61 1m-61 35q32 9 65 1m-65 39q32 9 70 0" stroke="#173e54" stroke-opacity=".6" stroke-width="2" fill="none"/>
+  <path d="M650 63q-1 172 20 287 13 87 35 155" stroke="#edf0cf" stroke-opacity=".75" stroke-width="3" fill="none"/>
+  <path d="M659 57q-2 171 16 280 13 84 37 168" stroke="#183d56" stroke-opacity=".8" stroke-width="2" fill="none"/>
+
+  <!-- Mid-rise office buildings -->
+  <path d="M421 277l35-3 21 12 5 220h-62z" fill="#4d7384" stroke="#304f60" stroke-width="2"/>
+  <path d="M423 280l35-1 17 8v208h-53z" fill="url(#towerLines)"/>
+  <path d="M420 302h53m-52 13h54m-54 14h55m-55 15h55m-55 16h55m-55 17h56m-56 18h57m-57 20h58" stroke="#acc0af" stroke-opacity=".58" stroke-width="2"/>
+  <path d="M540 270l49-6 22 225h-61z" fill="#c3c6ad" stroke="#718b85" stroke-width="2"/>
+  <path d="M549 281l43-6 14 215h-51z" fill="url(#towerLines)" opacity=".6"/>
+  <path d="M545 366l53 4m-52 8 54 5m-53 8 55 6" stroke="#d7d2ab" stroke-width="4"/>
+  <path d="M597 427l79-5 4 150h-89z" fill="#e6dfb9" stroke="#596c71" stroke-width="2"/>
+  <path d="M602 438l69-4v122h-69z" fill="url(#darkWindows)"/>
+  <path d="M579 514h166v76H579z" fill="#afbb9e"/>
+  <path d="M650 524h95v57h-95z" fill="#d0c69d"/>
+  <path d="M655 530h90v44h-90z" fill="url(#glass)"/>
+
+  <!-- Oriental Pearl Tower's legs, shaft, and spheres -->
+  <g stroke="url(#steel)" stroke-linecap="round" fill="none">
+    <path d="M91 454L21 575M111 454l50 116" stroke-width="13"/>
+    <path d="M91 455l-25 119m47-120 16 121" stroke-width="8"/>
+  </g>
+  <path d="M89 168h37v217H89z" fill="url(#steel)" stroke="#4d5257" stroke-width="2"/>
+  <path d="M95 168h11v220H95zm22 0h7v220h-7z" fill="#e0c79c" opacity=".75"/>
+  <path d="M103 0h9l4 112h-18z" fill="url(#steel)" stroke="#514b4d" stroke-width="1.5"/>
+  <path d="M100 19h16m-17 5h18m-17 12h17m-16 6h15m-13 15h13m-13 7h14m-14 21h15" stroke="#303847" stroke-width="2"/>
+  <path d="M100 3l7-21 5 21" fill="url(#gold)"/>
+  <ellipse cx="108" cy="36" rx="12" ry="10" fill="url(#pearl)" stroke="#45424b" stroke-width="2"/>
+  <path d="M96 31h25m-23 10h20" stroke="#d3a881" stroke-width="2"/>
+  <ellipse cx="108" cy="140" rx="38" ry="35" fill="url(#pearl)" stroke="#3f3b4d" stroke-width="3"/>
+  <path d="M67 110h82v68H67z" fill="url(#pearlGrid)" clip-path="url(#topPearl)"/>
+  <ellipse cx="108" cy="162" rx="38" ry="9" fill="url(#steel)" stroke="#344052" stroke-width="2"/>
+  <path d="M91 294h32m-32 25h32m-33 25h33" stroke="#9b625c" stroke-width="5"/>
+  <path d="M95 210h25m-23 46h22m-23 24h24" stroke="#b5a681" stroke-width="4"/>
+  <ellipse cx="102" cy="424" rx="43" ry="48" fill="url(#pearl)" stroke="#394354" stroke-width="3"/>
+  <path d="M58 376h90v99H58z" fill="url(#pearlGrid)" clip-path="url(#lowPearl)"/>
+  <ellipse cx="102" cy="452" rx="42" ry="11" fill="url(#steel)" stroke="#313f50" stroke-width="2"/>
+  <path d="M90 474h25l-4 40H94z" fill="url(#steel)"/>
+
+  <!-- Historic riverfront facade and its two glass domes -->
+  <path d="M109 558v-28a44 44 0 0 1 88 0v28" fill="url(#dome)" stroke="#c0b995" stroke-width="3"/>
+  <path d="M101 557v-27a53 53 0 0 1 106 0v27" fill="url(#dome)" stroke="#394d52" stroke-width="2"/>
+  <g clip-path="url(#leftDome)" stroke="#d2c69a" stroke-opacity=".74" fill="none"><path d="M149 477v82m-21-77q-13 34-10 77m60-77q13 34 9 77M101 520h106m-104 11h104m-101 12h98" stroke-width="1.5"/><path d="M98 507h110" stroke-width="1"/></g>
+  <path d="M166 491l232-1v83H166z" fill="#d3c59f" stroke="#827c64" stroke-width="2"/>
+  <path d="M172 506h219v60H172z" fill="url(#heritageWindows)"/>
+  <path d="M166 493l232-2m-230 10h228m-228 65h229" stroke="#f2e4b7" stroke-width="5"/>
+  <path d="M178 494v73m20-73v73m19-73v73m19-73v73m19-73v73m19-73v73m19-73v73m19-73v73m19-73v73m19-73v73m19-73v73" stroke="#eee0b5" stroke-width="3"/>
+  <path d="M394 552v-29a53 53 0 0 1 106 0v29" fill="url(#dome)" stroke="#334e50" stroke-width="3"/>
+  <g clip-path="url(#rightDome)" stroke="#c8c398" stroke-opacity=".75" fill="none"><path d="M446 468v85m-22-79q-14 31-10 80m61-80q14 31 10 80M394 510h106m-105 12h104m-103 13h102m-100 12h99" stroke-width="1.5"/></g>
+  <path d="M394 553h107v13H394zM99 555h108v10H99z" fill="#abb198"/>
+  <path d="M485 397l21-13 22 12 10 11-65 1z" fill="url(#gold)" stroke="#4c4942" stroke-width="2"/>
+  <path d="M488 406h42v75h-42z" fill="#876d4c" stroke="#49483d" stroke-width="2"/>
+  <path d="M491 412h35m-35 12h35m-35 14h35" stroke="#d2b77d" stroke-width="3"/>
+  <path d="M0 566q112-13 234 2 94 3 174-1 172-7 337 7v37H0z" fill="#526147"/>
+  <g fill="#2e4738"><circle cx="18" cy="573" r="13"/><circle cx="49" cy="577" r="16"/><circle cx="221" cy="573" r="17"/><circle cx="246" cy="577" r="19"/><circle cx="281" cy="579" r="17"/><circle cx="337" cy="578" r="13"/><circle cx="367" cy="577" r="16"/><circle cx="464" cy="576" r="16"/><circle cx="556" cy="582" r="15"/><circle cx="586" cy="579" r="12"/></g>
+  <g fill="#954a3e"><circle cx="571" cy="578" r="10"/><circle cx="594" cy="577" r="12"/><circle cx="619" cy="579" r="10"/></g>
+  <path d="M0 595q143-3 304 2 160-2 281-4 94-2 160 4v17H0z" fill="#b1b096"/>
+  <path d="M0 606q145-6 298 2 161-4 302-8 86-2 145 4" fill="none" stroke="#e0d7af" stroke-width="4"/>
+  <path class="night" d="M0 160h745v451H0z" fill="url(#nightShade)" opacity="0"/>
+
+  <!-- River, reflections, and animated light -->
+  <g clip-path="url(#riverClip)">
+    <path d="M0 603h745v139H0z" fill="url(#water)"/>
+    <path class="night" d="M0 603h745v139H0z" fill="url(#nightWater)" opacity="0"/>
+    <path d="M0 603h745v139H0z" fill="url(#riverRipples)"/>
+    <g class="water-shimmer" fill="none" stroke-linecap="round">
+      <path d="M38 629h101m-58 9h100m-96 8h58m-77 15h95m-62 10h105m-83 12h67m-61 14h82m-31 10h105" stroke="#e7ab88" stroke-opacity=".43" stroke-width="2"/>
+      <path d="M267 623h55m-41 13h88m-101 17h80m-34 13h89m-73 22h95m-115 15h82m-16 24h122" stroke="#a9c8bb" stroke-opacity=".42" stroke-width="2"/>
+      <path d="M559 620h95m-70 15h122m-101 13h132m-119 16h92m-65 16h100m-142 20h129m-73 20h74" stroke="#a8c5b6" stroke-opacity=".45" stroke-width="2"/>
+    </g>
+    <g class="lamps" opacity="0" stroke-linecap="round">
+      <path d="M97 621h52m-43 8h86m-66 10h48m-74 14h81m-52 16h54m-60 16h79m-48 18h95m-66 18h78" stroke="#e99776" stroke-opacity=".68" stroke-width="3"/>
+      <path d="M390 619h114m-85 11h99m-111 13h86m-84 16h131m-115 19h108m-74 18h96m-91 20h115" stroke="#efd085" stroke-opacity=".53" stroke-width="3"/>
+      <path d="M608 623h93m-77 14h118m-98 16h75m-87 22h103m-72 20h82m-89 20h93" stroke="#c4d7d1" stroke-opacity=".6" stroke-width="2"/>
+    </g>
+    <path d="M0 614q96 5 177 0t158 0 173-1 237 1" stroke="#d9d8bc" stroke-opacity=".65" stroke-width="2" fill="none"/>
+  </g>
+
+  <!-- Boats sit in front of the river -->
+  <g><path d="M0 603h127l-13 13H0z" fill="#efecdb"/><path d="M1 598h97v8H1z" fill="#f4f2e5"/><path d="M20 590h35v9H20z" fill="#f9f7e7"/><path d="M52 590v-16m27 24v-14" stroke="#5b6364" stroke-width="1.5"/><path d="M19 604h9m6 0h9m6 0h9m6 0h9m6 0h9" stroke="#1d4454" stroke-width="4"/></g>
+  <g><path d="M567 620h165l13-12H580z" fill="#1f2d35"/><path d="M586 608h113v11H586z" fill="#183d52"/><path d="M598 605h67v4h-67z" fill="#f0ede1"/><path d="M600 613h13m7 0h13m7 0h13m7 0h13" stroke="#d6e0d6" stroke-width="5"/><path d="M571 626h171" stroke="#c4b59a" stroke-width="2"/></g>
+
+  <!-- Night illumination above the architecture -->
+  <g class="lamps" opacity="0">
+    <path d="M174 511h215v52H174z" fill="url(#litWindows)" opacity=".75"/>
+    <path d="M420 283h55v205h-55zm66-39h53v238h-53zm67 42h47v199h-47zm50 150h69v118h-69z" fill="url(#litWindows)" opacity=".68"/>
+    <path d="M643 62q19 196 23 270 9 95 30 174" stroke="#d9e4cf" stroke-opacity=".45" stroke-width="2" fill="none"/>
+    <path d="M103 5v102m-8 69v196m7 108v36" stroke="#eac18e" stroke-width="3" stroke-opacity=".75"/>
+    <ellipse cx="108" cy="140" rx="36" ry="33" fill="#f09a71" opacity=".17"/>
+    <ellipse cx="102" cy="424" rx="41" ry="46" fill="#ef9373" opacity=".19"/>
+    <path d="M106 484q-27 29-26 68m74-66q28 25 29 67m265-74q-33 30-33 71m37-72q33 24 34 71" stroke="#c7ddb6" stroke-width="2" fill="none" opacity=".6"/>
+  </g>
+</svg>
+</body>
+</html>
