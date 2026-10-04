@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>Shanghai Skyline — Day & Night SVG Loop</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;display:flex;align-items:center;justify-content:center}
+  svg{width:min(100vmin,1000px);height:min(100vmin,1000px);display:block}
+  /* ===== 日夜循環 (60s) ===== */
+  .skyDay,.skyTw,.skyNight,.tint,.win,.star,.glow,.cityGlow,.refl,
+  .waterNight,.waterTw,.clouds,.sunSpin{animation-duration:60s;animation-iteration-count:infinite;animation-timing-function:linear}
+  @keyframes skyDayK{0%,24%{opacity:1}34%,82%{opacity:0}92%,100%{opacity:1}}
+  @keyframes skyTwK{0%,24%{opacity:0}32%,38%{opacity:1}46%,76%{opacity:0}84%{opacity:1}92%,100%{opacity:0}}
+  @keyframes skyNightK{0%,30%{opacity:0}42%,76%{opacity:1}88%,100%{opacity:0}}
+  @keyframes tintK{0%,26%{opacity:0}40%,76%{opacity:.8}88%,100%{opacity:0}}
+  @keyframes winK{0%,28%{opacity:0}38%,76%{opacity:1}86%,100%{opacity:0}}
+  @keyframes starK{0%,30%{opacity:0}42%,74%{opacity:1}86%,100%{opacity:0}}
+  @keyframes glowK{0%,30%{opacity:0}40%,76%{opacity:1}86%,100%{opacity:0}}
+  @keyframes cityGlowK{0%,30%{opacity:0}42%,74%{opacity:.5}86%,100%{opacity:0}}
+  @keyframes reflK{0%,30%{opacity:0}42%,76%{opacity:.75}86%,100%{opacity:0}}
+  @keyframes waterNightK{0%,30%{opacity:0}44%,74%{opacity:1}88%,100%{opacity:0}}
+  @keyframes waterTwK{0%,24%{opacity:0}32%,40%{opacity:.7}48%,74%{opacity:0}82%{opacity:.7}92%,100%{opacity:0}}
+  @keyframes cloudK{0%,22%{opacity:.9}40%,78%{opacity:.12}92%,100%{opacity:.9}}
+  @keyframes sunSpinK{from{transform:rotate(-54deg)}to{transform:rotate(306deg)}}
+  @keyframes twK{0%,100%{opacity:.35}50%{opacity:1}}
+  @keyframes driftK{0%{transform:translateX(-30px)}50%{transform:translateX(30px)}100%{transform:translateX(-30px)}}
+  @keyframes shimmerK{0%,100%{opacity:.15;transform:translateX(0)}50%{opacity:.6;transform:translateX(18px)}}
+  @keyframes bobK{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+  @keyframes pearlPulseK{0%,100%{opacity:.55}50%{opacity:1}}
+  .skyDay{animation-name:skyDayK}.skyTw{animation-name:skyTwK}.skyNight{animation-name:skyNightK}
+  .tint{animation-name:tintK}.win{animation-name:winK}.star{animation-name:starK}
+  .glow{animation-name:glowK}.cityGlow{animation-name:cityGlowK}.refl{animation-name:reflK}
+  .waterNight{animation-name:waterNightK}.waterTw{animation-name:waterTwK}
+  .clouds{animation-name:cloudK}.sunSpin{animation-name:sunSpinK;transform-origin:500px 1050px}
+  .tw{animation:twK 3s infinite}.drift{animation:driftK 90s infinite}
+  .shimmer{animation:shimmerK 7s infinite}.bob{animation:bobK 4s infinite}
+  .pearlPulse{animation:pearlPulseK 5s infinite}
+</style>
+</head>
+<body>
+<svg id="scene" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="gDay" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#0d5bbf"/><stop offset=".6" stop-color="#3f8fdd"/><stop offset="1" stop-color="#a8d4f2"/>
+  </linearGradient>
+  <linearGradient id="gTw" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#243b6b"/><stop offset=".55" stop-color="#8a5a7a"/><stop offset="1" stop-color="#f2a15c"/>
+  </linearGradient>
+  <linearGradient id="gNight" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#03060f"/><stop offset=".7" stop-color="#0c1a33"/><stop offset="1" stop-color="#1d3050"/>
+  </linearGradient>
+  <linearGradient id="gWaterDay" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3f83b4"/><stop offset="1" stop-color="#173f66"/>
+  </linearGradient>
+  <linearGradient id="gWaterNight" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#0b1a2e"/><stop offset="1" stop-color="#04080f"/>
+  </linearGradient>
+  <linearGradient id="gWaterTw" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#b06a4a"/><stop offset="1" stop-color="#3a2a3c"/>
+  </linearGradient>
+  <radialGradient id="gPearl" cx=".35" cy=".3" r=".9">
+    <stop offset="0" stop-color="#ff9db0"/><stop offset=".55" stop-color="#e0405f"/><stop offset="1" stop-color="#8e1f3a"/>
+  </radialGradient>
+  <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#bfe0f5"/><stop offset=".5" stop-color="#6fa6cf"/><stop offset="1" stop-color="#3d6f9c"/>
+  </linearGradient>
+  <linearGradient id="gSh" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#dcecf7"/><stop offset=".5" stop-color="#8fb4d4"/><stop offset="1" stop-color="#5c87ad"/>
+  </linearGradient>
+  <linearGradient id="gJin" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#e4d5b2"/><stop offset=".6" stop-color="#b3a077"/><stop offset="1" stop-color="#7d6c4c"/>
+  </linearGradient>
+  <linearGradient id="gRefl" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </linearGradient>
+  <radialGradient id="gSun" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#fff8d0"/><stop offset=".4" stop-color="#ffd75e"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gMoon" cx=".4" cy=".4" r=".7">
+    <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfd8e8"/>
+  </radialGradient>
+  <pattern id="pearlPat" width="16" height="16" patternUnits="userSpaceOnUse">
+    <circle cx="8" cy="8" r="4.5" fill="none" stroke="#ffd9e0" stroke-width="1.2" opacity=".5"/>
+  </pattern>
+  <pattern id="domePat" width="14" height="14" patternUnits="userSpaceOnUse">
+    <path d="M0 0H14M0 0V14" stroke="#cfe9f7" stroke-width=".8" opacity=".5"/>
+  </pattern>
+  <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+
+  <clipPath id="cpBlue"><path d="M430 452 L464 438 L506 468 L506 802 L430 802 Z"/></clipPath>
+  <clipPath id="cpSwfc"><path fill-rule="evenodd" d="M626 802 L640 300 L652 262 L710 262 L722 300 L736 802 Z M656 278 L704 278 L696 332 L664 332 Z"/></clipPath>
+  <clipPath id="cpJin">
+    <rect x="664" y="428" width="24" height="24"/><rect x="656" y="450" width="40" height="28"/>
+    <rect x="648" y="476" width="56" height="32"/><rect x="640" y="506" width="72" height="38"/>
+    <rect x="632" y="542" width="88" height="48"/><rect x="624" y="588" width="104" height="214"/>
+  </clipPath>
+  <clipPath id="cpWhite"><path d="M736 402 L796 362 L802 802 L736 802 Z"/></clipPath>
+  <clipPath id="cpSh"><path d="M862 802 L868 140 Q870 66 892 58 Q914 64 918 142 L928 802 Z"/></clipPath>
+  <clipPath id="cpGreen"><path d="M940 486 L998 470 L998 802 L940 802 Z"/></clipPath>
+  <clipPath id="cpMid1"><rect x="8" y="470" width="56" height="332"/></clipPath>
+  <clipPath id="cpMid2"><rect x="150" y="506" width="60" height="296"/></clipPath>
+  <clipPath id="cpClassic"><rect x="330" y="672" width="236" height="130"/></clipPath>
+  <clipPath id="cpDomeL"><path d="M206 802 A52 52 0 0 1 310 802 Z"/></clipPath>
+  <clipPath id="cpDomeR"><path d="M548 802 A50 50 0 0 1 648 802 Z"/></clipPath>
+</defs>
+
+<!-- ===== 天空 ===== -->
+<rect class="skyDay" x="0" y="0" width="1000" height="840" fill="url(#gDay)"/>
+<rect class="skyTw" x="0" y="0" width="1000" height="840" fill="url(#gTw)"/>
+<rect class="skyNight" x="0" y="0" width="1000" height="840" fill="url(#gNight)"/>
+
+<!-- 星星 -->
+<g id="stars" class="star"></g>
+
+<!-- 太陽 / 月亮（繞地平線下圓心旋轉） -->
+<g class="sunSpin">
+  <g><circle cx="500" cy="320" r="90" fill="url(#gSun)"/><circle cx="500" cy="320" r="30" fill="#ffef9e"/></g>
+  <g><circle cx="500" cy="1780" r="60" fill="#cfe0ff" opacity=".25" filter="url(#blur6)"/>
+     <circle cx="500" cy="1780" r="26" fill="url(#gMoon)"/>
+     <circle cx="492" cy="1772" r="5" fill="#b8c4d8" opacity=".6"/>
+     <circle cx="508" cy="1788" r="4" fill="#b8c4d8" opacity=".5"/></g>
+</g>
+
+<!-- 雲 -->
+<g class="clouds drift" fill="#fff">
+  <g opacity=".85"><ellipse cx="220" cy="150" rx="70" ry="16"/><ellipse cx="270" cy="140" rx="50" ry="14"/><ellipse cx="170" cy="142" rx="40" ry="12"/></g>
+  <g opacity=".7"><ellipse cx="640" cy="110" rx="80" ry="15"/><ellipse cx="700" cy="100" rx="45" ry="12"/></g>
+  <g opacity=".6"><ellipse cx="430" cy="230" rx="55" ry="10"/><ellipse cx="480" cy="224" rx="35" ry="9"/></g>
+</g>
+
+<!-- 夜間城市光暈 -->
+<ellipse class="cityGlow" cx="560" cy="790" rx="480" ry="90" fill="#ffb066" filter="url(#blur6)"/>
+
+<!-- ===== 天際線 ===== -->
+<g id="skyline">
+  <!-- 遠方中段小塔 -->
+  <g><rect x="404" y="622" width="16" height="180" fill="#9fb6c8"/><line x1="412" y1="622" x2="412" y2="600" stroke="#9fb6c8" stroke-width="2"/>
+     <rect x="452" y="612" width="14" height="190" fill="#8fa8bc"/><rect x="486" y="596" width="12" height="206" fill="#a9bccb"/></g>
+
+  <!-- 左側中段大樓 -->
+  <g clip-path="url(#cpMid1)"><rect x="8" y="470" width="56" height="332" fill="#d3dade"/>
+     <rect class="tint" x="8" y="470" width="56" height="332" fill="#0a1428"/>
+     <g class="win" id="wMid1"></g></g>
+  <g clip-path="url(#cpMid2)"><rect x="150" y="506" width="60" height="296" fill="#c6ccd0"/>
+     <rect class="tint" x="150" y="506" width="60" height="296" fill="#0a1428"/>
+     <g class="win" id="wMid2"></g></g>
+  <rect x="70" y="548" width="46" height="254" fill="#aeb8bd"/><rect class="tint" x="70" y="548" width="46" height="254" fill="#0a1428"/>
+
+  <!-- 藍色斜頂塔 -->
+  <g clip-path="url(#cpBlue)"><rect x="428" y="436" width="80" height="368" fill="url(#gGlass)"/>
+     <path d="M430 452 L464 438 L464 802 L430 802 Z" fill="#cfe6f5" opacity=".5"/>
+     <rect class="tint" x="428" y="436" width="80" height="368" fill="#0a1428"/>
+     <g class="win" id="wBlue"></g></g>
+  <line x1="464" y1="438" x2="464" y2="420" stroke="#8fb4d4" stroke-width="2"/>
+
+  <!-- 環球金融中心 (開瓶器) -->
+  <g clip-path="url(#cpSwfc)">
+     <rect x="624" y="258" width="114" height="546" fill="url(#gGlass)"/>
+     <rect class="tint" x="624" y="258" width="114" height="546" fill="#0a1428"/>
+     <g class="win" id="wSwfc"></g></g>
+
+  <!-- 金茂大廈 -->
+  <g clip-path="url(#cpJin)"><rect x="622" y="426" width="108" height="378" fill="url(#gJin)"/>
+     <rect class="tint" x="622" y="426" width="108" height="378" fill="#0a1428"/>
+     <g class="win" id="wJin"></g></g>
+  <line x1="676" y1="428" x2="676" y2="396" stroke="#cbb98f" stroke-width="3"/>
+
+  <!-- 白色玻璃塔 -->
+  <g clip-path="url(#cpWhite)"><rect x="734" y="360" width="70" height="444" fill="#cfd8dd"/>
+     <path d="M736 402 L796 362 L796 802 L736 802 Z" fill="#e8eef2" opacity=".6"/>
+     <rect class="tint" x="734" y="360" width="70" height="444" fill="#0a1428"/>
+     <g class="win" id="wWhite"></g></g>
+
+  <!-- 上海中心大廈（螺旋） -->
+  <g clip-path="url(#cpSh)"><rect x="860" y="56" width="70" height="748" fill="url(#gSh)"/>
+     <path d="M866 800 Q900 640 872 470 Q905 330 880 160" fill="none" stroke="#eef6fc" stroke-width="3" opacity=".55"/>
+     <path d="M900 800 Q922 620 896 430 Q920 280 902 120" fill="none" stroke="#3f6a8e" stroke-width="2.5" opacity=".5"/>
+     <rect class="tint" x="860" y="56" width="70" height="748" fill="#0a1428"/>
+     <g class="win" id="wSh"></g></g>
+  <circle cx="892" cy="58" r="4" fill="#fff" class="glow"/>
+
+  <!-- 綠色塔 -->
+  <g clip-path="url(#cpGreen)"><rect x="938" y="468" width="62" height="336" fill="#3f9e6e"/>
+     <rect class="tint" x="938" y="468" width="62" height="336" fill="#0a1428"/>
+     <g class="win" id="wGreen"></g></g>
+
+  <!-- 東方明珠塔 -->
+  <g id="pearl">
+    <line x1="146" y1="6" x2="146" y2="56" stroke="#c9a08a" stroke-width="4"/>
+    <circle cx="146" cy="64" r="11" fill="url(#gPearl)"/>
+    <rect x="141" y="74" width="10" height="60" fill="#c9a08a"/>
+    <circle cx="146" cy="182" r="48" fill="url(#gPearl)"/>
+    <circle cx="146" cy="182" r="48" fill="url(#pearlPat)"/>
+    <circle class="glow pearlPulse" cx="146" cy="182" r="56" fill="#ff4d6d" opacity="0" filter="url(#blur6)"/>
+    <rect x="132" y="228" width="7" height="330" fill="#c9a08a"/>
+    <rect x="153" y="228" width="7" height="330" fill="#b98f78"/>
+    <g stroke="#c9a08a" stroke-width="4">
+      <line x1="132" y1="270" x2="160" y2="270"/><line x1="132" y1="330" x2="160" y2="330"/>
+      <line x1="132" y1="390" x2="160" y2="390"/><line x1="132" y1="450" x2="160" y2="450"/>
+      <line x1="132" y1="510" x2="160" y2="510"/></g>
+    <circle cx="146" cy="604" r="52" fill="url(#gPearl)"/>
+    <circle cx="146" cy="604" r="52" fill="url(#pearlPat)"/>
+    <circle class="glow pearlPulse" cx="146" cy="604" r="62" fill="#ff4d6d" opacity="0" filter="url(#blur6)"/>
+    <circle cx="146" cy="700" r="10" fill="url(#gPearl)"/>
+    <path d="M118 646 L74 786 M174 646 L218 786 M146 656 L146 790" stroke="#c9a08a" stroke-width="9" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- 古典拱窗建築 -->
+  <g>
+    <rect x="330" y="672" width="236" height="130" fill="#e9e0c6"/>
+    <rect x="326" y="666" width="244" height="10" fill="#d8cdb0"/>
+    <g fill="#7d8a94">
+      <path d="M344 700 h24 v62 h-24 z M344 700 a12 12 0 0 1 24 0"/>
+      <path d="M378 700 h24 v62 h-24 z M378 700 a12 12 0 0 1 24 0"/>
+      <path d="M412 700 h24 v62 h-24 z M412 700 a12 12 0 0 1 24 0"/>
+      <path d="M446 700 h24 v62 h-24 z M446 700 a12 12 0 0 1 24 0"/>
+      <path d="M480 700 h24 v62 h-24 z M480 700 a12 12 0 0 1 24 0"/>
+      <path d="M514 700 h24 v62 h-24 z M514 700 a12 12 0 0 1 24 0"/>
+    </g>
+    <rect class="tint" x="330" y="672" width="236" height="130" fill="#0a1428"/>
+    <g class="win" id="wClassic"></g>
+  </g>
+
+  <!-- 兩座玻璃穹頂 -->
+  <g>
+    <path d="M206 802 A52 52 0 0 1 310 802 Z" fill="url(#gGlass)"/>
+    <g clip-path="url(#cpDomeL)"><rect x="204" y="748" width="108" height="56" fill="url(#domePat)"/>
+      <path d="M232 802 A30 52 0 0 1 284 802" fill="none" stroke="#cfe9f7" stroke-width="1.2" opacity=".6"/></g>
+    <path d="M548 802 A50 50 0 0 1 648 802 Z" fill="url(#gGlass)"/>
+    <g clip-path="url(#cpDomeR)"><rect x="546" y="750" width="104" height="54" fill="url(#domePat)"/>
+      <path d="M574 802 A28 50 0 0 1 622 802" fill="none" stroke="#cfe9f7" stroke-width="1.2" opacity=".6"/></g>
+    <path class="glow" d="M206 802 A52 52 0 0 1 310 802 Z" fill="#4dd0e1" opacity="0" filter="url(#blur3)"/>
+    <path class="glow" d="M548 802 A50 50 0 0 1 648 802 Z" fill="#4dd0e1" opacity="0" filter="url(#blur3)"/>
+  </g>
+
+  <!-- 堤岸與樹木 -->
+  <rect x="0" y="792" width="1000" height="44" fill="#3c4a3a"/>
+  <rect x="0" y="792" width="1000" height="6" fill="#5a6a52"/>
+  <g id="trees"></g>
+</g>
+
+<!-- ===== 黃浦江 ===== -->
+<rect x="0" y="832" width="1000" height="168" fill="url(#gWaterDay)"/>
+<rect class="waterTw" x="0" y="832" width="1000" height="168" fill="url(#gWaterTw)"/>
+<rect class="waterNight" x="0" y="832" width="1000" height="168" fill="url(#gWaterNight)"/>
+
+<!-- 倒影 -->
+<g filter="url(#blur3)">
+  <rect x="120" y="836" width="52" height="120" fill="#ff7d95" opacity=".3"/>
+  <rect class="refl" x="112" y="836" width="68" height="130" fill="#ff5f7a"/>
+  <rect class="refl" x="440" y="836" width="56" height="90" fill="#bfe0f5"/>
+  <rect class="refl" x="640" y="836" width="80" height="110" fill="#d8e8f2"/>
+  <rect class="refl" x="630" y="836" width="96" height="95" fill="#e4d5b2"/>
+  <rect class="refl" x="744" y="836" width="52" height="85" fill="#e8eef2"/>
+  <rect class="refl" x="866" y="836" width="56" height="125" fill="#cfe3f2"/>
+  <rect class="refl" x="944" y="836" width="50" height="80" fill="#3f9e6e"/>
+  <rect class="refl" x="216" y="836" width="84" height="70" fill="#4dd0e1"/>
+  <rect class="refl" x="558" y="836" width="80" height="66" fill="#4dd0e1"/>
+</g>
+<g id="shimmer"></g>
+
+<!-- 船 -->
+<g class="bob">
+  <path d="M14 812 L150 812 L138 834 L26 834 Z" fill="#f5f5f5"/>
+  <rect x="40" y="796" width="80" height="16" fill="#e0e0e0"/>
+  <g fill="#5a7a94"><rect x="48" y="800" width="6" height="8"/><rect x="60" y="800" width="6" height="8"/><rect x="72" y="800" width="6" height="8"/><rect x="84" y="800" width="6" height="8"/><rect x="96" y="800" width="6" height="8"/></g>
+</g>
+<g class="bob" style="animation-delay:1.2s">
+  <path d="M768 828 L952 828 L938 854 L782 854 Z" fill="#26323c"/>
+  <g fill="#1e88e5"><rect x="790" y="806" width="26" height="22"/><rect x="820" y="806" width="26" height="22"/><rect x="850" y="806" width="26" height="22"/><rect x="880" y="806" width="26" height="22"/></g>
+  <rect x="912" y="800" width="18" height="28" fill="#e53935"/>
+  <circle class="glow" cx="966" cy="842" r="7" fill="#ff3b30" opacity="0"/>
+  <circle cx="966" cy="842" r="6" fill="#e53935"/>
+</g>
+</svg>
+
+<script>
+const S=document.getElementById('scene'),NS='http://www.w3.org/2000/svg';
+const rnd=(a,b)=>a+Math.random()*(b-a);
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+
+/* 星星 */
+const stars=document.getElementById('stars');
+for(let i=0;i<110;i++){
+  const g=el('g',{class:'tw'});g.style.animationDelay=rnd(0,3)+'s';
+  g.appendChild(el('circle',{cx:rnd(5,995),cy:rnd(5,560),r:rnd(.6,1.8),fill:'#fff'}));
+  stars.appendChild(g);
+}
+/* 窗燈產生器 */
+function windows(id,x0,y0,x1,y1,cw,ch,ww,wh,p){
+  const g=document.getElementById(id);
+  for(let y=y0;y+wh<y1;y+=ch)for(let x=x0;x+ww<x1;x+=cw){
+    if(Math.random()<p){const r=el('rect',{x:x,y:y,width:ww,height:wh,fill:Math.random()<.85?'#ffe9a8':'#bfe3ff'});
+      g.appendChild(r);}
+  }
+}
+windows('wMid1',12,478,60,800,9,12,4,7,.7);
+windows('wMid2',154,514,206,800,9,12,4,7,.7);
+windows('wBlue',436,452,502,800,10,12,5,7,.75);
+windows('wSwfc',630,268,732,800,10,12,5,7,.75);
+windows('wJin',628,432,724,800,9,11,4,6,.7);
+windows('wWhite',740,370,798,800,9,12,4,7,.7);
+windows('wSh',864,66,926,800,10,12,5,7,.72);
+windows('wGreen',944,478,996,800,9,12,4,7,.7);
+windows('wClassic',338,682,560,798,11,14,5,8,.8);
+
+/* 樹木 */
+const trees=document.getElementById('trees');
+for(let x=20;x<1000;x+=rnd(16,30)){
+  const red=x>540&&x<720&&Math.random()<.5;
+  trees.appendChild(el('circle',{cx:x,cy:rnd(782,792),r:rnd(7,12),fill:red?'#b23b2e':'#2e6b34'}));
+}
+/* 水面波光 */
+const sh=document.getElementById('shimmer');
+for(let i=0;i<16;i++){
+  const r=el('rect',{x:rnd(0,940),y:rnd(845,985),width:rnd(30,90),height:1.6,rx:1,fill:'#dceaf5',class:'shimmer'});
+  r.style.animationDelay=rnd(0,7)+'s';sh.appendChild(r);
+}
+</script>
+</body>
+</html>

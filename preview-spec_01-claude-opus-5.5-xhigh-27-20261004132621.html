@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lujiazui Day &amp; Night</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05070d; overflow: hidden; }
+  body { display: grid; place-items: center; }
+  #stage { display: block; width: min(100vw, calc(100vh * 745 / 742)); height: auto; }
+
+  /* perpetual micro animations (independent of the day cycle) */
+  .tw { animation: twinkle 3.2s ease-in-out infinite; }
+  @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+  .blink { animation: blink 1.6s steps(1, end) infinite; }
+  @keyframes blink { 0% { opacity: 1; } 35% { opacity: .08; } }
+  .shimmer { animation: shimmer 2.4s ease-in-out infinite alternate; }
+  @keyframes shimmer { from { transform: translateX(-1.6px); opacity: .75; } to { transform: translateX(1.6px); opacity: 1; } }
+  .sparkle { animation: sparkle 1.3s ease-in-out infinite; }
+  @keyframes sparkle { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+  .led-run { animation: ledRun 2.2s linear infinite; }
+  @keyframes ledRun { to { stroke-dashoffset: -24; } }
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 745 742" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Shanghai Lujiazui skyline day and night loop">
+<defs>
+  <!-- day-cycle driven gradients (stops updated by JS) -->
+  <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+    <stop id="sk0" offset="0"/><stop id="sk1" offset=".3"/><stop id="sk2" offset=".55"/><stop id="sk3" offset=".76"/><stop id="sk4" offset="1"/>
+  </linearGradient>
+  <linearGradient id="gSkySide" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".09"/>
+  </linearGradient>
+  <radialGradient id="gSunGlow">
+    <stop id="sunG0" offset="0" stop-opacity=".9"/><stop id="sunG1" offset=".18" stop-opacity=".45"/><stop id="sunG2" offset="1" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gSunDisc" cx=".42" cy=".42">
+    <stop offset="0" stop-color="#fff"/><stop id="sunD1" offset="1"/>
+  </radialGradient>
+  <radialGradient id="gMoonGlow">
+    <stop offset="0" stop-color="#dfe8ff" stop-opacity=".55"/><stop offset=".25" stop-color="#9fb4e8" stop-opacity=".18"/><stop offset="1" stop-color="#9fb4e8" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gMoonDisc" cx=".4" cy=".38">
+    <stop offset="0" stop-color="#fffef4"/><stop offset=".8" stop-color="#ece6cf"/><stop offset="1" stop-color="#d6cfb6"/>
+  </radialGradient>
+  <radialGradient id="gCityGlow" cx=".5" cy="1" r=".75">
+    <stop offset="0" stop-color="#ff9f6a" stop-opacity=".35"/><stop offset=".45" stop-color="#9a5aa8" stop-opacity=".16"/><stop offset="1" stop-color="#3a3a8a" stop-opacity="0"/>
+  </radialGradient>
+
+  <!-- city tint: matrix rewritten every frame -->
+  <filter id="fTint" filterUnits="userSpaceOnUse" x="0" y="0" width="745" height="742" color-interpolation-filters="sRGB">
+    <feColorMatrix id="tintMatrix" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/>
+  </filter>
+  <filter id="fTintBoats" filterUnits="userSpaceOnUse" x="-200" y="575" width="1145" height="75" color-interpolation-filters="sRGB">
+    <feColorMatrix id="tintMatrixBoats" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/>
+  </filter>
+
+  <!-- shared building gradients -->
+  <linearGradient id="gCol" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#c4ad88"/><stop offset=".35" stop-color="#f0dab4"/><stop offset=".7" stop-color="#d2b990"/><stop offset="1" stop-color="#957f60"/>
+  </linearGradient>
+  <linearGradient id="gColBack" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#8d8270"/><stop offset=".5" stop-color="#b4a78f"/><stop offset="1" stop-color="#7d7262"/>
+  </linearGradient>
+  <linearGradient id="gShaft" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#a99c86"/><stop offset=".35" stop-color="#e3d8c4"/><stop offset=".75" stop-color="#c2b59d"/><stop offset="1" stop-color="#8f8370"/>
+  </linearGradient>
+  <radialGradient id="gSphereShade" cx=".38" cy=".34" r=".7">
+    <stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset=".8" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".5"/>
+  </radialGradient>
+  <radialGradient id="gBall" cx=".35" cy=".3" r=".75">
+    <stop offset="0" stop-color="#f4efe6"/><stop offset=".5" stop-color="#bdb5a8"/><stop offset="1" stop-color="#6d665c"/>
+  </radialGradient>
+  <linearGradient id="gGrey" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#9c9384"/><stop offset=".4" stop-color="#d9d1c2"/><stop offset="1" stop-color="#8b8274"/>
+  </linearGradient>
+  <linearGradient id="gCylinder" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#6a90c4"/><stop offset=".18" stop-color="#3f69a6"/><stop offset=".5" stop-color="#244a82"/><stop offset=".78" stop-color="#4170aa"/><stop offset=".92" stop-color="#93b2d8"/><stop offset="1" stop-color="#4a6ea6"/>
+  </linearGradient>
+  <linearGradient id="gBlueCrown" x1="0" y1="0" x2=".25" y2="1">
+    <stop offset="0" stop-color="#d4d2a2"/><stop offset=".45" stop-color="#b3b896" stop-opacity=".9"/><stop offset="1" stop-color="#5f84b0" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="gBlueTower" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#33639f"/><stop offset=".5" stop-color="#26518a"/><stop offset="1" stop-color="#1e4277"/>
+  </linearGradient>
+  <linearGradient id="gSwfc" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#5f8fd6"/><stop offset=".06" stop-color="#2c58a6"/><stop offset=".5" stop-color="#1b3f88"/><stop offset="1" stop-color="#16367a"/>
+  </linearGradient>
+  <linearGradient id="gJinmao" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#3f5a88"/><stop offset=".3" stop-color="#6d84aa"/><stop offset=".55" stop-color="#36507e"/><stop offset="1" stop-color="#253c66"/>
+  </linearGradient>
+  <linearGradient id="gYellow" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f4f2d6"/><stop offset=".5" stop-color="#e9e6c4"/><stop offset="1" stop-color="#d9d4ac"/>
+  </linearGradient>
+  <linearGradient id="gNotch" x1="0" y1="42" x2="0" y2="425" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#f6f9fc" stop-opacity="0"/><stop offset=".25" stop-color="#f6f9fc" stop-opacity=".15"/><stop offset=".45" stop-color="#f6f9fc" stop-opacity="1"/><stop offset="1" stop-color="#f6f9fc" stop-opacity="1"/>
+  </linearGradient>
+  <linearGradient id="gShtLit" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#e9eef4"/><stop offset=".45" stop-color="#c3cfdd"/><stop offset="1" stop-color="#8ea3bf"/>
+  </linearGradient>
+  <linearGradient id="gShtDark" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2c5089"/><stop offset=".4" stop-color="#1f4076"/><stop offset="1" stop-color="#335a94"/>
+  </linearGradient>
+  <linearGradient id="gGreenDark" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#2f6a5c"/><stop offset=".5" stop-color="#1e4c46"/><stop offset="1" stop-color="#173a38"/>
+  </linearGradient>
+  <linearGradient id="gGreenLime" x1="0" y1="0" x2=".4" y2="1">
+    <stop offset="0" stop-color="#a6dc8a"/><stop offset=".45" stop-color="#6fc862"/><stop offset="1" stop-color="#3f9a4a"/>
+  </linearGradient>
+  <linearGradient id="gGlobeL" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8a9a6a"/><stop offset=".22" stop-color="#6a8664"/><stop offset=".3" stop-color="#4f6f70"/><stop offset=".36" stop-color="#2f5c92"/><stop offset=".7" stop-color="#244c86"/><stop offset="1" stop-color="#1c3866"/>
+  </linearGradient>
+  <linearGradient id="gGlobeR" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#5a7a58"/><stop offset=".5" stop-color="#355e55"/><stop offset="1" stop-color="#1e3a5e"/>
+  </linearGradient>
+  <linearGradient id="gFacade" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#d9c398"/><stop offset="1" stop-color="#c6aa7c"/>
+  </linearGradient>
+  <linearGradient id="gArchWin" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3f5f8a"/><stop offset=".5" stop-color="#2a4468"/><stop offset="1" stop-color="#33506f"/>
+  </linearGradient>
+  <linearGradient id="gDrum" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#7a6c48"/><stop offset=".4" stop-color="#c9b780"/><stop offset="1" stop-color="#7f6f48"/>
+  </linearGradient>
+  <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8798a6"/><stop offset=".14" stop-color="#5d7fa8"/><stop offset=".45" stop-color="#4371ad"/><stop offset="1" stop-color="#2c5c9e"/>
+  </linearGradient>
+  <linearGradient id="gWaterSide" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#16346a" stop-opacity=".35"/><stop offset=".3" stop-color="#16346a" stop-opacity="0"/><stop offset=".62" stop-color="#9a9a6a" stop-opacity="0"/><stop offset=".8" stop-color="#9f9d74" stop-opacity=".55"/><stop offset="1" stop-color="#8e9a80" stop-opacity=".5"/>
+  </linearGradient>
+  <radialGradient id="gReflPink">
+    <stop offset="0" stop-color="#f6a684" stop-opacity="1"/><stop offset=".55" stop-color="#e09482" stop-opacity=".55"/><stop offset="1" stop-color="#c88a8a" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gReflGold">
+    <stop offset="0" stop-color="#d8cf9a" stop-opacity=".8"/><stop offset="1" stop-color="#b0a878" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="gHull" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#2a3a5c"/><stop offset="1" stop-color="#121b2e"/>
+  </linearGradient>
+
+  <!-- night light gradients -->
+  <radialGradient id="gPearlGlow" cx=".42" cy=".38" r=".65">
+    <stop id="pg0" offset="0" stop-color="#ffd0f0"/><stop id="pg1" offset=".55" stop-color="#ff4fbf"/><stop id="pg2" offset="1" stop-color="#8a1fd1"/>
+  </radialGradient>
+  <radialGradient id="gPearlHalo">
+    <stop id="ph0" offset="0" stop-color="#ff4fbf" stop-opacity=".55"/><stop id="ph1" offset="1" stop-color="#ff4fbf" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="gPearlCol" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#f6c6ff" stop-opacity=".25"/><stop offset=".4" stop-color="#ffe6ff" stop-opacity=".85"/><stop offset="1" stop-color="#c88cff" stop-opacity=".3"/>
+  </linearGradient>
+  <radialGradient id="gWarmDot">
+    <stop offset="0" stop-color="#fff3c8"/><stop offset=".3" stop-color="#ffc35a" stop-opacity=".75"/><stop offset="1" stop-color="#ff9a2a" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gRedDot">
+    <stop offset="0" stop-color="#ffd2c8"/><stop offset=".3" stop-color="#ff3b2a" stop-opacity=".85"/><stop offset="1" stop-color="#ff1a0a" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gGreenDot">
+    <stop offset="0" stop-color="#e0ffe8"/><stop offset=".3" stop-color="#3dff7a" stop-opacity=".85"/><stop offset="1" stop-color="#0aff4a" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gBlueHalo">
+    <stop offset="0" stop-color="#7fd0ff" stop-opacity=".55"/><stop offset="1" stop-color="#3f8fff" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gGoldHalo">
+    <stop offset="0" stop-color="#ffd27a" stop-opacity=".5"/><stop offset="1" stop-color="#ff9a3a" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="gJinmaoLit" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#ffcf6a"/><stop offset=".35" stop-color="#fff0c0"/><stop offset=".7" stop-color="#ffc45a"/><stop offset="1" stop-color="#d98a2a"/>
+  </linearGradient>
+  <linearGradient id="gFacadeLit" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffe2a0"/><stop offset="1" stop-color="#f0a850"/>
+  </linearGradient>
+  <linearGradient id="gShtNight" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#e8f6ff" stop-opacity=".9"/><stop offset=".12" stop-color="#9fd6ff" stop-opacity=".45"/><stop offset="1" stop-color="#3f7fe0" stop-opacity=".12"/>
+  </linearGradient>
+  <linearGradient id="gLed" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse" spreadMethod="repeat">
+    <stop offset="0" stop-color="#ff3d8b"/><stop offset=".25" stop-color="#ffb43d"/><stop offset=".5" stop-color="#3de0ff"/><stop offset=".75" stop-color="#8a5bff"/><stop offset="1" stop-color="#ff3d8b"/>
+    <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="0 80" dur="6s" repeatCount="indefinite"/>
+  </linearGradient>
+  <linearGradient id="gStreakWarm" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffd98a" stop-opacity=".9"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="gStreakPink" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ff6fd0" stop-opacity=".85"/><stop offset="1" stop-color="#b03aff" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="gStreakBlue" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#9fe0ff" stop-opacity=".8"/><stop offset="1" stop-color="#3f8fff" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="gStreakGreen" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8aff8a" stop-opacity=".6"/><stop offset="1" stop-color="#2ad05a" stop-opacity="0"/>
+  </linearGradient>
+
+  <!-- ripple patterns (drift via SMIL) -->
+  <pattern id="pRipS" width="60" height="9" patternUnits="userSpaceOnUse">
+    <path d="M4 2h9M30 6h12M48 3h6" stroke="#d6e6f6" stroke-opacity=".35" stroke-width=".8"/>
+    <path d="M18 4h8M40 8h9" stroke="#163c78" stroke-opacity=".35" stroke-width=".9"/>
+    <animateTransform attributeName="patternTransform" type="translate" from="0 0" to="60 0" dur="14s" repeatCount="indefinite"/>
+  </pattern>
+  <pattern id="pRipM" width="110" height="16" patternUnits="userSpaceOnUse">
+    <path d="M6 3h20M52 10h24M88 5h14" stroke="#d6e6f6" stroke-opacity=".3" stroke-width="1.2"/>
+    <path d="M30 7h16M70 14h22M2 13h12" stroke="#123672" stroke-opacity=".38" stroke-width="1.4"/>
+    <animateTransform attributeName="patternTransform" type="translate" from="0 0" to="-110 0" dur="18s" repeatCount="indefinite"/>
+  </pattern>
+  <pattern id="pRipL" width="180" height="26" patternUnits="userSpaceOnUse">
+    <path d="M8 4h36M92 15h40M150 8h22" stroke="#d6e6f6" stroke-opacity=".26" stroke-width="1.8"/>
+    <path d="M50 10h30M120 22h34M10 20h26" stroke="#0f2f68" stroke-opacity=".4" stroke-width="2.2"/>
+    <animateTransform attributeName="patternTransform" type="translate" from="0 0" to="180 0" dur="22s" repeatCount="indefinite"/>
+  </pattern>
+
+  <!-- clip paths -->
+  <clipPath id="cPearlUp"><path d="M71.1 156 A37.5 37.5 0 1 1 143.9 156 Z"/></clipPath>
+  <clipPath id="cPearlLow"><circle cx="103.5" cy="443.5" r="43.5"/></clipPath>
+  <clipPath id="cPearlTop"><ellipse cx="108" cy="31" rx="13" ry="10.5"/></clipPath>
+  <clipPath id="cGlobeL"><circle cx="151.5" cy="529.5" r="51.5"/></clipPath>
+  <clipPath id="cGlobeR"><circle cx="448.5" cy="522" r="49"/></clipPath>
+  <path id="pShtOutline" d="M637 42 C650 38.5 665 38 678 39.5 L682 70 L686 100 L690 150 L694 200 L698 250 L701 300 L703.5 340 L706 425 L640 425 L640 200 Z"/>
+  <clipPath id="cSht"><use href="#pShtOutline"/></clipPath>
+  <clipPath id="cCyl"><path d="M222.5 334 L270 333 L270 492 L222 492 Z"/></clipPath>
+  <clipPath id="cBlueT"><path d="M420 276 L478 281 L482 286 L482 482 L420 482 Z"/></clipPath>
+  <clipPath id="cYellowLit"><path d="M548 273 L585 265.5 L603 393 L548 398 Z"/></clipPath>
+  <path id="pJinmao" d="M510 229 L511.5 236 L514 240 L516.5 247 L519.5 249 L521 257 L524.5 259 L526 267 L530.5 269 L532.5 279 L536 281 L536 400 L488 400 L488 281 L491.5 279 L493.5 269 L498 267 L499.5 259 L503 257 L504.5 249 L507.5 247 L509.5 240 L508.5 236 Z"/>
+  <clipPath id="cJinmao"><use href="#pJinmao"/></clipPath>
+  <clipPath id="cJinmaoVis"><rect x="480" y="200" width="70" height="186"/></clipPath>
+  <clipPath id="cWater"><rect x="0" y="604" width="745" height="138"/></clipPath>
+</defs>
+
+<!-- ============ SKY ============ -->
+<g id="sky">
+  <rect width="745" height="620" fill="url(#gSky)"/>
+  <rect width="745" height="620" fill="url(#gSkySide)"/>
+  <g id="stars"></g>
+  <ellipse id="cityGlow" cx="372" cy="600" rx="520" ry="330" fill="url(#gCityGlow)" opacity="0"/>
+  <g id="moon" opacity="0">
+    <circle r="70" fill="url(#gMoonGlow)"/>
+    <circle r="11" fill="url(#gMoonDisc)"/>
+    <g fill="#b9b29a" opacity=".45">
+      <circle cx="-3.5" cy="-2.5" r="2.6"/><circle cx="3" cy="2.5" r="3.2"/><circle cx="-1" cy="5.2" r="1.5"/><circle cx="4.2" cy="-4" r="1.3"/>
+    </g>
+  </g>
+  <g id="sun">
+    <circle id="sunGlow" r="150" fill="url(#gSunGlow)"/>
+    <circle r="15" fill="url(#gSunDisc)"/>
+  </g>
+</g>
+
+<!-- ============ CITY (tinted by day cycle) ============ -->
+<g id="city" filter="url(#fTint)">
+
+  <!-- distant hazy towers -->
+  <g id="far">
+    <rect x="340" y="477" width="13" height="18" fill="#a9b9c9"/>
+    <path d="M300 461 h17 v34 h-17z" fill="#7d9cc2"/>
+    <path d="M300 461 h3 v34 h-3z M314 461 h3 v34 h-3z" fill="#cdd6de"/>
+    <path d="M322 460 h18 v35 h-18z" fill="#86a3c6"/>
+    <path d="M322 460 h3 v35 h-3z M337 460 h3 v35 h-3z" fill="#d3dbe2"/>
+    <path d="M309 447.5 v12 M331 446.5 v12" stroke="#b7c3cf" stroke-width="1.2"/>
+    <path d="M301.5 456 h15 v2.2 h-15z M323.5 455 h15 v2.2 h-15z" fill="#c4ced8"/>
+    <path d="M304.5 458 h9 v3.5 h-9z M326.5 457 h9 v3.5 h-9z" fill="#9fb1c4"/>
+    <path d="M313 474 l9 -5 l9 5 v21 h-18z" fill="#c6d3cf"/>
+    <path d="M313 474 l9 -5 l9 5z" fill="#8fbf9a"/>
+    <!-- antenna tower -->
+    <path d="M352 445 h25 v48 h-25z" fill="#c3c3c2"/>
+    <path d="M366 445 h11 v48 h-11z" fill="#d6d4cf"/>
+    <path d="M363 445 h3 v48 h-3z" fill="#a3a6aa"/>
+    <path d="M356 438.5 h17 v6.5 h-17z" fill="#b6b8bb"/>
+    <path d="M359 438.5 L362.5 418 L365.5 418 L369 438.5Z" fill="#a8acb2"/>
+    <path d="M364 400 V420" stroke="#9fa4ab" stroke-width="1.3"/>
+    <g id="farLines" stroke="#9aa0a8" stroke-width=".4" opacity=".7"></g>
+  </g>
+
+  <!-- left cluster behind Pearl Tower -->
+  <g id="leftCluster">
+    <path d="M0 421 L5 417 L13 417 L13 566 L0 566Z" fill="#d7c9aa"/>
+    <!-- building B: blue glass with beige frame -->
+    <path d="M20 351 L50 351 L50 560 L20 560Z" fill="#284a7c"/>
+    <path d="M20 351 L50 351 L50 357 L20 357Z" fill="#dcd2bc"/>
+    <path d="M13 398 L20 396 L20 560 L13 560Z" fill="#d8ccb3"/>
+    <path d="M20 357 L23 357 L23 560 L20 560Z" fill="#7fa4dc"/>
+    <!-- building C: beige -->
+    <path d="M50 346 L87 346 L87 560 L50 560Z" fill="#c4b594"/>
+    <path d="M50 346 L57 346 L57 560 L50 560Z" fill="#c5b799"/>
+    <path d="M51.5 327 V346 M81.5 322 V346" stroke="#d6dde5" stroke-width=".9"/>
+    <!-- building D: dark slanted top -->
+    <path d="M130 350 L139 343 L146 351 L146 392 L130 392Z" fill="#2e4369"/>
+    <path d="M139 343 L146 351 L146 392 L141 392Z" fill="#435d8a"/>
+    <!-- building E: Ping An (beige, stepped top) -->
+    <path d="M128 372 L140 368 L150 377 L160 385 L166 393 L172 401 L172 492 L128 492Z" fill="#dcc890"/>
+    <path d="M149 376 L152 378 L152 492 L149 492Z" fill="#f6efd8"/>
+    <g id="pingAnSign" fill="#c9342a">
+      <rect x="137.5" y="395" width="6" height="8.5"/><rect x="145" y="395" width="6" height="8.5"/><rect x="152.5" y="395" width="6" height="8.5"/><rect x="160" y="395" width="6" height="8.5"/>
+    </g>
+    <g fill="#f0e3c0"><rect x="139" y="397" width="3" height="1"/><rect x="146.5" y="399" width="3" height="1"/><rect x="154" y="397" width="3" height="1"/><rect x="161.5" y="398.5" width="3" height="1"/></g>
+    <!-- building F: teal glass -->
+    <path d="M170 401 L186 410 L186 485 L170 485Z" fill="#2a5a72"/>
+    <path d="M196 480 L213 478 L213 495 L196 495Z" fill="#3c4f66"/>
+    <!-- lower white building between Pearl legs -->
+    <path d="M55 466 L86 466 L86 562 L55 562Z" fill="#ebe5d7"/>
+    <g id="leftDetails"></g>
+  </g>
+
+  <!-- cylinder tower + wedge -->
+  <g id="cylinderTower">
+    <path d="M219 440 L224 437 L224 482 L213 490Z" fill="#203a68"/>
+    <path d="M222.5 334 L270 333 L270 492 L222 492Z" fill="url(#gCylinder)"/>
+    <g clip-path="url(#cCyl)">
+      <path d="M246 430 L251 385 L254 372 L257 386 L262 430Z" fill="#0f2a5e" opacity=".85"/>
+      <path d="M232 492 L236 360 L240 492Z" fill="#6f95d0" opacity=".35"/>
+      <g id="cylLines" stroke="#7fa0d4" stroke-width=".35" opacity=".55"></g>
+    </g>
+    <rect x="222.5" y="334" width="47.5" height="12" fill="#d8dee4"/>
+    <ellipse cx="246.2" cy="334" rx="23.8" ry="2.2" fill="#eef2f5"/>
+    <g fill="#8c97a3"><rect x="228" y="337.5" width="5" height="4"/><rect x="235" y="337.5" width="4" height="4"/><rect x="241" y="337.5" width="5" height="4"/><rect x="248" y="337.5" width="4" height="4"/><rect x="254" y="337.5" width="5" height="4"/><rect x="261" y="337.5" width="4" height="4"/></g>
+    <rect x="222.5" y="345" width="47.5" height="1.2" fill="#8a96a6"/>
+    <!-- wedge -->
+    <path d="M213 494 L260 433 L270 433 L278 494Z" fill="#c8b08a"/>
+    <path d="M268 433 L270 433 L278 494 L271 494Z" fill="#efe2c2"/>
+    <g id="wedgeRibs" stroke="#b49c72" stroke-width=".55"></g>
+    <path d="M213 494 L238 461 L236.5 494Z" fill="#3e6b52"/>
+    <g stroke="#7fa88c" stroke-width=".35" opacity=".8"><path d="M216 490 L237 463 M219 494 V486 M225 494 V478 M231 494 V471"/></g>
+  </g>
+
+  <!-- Shanghai Tower -->
+  <g id="shanghaiTower">
+    <use href="#pShtOutline" fill="url(#gShtLit)"/>
+    <g clip-path="url(#cSht)">
+      <path d="M630 30 L650 30 C649 100 650 160 653 195 C660 250 672 300 684 342 L702 430 L630 430Z" fill="url(#gShtDark)"/>
+      <g id="shtFloors"></g>
+      <g id="shtCrown"></g>
+      <rect x="630" y="80" width="80" height="7.5" fill="#33496f" opacity=".85"/>
+      <rect x="664" y="95.5" width="22" height="2.6" fill="#f4f7fa"/>
+      <rect x="652" y="161.5" width="42" height="4.5" fill="#f7f9fb"/>
+      <rect x="630" y="161.5" width="22" height="3.5" fill="#6f8fbf"/>
+      <path d="M650 42 C649 100 650 160 653 195 C660 250 672 300 684 342 L700 425" fill="none" stroke="url(#gNotch)" stroke-width="1.6"/>
+      <path d="M648 42 C647 100 648 160 651 195 C658 250 670 300 682 342" fill="none" stroke="#1d3768" stroke-width=".9" opacity=".7"/>
+      <rect x="637" y="42" width="3" height="400" fill="#7f9fd0" opacity=".5"/>
+    </g>
+  </g>
+
+  <!-- dark green + lime green towers right -->
+  <g id="greenTowers">
+    <path d="M670 343 L688 336.5 L713 357 L713 516 L670 516Z" fill="url(#gGreenDark)"/>
+    <g id="greenDarkGrid" stroke="#4f9584" stroke-width=".4" opacity=".55"></g>
+    <path d="M688 336.5 L713 357 L713 362 L688 341Z" fill="#78b8a0" opacity=".6"/>
+    <path d="M710 362 L740 358 L745 359 L745 506 L710 506Z" fill="url(#gGreenLime)"/>
+    <g id="greenLimeGrid" stroke="#b9f0a8" stroke-width=".4" opacity=".45"></g>
+    <path d="M714 420 L742 380 M714 470 L742 430" stroke="#d9ffd0" stroke-width="1.2" opacity=".35"/>
+    <path d="M738.5 358 L745 358 L745 506 L738.5 506Z" fill="#e4dac0"/>
+  </g>
+
+  <!-- blue tower -->
+  <g id="blueTower">
+    <path d="M420 276 L478 281 L482 286 L482 482 L420 482 Z" fill="url(#gBlueTower)"/>
+    <g clip-path="url(#cBlueT)">
+      <path d="M466 270 L482 270 L482 482 L466 482Z" fill="#1e4b98" opacity=".7"/>
+      <path d="M420 270 L482 270 L482 306 L420 303Z" fill="url(#gBlueCrown)"/>
+      <rect x="420" y="287" width="62" height="3" fill="#f2f4ea"/>
+      <path d="M420 297 L482 300 L482 303 L420 300Z" fill="#7a98b0"/>
+      <g id="blueLines" stroke="#79a3e0" stroke-width=".4" opacity=".6"></g>
+      <rect x="420" y="371" width="62" height="6" fill="#18305e"/>
+      <rect x="420" y="276" width="3" height="210" fill="#86aee6" opacity=".7"/>
+      <path d="M432 330 L446 300 L452 300 L438 330Z" fill="#9ec0ec" opacity=".18"/>
+    </g>
+  </g>
+
+  <!-- SWFC (bottle opener) -->
+  <g id="swfc">
+    <path fill-rule="evenodd" d="M481 193 L544 191.5 L545 420 L478 420 Z M491 208 L532 208 L527 234 L496 234 Z" fill="url(#gSwfc)"/>
+    <path d="M481 193 L544 191.5 L544 194 L481 195.5Z" fill="#0f2558"/>
+    <path d="M491 208 L532 208 L531.4 211 L491.6 211Z" fill="#0d2150" opacity=".6"/>
+    <path d="M481 193 L484.5 193 L483 420 L478 420Z" fill="#8db3ea" opacity=".75"/>
+    <g id="swfcLines" stroke="#5b80c0" stroke-width=".35" opacity=".5"></g>
+  </g>
+
+  <!-- Jin Mao -->
+  <g id="jinmao">
+    <path d="M510 214 L510.9 232 L509.1 232Z" fill="#e6ecf3"/>
+    <use href="#pJinmao" fill="url(#gJinmao)"/>
+    <g clip-path="url(#cJinmao)">
+      <g id="jinmaoDetail"></g>
+    </g>
+  </g>
+
+  <!-- yellow (LED face) tower -->
+  <g id="yellowTower">
+    <path d="M540 275 L585 265.5 L603 393 L608 398 L608 522 L540 522Z" fill="#2a4a6e"/>
+    <path d="M540 275 L548 273 L548 400 L540 400Z" fill="#2f5290"/>
+    <path d="M548 273 L585 265.5 L603 393 L548 398 Z" fill="url(#gYellow)"/>
+    <g clip-path="url(#cYellowLit)">
+      <g id="yellowLines" stroke="#c4b878" stroke-width=".4" opacity=".55"></g>
+      <g id="yellowMosaic"></g>
+      <path d="M548 300 L600 280 L600 284 L548 304Z" fill="#fffbe0" opacity=".35"/>
+    </g>
+    <path d="M548 273 L585 265.5 L585.6 268 L548 275.5Z" fill="#fbf8e4"/>
+    <g id="yellowLower" stroke="#5f84c0" stroke-width=".4" opacity=".6"></g>
+  </g>
+
+  <!-- domed beige building (in front of Jin Mao) -->
+  <g id="domeBuilding">
+    <path d="M480 418 L537 418 L537 429 L545 432 L545 560 L480 560Z" fill="#b09070"/>
+    <path d="M480 418 L500 418 L500 560 L480 560Z" fill="#2f4c7c"/>
+    <g id="domeDetail"></g>
+    <rect x="487.5" y="397" width="41" height="21" fill="url(#gDrum)"/>
+    <g fill="#7d5e36" opacity=".7"><rect x="491" y="401" width="2" height="14"/><rect x="497" y="401" width="2" height="14"/><rect x="503" y="401" width="2" height="14"/><rect x="509" y="401" width="2" height="14"/><rect x="515" y="401" width="2" height="14"/><rect x="521" y="401" width="2" height="14"/></g>
+    <ellipse cx="508" cy="396.5" rx="29" ry="3.8" fill="#b9a27e"/>
+    <ellipse cx="508" cy="395.2" rx="28.5" ry="3" fill="#e2d4b6"/>
+    <path d="M497 394 Q507.5 380.5 518 394Z" fill="#cdb27a"/>
+    <path d="M507.5 384 V380" stroke="#cdb27a" stroke-width="1"/>
+  </g>
+
+  <!-- white grid building -->
+  <g id="gridBuilding">
+    <path d="M568 425 L628 423 L628 518 L568 518Z" fill="#9aa5b8"/>
+    <path d="M628 423 L675 425 L677 518 L628 518Z" fill="#e2d6bb"/>
+    <path d="M568 425 L628 423 L628 426 L568 428Z" fill="#e8ecf2"/>
+    <g id="gridWindows"></g>
+  </g>
+
+  <!-- logo building + low white blocks -->
+  <g id="lowRight">
+    <path d="M510 473 L557 473 L557 523 L510 523Z" fill="#9aa6b4"/>
+    <path d="M532 474 L555 474 L555 522 L532 522Z" fill="#efe5c4"/>
+    <g fill="#4a3a2a" opacity=".8">
+      <rect x="537" y="482" width="3" height="5"/><rect x="542" y="481" width="2" height="7"/><rect x="546" y="483" width="3" height="3"/>
+      <path d="M538 496 q5 -6 10 0 q-5 8 -10 0z"/><rect x="540" y="506" width="7" height="2"/><rect x="543" y="510" width="2" height="6"/>
+    </g>
+    <path d="M505 520 L612 520 L612 563 L505 563Z" fill="#d6dbe1"/>
+    <path d="M540 520 L647 520 L647 562 L540 562Z" fill="#ccd3dc"/>
+    <path d="M583 507 L630 507 L630 521 L583 521Z" fill="#e6e6df"/>
+    <path d="M610 525 L647 525 L647 562 L610 562Z" fill="#9aa3ae"/>
+    <g id="lowWindows" fill="#8a97aa"></g>
+    <!-- cream frame building with green glass bands -->
+    <path d="M643 519 L745 519 L745 583 L643 583Z" fill="#ece5cc"/>
+    <path d="M650 528 L745 528 L745 557 L650 557Z" fill="#3f8a60"/>
+    <path d="M650 563 L745 563 L745 577 L650 577Z" fill="#357a58"/>
+    <g id="greenBand" stroke="#7fc8b0" stroke-width=".5" opacity=".6"></g>
+    <path d="M650 528 L745 528 L745 531 L650 531Z" fill="#9fd8c4" opacity=".6"/>
+  </g>
+
+  <!-- Oriental Pearl Tower -->
+  <g id="pearl">
+    <!-- spire + top module -->
+    <rect x="109.3" y="0" width="1.4" height="6" fill="#d8d0c2"/>
+    <rect x="108" y="5" width="4" height="8.5" fill="#c9bfae"/>
+    <rect x="106.8" y="12.5" width="6.4" height="8" fill="#bcb19e"/>
+    <rect x="110.2" y="5" width="1.8" height="15.5" fill="#8f8574" opacity=".55"/>
+    <g fill="#ece4d4"><rect x="107.6" y="8.5" width="4.8" height=".9"/><rect x="106.4" y="12.3" width="7.2" height="1"/><rect x="106.2" y="16.2" width="7.6" height="1"/></g>
+    <ellipse cx="108" cy="20.6" rx="5.5" ry="1.2" fill="#e2d9c8"/>
+    <g clip-path="url(#cPearlTop)">
+      <rect x="94" y="19" width="28" height="24" fill="#a39886"/>
+      <rect x="94" y="26" width="28" height="8" fill="#8f343b"/>
+      <g id="pearlTopLattice" stroke="#ead8c0" stroke-width=".4"></g>
+      <rect x="94" y="25.2" width="28" height="1" fill="#e9e0cf"/>
+      <rect x="94" y="34" width="28" height="1.4" fill="#e4dccb"/>
+      <ellipse cx="108" cy="31" rx="13" ry="10.5" fill="url(#gSphereShade)"/>
+    </g>
+    <!-- upper shaft -->
+    <path d="M101.5 41 L114.5 41 L116.5 88 L99.5 88Z" fill="url(#gShaft)"/>
+    <g id="shaftRibs" stroke="#8e826e" stroke-width=".45" opacity=".7"></g>
+    <ellipse cx="108.3" cy="89" rx="12.5" ry="2" fill="#e8dfcd"/>
+    <path d="M95.8 89 h25 v1.8 h-25z" fill="#9b907e"/>
+    <path d="M101 90.5 L116 90.5 L116 113 L101 113Z" fill="url(#gShaft)"/>
+    <!-- columns between spheres -->
+    <rect x="103" y="170" width="11" height="236" fill="url(#gColBack)"/>
+    <rect x="88.5" y="168" width="13.5" height="238" fill="url(#gCol)"/>
+    <rect x="114.5" y="168" width="14.5" height="238" fill="url(#gCol)"/>
+    <g id="pearlBands"></g>
+    <!-- upper sphere -->
+    <g clip-path="url(#cPearlUp)">
+      <rect x="69" y="109" width="78" height="80" fill="#8f2c33"/>
+      <g id="pearlUpLattice"></g>
+      <circle cx="107.5" cy="147" r="37.5" fill="url(#gSphereShade)"/>
+    </g>
+    <path d="M77 125 A37.5 37.5 0 0 1 138 125" fill="none" stroke="#f1e2cc" stroke-width="1.2" opacity=".55"/>
+    <!-- equator ring + lower bowl -->
+    <path d="M72.5 158 C76 167 88 174 108 174 C128 174 139.5 167 142.5 158Z" fill="url(#gGrey)"/>
+    <g id="bowlDots" fill="#5a5247"></g>
+    <path d="M70 152 L145 152 L145.5 155.5 C145.5 157.5 143 158.5 142 158.5 L73 158.5 C71.5 158.5 69.5 157.5 69.5 155.5Z" fill="#d8cfbe"/>
+    <path d="M70 155.6 h75.5 v1.4 h-75.5z" fill="#6f6658"/>
+    <!-- lower sphere -->
+    <g clip-path="url(#cPearlLow)">
+      <rect x="59" y="399" width="90" height="90" fill="#aca290"/>
+      <rect x="59" y="423" width="90" height="32" fill="#923236"/>
+      <g id="pearlLowBand"></g>
+      <rect x="59" y="455" width="90" height="34" fill="#9a9080"/>
+      <g id="pearlLowDots" fill="#4c463d"></g>
+      <circle cx="103.5" cy="443.5" r="43.5" fill="url(#gSphereShade)"/>
+    </g>
+    <!-- legs -->
+    <rect x="114" y="478" width="13" height="25" fill="url(#gColBack)"/>
+    <rect x="100" y="480" width="13" height="25" fill="url(#gCol)"/>
+    <path d="M73 476 L84 482 L58 532 L48 527Z" fill="url(#gCol)"/>
+    <path d="M48 527 L58 532 L33 570 L21 568Z" fill="url(#gCol)"/>
+    <path d="M54 532 L58 527 L84 550 L80 555Z" fill="#8a8274"/>
+    <circle cx="53" cy="529.5" r="7.5" fill="url(#gBall)"/>
+    <path d="M84 478 L97 478 L97 557 L101 566 L80 566 L84 557Z" fill="url(#gCol)"/>
+    <path d="M20 566 L112 566 L112 572 L20 572Z" fill="#cfc6b5"/>
+  </g>
+
+  <!-- convention center facade -->
+  <g id="convention">
+    <path d="M175 497 L403 497 L403 582 L175 582Z" fill="url(#gFacade)"/>
+    <path d="M175 491.5 L403 491.5 L403 498 L175 498Z" fill="#a8835a"/>
+    <path d="M175 490 L403 490 L403 492 L175 492Z" fill="#efe2c0"/>
+    <g id="conventionDetail"></g>
+  </g>
+
+  <!-- left globe -->
+  <g id="globeL">
+    <path d="M95 557 L207 557 L207 576 L95 576Z" fill="#e9ecee"/>
+    <g fill="#aab4be"><rect x="95" y="561" width="112" height="1.2"/><rect x="95" y="566" width="112" height="1.2"/><rect x="95" y="571" width="112" height="1.2"/></g>
+    <g clip-path="url(#cGlobeL)">
+      <rect x="99" y="477" width="105" height="105" fill="url(#gGlobeL)"/>
+      <g id="globeLGrid" fill="none" stroke="#c4d4bc" stroke-width=".55" opacity=".6"></g>
+      <circle cx="151.5" cy="529.5" r="51.5" fill="url(#gSphereShade)"/>
+      <path d="M120 540 C122 520 130 508 140 503 L140 560 L122 560Z" fill="#9fd0ff" opacity=".12"/>
+    </g>
+    <path d="M100 556 L203 556 L203 559 L100 559Z" fill="#f4f5f4"/>
+  </g>
+
+  <!-- right globe -->
+  <g id="globeR">
+    <path d="M396 551 L502 551 L502 569 L396 569Z" fill="#eceeef"/>
+    <g fill="#a8b2bc"><rect x="396" y="555" width="106" height="1.2"/><rect x="396" y="560" width="106" height="1.2"/><rect x="396" y="565" width="106" height="1.2"/></g>
+    <g clip-path="url(#cGlobeR)">
+      <rect x="398" y="472" width="102" height="100" fill="url(#gGlobeR)"/>
+      <g id="globeRMap" opacity=".72"></g>
+      <g id="globeRGrid" fill="none" stroke="#efe2b4" stroke-width=".55" opacity=".8"></g>
+      <circle cx="448.5" cy="522" r="49" fill="url(#gSphereShade)"/>
+    </g>
+    <path d="M400 549 L497 549 L497 552 L400 552Z" fill="#f4f5f4"/>
+  </g>
+
+  <!-- riverfront trees -->
+  <g id="trees"></g>
+
+  <!-- water -->
+  <g id="water" clip-path="url(#cWater)">
+    <rect x="0" y="604" width="745" height="138" fill="url(#gWater)"/>
+    <rect x="0" y="604" width="745" height="138" fill="url(#gWaterSide)"/>
+    <ellipse cx="112" cy="648" rx="58" ry="22" fill="url(#gReflPink)"/>
+    <ellipse cx="108" cy="690" rx="40" ry="14" fill="url(#gReflPink)" opacity=".45"/>
+    <ellipse cx="450" cy="640" rx="40" ry="20" fill="#7fa7a0" opacity=".25"/>
+    <ellipse cx="640" cy="690" rx="120" ry="55" fill="url(#gReflGold)" opacity=".6"/>
+    <rect x="0" y="604" width="745" height="7" fill="#c7d3df" opacity=".35"/>
+    <g id="dayStreaks"></g>
+    <rect x="0" y="604" width="745" height="36" fill="url(#pRipS)"/>
+    <rect x="0" y="636" width="745" height="52" fill="url(#pRipM)"/>
+    <rect x="0" y="684" width="745" height="58" fill="url(#pRipL)"/>
+  </g>
+
+  <!-- embankment -->
+  <g id="embankment">
+    <path d="M0 604 L745 604 L745 612 L0 612Z" fill="#8e8372"/>
+    <path d="M232 598 L436 598 L436 609 L232 609Z" fill="#8f6e45"/>
+    <path d="M232 598 L436 598 L436 600 L232 600Z" fill="#b8996a"/>
+    <path d="M436 593.5 L598 593.5 L598 609 L436 609Z" fill="#d3c8a8"/>
+    <path d="M436 606 L598 606 L598 609 L436 609Z" fill="#b8b4aa"/>
+    <path d="M590 587 L745 587 L745 606 L590 606Z" fill="#ddd5bd"/>
+    <path d="M590 602.5 L745 602.5 L745 606 L590 606Z" fill="#bdb8ad"/>
+    <path d="M590 587 L745 587 L745 589 L590 589Z" fill="#f7f5ef"/>
+    <g id="lampPosts" stroke="#6d6f74" stroke-width=".8"></g>
+    <path d="M708 609 L710 593 L714 593 L716 609Z" fill="#d6372c"/>
+    <path d="M709 600 h6 v2 h-6z" fill="#f4eee6"/>
+    <path d="M711.2 593 v-3 h1.6 v3z" fill="#c1302a"/>
+  </g>
+
+</g>
+
+<!-- ============ DAY FX (sun glint + glitter) ============ -->
+<g id="dayFx">
+  <g id="glint" opacity="0">
+    <circle cx="111" cy="322" r="9" fill="url(#gWarmDot)"/>
+    <path d="M111 314 L111.7 321.3 L119 322 L111.7 322.7 L111 330 L110.3 322.7 L103 322 L110.3 321.3Z" fill="#fffbe8"/>
+  </g>
+  <g id="sunGlitter" opacity="0"></g>
+  <g id="moonGlitter" opacity="0"></g>
+</g>
+
+<!-- ============ NIGHT LIGHTS ============ -->
+<g id="night" opacity="0">
+  <g id="nWin1"></g><g id="nWin2"></g><g id="nWin3"></g><g id="nWin4"></g><g id="nWin5"></g>
+  <g id="nLandmark"></g>
+  <g id="nReflect" clip-path="url(#cWater)"></g>
+  <g id="nAviation"></g>
+</g>
+
+<!-- ============ BOATS ============ -->
+<g id="boats" filter="url(#fTintBoats)">
+  <g id="ferry">
+    <path d="M0 605 L86 605 L81 617 L0 618Z" fill="#f3f3f0"/>
+    <path d="M0 614.5 L82.5 614.5 L81.6 617 L0 618Z" fill="#b23a3a"/>
+    <path d="M0 596 L78 596 L83 605 L0 605Z" fill="#f7f7f4"/>
+    <path d="M2 599 L76 599 L77 602.5 L2 602.5Z" fill="#33445c"/>
+    <path d="M0 590 L58 590 L62 596 L0 596Z" fill="#ececea"/>
+    <path d="M2 591.8 L56 591.8 L57.6 594.2 L2 594.2Z" fill="#3b4c64"/>
+    <path d="M6 586 L34 586 L36 590 L6 590Z" fill="#e2e2df"/>
+    <path d="M20 581 V586 M24 582 V586" stroke="#9aa1aa" stroke-width=".7"/>
+    <g fill="#f3f3f0"><rect x="10" y="599" width="1" height="3.5"/><rect x="22" y="599" width="1" height="3.5"/><rect x="34" y="599" width="1" height="3.5"/><rect x="46" y="599" width="1" height="3.5"/><rect x="58" y="599" width="1" height="3.5"/><rect x="70" y="599" width="1" height="3.5"/></g>
+  </g>
+  <g id="barge">
+    <path d="M75 603 L233 603 L232 611 L76 611Z" fill="#e9e5dc"/>
+    <path d="M76 609.5 L232.5 609.5 L232 612.5 L76.5 612.5Z" fill="#c0392b"/>
+    <path d="M84 596.5 L192 596.5 L192 603 L84 603Z" fill="#f2f0ea"/>
+    <path d="M86 598.6 L190 598.6 L190 601 L86 601Z" fill="#7d8796"/>
+    <path d="M124 597 L134 588 L164 588 L174 597" fill="none" stroke="#f4f4f2" stroke-width="1"/>
+    <path d="M129 592.5 L169 592.5 M139 588 L136 597 M149 588 V597 M159 588 L162 597" stroke="#e4e4e0" stroke-width=".6"/>
+    <path d="M195 599 L230 599 L230 603 L195 603Z" fill="#d8d2c4"/>
+  </g>
+  <g id="tug">
+    <g id="tugWake" opacity=".8">
+      <path d="M567 630 C540 628 505 624 462 619 C500 626 535 631 567 634Z" fill="#e8f1fa" opacity=".55"/>
+      <path d="M567 627 C545 624 520 621 490 618" stroke="#f4f8fc" stroke-width="1.2" fill="none" opacity=".7"/>
+    </g>
+    <path d="M567 621 L702 621 L696 634 L573 635.5Z" fill="url(#gHull)"/>
+    <g id="tugTires" fill="#0b0f18"></g>
+    <path d="M588 611 L690 611 L690 621.5 L588 621.5Z" fill="#2a66c8"/>
+    <g fill="#c8342a"><rect x="594" y="614" width="10" height="3"/><rect x="608" y="614" width="10" height="3"/><rect x="622" y="614" width="10" height="3"/><rect x="636" y="614" width="10" height="3"/><rect x="650" y="614" width="10" height="3"/><rect x="664" y="614" width="10" height="3"/></g>
+    <path d="M586 609 L692 609 L692 611 L586 611Z" fill="#c9cdd3"/>
+    <path d="M630 603.5 L662 603.5 L662 609 L630 609Z" fill="#e9eaec"/>
+    <path d="M633 605 h26 v2 h-26z" fill="#3b4a60"/>
+    <path d="M656 597 V603.5" stroke="#cfd3d8" stroke-width=".8"/>
+    <g fill="#1d2433"><circle cx="639" cy="600.5" r="1.2"/><rect x="638" y="601.5" width="2" height="2.2"/><circle cx="644" cy="600.8" r="1.1"/><rect x="643" y="601.8" width="2" height="2"/></g>
+    <path d="M700 624 L746 624 L744 631.5 L702 631.5Z" fill="#33589f"/>
+    <path d="M702 622 L744 622 L744 625 L702 625Z" fill="#c63a32"/>
+    <path d="M567 634 C620 637 670 637 700 633" stroke="#d9e6f2" stroke-width="1" fill="none" opacity=".6"/>
+  </g>
+</g>
+
+<!-- ============ BOAT LIGHTS ============ -->
+<g id="boatLights" opacity="0"></g>
+</svg>
+
+<script>
+(() => {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const CYCLE_MS = 40000; // one full day
+  const START_HOUR = 15;  // loop starts at the reference photo's afternoon light
+
+  // ---------- helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, attrs, parent) => {
+    const node = document.createElementNS(NS, tag);
+    for (const k in attrs) node.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(node);
+    return node;
+  };
+  // deterministic PRNG so the scene is identical on every load
+  let seed = 20261004;
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  const range = (a, b) => a + (b - a) * rand();
+  const pick = (list) => list[Math.floor(rand() * list.length)];
+  const lines = (parent, d) => el('path', { d }, parent);
+
+  let globeGridL = '', globeGridR = '';
+
+  // ---------- static detail generation ----------
+  const buildDetails = () => {
+    // far tower facade lines
+    let d = '';
+    for (let x = 355; x < 377; x += 2.5) d += `M${x} 446 V493`;
+    for (let y = 448; y < 493; y += 2.6) d += `M352 ${y} H377`;
+    lines($('farLines'), d);
+
+    // left cluster details: window grids
+    const ld = $('leftDetails');
+    d = '';
+    for (let y = 424; y < 566; y += 4) d += `M1 ${y} H12.5`;
+    el('path', { d, stroke: '#9c8f74', 'stroke-width': .9 }, ld);
+    d = '';
+    for (let x = 25; x < 50; x += 3) d += `M${x} 357 V560`;
+    el('path', { d, stroke: '#7ea1dc', 'stroke-width': .45, opacity: .7 }, ld);
+    d = '';
+    for (let y = 360; y < 560; y += 3.2) d += `M23 ${y} H50`;
+    el('path', { d, stroke: '#173a7a', 'stroke-width': .5, opacity: .6 }, ld);
+    d = '';
+    for (let y = 350; y < 560; y += 3.4) d += `M58 ${y} H86`;
+    el('path', { d, stroke: '#a4967a', 'stroke-width': 1, opacity: .75 }, ld);
+    d = '';
+    for (let x = 60; x < 86; x += 3.2) d += `M${x} 470 V560`;
+    el('path', { d, stroke: '#3d4656', 'stroke-width': 1.3, 'stroke-dasharray': '6 1.5' }, ld);
+    d = '';
+    for (let y = 384; y < 492; y += 3.3) d += `M129 ${y} H172`;
+    el('path', { d, stroke: '#a8946a', 'stroke-width': .9, opacity: .8, 'stroke-dasharray': '2.2 1.1' }, ld);
+    d = '';
+    for (let y = 412; y < 486; y += 3) d += `M170 ${y} H186`;
+    el('path', { d, stroke: '#4f8aa0', 'stroke-width': .4 }, ld);
+
+    // cylinder tower vertical mullions
+    d = '';
+    for (let x = 224; x < 270; x += 2.6) d += `M${x} 346 V492`;
+    lines($('cylLines'), d);
+    // wedge ribs
+    d = '';
+    for (let x = 238; x < 270; x += 2.4) {
+      const yTop = 494 - (x - 213) * (61 / 47);
+      d += `M${x} ${Math.max(433, yTop + 1)} V494`;
+    }
+    lines($('wedgeRibs'), d);
+
+    // Shanghai Tower floors (horizontal) + crown ribs
+    const floors = $('shtFloors');
+    d = '';
+    for (let y = 89; y < 425; y += 2.7) d += `M636 ${y} H708`;
+    el('path', { d, stroke: '#647a9a', 'stroke-width': .9, opacity: .6 }, floors);
+    d = '';
+    for (let y = 90; y < 425; y += 8.1) d += `M636 ${y} H708`;
+    el('path', { d, stroke: '#f3f6fa', 'stroke-width': .6, opacity: .35 }, floors);
+    const crown = $('shtCrown');
+    el('rect', { x: 636, y: 38, width: 72, height: 42, fill: '#5677a6' }, crown);
+    d = '';
+    for (let x = 639; x < 682; x += 2.2) d += `M${x} 40 V80`;
+    el('path', { d, stroke: '#3e5c8c', 'stroke-width': .6 }, crown);
+    d = '';
+    for (let y = 44; y < 80; y += 4.5) d += `M636 ${y} H690`;
+    el('path', { d, stroke: '#c9d6e6', 'stroke-width': .9, opacity: .75 }, crown);
+    el('rect', { x: 636, y: 38, width: 14, height: 42, fill: '#3e5f97', opacity: .55 }, crown);
+
+    // green towers grids
+    d = '';
+    for (let x = 673; x < 713; x += 3.5) d += `M${x} 345 V516`;
+    for (let y = 350; y < 516; y += 3.6) d += `M670 ${y} H713`;
+    lines($('greenDarkGrid'), d);
+    d = '';
+    for (let x = 713; x < 739; x += 3.2) d += `M${x} 362 V506`;
+    for (let y = 366; y < 506; y += 4) d += `M710 ${y} H739`;
+    lines($('greenLimeGrid'), d);
+
+    // blue tower mullions
+    d = '';
+    for (let x = 424; x < 482; x += 2.4) d += `M${x} 276 V482`;
+    lines($('blueLines'), d);
+
+    // SWFC mullions
+    d = '';
+    for (let x = 486; x < 545; x += 2.6) d += `M${x} 195 V420`;
+    for (let y = 198; y < 420; y += 3.1) d += `M481 ${y} H545`;
+    lines($('swfcLines'), d);
+
+    // Jin Mao: bright vertical setbacks + tier ledges
+    const jm = $('jinmaoDetail');
+    // bright setback edges: [x, width, top y, color, opacity]
+    [[490, 1.6, 279, '#cfdcee', .8], [494.5, 1.4, 268, '#e6eef8', .85], [500.5, 2.2, 258, '#f7faff', .95], [504.5, 1.2, 248, '#ffffff', .9],
+     [507.5, 2.6, 239, '#ffffff', 1], [513, 1.2, 240, '#dfe9f6', .8], [516, 1.8, 248, '#f2f6fb', .9], [520.5, 1.4, 258, '#c9d8ee', .8],
+     [525, 1.6, 268, '#a9bfe0', .75], [530.5, 1.4, 279, '#8fa8d0', .7]]
+      .forEach(([x, w, y, c, o]) => el('rect', { x, y, width: w, height: 400 - y, fill: c, opacity: o }, jm));
+    d = '';
+    for (let y = 282; y < 400; y += 2.4) d += `M488 ${y} H536`;
+    el('path', { d, stroke: '#1d3666', 'stroke-width': .45, opacity: .45 }, jm);
+    d = 'M504 248.5 H516 M500 258.5 H520 M494.5 268.5 H525.5 M489.5 280.5 H534.5 M507.5 239.5 H512.5';
+    el('path', { d, stroke: '#ffffff', 'stroke-width': 1, opacity: .9 }, jm);
+
+    // yellow tower: floor lines + mosaic band
+    d = '';
+    for (let y = 270; y < 400; y += 2.6) d += `M548 ${y} H604`;
+    lines($('yellowLines'), d);
+    const mosaic = $('yellowMosaic');
+    const mosaicColors = ['#6fae7c', '#d9a35a', '#7fb88a', '#c8714c', '#e0c06a', '#5f9f8c'];
+    for (let row = 0; row < 2; row++) {
+      for (let x = 549; x < 603; x += 4) {
+        el('rect', { x, y: 357.5 + row * 6, width: 3.4, height: 4.2, fill: pick(mosaicColors), opacity: .85 }, mosaic);
+      }
+    }
+    d = '';
+    for (let y = 402; y < 522; y += 3) d += `M540 ${y} H608`;
+    for (let x = 543; x < 608; x += 3.2) d += `M${x} 400 V522`;
+    lines($('yellowLower'), d);
+
+    // domed building windows
+    const dome = $('domeDetail');
+    d = '';
+    for (let x = 503; x < 545; x += 3.4) d += `M${x} 440 V555`;
+    el('path', { d, stroke: '#6b4a32', 'stroke-width': 1.3, 'stroke-dasharray': '4 2' }, dome);
+    d = '';
+    for (let y = 422; y < 560; y += 3) d += `M480 ${y} H500`;
+    el('path', { d, stroke: '#6f92c8', 'stroke-width': .45 }, dome);
+    for (let x = 518; x < 545; x += 4.5) el('rect', { x, y: 428, width: 2.6, height: 5, fill: '#e3c49a' }, dome);
+    el('path', { d: 'M500 418 L537 418 L537 422 L500 422Z', fill: '#e8cfa6' }, dome);
+
+    // white grid building windows (6x7 blue left face, 8x6 brown slits right face)
+    const gw = $('gridWindows');
+    for (let c = 0; c < 6; c++) {
+      for (let r = 0; r < 7; r++) {
+        el('rect', { x: 570.5 + c * 9.6, y: 430.5 + r * 12, width: 7.6, height: 9.6, fill: '#22314f' }, gw);
+      }
+    }
+    for (let c = 0; c < 8; c++) {
+      for (let r = 0; r < 6; r++) {
+        el('rect', { x: 631.5 + c * 5.6, y: 431 + r * 14.2, width: 2.8, height: 10.5, fill: '#7a3d30' }, gw);
+      }
+    }
+
+    // low building windows
+    const lw = $('lowWindows');
+    for (let x = 544; x < 606; x += 8) {
+      for (let y = 528; y < 558; y += 9) el('rect', { x, y, width: 2.4, height: 2.4 }, lw);
+    }
+    for (let x = 513; x < 530; x += 5) {
+      for (let y = 480; y < 520; y += 7) el('rect', { x, y, width: 2.4, height: 3.2 }, lw);
+    }
+    d = '';
+    for (let x = 655; x < 745; x += 6) d += `M${x} 528 V557 M${x} 563 V577`;
+    lines($('greenBand'), d);
+
+    // convention center: cornice text, 10 arched bays
+    const cv = $('conventionDetail');
+    for (let x = 200; x < 380; x += 6.4) {
+      if (x > 262 && x < 284) continue;
+      el('rect', { x, y: 492.8, width: 4, height: 4, fill: '#e2b85a', opacity: .9 }, cv);
+    }
+    for (let x = 176; x < 403; x += 11.25) el('rect', { x, y: 487.5, width: 2.2, height: 3, fill: '#e0cfa6' }, cv);
+    el('rect', { x: 175, y: 498, width: 228, height: 3, fill: '#b28e62' }, cv);
+    for (let i = 0; i < 10; i++) {
+      const x0 = 175 + i * 22.5;
+      el('rect', { x: x0, y: 500, width: 5.5, height: 82, fill: '#e6d3aa' }, cv);
+      el('rect', { x: x0 + 4.4, y: 500, width: 1.1, height: 82, fill: '#b49b6c' }, cv);
+      const wx = x0 + 7.5, ww = 13, cx = wx + ww / 2;
+      el('path', { d: `M${wx} 515 A${ww / 2} ${ww / 2} 0 0 1 ${wx + ww} 515 V575 H${wx}Z`, fill: 'url(#gArchWin)' }, cv);
+      el('path', { d: `M${wx - 1.2} 515 A${ww / 2 + 1.2} ${ww / 2 + 1.2} 0 0 1 ${wx + ww + 1.2} 515`, fill: 'none', stroke: '#f7ecd0', 'stroke-width': 1.4 }, cv);
+      el('path', {
+        d: `M${cx} 508.5 V575 M${wx} 515 H${wx + ww} M${wx} 534 H${wx + ww} M${wx} 553 H${wx + ww} M${cx} 515 L${wx + 1.6} 510.5 M${cx} 515 L${wx + ww - 1.6} 510.5 M${wx} 544 H${wx + ww} M${wx} 563 H${wx + ww}`,
+        stroke: '#eef0ee', 'stroke-width': .6, fill: 'none'
+      }, cv);
+      el('rect', { x: wx - 1, y: 533, width: ww + 2, height: 2.2, fill: '#ead7ad' }, cv);
+    }
+
+    // globe grids
+    const globeGrid = (g, cx, cy, r, nMer, nPar) => {
+      let path = '';
+      for (let k = 1; k < nMer; k++) {
+        const rx = r * Math.abs(Math.cos((k / nMer) * Math.PI));
+        path += `M${cx} ${cy - r} A${rx.toFixed(2)} ${r} 0 0 ${k < nMer / 2 ? 0 : 1} ${cx} ${cy + r}`;
+      }
+      for (let k = 1; k < nPar; k++) {
+        const y = cy - r + (2 * r * k) / nPar;
+        const hw = Math.sqrt(Math.max(0, r * r - (y - cy) * (y - cy)));
+        path += `M${(cx - hw).toFixed(2)} ${y.toFixed(2)} Q${cx} ${(y + 2.2).toFixed(2)} ${(cx + hw).toFixed(2)} ${y.toFixed(2)}`;
+      }
+      el('path', { d: path }, g);
+      return path;
+    };
+    globeGridL = globeGrid($('globeLGrid'), 151.5, 529.5, 51.5, 22, 16);
+    globeGridR = globeGrid($('globeRGrid'), 448.5, 522, 49, 26, 19);
+    const map = $('globeRMap');
+    el('path', { d: 'M428 486 C436 480 452 480 466 484 C470 490 468 498 460 501 C450 499 440 502 432 499 C427 495 426 490 428 486Z', fill: '#e2643a' }, map);
+    el('path', { d: 'M440 484 C446 482 454 483 458 486 L452 492 L442 490Z', fill: '#f08a3a' }, map);
+    el('path', { d: 'M412 505 C420 498 432 500 440 506 C438 514 428 520 418 518 C413 514 411 509 412 505Z', fill: '#4fae6a' }, map);
+    el('path', { d: 'M444 506 L478 504 L480 516 L446 518Z', fill: '#bfeaf2', opacity: .85 }, map);
+    el('path', { d: 'M455 522 C462 520 472 524 476 532 C470 540 460 540 456 534Z', fill: '#e2c24a' }, map);
+    el('path', { d: 'M420 528 C428 526 436 532 436 540 C430 546 422 544 418 538Z', fill: '#3f9a5a' }, map);
+    el('path', { d: 'M470 488 C478 490 486 498 488 506 L480 504 C476 498 472 494 470 488Z', fill: '#cf4a3a' }, map);
+    el('rect', { x: 398, y: 546, width: 102, height: 30, fill: '#1c3768', opacity: .6 }, map);
+
+    // Pearl Tower: top module lattice, shaft ribs, connector bands, lattice on spheres
+    d = '';
+    for (let x = 92; x < 124; x += 3) d += `M${x} 26 L${x + 3} 34 M${x + 3} 26 L${x} 34`;
+    lines($('pearlTopLattice'), d);
+    d = '';
+    for (let y = 43; y < 88; y += 2.3) {
+      const t = (y - 41) / 47;
+      d += `M${101.5 - 2 * t} ${y} H${114.5 + 2 * t}`;
+    }
+    lines($('shaftRibs'), d);
+    const bands = $('pearlBands');
+    [172, 208, 245, 283, 320, 357, 395].forEach((y, i) => {
+      if (i > 0) {
+        el('circle', { cx: 108.5, cy: y + 10.5, r: 6.2, fill: 'url(#gBall)' }, bands);
+      }
+      el('rect', { x: 96.5, y, width: 23, height: 7.5, fill: '#e6d8bb' }, bands);
+      el('rect', { x: 96.5, y: y + 3, width: 23, height: 1.8, fill: '#c2463d' }, bands);
+      el('rect', { x: 96.5, y: y + 6.6, width: 23, height: .9, fill: '#8a7d68' }, bands);
+    });
+    // upper sphere lattice: triangle mesh
+    const lat = $('pearlUpLattice');
+    for (let row = 0, y = 108; y < 156; y += 5.6, row++) {
+      for (let x = 66 + (row % 2) * 3.2; x < 150; x += 6.4) {
+        el('path', { d: `M${x} ${y} L${x + 3.2} ${y + 5.6} L${x - 3.2} ${y + 5.6}Z`, fill: rand() > .5 ? '#a8414a' : '#97333b' }, lat);
+      }
+    }
+    d = '';
+    for (let y = 108; y < 158; y += 5.6) d += `M66 ${y} H150`;
+    for (let x = 40; x < 170; x += 6.4) d += `M${x} 108 L${x + 28.6} 158 M${x} 108 L${x - 28.6} 158`;
+    el('path', { d, stroke: '#dcc4aa', 'stroke-width': .5, fill: 'none', opacity: .75 }, lat);
+    // lower sphere: two zigzag rows
+    const lb = $('pearlLowBand');
+    d = '';
+    for (let row = 0; row < 2; row++) {
+      const y0 = 424 + row * 16, y1 = y0 + 14;
+      d += `M58 ${y0}`;
+      for (let x = 58; x < 150; x += 8) d += ` L${x + 4} ${y1} L${x + 8} ${y0}`;
+      d += `M58 ${y1}`;
+      for (let x = 58; x < 150; x += 8) d += ` L${x + 4} ${y0} L${x + 8} ${y1}`;
+    }
+    el('path', { d, stroke: '#f2e6d6', 'stroke-width': .7, fill: 'none' }, lb);
+    el('rect', { x: 58, y: 438.6, width: 92, height: 1.6, fill: '#d9cfbf' }, lb);
+    // dots (windows) on lower sphere + bowl
+    const dots = $('pearlLowDots');
+    for (let x = 66; x < 142; x += 4) el('circle', { cx: x, cy: 413, r: .9 }, dots);
+    for (let x = 70; x < 138; x += 4.5) el('circle', { cx: x, cy: 405.5, r: .7 }, dots);
+    for (let x = 64; x < 144; x += 4) el('circle', { cx: x, cy: 461, r: .9 }, dots);
+    for (let x = 70; x < 138; x += 4.5) el('circle', { cx: x, cy: 470, r: .8 }, dots);
+    const bowl = $('bowlDots');
+    for (let x = 80; x < 138; x += 3.6) el('circle', { cx: x, cy: 163, r: .8 }, bowl);
+
+    // trees: round dark olive crowns on the left, red conical metasequoia on the right
+    const trees = $('trees');
+    const greens = ['#2f3a28', '#3b4630', '#46502f', '#323c2b', '#4f5734'];
+    const reds = ['#7a2e1a', '#8f3a20', '#a8442a', '#6a2616', '#b5502c'];
+    el('rect', { x: 0, y: 586, width: 652, height: 20, fill: '#262b1f' }, trees);
+    for (let x = -6; x < 455; x += range(3, 5.5)) {
+      const big = (x > 225 && x < 335) || (x > 150 && x < 178) || (x > 345 && x < 372);
+      const height = big ? range(26, 40) : range(14, 24);
+      for (let j = 0; j < 3; j++) {
+        const r = range(4.5, 7.5) * (big ? 1.3 : 1);
+        const cy = 594 - height * (.3 + j * .24) + range(-2, 2);
+        el('circle', { cx: (x + range(-3, 3)).toFixed(1), cy: cy.toFixed(1), r: r.toFixed(1), fill: pick(greens) }, trees);
+      }
+      el('circle', { cx: (x - 1.5).toFixed(1), cy: (594 - height * .8).toFixed(1), r: range(1.5, 3).toFixed(1), fill: '#6e7046', opacity: .6 }, trees);
+    }
+    el('rect', { x: 452, y: 584, width: 200, height: 14, fill: '#5a2414' }, trees);
+
+    for (let row = 0; row < 2; row++) {
+      for (let x = 454 + row * 5; x < 652; x += range(6, 9)) {
+        const base = 597 - row * 2;
+        const h = range(30, 42) - row * 5;
+        const w = range(6, 9);
+        const tip = base - h;
+        const shape = `M${(x - w).toFixed(1)} ${base} C${(x - w * 1.05).toFixed(1)} ${(base - h * .55).toFixed(1)} ${(x - w * .35).toFixed(1)} ${(tip + 3).toFixed(1)} ${x.toFixed(1)} ${tip.toFixed(1)} C${(x + w * .35).toFixed(1)} ${(tip + 3).toFixed(1)} ${(x + w * 1.05).toFixed(1)} ${(base - h * .55).toFixed(1)} ${(x + w).toFixed(1)} ${base}Z`;
+        el('path', { d: shape, fill: pick(reds) }, trees);
+        el('path', { d: `M${x.toFixed(1)} ${tip.toFixed(1)} C${(x + w * .35).toFixed(1)} ${(tip + 3).toFixed(1)} ${(x + w * 1.05).toFixed(1)} ${(base - h * .55).toFixed(1)} ${(x + w).toFixed(1)} ${base} L${(x + 1).toFixed(1)} ${base}Z`, fill: '#3a1208', opacity: .28 }, trees);
+        el('path', { d: `M${(x - w * .55).toFixed(1)} ${(base - h * .3).toFixed(1)} Q${(x - w * .5).toFixed(1)} ${(base - h * .72).toFixed(1)} ${(x - .5).toFixed(1)} ${(tip + 2).toFixed(1)}`, stroke: '#e48a48', 'stroke-width': 1.4, fill: 'none', opacity: .45 }, trees);
+      }
+    }
+
+    // lamp posts along the promenade
+    const lp = $('lampPosts');
+    [250, 300, 350, 400, 451, 500, 550, 620, 670, 720].forEach((x) => {
+      el('path', { d: `M${x} ${x > 590 ? 587 : 594} V${x === 451 ? 548 : 578}` }, lp);
+      el('rect', { x: x - 1.3, y: x === 451 ? 546 : 576, width: 2.6, height: 2, fill: '#5d6066', stroke: 'none' }, lp);
+    });
+
+    // daytime water streaks (light glints + dark troughs)
+    const ds = $('dayStreaks');
+    for (let i = 0; i < 70; i++) {
+      const y = range(612, 742);
+      const depth = (y - 604) / 138;
+      const w = 6 + depth * range(18, 60);
+      el('rect', { x: range(0, 745), y, width: w, height: .6 + depth * 1.6, rx: 1, fill: rand() > .45 ? '#d9e8f6' : '#1b4486', opacity: (.18 + depth * .25).toFixed(2) }, ds);
+    }
+
+    // tug tires
+    const tires = $('tugTires');
+    for (let x = 572; x < 696; x += 8.5) el('circle', { cx: x, cy: 628, r: 3 }, tires);
+
+    // stars
+    const stars = $('stars');
+    for (let i = 0; i < 170; i++) {
+      const y = Math.pow(rand(), 1.4) * 470;
+      const s = el('circle', { cx: range(0, 745).toFixed(1), cy: y.toFixed(1), r: (range(.35, 1.15) * (1 - y / 900)).toFixed(2), fill: rand() > .85 ? '#ffe9c4' : '#eef3ff' }, stars);
+      if (rand() > .35) {
+        s.setAttribute('class', 'tw');
+        s.style.animationDelay = `${-range(0, 3.2).toFixed(2)}s`;
+        s.style.animationDuration = `${range(2.2, 4.8).toFixed(2)}s`;
+      }
+    }
+
+    // sun & moon glitter on water
+    const glitter = (g, fill, n) => {
+      for (let i = 0; i < n; i++) {
+        const y = range(610, 740);
+        const depth = (y - 604) / 138;
+        const spread = 8 + depth * 46;
+        const e = el('rect', { x: (range(-spread, spread)).toFixed(1), y: y.toFixed(1), width: (2 + depth * range(4, 12)).toFixed(1), height: (.6 + depth * 1.2).toFixed(1), rx: .6, fill, class: 'sparkle' }, g);
+        e.style.animationDelay = `${-range(0, 1.3).toFixed(2)}s`;
+        e.style.animationDuration = `${range(.8, 1.8).toFixed(2)}s`;
+      }
+    };
+    glitter($('sunGlitter'), '#fff6dc', 70);
+    glitter($('moonGlitter'), '#e6eeff', 45);
+  };
+
+  // ---------- night lights ----------
+  const buildNight = () => {
+    const winGroups = [1, 2, 3, 4, 5].map((n) => $('nWin' + n));
+    const warm = ['#ffd27a', '#ffe2a6', '#ffc35a', '#fff0c8'];
+    const cool = ['#cfe6ff', '#e8f3ff', '#a8d4ff'];
+    // fill a region with randomly lit windows
+    const windows = (x0, y0, x1, y1, dx, dy, w, h, density, palette) => {
+      for (let y = y0; y < y1; y += dy) {
+        for (let x = x0; x < x1; x += dx) {
+          if (rand() > density) continue;
+          el('rect', { x: x.toFixed(1), y: y.toFixed(1), width: w, height: h, fill: pick(palette) }, pick(winGroups));
+        }
+      }
+    };
+    windows(1.5, 424, 12, 555, 3.4, 4, 2, 2.2, .45, warm);
+    windows(24, 360, 49, 518, 3, 3.2, 2, 1.8, .4, cool.concat(warm));
+    windows(52, 350, 86, 398, 3.4, 3.4, 2.2, 2, .5, warm);
+    windows(131, 352, 145, 368, 3, 3, 2, 1.8, .4, cool);
+    windows(150, 405, 171, 476, 3.3, 3.3, 2, 2, .5, warm);
+    windows(136, 382, 171, 392, 3.3, 3.3, 2, 2, .45, warm);
+    windows(172, 414, 185, 476, 3, 3, 1.8, 1.8, .35, cool);
+    windows(226, 350, 267, 425, 2.6, 3.4, 1.6, 1.8, .35, cool);
+    windows(301, 463, 339, 492, 3, 3, 1.6, 1.6, .4, warm);
+    windows(354, 448, 376, 491, 2.5, 2.6, 1.6, 1.6, .45, warm);
+    windows(424, 305, 480, 368, 2.4, 3.2, 1.6, 1.8, .38, cool);
+    windows(424, 380, 480, 470, 2.4, 3.2, 1.6, 1.8, .38, cool.concat(warm));
+    windows(484, 238, 487, 400, 2.6, 3.1, 1.4, 1.8, .4, cool);
+    windows(537, 282, 541, 400, 2.6, 3.1, 1.4, 1.8, .4, cool);
+    windows(544, 402, 567, 470, 3.2, 3, 2, 1.8, .45, warm);
+    windows(570, 402, 606, 420, 3.2, 3, 2, 1.8, .45, warm);
+    windows(503, 440, 545, 470, 3.4, 4, 2, 2.4, .5, warm);
+    windows(482, 422, 499, 555, 2.6, 3, 1.6, 1.8, .4, cool);
+    windows(642, 345, 668, 420, 2.4, 2.7, 1.6, 1.4, .35, cool);
+    windows(673, 352, 711, 505, 3.5, 3.6, 2.2, 2, .4, warm.concat(cool));
+    windows(543, 527, 606, 557, 8, 9, 2.6, 2.6, .7, warm);
+    windows(513, 480, 530, 520, 5, 7, 2.4, 3.2, .6, warm);
+    // white grid building: exact window positions
+    for (let c = 0; c < 6; c++) for (let r = 0; r < 7; r++) {
+      if (rand() < .65) el('rect', { x: 571 + c * 9.6, y: 431 + r * 12, width: 6.6, height: 8.6, fill: pick(warm.concat(cool)) }, pick(winGroups));
+    }
+    for (let c = 0; c < 8; c++) for (let r = 0; r < 6; r++) {
+      if (rand() < .6) el('rect', { x: 631.5 + c * 5.6, y: 431 + r * 14.2, width: 2.8, height: 10.5, fill: pick(warm) }, pick(winGroups));
+    }
+
+    const lm = $('nLandmark');
+    // left cluster extras
+    el('rect', { x: 137.5, y: 395, width: 28.5, height: 8.5, fill: '#ff3b30' }, lm);
+    el('rect', { x: 134, y: 391, width: 36, height: 16, fill: 'url(#gRedDot)', opacity: .5 }, lm);
+
+    // Shanghai Tower
+    const sht = el('g', { 'clip-path': 'url(#cSht)' }, lm);
+    el('rect', { x: 636, y: 38, width: 72, height: 390, fill: 'url(#gShtNight)' }, sht);
+    let d = '';
+    for (let y = 90; y < 425; y += 2.7) d += `M636 ${y} H708`;
+    el('path', { d, stroke: '#cfeaff', 'stroke-width': .5, opacity: .45 }, sht);
+    d = '';
+    for (let x = 639; x < 682; x += 2.2) d += `M${x} 40 V80`;
+    el('path', { d, stroke: '#ffffff', 'stroke-width': .7, opacity: .9 }, sht);
+    el('path', { d: 'M650 42 C649 100 650 160 653 195 C660 250 672 300 684 342 L700 425', fill: 'none', stroke: '#7fe9ff', 'stroke-width': 4, opacity: .25 }, sht);
+    el('path', { d: 'M650 42 C649 100 650 160 653 195 C660 250 672 300 684 342 L700 425', fill: 'none', stroke: '#e6fbff', 'stroke-width': 1.3 }, sht);
+    el('ellipse', { cx: 658, cy: 45, rx: 40, ry: 18, fill: 'url(#gBlueHalo)' }, lm);
+    el('path', { d: 'M637 42 C650 38.5 665 38 678 39.5', fill: 'none', stroke: '#ffffff', 'stroke-width': 1.2 }, lm);
+
+    // SWFC hole + edges
+    el('path', { d: 'M491 208 L532 208 L527 234 L496 234 Z', fill: 'none', stroke: '#7fd8ff', 'stroke-width': 3.5, opacity: .3 }, lm);
+    el('path', { d: 'M491 208 L532 208 L527 234 L496 234 Z', fill: 'none', stroke: '#e0f6ff', 'stroke-width': 1.1 }, lm);
+    el('path', { d: 'M481.5 193 L544 191.5 M481.8 193 V300 M543.6 192 V268', fill: 'none', stroke: '#9fdcff', 'stroke-width': .8, opacity: .85 }, lm);
+
+    // Jin Mao golden floodlight
+    el('ellipse', { cx: 511, cy: 300, rx: 42, ry: 90, fill: 'url(#gGoldHalo)', opacity: .7 }, lm);
+    const jmVis = el('g', { 'clip-path': 'url(#cJinmaoVis)' }, lm);
+    el('use', { href: '#pJinmao', fill: 'url(#gJinmaoLit)', opacity: .78 }, jmVis);
+    const jm = el('g', { 'clip-path': 'url(#cJinmao)' }, jmVis);
+    d = '';
+    for (let y = 282; y < 400; y += 4.8) d += `M488 ${y} H536`;
+    el('path', { d, stroke: '#8a5a1a', 'stroke-width': .7, opacity: .35 }, jm);
+    el('path', { d: 'M503 249.5 H517 M499.5 259.5 H521 M494 269.5 H526 M489 281.5 H535', stroke: '#fff6d8', 'stroke-width': 1.2 }, jm);
+    el('path', { d: 'M510 222 V240', stroke: '#fff4d0', 'stroke-width': 1.2 }, lm);
+
+    // domed building crown
+    el('rect', { x: 487.5, y: 397, width: 41, height: 21, fill: '#ffd88a', opacity: .75 }, lm);
+    el('ellipse', { cx: 508, cy: 395.5, rx: 29, ry: 3.4, fill: '#fff2c8', opacity: .85 }, lm);
+    el('path', { d: 'M497 394 Q507.5 380.5 518 394Z', fill: '#ffcf70', opacity: .85 }, lm);
+
+    // cylinder tower: crown + running LED lines
+    el('rect', { x: 222.5, y: 334, width: 47.5, height: 12, fill: '#f6fbff', opacity: .95 }, lm);
+    el('ellipse', { cx: 246, cy: 340, rx: 34, ry: 12, fill: 'url(#gBlueHalo)' }, lm);
+    const cyl = el('g', { 'clip-path': 'url(#cCyl)' }, lm);
+    d = '';
+    for (let x = 225; x < 270; x += 4.4) d += `M${x} 492 V347`;
+    el('path', { d, stroke: '#6fe0ff', 'stroke-width': .9, 'stroke-dasharray': '7 5', class: 'led-run', opacity: .75 }, cyl);
+
+    // blue tower: crown + LED bands
+    const bt = el('g', { 'clip-path': 'url(#cBlueT)' }, lm);
+    el('path', { d: 'M420 270 L482 270 L482 300 L420 297Z', fill: '#bff3ff', opacity: .85 }, bt);
+    d = '';
+    for (let y = 312; y < 480; y += 14) d += `M420 ${y} H482`;
+    el('path', { d, stroke: '#58c8ff', 'stroke-width': 1.1, opacity: .7 }, bt);
+
+    // yellow tower LED facade
+    const yl = el('g', { 'clip-path': 'url(#cYellowLit)' }, lm);
+    el('rect', { x: 546, y: 262, width: 60, height: 140, fill: 'url(#gLed)', opacity: .8 }, yl);
+    d = '';
+    for (let y = 266; y < 400; y += 2.6) d += `M546 ${y} H606`;
+    el('path', { d, stroke: '#000', 'stroke-width': .7, opacity: .35 }, yl);
+
+    // green towers glow
+    el('path', { d: 'M710 362 L740 358 L745 359 L745 506 L710 506Z', fill: '#3cff6a', opacity: .16 }, lm);
+    el('path', { d: 'M670 343 L688 336.5 L713 357', fill: 'none', stroke: '#9effd8', 'stroke-width': .9, opacity: .8 }, lm);
+    el('path', { d: 'M650 528 L745 528 L745 557 L650 557Z M650 563 L745 563 L745 577 L650 577Z', fill: '#5fffd0', opacity: .35 }, lm);
+
+    // convention center: floodlit facade + glowing arches
+    el('path', { d: 'M175 489 L403 489 L403 582 L175 582Z', fill: 'url(#gFacadeLit)', opacity: .5 }, lm);
+    for (let i = 0; i < 10; i++) {
+      const wx = 175 + i * 22.5 + 7.5;
+      el('path', { d: `M${wx} 515 A6.5 6.5 0 0 1 ${wx + 13} 515 V575 H${wx}Z`, fill: '#ffd98e', opacity: .85 }, lm);
+      el('path', { d: `M${wx + 6.5} 508.5 V575 M${wx} 534 H${wx + 13} M${wx} 553 H${wx + 13}`, stroke: '#a8742a', 'stroke-width': .6 }, lm);
+    }
+    for (let x = 200; x < 380; x += 6.4) {
+      if (x > 262 && x < 284) continue;
+      el('rect', { x, y: 492.8, width: 4, height: 4, fill: '#fff0b0' }, lm);
+    }
+
+    // globes lit from inside
+    const gl = el('g', { 'clip-path': 'url(#cGlobeL)' }, lm);
+    el('circle', { cx: 151.5, cy: 529.5, r: 51.5, fill: '#2f7fff', opacity: .55 }, gl);
+    el('circle', { cx: 151.5, cy: 529.5, r: 40, fill: 'url(#gBlueHalo)' }, gl);
+    el('path', { d: globeGridL, fill: 'none', stroke: '#c8f4ff', 'stroke-width': .6 }, gl);
+    const gr = el('g', { 'clip-path': 'url(#cGlobeR)' }, lm);
+    el('circle', { cx: 448.5, cy: 522, r: 49, fill: '#0e3a5a', opacity: .5 }, gr);
+    el('use', { href: '#globeRMap', opacity: .95 }, gr);
+    el('path', { d: globeGridR, fill: 'none', stroke: '#ffe9a0', 'stroke-width': .65 }, gr);
+
+    // Oriental Pearl Tower lighting (colors cycle via JS)
+    el('circle', { cx: 107.5, cy: 147, r: 78, fill: 'url(#gPearlHalo)' }, lm);
+    el('circle', { cx: 103.5, cy: 443.5, r: 88, fill: 'url(#gPearlHalo)' }, lm);
+    el('circle', { cx: 108, cy: 31, r: 28, fill: 'url(#gPearlHalo)' }, lm);
+    el('rect', { x: 88.5, y: 168, width: 13.5, height: 238, fill: 'url(#gPearlCol)' }, lm);
+    el('rect', { x: 114.5, y: 168, width: 14.5, height: 238, fill: 'url(#gPearlCol)' }, lm);
+    el('rect', { x: 84, y: 478, width: 13, height: 88, fill: 'url(#gPearlCol)' }, lm);
+    el('path', { d: 'M73 476 L84 482 L58 532 L48 527Z M48 527 L58 532 L33 570 L21 568Z', fill: 'url(#gPearlCol)' }, lm);
+    el('path', { d: 'M101.5 41 L114.5 41 L116.5 88 L99.5 88Z M101 90.5 L116 90.5 L116 113 L101 113Z', fill: 'url(#gPearlCol)' }, lm);
+    el('path', { d: 'M110 0 V19', stroke: '#ffe6ff', 'stroke-width': 1.4 }, lm);
+    [172, 208, 245, 283, 320, 357, 395].forEach((y, i) => {
+      el('rect', { x: 96.5, y: y + 2.5, width: 23, height: 2.5, fill: '#ffe0ff' }, lm);
+      if (i > 0) el('circle', { cx: 108.5, cy: y + 10.5, r: 5.6, fill: 'url(#gPearlGlow)' }, lm);
+    });
+    const up = el('g', { 'clip-path': 'url(#cPearlUp)' }, lm);
+    el('circle', { cx: 107.5, cy: 147, r: 37.5, fill: 'url(#gPearlGlow)', opacity: .92 }, up);
+    el('use', { href: '#pearlUpLattice', opacity: .25 }, up);
+    d = '';
+    for (let x = 40; x < 170; x += 6.4) d += `M${x} 108 L${x + 28.6} 158 M${x} 108 L${x - 28.6} 158`;
+    for (let y = 108; y < 158; y += 5.6) d += `M66 ${y} H150`;
+    el('path', { d, stroke: '#ffe6fa', 'stroke-width': .5, opacity: .7 }, up);
+    el('path', { d: 'M70 152 L145 152 L145 158.5 L70 158.5Z', fill: '#ffd6f6', opacity: .9 }, lm);
+    const low = el('g', { 'clip-path': 'url(#cPearlLow)' }, lm);
+    el('circle', { cx: 103.5, cy: 443.5, r: 43.5, fill: 'url(#gPearlGlow)', opacity: .9 }, low);
+    el('use', { href: '#pearlLowBand', opacity: .9 }, low);
+    for (let x = 66; x < 142; x += 4) el('circle', { cx: x, cy: 413, r: 1, fill: '#fff4d8' }, low);
+    for (let x = 64; x < 144; x += 4) el('circle', { cx: x, cy: 461, r: 1, fill: '#fff4d8' }, low);
+    const top = el('g', { 'clip-path': 'url(#cPearlTop)' }, lm);
+    el('ellipse', { cx: 108, cy: 31, rx: 13, ry: 10.5, fill: 'url(#gPearlGlow)', opacity: .95 }, top);
+
+    // promenade: lamps + fairy lights in trees
+    [250, 300, 350, 400, 451, 500, 550, 620, 670, 720].forEach((x) => {
+      const y = x === 451 ? 547 : 577;
+      el('circle', { cx: x, cy: y, r: 7, fill: 'url(#gWarmDot)' }, lm);
+    });
+    for (let i = 0; i < 190; i++) {
+      const x = range(240, 650);
+      const y = range(560, 596);
+      const c = el('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: range(.4, .9).toFixed(2), fill: x > 452 ? '#ffd7a0' : pick(['#fff1c0', '#ffd27a', '#c8ecff']) }, lm);
+      if (rand() > .5) {
+        c.setAttribute('class', 'tw');
+        c.style.animationDelay = `${-range(0, 3).toFixed(2)}s`;
+      }
+    }
+    el('path', { d: 'M232 598.5 H436 M436 594 H598 M590 587.5 H745', stroke: '#ffe2a8', 'stroke-width': 1, opacity: .7 }, lm);
+
+    // water reflections of the lights
+    const refl = $('nReflect');
+    const streak = (x, w, y0, len, grad, op) => {
+      const g = el('g', { class: 'shimmer' }, refl);
+      g.style.animationDelay = `${-range(0, 2.4).toFixed(2)}s`;
+      el('rect', { x: x - w / 2, y: y0, width: w, height: len, fill: `url(#${grad})`, opacity: op }, g);
+      for (let y = y0 + 2; y < y0 + len; y += range(3, 7)) {
+        const depth = (y - y0) / len;
+        const ww = w * range(.5, 1.4) * (1 + depth);
+        el('rect', { x: (x - ww / 2 + range(-3, 3)).toFixed(1), y: y.toFixed(1), width: ww.toFixed(1), height: (.8 + depth * 1.5).toFixed(1), fill: `url(#${grad})`, opacity: (op * (1 - depth * .8)).toFixed(2) }, g);
+      }
+    };
+    streak(107, 30, 610, 120, 'gStreakPink', .55);
+    streak(104, 18, 610, 70, 'gStreakPink', .4);
+    streak(151, 26, 610, 70, 'gStreakBlue', .4);
+    streak(448, 26, 610, 80, 'gStreakWarm', .4);
+    streak(290, 60, 610, 55, 'gStreakWarm', .45);
+    streak(511, 16, 610, 120, 'gStreakWarm', .5);
+    streak(575, 22, 610, 110, 'gStreakPink', .35);
+    streak(670, 16, 610, 130, 'gStreakBlue', .45);
+    streak(725, 20, 610, 80, 'gStreakGreen', .45);
+    streak(246, 10, 610, 90, 'gStreakBlue', .35);
+    [250, 300, 350, 400, 451, 500, 550, 620, 670, 720].forEach((x) => streak(x, 4, 610, 40, 'gStreakWarm', .5));
+
+    // aviation warning lights
+    const av = $('nAviation');
+    [[110, 1.2, 0], [657, 37.5, .5], [482, 191.5, .9], [543, 190.5, .2], [510, 222, 1.1], [246, 331, .7], [364, 400, .3], [421, 274.5, 1.3], [139, 342, .6], [688, 335.5, 1.0]].forEach(([x, y, delay]) => {
+      const b = el('circle', { cx: x, cy: y, r: 3.2, fill: 'url(#gRedDot)', class: 'blink' }, av);
+      b.style.animationDelay = `${delay}s`;
+    });
+
+    // boats
+    const bl = $('boatLights');
+    for (let x = 4; x < 76; x += 4.5) el('rect', { x, y: 599.6, width: 2.6, height: 2.4, fill: '#ffe2a0' }, bl);
+    for (let x = 4; x < 56; x += 4.5) el('rect', { x, y: 592.2, width: 2.6, height: 1.6, fill: '#fff0c8' }, bl);
+    el('path', { d: 'M0 605 H86', stroke: '#9fd8ff', 'stroke-width': .8 }, bl);
+    for (let x = 88; x < 190; x += 5) el('rect', { x, y: 598.8, width: 2.6, height: 1.8, fill: '#ffd27a' }, bl);
+    el('path', { d: 'M124 597 L134 588 L164 588 L174 597', fill: 'none', stroke: '#fff2c8', 'stroke-width': .8 }, bl);
+    const tl = el('g', { id: 'tugLights' }, bl);
+    el('rect', { x: 633, y: 605, width: 26, height: 2, fill: '#ffe2a0' }, tl);
+    for (let x = 594; x < 680; x += 14) el('rect', { x, y: 614, width: 10, height: 3, fill: '#ffcf8a', opacity: .8 }, tl);
+    el('circle', { cx: 656, cy: 597, r: 3.5, fill: 'url(#gWarmDot)' }, tl);
+    el('circle', { cx: 700, cy: 618, r: 3.2, fill: 'url(#gGreenDot)' }, tl);
+    el('circle', { cx: 568, cy: 618, r: 3.2, fill: 'url(#gRedDot)' }, tl);
+    el('circle', { cx: 744, cy: 621, r: 2.8, fill: 'url(#gWarmDot)' }, tl);
+    el('rect', { x: 600, y: 637, width: 70, height: 1.4, fill: '#ffd98a', opacity: .35, class: 'shimmer' }, tl);
+    el('rect', { x: 610, y: 642, width: 50, height: 1.2, fill: '#ffd98a', opacity: .25, class: 'shimmer' }, tl);
+  };
+
+  buildDetails();
+  buildNight();
+
+  // ---------- day cycle keyframes ----------
+  // sky: 5 stops top->horizon; tint: rgb multiplier; sat: saturation; night: lights level
+  const KEYS = [
+    { h: 0, sky: ['#03061a', '#070d26', '#0d1838', '#1a2550', '#2e2f5a'], tint: [.17, .21, .36], sat: .45, night: 1 },
+    { h: 4.3, sky: ['#040820', '#08102c', '#0f1b40', '#1c2856', '#30335e'], tint: [.18, .22, .37], sat: .45, night: 1 },
+    { h: 5.2, sky: ['#0c1638', '#1b2a5c', '#34407a', '#5c5a8e', '#8a6c8e'], tint: [.27, .28, .43], sat: .5, night: .85 },
+    { h: 5.9, sky: ['#1b3270', '#39589a', '#7a82b5', '#d29a9a', '#f6b48a'], tint: [.52, .46, .58], sat: .6, night: .45 },
+    { h: 6.5, sky: ['#2a5aae', '#4f86c8', '#8fb2d8', '#f0c49a', '#ffd29a'], tint: [.84, .74, .7], sat: .75, night: .06 },
+    { h: 7.5, sky: ['#2468d6', '#3a8ce0', '#6aaee6', '#a8cbe6', '#cfdde6'], tint: [.93, .94, .97], sat: .86, night: 0 },
+    { h: 11, sky: ['#2171e8', '#2a8eec', '#36a2ec', '#79b6e2', '#a9c6de'], tint: [1, 1, 1], sat: 1, night: 0 },
+    { h: 16, sky: ['#2171e8', '#2a8eec', '#38a2ea', '#86b8de', '#b8c8d8'], tint: [1, .99, .96], sat: 1.02, night: 0 },
+    { h: 17.3, sky: ['#2558bf', '#3d7fd0', '#78a6d6', '#e6c49a', '#f6c88e'], tint: [1, .86, .67], sat: 1.08, night: 0 },
+    { h: 18.2, sky: ['#22408e', '#4a5ea8', '#a07aa8', '#f08e70', '#ffa860'], tint: [.78, .58, .55], sat: .9, night: .12 },
+    { h: 18.8, sky: ['#18286a', '#2e3c82', '#6a5490', '#c46a78', '#e48660'], tint: [.56, .45, .55], sat: .75, night: .42 },
+    { h: 19.5, sky: ['#0b1745', '#15276a', '#273c86', '#4a4c8c', '#74608a'], tint: [.33, .33, .52], sat: .6, night: .82 },
+    { h: 20.5, sky: ['#040822', '#08102e', '#0e1a3e', '#1b2652', '#2e305c'], tint: [.18, .22, .37], sat: .45, night: 1 },
+    { h: 24, sky: ['#03061a', '#070d26', '#0d1838', '#1a2550', '#2e2f5a'], tint: [.17, .21, .36], sat: .45, night: 1 }
+  ];
+  const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  KEYS.forEach((k) => { k.skyRgb = k.sky.map(hexToRgb); });
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smooth = (t) => t * t * (3 - 2 * t);
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
+  const rgbStr = (c) => `rgb(${c.map((v) => Math.round(v)).join(',')})`;
+  const mixRgb = (a, b, t) => a.map((v, i) => lerp(v, b[i], t));
+
+  const sampleKeys = (h) => {
+    let i = 0;
+    while (KEYS[i + 1].h < h) i++;
+    const a = KEYS[i], b = KEYS[i + 1];
+    const t = smooth((h - a.h) / (b.h - a.h));
+    return {
+      sky: a.skyRgb.map((c, j) => mixRgb(c, b.skyRgb[j], t)),
+      tint: a.tint.map((v, j) => lerp(v, b.tint[j], t)),
+      sat: lerp(a.sat, b.sat, t),
+      night: lerp(a.night, b.night, t)
+    };
+  };
+
+  // saturation + per-channel tint as one 4x5 color matrix
+  const getTintMatrix = (tint, s) => {
+    const lr = .2126, lg = .7152, lb = .0722;
+    const rows = [
+      [lr + (1 - lr) * s, lg - lg * s, lb - lb * s],
+      [lr - lr * s, lg + (1 - lg) * s, lb - lb * s],
+      [lr - lr * s, lg - lg * s, lb + (1 - lb) * s]
+    ];
+    const m = rows.map((row, i) => row.map((v) => (v * tint[i]).toFixed(4)).concat(['0', '0']).join(' '));
+    return `${m.join(' ')} 0 0 0 1 0`;
+  };
+
+  // ---------- frame update ----------
+  const skyStops = [0, 1, 2, 3, 4].map((i) => $('sk' + i));
+  const tintMatrix = $('tintMatrix');
+  const tintMatrixBoats = $('tintMatrixBoats');
+  const sun = $('sun'), sunGlow = $('sunGlow');
+  const sunStops = [$('sunG0'), $('sunG1'), $('sunG2'), $('sunD1')];
+  const moon = $('moon'), stars = $('stars'), cityGlow = $('cityGlow');
+  const nightGroup = $('night'), boatLights = $('boatLights');
+  const winGroups = [1, 2, 3, 4, 5].map((n) => $('nWin' + n));
+  const landmark = $('nLandmark'), reflect = $('nReflect'), aviation = $('nAviation');
+  const glint = $('glint'), sunGlitter = $('sunGlitter'), moonGlitter = $('moonGlitter');
+  const tug = $('tug'), tugLights = $('tugLights');
+  const pearlStops = [$('pg0'), $('pg1'), $('pg2')];
+  const pearlHalo = [$('ph0'), $('ph1')];
+
+  // skip DOM writes when a value has not changed
+  const cache = new Map();
+  const setAttr = (node, name, value) => {
+    const entry = cache.get(node) || {};
+    if (entry[name] === value) return;
+    entry[name] = value;
+    cache.set(node, entry);
+    node.setAttribute(name, value);
+  };
+
+  const hsl = (h, s, l) => `hsl(${h.toFixed(1)},${s}%,${l}%)`;
+  // tug group spans [x - wake, x + body]; wrap only when fully off-screen
+  const TUG_X0 = 567, TUG_W = 182, TUG_WAKE = 106, TUG_TRIP = 745 + TUG_W + TUG_WAKE;
+
+  const render = (h, loopT, ms) => {
+    const k = sampleKeys(h);
+
+    // sky
+    k.sky.forEach((c, i) => setAttr(skyStops[i], 'stop-color', rgbStr(c)));
+
+    // city tint
+    const matrix = getTintMatrix(k.tint, k.sat);
+    setAttr(tintMatrix, 'values', matrix);
+    setAttr(tintMatrixBoats, 'values', matrix);
+
+    // sun on an arc: rises right (06:00), sets left (18:40)
+    const sunS = (h - 6) / 12.65;
+    const sunAlt = Math.sin(Math.PI * clamp01(sunS));
+    const sx = 372 + 345 * Math.cos(Math.PI * sunS);
+    const sy = 575 - 900 * Math.sin(Math.PI * sunS);
+    setAttr(sun, 'transform', `translate(${sx.toFixed(1)} ${sy.toFixed(1)})`);
+    setAttr(sun, 'opacity', clamp01((sunS + .03) * 12) * clamp01((1.03 - sunS) * 12));
+    const low = 1 - clamp01(sunAlt * 2.2);
+    const disc = mixRgb([255, 246, 214], [255, 120, 50], low);
+    const glow = mixRgb([255, 248, 220], [255, 140, 70], low);
+    setAttr(sunStops[0], 'stop-color', rgbStr(glow));
+    setAttr(sunStops[1], 'stop-color', rgbStr(glow));
+    setAttr(sunStops[2], 'stop-color', rgbStr(glow));
+    setAttr(sunStops[3], 'stop-color', rgbStr(disc));
+    setAttr(sunGlow, 'r', (130 + low * 110).toFixed(1));
+
+    // moon on a lower arc: rises ~19:00, sets ~05:30
+    const moonS = (((h - 19 + 24) % 24)) / 10.5;
+    const mx = 372 + 330 * Math.cos(Math.PI * moonS);
+    const my = 560 - 420 * Math.sin(Math.PI * clamp01(moonS));
+    const moonVis = moonS <= 1 ? clamp01(moonS * 10) * clamp01((1 - moonS) * 10) : 0;
+    setAttr(moon, 'transform', `translate(${mx.toFixed(1)} ${my.toFixed(1)})`);
+    setAttr(moon, 'opacity', (moonVis * clamp01(k.night * 1.2)).toFixed(3));
+
+    // stars + city light pollution
+    setAttr(stars, 'opacity', Math.pow(clamp01((k.night - .35) / .65), 1.5).toFixed(3));
+    setAttr(cityGlow, 'opacity', (k.night * .9).toFixed(3));
+
+    // night lights: windows switch on in 5 waves, landmarks fade in
+    setAttr(nightGroup, 'opacity', k.night > .001 ? 1 : 0);
+    winGroups.forEach((g, i) => setAttr(g, 'opacity', clamp01((k.night - (.12 + i * .14)) / .12).toFixed(3)));
+    setAttr(landmark, 'opacity', clamp01((k.night - .25) / .35).toFixed(3));
+    setAttr(reflect, 'opacity', clamp01((k.night - .35) / .4).toFixed(3));
+    setAttr(aviation, 'opacity', clamp01(k.night / .3).toFixed(3));
+    setAttr(boatLights, 'opacity', clamp01((k.night - .2) / .4).toFixed(3));
+
+    // Pearl Tower color show: pink -> violet -> blue -> pink every 12s
+    const hue = (320 - 110 * (0.5 - 0.5 * Math.cos((ms / 12000) * Math.PI * 2)) + 360) % 360;
+    setAttr(pearlStops[0], 'stop-color', hsl(hue, 100, 90));
+    setAttr(pearlStops[1], 'stop-color', hsl(hue, 100, 62));
+    setAttr(pearlStops[2], 'stop-color', hsl((hue - 40 + 360) % 360, 80, 45));
+    setAttr(pearlHalo[0], 'stop-color', hsl(hue, 100, 62));
+    setAttr(pearlHalo[1], 'stop-color', hsl(hue, 100, 62));
+
+    // daytime effects
+    const afternoon = clamp01(1 - Math.abs(h - 15) / 2.5);
+    setAttr(glint, 'opacity', afternoon.toFixed(3));
+    setAttr(sunGlitter, 'transform', `translate(${sx.toFixed(1)} 0)`);
+    setAttr(sunGlitter, 'opacity', (sunS > 0 && sunS < 1 ? low * .9 + .15 * sunAlt : 0).toFixed(3));
+    setAttr(moonGlitter, 'transform', `translate(${mx.toFixed(1)} 0)`);
+    setAttr(moonGlitter, 'opacity', (moonVis * clamp01((k.night - .5) * 2) * .8).toFixed(3));
+
+    // tug crosses the river once per loop (wraps off-screen)
+    const tugX = ((TUG_X0 + TUG_W + TUG_TRIP * loopT) % TUG_TRIP) - TUG_W;
+    const tugTransform = `translate(${(tugX - TUG_X0).toFixed(1)} 0)`;
+    setAttr(tug, 'transform', tugTransform);
+    setAttr(tugLights, 'transform', tugTransform);
+  };
+
+  const t0 = performance.now();
+  const tick = (now) => {
+    const ms = now - t0;
+    const loopT = (ms % CYCLE_MS) / CYCLE_MS;
+    const h = (START_HOUR + 24 * loopT) % 24;
+    render(h, loopT, ms);
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

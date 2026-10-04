@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>上海天際線・日夜循環</title>
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; background: #08172b; }
+    body { display: grid; place-items: center; overflow: hidden; }
+    svg { display: block; width: min(100vw, 100.4vh); height: auto; max-height: 100vh; }
+    .night-sky, .stars, .moon, .city-lights, .night-water, .night-reflections { opacity: 0; }
+    .night-sky, .night-water { animation: night 32s linear infinite; }
+    .stars, .moon, .city-lights, .night-reflections { animation: lights 32s linear infinite; }
+    .city { animation: city 32s linear infinite; }
+    .day-reflections { animation: day-reflections 32s linear infinite; }
+    .moon { transform-origin: 582px 107px; }
+    .star-twinkle { animation: twinkle 3.8s ease-in-out infinite alternate; }
+    .water-glint { animation: glint 3.2s ease-in-out infinite alternate; }
+    @keyframes night { 0%, 27%, 100% { opacity: 0; } 43%, 72% { opacity: 1; } 90% { opacity: 0; } }
+    @keyframes lights { 0%, 32%, 100% { opacity: 0; } 48%, 73% { opacity: 1; } 89% { opacity: 0; } }
+    @keyframes city { 0%, 29%, 100% { filter: brightness(1); } 45%, 73% { filter: brightness(.43) saturate(.82); } 89% { filter: brightness(1); } }
+    @keyframes day-reflections { 0%, 31%, 100% { opacity: 1; } 48%, 73% { opacity: .25; } 89% { opacity: 1; } }
+    @keyframes twinkle { from { opacity: .35; } to { opacity: 1; } }
+    @keyframes glint { from { opacity: .45; } to { opacity: .9; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 745 742" role="img" aria-label="上海浦東天際線的 SVG 插畫，天空、建築燈光與江面倒影持續在白天和夜晚之間變化">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#1b75e5"/><stop offset=".52" stop-color="#319ce9"/><stop offset="1" stop-color="#9cdbec"/></linearGradient>
+    <linearGradient id="nightSky" x2="0" y2="1"><stop stop-color="#05112f"/><stop offset=".62" stop-color="#15315d"/><stop offset="1" stop-color="#504b72"/></linearGradient>
+    <linearGradient id="haze" x2="0" y2="1"><stop stop-color="#d2ebee" stop-opacity="0"/><stop offset="1" stop-color="#d5eee7" stop-opacity=".72"/></linearGradient>
+    <linearGradient id="water" x2="0" y2="1"><stop stop-color="#6caaa9"/><stop offset=".25" stop-color="#4c8da8"/><stop offset=".67" stop-color="#2b638c"/><stop offset="1" stop-color="#164474"/></linearGradient>
+    <linearGradient id="nightWater" x2="0" y2="1"><stop stop-color="#132e55"/><stop offset="1" stop-color="#04162e"/></linearGradient>
+    <linearGradient id="pearlRed" x2="0" y2="1"><stop stop-color="#c6a28e"/><stop offset=".18" stop-color="#874b53"/><stop offset=".46" stop-color="#bd685c"/><stop offset=".72" stop-color="#773945"/><stop offset="1" stop-color="#a5a091"/></linearGradient>
+    <linearGradient id="pearlStem"><stop stop-color="#5d675c"/><stop offset=".24" stop-color="#d6c9a4"/><stop offset=".47" stop-color="#aaab8c"/><stop offset=".78" stop-color="#ece0b2"/><stop offset="1" stop-color="#626b68"/></linearGradient>
+    <linearGradient id="glass"><stop stop-color="#223d55"/><stop offset=".24" stop-color="#72a5a1"/><stop offset=".42" stop-color="#2c646b"/><stop offset=".7" stop-color="#a0bba7"/><stop offset="1" stop-color="#26444b"/></linearGradient>
+    <linearGradient id="tower"><stop stop-color="#1a466a"/><stop offset=".24" stop-color="#5a91aa"/><stop offset=".44" stop-color="#c6cdc4"/><stop offset=".59" stop-color="#7b9caa"/><stop offset=".79" stop-color="#315875"/><stop offset="1" stop-color="#1e3b55"/></linearGradient>
+    <linearGradient id="blueGlass"><stop stop-color="#213d62"/><stop offset=".32" stop-color="#7aa1ad"/><stop offset=".55" stop-color="#304e6b"/><stop offset=".82" stop-color="#81b3b5"/><stop offset="1" stop-color="#1c385a"/></linearGradient>
+    <linearGradient id="goldFace"><stop stop-color="#9b9b80"/><stop offset=".52" stop-color="#e9e0af"/><stop offset="1" stop-color="#adac85"/></linearGradient>
+    <pattern id="glassGrid" width="8" height="10" patternUnits="userSpaceOnUse"><path d="M0 0H8 M0 0V10" fill="none" stroke="#b8d5cc" stroke-opacity=".35" stroke-width=".65"/><path d="M1 5H8" stroke="#153957" stroke-opacity=".37" stroke-width=".6"/></pattern>
+    <pattern id="fineGrid" width="5" height="7" patternUnits="userSpaceOnUse"><path d="M0 0H5 M0 0V7" fill="none" stroke="#d7dcc3" stroke-opacity=".34" stroke-width=".55"/></pattern>
+    <pattern id="darkGrid" width="8" height="12" patternUnits="userSpaceOnUse"><rect x="1" y="1" width="5" height="8" fill="#17334e"/><path d="M0 0H8 M0 0V12" stroke="#839ca3" stroke-opacity=".7" stroke-width=".7"/></pattern>
+    <pattern id="pearlNet" width="12" height="10" patternUnits="userSpaceOnUse"><path d="M-6 0 6 10 18 0 M-6 10 6 0 18 10" fill="none" stroke="#e7b8a4" stroke-opacity=".55" stroke-width=".8"/></pattern>
+    <pattern id="glassNet" width="12" height="10" patternUnits="userSpaceOnUse"><path d="M0 0H12 M0 5H12 M0 0 12 10 M12 0 0 10" fill="none" stroke="#d6e9ca" stroke-opacity=".39" stroke-width=".65"/></pattern>
+    <clipPath id="upperPearl"><ellipse cx="107" cy="143" rx="38" ry="35"/></clipPath>
+    <clipPath id="lowerPearl"><ellipse cx="103" cy="439" rx="43" ry="47"/></clipPath>
+    <clipPath id="leftGlobe"><path d="M100 548 C99 510 115 484 147 478 C178 479 198 507 200 548Z"/></clipPath>
+    <clipPath id="rightGlobe"><path d="M391 549 C394 505 411 475 445 472 C480 474 498 504 499 549Z"/></clipPath>
+    <clipPath id="shanghaiTower"><path d="M638 43 Q655 38 678 41 C685 111 686 179 696 243 C706 308 714 379 718 522 L637 522 C640 388 643 296 640 209 C638 147 637 88 638 43Z"/></clipPath>
+  </defs>
+
+  <rect width="745" height="742" fill="url(#sky)"/>
+  <rect y="285" width="745" height="327" fill="url(#haze)"/>
+  <rect class="night-sky" width="745" height="742" fill="url(#nightSky)"/>
+  <g class="stars" fill="#f8f4db">
+    <circle cx="211" cy="68" r="1.3" class="star-twinkle"/><circle cx="303" cy="95" r="1"/><circle cx="394" cy="49" r="1.5" class="star-twinkle"/><circle cx="538" cy="59" r=".9"/><circle cx="614" cy="163" r="1.2"/><circle cx="343" cy="168" r=".8"/><circle cx="266" cy="191" r="1.1"/><circle cx="450" cy="123" r=".9"/><circle cx="578" cy="231" r=".9"/><circle cx="720" cy="132" r=".9"/><circle cx="175" cy="218" r=".8"/><circle cx="40" cy="109" r="1"/>
+  </g>
+  <g class="moon"><circle cx="577" cy="103" r="29" fill="#fff7d8" opacity=".1"/><circle cx="577" cy="103" r="17" fill="#fff7dd"/><circle cx="583" cy="97" r="15" fill="#0a1b3e"/></g>
+
+  <g class="city">
+    <!-- Distant shore and low skyline. -->
+    <path d="M0 528 13 519 18 408 31 401 47 398 53 344 78 353 84 386 100 382 119 355 145 345 168 371 174 447 209 487 231 454 258 440 272 486 307 490 307 456 347 458 362 403 368 455 421 460 423 431 457 417 477 444 503 445 522 416 560 430 589 451 628 454 663 423 745 461 745 610H0Z" fill="#607b86"/>
+    <path d="M0 526 20 509 20 355 52 350 74 357 76 504 92 510V586H0Z" fill="#d1ccb0" stroke="#506476" stroke-width="2"/>
+    <path d="M19 357 53 351V527H19Z" fill="#748c8d"/><path d="M55 353 75 357V549H55Z" fill="#c6b993"/>
+    <path d="M18 369H53 M18 390H53 M18 414H53 M18 440H53 M18 466H53 M18 492H53 M55 376H75 M55 413H75 M55 451H75 M55 487H75" stroke="#e8dfb6" stroke-width="2" opacity=".72"/>
+    <path d="M0 426 12 420V569H0Z M76 398 90 392V573H76Z M128 357 148 344 170 382V560H125Z" fill="#889a8d"/>
+    <path d="M128 358 145 345 160 369 148 365Z" fill="#d5d5b7"/><path d="M134 365V539 M144 358V536 M157 380V537" stroke="#d9d6b3" stroke-width="3"/>
+    <path d="M221 335 244 328 266 332 270 484 216 499Z" fill="url(#blueGlass)" stroke="#586e7d" stroke-width="2"/>
+    <path d="M222 341 242 335 261 339 260 487 219 496Z" fill="url(#glassGrid)" opacity=".68"/>
+    <path d="M226 350 226 471 M246 338 246 490 M261 340 262 483" stroke="#d8d5b2" stroke-opacity=".55" stroke-width="1.4"/>
+    <path d="M212 499 226 450 270 423 274 499Z" fill="#d9d6b5"/><path d="M218 496 231 451 234 491 M230 495 242 446 245 493 M243 495 254 436 256 495" stroke="#7e9294" stroke-width="2"/>
+    <path d="M300 470 302 458 309 453 317 460 319 494H299Z M321 465 325 452 330 450 336 460 339 492H321Z" fill="#7d97a0" stroke="#dfdbb4" stroke-width="1"/>
+    <path d="M361 490 361 425 364 425 365 403 367 425 370 490Z" fill="#8298a1"/>
+
+    <!-- Lujiazui high rises behind the riverfront. -->
+    <path d="M421 282 439 274 478 280 483 520 420 521Z" fill="url(#blueGlass)" stroke="#708e90" stroke-width="2"/>
+    <path d="M423 289 474 287 478 510 423 513Z" fill="url(#darkGrid)" opacity=".58"/>
+    <path d="M421 313 478 320 M421 365 480 368 M421 429 481 430 M421 481 481 481" stroke="#9ab8b1" stroke-opacity=".7" stroke-width="2"/>
+    <path d="M421 282 439 275 478 281 478 293 421 291Z" fill="#9cb1a8"/>
+    <path d="M476 449 483 413 481 198 541 193 547 523H477Z" fill="#234b70" stroke="#19385a" stroke-width="2"/>
+    <path d="M490 211 531 207 530 258 496 260Z" fill="#368bc0" stroke="#112e52" stroke-width="3"/>
+    <path d="M498 219 522 217 521 250 500 251Z" fill="#78b6d2"/>
+    <path d="M487 268 540 265 544 518 487 518Z" fill="url(#glassGrid)" opacity=".55"/>
+    <path d="M490 287 538 286 M489 353 542 350 M489 416 543 412 M490 477 545 472" stroke="#b4c7bd" stroke-opacity=".45" stroke-width="1.5"/>
+    <path d="M503 262 509 257 510 241 513 237 514 223 516 239 522 244 522 261 530 265 530 288 545 294 550 518H498L498 300 505 292Z" fill="#b1ac8d" stroke="#445a69" stroke-width="1.5"/>
+    <path d="M501 298 547 298 M503 315 548 315 M502 334 548 334 M501 357 548 357 M502 384 549 384 M502 419 550 419 M502 455 550 455" stroke="#e9ddb4" stroke-width="3"/>
+    <path d="M503 302 548 302 M503 320 548 320 M503 339 549 339 M502 362 549 362 M502 390 549 390 M502 425 549 425 M502 461 549 461" stroke="#34495d" stroke-width="3"/>
+    <path d="M507 278 511 274 512 261 514 262 514 247 517 246 517 261 521 261 521 278 526 282 526 293 507 293Z" fill="#d7caa0"/>
+    <path d="M545 276 585 265 597 403 597 521 546 522Z" fill="url(#goldFace)" stroke="#9a9e88" stroke-width="2"/>
+    <path d="M547 282 585 273 593 397 549 399Z" fill="url(#fineGrid)" opacity=".75"/>
+    <path d="M548 353 590 358 M548 367 591 369 M549 382 593 381" stroke="#7d9e8e" stroke-width="4" opacity=".8"/>
+    <path d="M552 404 599 402V527H552Z" fill="#d2d0af"/><path d="M554 421H599 M554 443H599 M554 465H599 M554 487H599" stroke="#7f9a9d" stroke-width="2"/>
+
+    <!-- Shanghai Tower: curved glass shell and its twisting bands. -->
+    <path d="M638 43 Q655 38 678 41 C685 111 686 179 696 243 C706 308 714 379 718 522 L637 522 C640 388 643 296 640 209 C638 147 637 88 638 43Z" fill="url(#tower)" stroke="#50728d" stroke-width="2"/>
+    <path d="M637 45 Q655 39 678 42 M638 50 Q658 45 680 49" stroke="#c1d4ca" stroke-opacity=".75" fill="none" stroke-width="2"/>
+    <g clip-path="url(#shanghaiTower)">
+      <rect x="634" y="42" width="90" height="485" fill="url(#fineGrid)" opacity=".6"/>
+      <path d="M643 42 C652 95 657 183 670 252 C682 334 693 437 709 523 M669 41 C667 110 670 165 683 226 C699 301 700 419 704 523 M682 83 C658 143 654 216 660 270 C665 321 681 370 691 432" stroke="#d5d7c4" stroke-opacity=".55" fill="none" stroke-width="2"/>
+      <path d="M632 71 Q666 60 688 70 M634 112 Q672 91 693 105 M635 155 Q674 139 694 146 M636 198 Q684 173 704 188 M635 242 Q686 215 708 234 M636 289 Q689 262 712 281 M635 338 Q689 306 715 329 M635 389 Q696 349 719 381 M634 444 Q699 404 722 433" stroke="#23495e" stroke-opacity=".67" stroke-width="6" fill="none"/>
+      <path d="M635 76 Q673 64 690 73 M635 118 Q674 97 694 110 M636 160 Q678 142 698 153 M637 202 Q685 180 705 193 M636 246 Q687 222 708 238 M635 294 Q688 269 713 286 M636 342 Q691 313 716 334 M635 394 Q699 355 722 387 M634 449 Q702 410 724 440" stroke="#c9d4c6" stroke-opacity=".68" stroke-width="1.5" fill="none"/>
+      <path d="M644 41 Q650 112 648 182 Q643 239 653 291 Q671 393 698 524" stroke="#e8ddbf" stroke-opacity=".65" stroke-width="4" fill="none"/>
+    </g>
+    <path d="M687 342 710 356 726 361 745 354V525H695Z" fill="#4b8e70" stroke="#517d70" stroke-width="2"/>
+    <path d="M700 361 724 370V518H700Z" fill="url(#glassGrid)" opacity=".9"/>
+
+    <!-- Waterfront buildings. -->
+    <path d="M566 436 624 424 650 428V538H565Z" fill="#d6d9c6" stroke="#718892" stroke-width="2"/>
+    <path d="M574 441 574 522 M582 440 582 523 M591 438 591 521 M600 436 600 522 M609 433 609 520 M618 431 618 518 M627 430 627 519 M638 432 638 521" stroke="#314e65" stroke-width="3"/>
+    <path d="M570 462H645 M570 485H645 M570 506H645" stroke="#aeb4aa" stroke-width="2"/>
+    <path d="M635 520 652 498 655 473 663 463 744 489V564H634Z" fill="#65817d"/>
+    <path d="M655 471 728 483 744 493V536H655Z" fill="#b1b79f"/><path d="M652 518 744 520" stroke="#d7d9c0" stroke-width="4"/>
+    <path d="M0 554 77 551 123 558 144 549 196 551 203 568 221 559 281 560 317 553 361 549 393 557 440 547 480 553 527 543 559 548 604 543 646 547 745 537V608H0Z" fill="#9a9b7c"/>
+
+    <!-- The historic building, repeated arcade, columns and roof detail. -->
+    <path d="M170 500 211 492 372 490 393 497 397 570 171 572Z" fill="#dbd5b3" stroke="#8f8b76" stroke-width="2"/>
+    <path d="M168 492 208 486 368 486 394 492 399 500 170 501Z" fill="#d4c7a1" stroke="#7c7970" stroke-width="1.5"/>
+    <path d="M173 504H395 M173 565H397 M174 574H399" stroke="#f6ecc5" stroke-width="3"/>
+    <g id="arcade"/>
+    <path d="M169 496 169 565 M395 501 397 568" stroke="#b09c7b" stroke-width="5"/>
+    <path d="M165 568 401 569 401 581 164 582Z" fill="#bfb48e"/>
+    <path d="M170 581H400" stroke="#6b705e" stroke-width="2"/>
+
+    <!-- Glass spheres flanking the historic facade. -->
+    <path d="M100 548 C99 510 115 484 147 478 C178 479 198 507 200 548Z" fill="url(#glass)" stroke="#456a68" stroke-width="2"/>
+    <g clip-path="url(#leftGlobe)"><rect x="99" y="476" width="103" height="75" fill="url(#glassNet)"/><path d="M148 477 C122 501 124 527 127 549 M148 477 C139 507 140 532 140 550 M148 477 C155 500 160 526 161 550 M148 477 C176 506 180 531 181 550 M101 521 Q149 503 199 522 M101 540 Q150 526 200 542" stroke="#e0dfba" stroke-opacity=".62" stroke-width="1" fill="none"/></g>
+    <path d="M102 549 198 549 200 556 99 556Z" fill="#d1caa7" stroke="#62796f" stroke-width="1.4"/>
+    <path d="M391 549 C394 505 411 475 445 472 C480 474 498 504 499 549Z" fill="url(#glass)" stroke="#3d6866" stroke-width="2"/>
+    <g clip-path="url(#rightGlobe)"><rect x="390" y="470" width="111" height="82" fill="url(#glassNet)"/><path d="M445 473 C420 495 419 526 421 550 M445 473 C437 496 437 527 437 552 M445 473 C456 499 458 531 459 553 M445 473 C476 494 481 526 479 550 M392 515 Q446 499 498 515 M391 534 Q446 523 499 535" stroke="#dfe0bc" stroke-opacity=".62" stroke-width="1" fill="none"/></g>
+    <path d="M391 549 499 549 500 557 390 557Z" fill="#d4d1ad" stroke="#698175" stroke-width="1.4"/>
+
+    <!-- Low right waterfront, tower cap and garden trees. -->
+    <path d="M479 399 505 392 529 394 542 401 529 407 484 406Z" fill="#a99b74" stroke="#6e776c" stroke-width="2"/>
+    <path d="M491 405 530 406 534 478 488 476Z" fill="#c5b694"/>
+    <path d="M492 422H532 M490 436H533 M490 451H534" stroke="#826b5b" stroke-width="3"/>
+    <path d="M514 387 515 367 516 387" stroke="#8b9787" stroke-width="2"/>
+    <path d="M519 548 554 545 558 482 589 480 591 546 645 544 652 519 744 521V589H519Z" fill="#a9ae99"/>
+    <path d="M556 483 590 480V548H556Z" fill="#d5d1b2"/><path d="M559 490H588 M559 503H588 M559 515H588 M559 528H588" stroke="#506e76" stroke-width="2"/>
+    <path d="M647 524 745 526V580H647Z" fill="#6fb0ab" stroke="#d6d9bd" stroke-width="5"/>
+    <path d="M650 531H745 M651 549H745" stroke="#266a75" stroke-width="3"/>
+    <path d="M650 556 745 555V579H650Z" fill="#d9d4b9"/>
+
+    <!-- Oriental Pearl: legs, two observation spheres and needle. -->
+    <path d="M84 468 42 569 28 575 73 462Z M120 465 160 569 175 575 133 461Z" fill="url(#pearlStem)" stroke="#536565" stroke-width="2"/>
+    <path d="M95 476 93 563 101 574 110 563 112 476Z" fill="url(#pearlStem)" stroke="#616b67" stroke-width="2"/>
+    <path d="M79 465 57 538 M127 466 155 542" stroke="#eee5ba" stroke-width="4" opacity=".72"/>
+    <path d="M89 173 90 402 102 404 102 172Z M112 170 112 401 125 406 123 172Z" fill="url(#pearlStem)" stroke="#506161" stroke-width="1.5"/>
+    <path d="M102 172 111 172 111 397 102 397Z" fill="#68848a"/>
+    <path d="M96 212 119 209 M95 251 120 250 M95 291 120 289 M94 330 120 327 M94 367 119 365" stroke="#bd9a73" stroke-width="7"/>
+    <path d="M94 215 120 212 M94 253 121 252 M94 293 121 292 M94 331 121 330 M94 370 120 369" stroke="#e4d7a8" stroke-width="2"/>
+    <path d="M106 0 105 34 101 51 103 81 100 111 113 113 111 82 113 51 110 34 110 0Z" fill="url(#pearlStem)" stroke="#5c6660" stroke-width="1.3"/>
+    <path d="M98 29 119 29 118 43 112 49 102 46Z" fill="url(#pearlRed)" stroke="#5b5960" stroke-width="2"/>
+    <path d="M101 35 118 35 M105 49 111 49 M103 66 112 66 M102 84 113 84 M104 99 112 99" stroke="#e7d3a1" stroke-width="1.4"/>
+    <ellipse cx="107" cy="143" rx="38" ry="35" fill="url(#pearlRed)" stroke="#535a5d" stroke-width="2"/>
+    <g clip-path="url(#upperPearl)"><rect x="68" y="108" width="79" height="72" fill="url(#pearlNet)"/><path d="M69 135 Q108 122 146 135 M69 151 Q108 143 146 151 M70 161 Q107 158 145 161" stroke="#e7c1a5" opacity=".48" fill="none" stroke-width="1.4"/></g>
+    <path d="M72 157 Q107 170 143 157 L139 169 Q107 181 76 169Z" fill="#737c79" stroke="#3b555d" stroke-width="1.6"/>
+    <path d="M76 168 Q108 178 139 168" fill="none" stroke="#d5cab0" stroke-width="2"/>
+    <path d="M75 404 Q102 392 130 404 L141 426 126 468 Q103 486 79 466 L62 433Z" fill="#596567"/>
+    <ellipse cx="103" cy="439" rx="43" ry="47" fill="url(#pearlRed)" stroke="#4e5a5b" stroke-width="2"/>
+    <g clip-path="url(#lowerPearl)"><rect x="59" y="391" width="88" height="96" fill="url(#pearlNet)"/><path d="M60 419 Q103 402 146 419 M60 438 Q104 431 147 438 M64 458 Q105 459 143 458" stroke="#eed1b6" opacity=".47" fill="none" stroke-width="2"/></g>
+    <path d="M62 451 Q103 466 144 451 L138 467 Q104 481 68 465Z" fill="#88948a" opacity=".7"/>
+    <path d="M81 478 Q103 489 128 477" fill="none" stroke="#d0c5a3" stroke-width="4"/>
+
+    <!-- Trees and the narrow quay. -->
+    <path d="M0 582 53 580 75 576 103 575 134 575 175 578 208 579 227 572 250 573 271 567 295 572 313 568 335 570 365 566 395 565 421 569 444 565 461 570 480 568 500 563 523 570 550 567 579 571 606 566 638 570 666 566 745 574V606H0Z" fill="#394b3c"/>
+    <g id="trees"/>
+    <path d="M0 597 42 594 77 599 153 591 207 595 268 590 335 593 393 589 457 590 520 587 574 589 631 584 745 580V611H0Z" fill="#d7c99e"/>
+    <path d="M0 609 Q160 604 320 607 Q520 600 745 603V617H0Z" fill="#697775"/>
+    <path d="M0 613 745 608" stroke="#f7e9bf" stroke-width="3"/>
+    <path d="M0 618 745 614" stroke="#37566c" stroke-width="5"/>
+  </g>
+
+  <!-- River and moving surface detail. -->
+  <path d="M0 615 Q196 611 355 616 Q537 612 745 607V742H0Z" fill="url(#water)"/>
+  <path class="night-water" d="M0 615 Q196 611 355 616 Q537 612 745 607V742H0Z" fill="url(#nightWater)"/>
+  <g class="day-reflections" id="dayRipples"/>
+  <g class="night-reflections" id="nightRipples"/>
+
+  <!-- Ferries and workboats match the small silhouettes on the river. -->
+  <g class="city">
+    <path d="M0 599 42 597 54 592 115 593 124 600 171 601 185 607 0 610Z" fill="#f3f0d5" stroke="#556b70" stroke-width="1.5"/>
+    <path d="M38 590 43 579 53 579 55 592 M58 592 59 585 104 585 107 593" stroke="#e9e7cd" stroke-width="3" fill="none"/>
+    <path d="M0 605H171 M30 595H50 M60 595H109" stroke="#404f62" stroke-width="2"/>
+    <path d="M449 598 517 597 528 600 452 602Z" fill="#e6e2c7" stroke="#67716d"/>
+    <path d="M572 621 589 615 610 615 623 608 678 607 695 611 714 611 728 622 745 623 745 633 588 637 569 630Z" fill="#1b3442" stroke="#122c40" stroke-width="2"/>
+    <path d="M601 610 613 602 630 601 644 608 667 607 673 612Z" fill="#e8e1c9"/>
+    <path d="M610 611 619 605 628 605 629 614Z M633 605 642 605 644 615 632 615Z M649 607 661 608 661 615 649 615Z" fill="#3e7387"/>
+    <path d="M588 622 723 623 M605 618 699 618" stroke="#ba684d" stroke-width="3"/>
+    <path d="M601 613 602 635 M680 610 680 632 M709 617 709 632" stroke="#324c58" stroke-width="2"/>
+    <path d="M713 598 713 581" stroke="#6e6154" stroke-width="2"/><path d="M710 583 719 585 711 587Z" fill="#c54739"/>
+  </g>
+
+  <!-- Warm windows emerge after dusk; reflection marks echo the quay. -->
+  <g class="city-lights">
+    <g id="litWindows"/>
+    <path d="M80 410 Q104 398 129 411 M71 451 Q101 438 140 451 M73 155 Q107 143 140 156 M391 536 Q446 512 499 536" stroke="#f3b963" stroke-width="2" opacity=".75" fill="none"/>
+    <path d="M0 606 745 601" stroke="#f4c880" stroke-width="2" opacity=".72"/>
+  </g>
+</svg>
+<script>
+  const svg = document.querySelector('svg');
+  const svgNamespace = 'http://www.w3.org/2000/svg';
+  let seed = 31;
+  const random = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
+  const add = (parent, name, attributes) => {
+    const element = document.createElementNS(svgNamespace, name);
+    for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, value);
+    parent.appendChild(element);
+    return element;
+  };
+
+  const arcade = svg.querySelector('#arcade');
+  for (let index = 0; index < 12; index++) {
+    const x = 179 + index * 18;
+    add(arcade, 'path', { d: `M${x} 561V518 Q${x + 6} 505 ${x + 12} 518V561Z`, fill: '#38586a', stroke: '#f2e6bf', 'stroke-width': 2.1 });
+    add(arcade, 'path', { d: `M${x + 2} 522 Q${x + 6} 514 ${x + 10} 522 M${x + 6} 518V559 M${x + 1} 541H${x + 11}`, fill: 'none', stroke: '#b3bdac', 'stroke-width': 1.1 });
+    add(arcade, 'path', { d: `M${x - 2} 505V566 M${x + 15} 505V566`, stroke: '#a39a79', 'stroke-width': 1.1 });
+  }
+
+  const trees = svg.querySelector('#trees');
+  for (let index = 0; index < 81; index++) {
+    const x = 3 + index * 9 + random() * 5;
+    const y = 581 + random() * 8;
+    const radius = 6 + random() * 7;
+    add(trees, 'circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: radius.toFixed(1), fill: ['#273e33', '#40523a', '#5a6240', '#775848'][Math.floor(random() * 4)], opacity: (.73 + random() * .25).toFixed(2) });
+  }
+
+  const windows = svg.querySelector('#litWindows');
+  for (const building of [
+    { x: 22, y: 367, columns: 5, rows: 19, dx: 9, dy: 10 },
+    { x: 425, y: 299, columns: 7, rows: 25, dx: 7, dy: 8 },
+    { x: 490, y: 277, columns: 6, rows: 31, dx: 8, dy: 7 },
+    { x: 552, y: 285, columns: 5, rows: 16, dx: 7, dy: 7 },
+    { x: 641, y: 56, columns: 7, rows: 55, dx: 9, dy: 8 },
+    { x: 573, y: 450, columns: 9, rows: 8, dx: 7, dy: 9 },
+    { x: 660, y: 476, columns: 10, rows: 6, dx: 8, dy: 8 }
+  ]) {
+    const windowGroup = building.x === 641 ? add(windows, 'g', { 'clip-path': 'url(#shanghaiTower)' }) : windows;
+    for (let row = 0; row < building.rows; row++) {
+      for (let column = 0; column < building.columns; column++) {
+        if (random() > .36) continue;
+        const x = building.x + column * building.dx;
+        const y = building.y + row * building.dy;
+        add(windowGroup, 'rect', { x, y, width: building.dx > 8 ? 2.4 : 2, height: 3.1, rx: .25, fill: random() > .25 ? '#ffd388' : '#d9edf2', opacity: (.45 + random() * .5).toFixed(2) });
+      }
+    }
+  }
+  for (let column = 0; column < 12; column++) {
+    if (random() > .15) add(windows, 'path', { d: `M${180 + column * 18} 522v38`, stroke: '#ffc06d', 'stroke-width': 2.2, opacity: '.9' });
+  }
+
+  const dayRipples = svg.querySelector('#dayRipples');
+  const nightRipples = svg.querySelector('#nightRipples');
+  for (let index = 0; index < 490; index++) {
+    const y = 620 + random() * 124;
+    const x = random() * 745;
+    const length = 4 + random() * (y < 657 ? 25 : 38);
+    const isGold = (x > 75 && x < 155) || (x > 450 && x < 520) || (x > 640 && x < 730);
+    add(dayRipples, 'path', { d: `M${x.toFixed(1)} ${y.toFixed(1)}q${(length / 2).toFixed(1)} ${(-1.3 + random() * 2.6).toFixed(1)} ${length.toFixed(1)} 0`, fill: 'none', stroke: isGold && random() > .48 ? '#ddbd91' : random() > .44 ? '#a4c2b9' : '#153d69', 'stroke-width': (.35 + random() * 1.15).toFixed(2), opacity: (.16 + random() * .5).toFixed(2) });
+  }
+  for (let index = 0; index < 150; index++) {
+    const y = 619 + random() * 121;
+    const x = random() * 745;
+    const length = 3 + random() * 21;
+    add(nightRipples, 'path', { d: `M${x.toFixed(1)} ${y.toFixed(1)}h${length.toFixed(1)}`, stroke: random() > .36 ? '#efad67' : '#8dd6dc', 'stroke-width': (.7 + random() * 1.4).toFixed(1), opacity: (.12 + random() * .5).toFixed(2), class: index % 8 === 0 ? 'water-glint' : '' });
+  }
+</script>
+</body>
+</html>
