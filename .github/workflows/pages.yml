@@ -26,11 +26,22 @@ jobs:
       - name: Generate index.html
         run: |
           {
-            echo '<!doctype html>'
-            echo '<html lang="en"><head><meta charset="utf-8">'
-            echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            echo '<title>AI Model Benchmark Previews</title></head><body>'
-            echo '<h1>AI Model Benchmark Previews</h1><ul>'
+            cat <<'HTML'
+          <!doctype html>
+          <html lang="en"><head><meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>AI Model Benchmark Previews</title>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+          <style>
+            td:not(:last-child) { white-space: nowrap; }
+            td.num { text-align: right; }
+          </style></head><body>
+          <main class="container">
+          <h1>AI Model Benchmark Previews</h1>
+          <div class="overflow-auto"><table class="striped">
+          <thead><tr><th>Created</th><th>Spec</th><th>Model</th><th>Minutes</th><th>Title</th></tr></thead>
+          <tbody>
+          HTML
             # Newest first by trailing YYYYMMDDHHMMSS in file name
             for f in *.html; do
               [ "$f" = index.html ] && continue
@@ -38,9 +49,16 @@ jobs:
               echo "$ts $f"
             done | sort -r | while read -r ts f; do
               title=$(grep -o -m1 '<title>[^<]*</title>' "$f" | sed -E 's#</?title>##g' || true)
-              echo "<li><a href=\"$f\">$f</a>${title:+ — $title}</li>"
+              # preview-${spec}-${model}-${minutes}-${YYYYMMDDHHMMSS}.html
+              if [[ $f =~ ^preview-(spec[-_][0-9]+)-(.+)-([0-9]+)-[0-9]{14}\.html$ ]]; then
+                spec=${BASH_REMATCH[1]} model=${BASH_REMATCH[2]} minutes=${BASH_REMATCH[3]}
+                created="${ts:0:4}-${ts:4:2}-${ts:6:2} ${ts:8:2}:${ts:10:2}"
+              else
+                spec= model=$f minutes= created=
+              fi
+              echo "<tr><td>$created</td><td>$spec</td><td><a href=\"$f\">$model</a></td><td class=\"num\">$minutes</td><td>$title</td></tr>"
             done
-            echo '</ul></body></html>'
+            echo '</tbody></table></div></main></body></html>'
           } > index.html
 
       - uses: actions/upload-pages-artifact@v5
