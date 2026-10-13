@@ -31,8 +31,12 @@ jobs:
             echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
             echo '<title>AI Model Benchmark Previews</title></head><body>'
             echo '<h1>AI Model Benchmark Previews</h1><ul>'
+            # Newest first by trailing YYYYMMDDHHMMSS in file name
             for f in *.html; do
               [ "$f" = index.html ] && continue
+              [[ $f =~ ([0-9]{14})\.html$ ]] && ts=${BASH_REMATCH[1]} || ts=0
+              echo "$ts $f"
+            done | sort -r | while read -r ts f; do
               title=$(grep -o -m1 '<title>[^<]*</title>' "$f" | sed -E 's#</?title>##g' || true)
               echo "<li><a href=\"$f\">$f</a>${title:+ — $title}</li>"
             done
