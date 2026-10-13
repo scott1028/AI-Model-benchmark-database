@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上海陸家嘴天際線日夜動畫 - Shanghai Skyline Day/Night Cycle</title>
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --panel-bg: rgba(16, 24, 39, 0.78);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --cycle-duration: 32s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stage-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      overflow: hidden;
+    }
+
+    svg#skyline-stage {
+      width: 100%;
+      height: 100%;
+      max-width: 100vh;
+      max-height: 100vw;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.8));
+    }
+
+    /* =======================================================
+       HUD & CONTROLS
+    ======================================================= */
+    .hud-header {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      pointer-events: auto;
+      transition: all 0.3s ease;
+    }
+
+    .hud-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .time-badge {
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .hud-dock {
+      position: absolute;
+      bottom: 24px;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      padding: 12px 20px;
+      border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+      width: min(92vw, 680px);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+
+    .hud-dock.minimized {
+      transform: translateY(calc(100% + 40px));
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .hud-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+
+    .btn.active {
+      background: var(--accent);
+      color: #04101d;
+      border-color: var(--accent);
+      font-weight: 600;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .slider-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .timeline-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .timeline-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      transition: transform 0.15s ease;
+    }
+
+    .timeline-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    .dock-toggle-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 55;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      color: var(--text);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .dock-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: var(--accent);
+    }
+
+    /* =======================================================
+       KEYFRAME ANIMATIONS FOR THE INFINITE DAY/NIGHT CYCLE
+    ======================================================= */
+    /* 
+       0% - 30%   Daytime (陽光明媚、蔚藍晴天)
+       30% - 46%  Sunset (夕陽火燒雲、紫金晚霞、街燈漸開)
+       46% - 74%  Night (深夜璀璨燈光秀、東方明珠與中心大廈霓虹奔馳)
+       74% - 90%  Sunrise / Dawn (晨曦朝霞、微藍淡金、夜燈隱退)
+       90% - 100% Day (重返日間)
+    */
+
+    /* 天空漸層動態 */
+    .anim-sky-top {
+      animation: skyTopCycle var(--cycle-duration) linear infinite;
+    }
+    .anim-sky-bottom {
+      animation: skyBottomCycle var(--cycle-duration) linear infinite;
+    }
+
+    @keyframes skyTopCycle {
+      0%, 28%   { stop-color: #1b6cc8; } /* Day deep azure */
+      36%       { stop-color: #7b2959; } /* Sunset purple */
+      44%       { stop-color: #2c1236; } /* Dusk deep magenta */
+      50%, 70%  { stop-color: #030611; } /* Night midnight navy */
+      78%       { stop-color: #1a2245; } /* Dawn indigo */
+      86%       { stop-color: #2a5a9c; } /* Morning sky blue */
+      94%, 100% { stop-color: #1b6cc8; } /* Day */
+    }
+
+    @keyframes skyBottomCycle {
+      0%, 28%   { stop-color: #5bb3f8; } /* Day pale cyan */
+      36%       { stop-color: #e56038; } /* Sunset fiery orange */
+      44%       { stop-color: #d94b59; } /* Dusk rose */
+      50%, 70%  { stop-color: #0a1329; } /* Night deep blue */
+      78%       { stop-color: #e67d60; } /* Dawn coral peach */
+      86%       { stop-color: #8acafb; } /* Morning cyan */
+      94%, 100% { stop-color: #5bb3f8; } /* Day */
+    }
+
+    /* 太陽軌道與日照 */
+    .anim-sun-group {
+      animation: sunPathCycle var(--cycle-duration) linear infinite;
+      transform-origin: 500px 900px;
+    }
+    @keyframes sunPathCycle {
+      0%   { transform: rotate(-45deg); opacity: 1; }
+      25%  { transform: rotate(0deg); opacity: 1; }
+      40%  { transform: rotate(48deg); opacity: 0.9; }
+      46%  { transform: rotate(62deg); opacity: 0; }
+      80%  { transform: rotate(-70deg); opacity: 0; }
+      88%  { transform: rotate(-55deg); opacity: 0.8; }
+      100% { transform: rotate(-45deg); opacity: 1; }
+    }
+
+    /* 月亮軌道與月華 */
+    .anim-moon-group {
+      animation: moonPathCycle var(--cycle-duration) linear infinite;
+      transform-origin: 500px 900px;
+    }
+    @keyframes moonPathCycle {
+      0%, 38%  { transform: rotate(90deg); opacity: 0; }
+      46%      { transform: rotate(45deg); opacity: 0.6; }
+      55%      { transform: rotate(0deg); opacity: 1; }
+      68%      { transform: rotate(-35deg); opacity: 1; }
+      76%      { transform: rotate(-60deg); opacity: 0.2; }
+      82%, 100%{ transform: rotate(-90deg); opacity: 0; }
+    }
+
+    /* 星空繁星閃爍 */
+    .anim-stars {
+      animation: starsCycle var(--cycle-duration) linear infinite;
+    }
+    @keyframes starsCycle {
+      0%, 42%   { opacity: 0; }
+      48%       { opacity: 0.6; }
+      54%, 70%  { opacity: 1; }
+      76%       { opacity: 0.3; }
+      82%, 100% { opacity: 0; }
+    }
+
+    /* 城市夜間霓虹外觀 (整體透明度由夜間接管) */
+    .anim-night-lights {
+      animation: nightLightsCycle var(--cycle-duration) linear infinite;
+    }
+    @keyframes nightLightsCycle {
+      0%, 36%   { opacity: 0; }
+      42%       { opacity: 0.45; }
+      48%, 72%  { opacity: 1; }
+      78%       { opacity: 0.35; }
+      84%, 100% { opacity: 0; }
+    }
+
+    /* 建築日間高光與陽光陰影 */
+    .anim-day-facade {
+      animation: dayFacadeCycle var(--cycle-duration) linear infinite;
+    }
+    @keyframes dayFacadeCycle {
+      0%, 30%   { opacity: 1; }
+      38%       { opacity: 0.7; filter: drop-shadow(0 0 10px rgba(255, 140, 50, 0.4)); }
+      46%, 72%  { opacity: 0.2; filter: brightness(0.28) contrast(1.1); }
+      78%       { opacity: 0.6; filter: drop-shadow(0 0 8px rgba(255, 180, 100, 0.3)); }
+      86%, 100% { opacity: 1; filter: none; }
+    }
+
+    /* 東方明珠球體霓虹呼吸與色彩律動 */
+    .anim-pearl-led {
+      animation: pearlLedPulse 4s ease-in-out infinite alternate;
+    }
+    @keyframes pearlLedPulse {
+      0%   { filter: drop-shadow(0 0 8px #ff1493) drop-shadow(0 0 16px #ff007f); }
+      50%  { filter: drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 20px #00bfff); }
+      100% { filter: drop-shadow(0 0 12px #9d4edd) drop-shadow(0 0 24px #7b2cbf); }
+    }
+
+    /* 上海中心大廈外殼螺旋光帶流動 (Chasing LED bands) */
+    .anim-shanghai-spiral {
+      stroke-dasharray: 20 80;
+      animation: spiralFlow 3s linear infinite;
+    }
+    @keyframes spiralFlow {
+      0%   { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -200; }
+    }
+
+    /* 國際會議中心大球地圖旋轉與光芒 */
+    .anim-globe-led {
+      animation: globeRotateHue 8s linear infinite;
+    }
+    @keyframes globeRotateHue {
+      0%   { filter: hue-rotate(0deg) drop-shadow(0 0 10px rgba(0, 255, 170, 0.8)); }
+      50%  { filter: hue-rotate(180deg) drop-shadow(0 0 12px rgba(0, 170, 255, 0.9)); }
+      100% { filter: hue-rotate(360deg) drop-shadow(0 0 10px rgba(0, 255, 170, 0.8)); }
+    }
+
+    /* 黃浦江江水色彩循環 */
+    .anim-river-water {
+      animation: riverWaterCycle var(--cycle-duration) linear infinite;
+    }
+    @keyframes riverWaterCycle {
+      0%, 28%   { stop-color: #2b619e; } /* Day rich blue */
+      38%       { stop-color: #5c3552; } /* Sunset amber/purple */
+      48%, 72%  { stop-color: #071021; } /* Night dark reflective water */
+      80%       { stop-color: #2d3c5f; } /* Dawn deep turquoise */
+      92%, 100% { stop-color: #2b619e; } /* Day */
+    }
+
+    /* 江面水波晃動微動態 */
+    .anim-wave-shimmer {
+      animation: waveShimmer 3.5s ease-in-out infinite alternate;
+    }
+    @keyframes waveShimmer {
+      0%   { transform: translateY(0px) scaleY(1); opacity: 0.85; }
+      100% { transform: translateY(2px) scaleY(1.03); opacity: 1; }
+    }
+
+    /* 江面霓虹倒影搖曳 */
+    .anim-reflection-glow {
+      animation: reflectionCycle var(--cycle-duration) linear infinite;
+    }
+    @keyframes reflectionCycle {
+      0%, 34%   { opacity: 0.25; filter: blur(3px); }
+      40%       { opacity: 0.6; filter: blur(4px) drop-shadow(0 0 15px rgba(255, 120, 50, 0.6)); }
+      48%, 72%  { opacity: 0.92; filter: blur(3px) drop-shadow(0 0 25px rgba(255, 50, 150, 0.8)); }
+      80%       { opacity: 0.4; filter: blur(4px); }
+      88%, 100% { opacity: 0.25; filter: blur(3px); }
+    }
+
+    /* 船舶航行與微波 */
+    .anim-ship-cruise {
+      animation: shipCruiseMotion 28s linear infinite;
+    }
+    @keyframes shipCruiseMotion {
+      0%   { transform: translate(-30px, 0); }
+      50%  { transform: translate(45px, 2px); }
+      100% { transform: translate(-30px, 0); }
+    }
+
+    .anim-barge-drift {
+      animation: bargeDriftMotion 36s ease-in-out infinite alternate;
+    }
+    @keyframes bargeDriftMotion {
+      0%   { transform: translate(20px, 0); }
+      100% { transform: translate(-40px, 1.5px); }
+    }
+
+    /* 浮標上下起伏與警示燈閃爍 */
+    .anim-buoy-bob {
+      animation: buoyBob 2.8s ease-in-out infinite alternate;
+      transform-origin: 955px 815px;
+    }
+    @keyframes buoyBob {
+      0%   { transform: translateY(-2px) rotate(-3deg); }
+      100% { transform: translateY(2px) rotate(3deg); }
+    }
+
+    .anim-beacon-flash {
+      animation: beaconFlash 1.2s steps(2, start) infinite;
+    }
+    @keyframes beaconFlash {
+      0%, 65% { opacity: 1; filter: drop-shadow(0 0 6px #ff0000); }
+      66%, 100% { opacity: 0.15; filter: none; }
+    }
+
+    /* 塔頂航空障礙紅燈閃爍 */
+    .anim-antenna-beacon {
+      animation: antennaFlash 1.6s ease-in-out infinite;
+    }
+    @keyframes antennaFlash {
+      0%, 100% { opacity: 0.3; }
+      50%      { opacity: 1; filter: drop-shadow(0 0 8px #ff2222); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部資訊標籤 -->
+  <div class="hud-header">
+    <div class="live-dot"></div>
+    <div class="hud-title">SHANGHAI PU DONG SKYLINE</div>
+    <div class="time-badge" id="clock-display">12:00 PM</div>
+    <div style="font-size:12px; color:var(--text-muted); border-left:1px solid rgba(255,255,255,0.15); padding-left:8px;">
+      無限循環 SVG 動畫
+    </div>
+  </div>
+
+  <!-- 主舞台 SVG 畫布 (1000 x 1000，完美還原 spec_01.png 比例) -->
+  <div class="stage-container">
+    <svg id="skyline-stage" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- 1. 動態天空漸層 -->
+        <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" class="anim-sky-top" stop-color="#1b6cc8" />
+          <stop offset="65%" stop-color="#3d8fe0" />
+          <stop offset="100%" class="anim-sky-bottom" stop-color="#5bb3f8" />
+        </linearGradient>
+
+        <!-- 2. 黃浦江水體動態漸層 -->
+        <linearGradient id="riverGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" class="anim-river-water" stop-color="#1f4b7a" />
+          <stop offset="35%" stop-color="#163960" />
+          <stop offset="100%" stop-color="#0b1e38" />
+        </linearGradient>
+
+        <!-- 3. 東方明珠球體紅寶石立體漸層 -->
+        <radialGradient id="pearlSphereGrad" cx="38%" cy="32%" r="65%">
+          <stop offset="0%" stop-color="#ff9ab1" />
+          <stop offset="25%" stop-color="#e63964" />
+          <stop offset="70%" stop-color="#9a1b3c" />
+          <stop offset="100%" stop-color="#4a081a" />
+        </radialGradient>
+
+        <!-- 4. 東方明珠球體夜間光雕漸層 -->
+        <radialGradient id="pearlNightGlow" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stop-color="#ff4df0" />
+          <stop offset="50%" stop-color="#d9048e" />
+          <stop offset="90%" stop-color="#7a0050" />
+          <stop offset="100%" stop-color="#240018" />
+        </radialGradient>
+
+        <!-- 5. 上海中心大廈螺旋外幕牆漸層 -->
+        <linearGradient id="shanghaiTowerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#b0c8dc" />
+          <stop offset="30%" stop-color="#ddebf7" />
+          <stop offset="65%" stop-color="#8baecc" />
+          <stop offset="100%" stop-color="#466885" />
+        </linearGradient>
+
+        <!-- 6. SWFC 環球金融中心金屬深藍漸層 -->
+        <linearGradient id="swfcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#6a91b8" />
+          <stop offset="45%" stop-color="#9fc2e6" />
+          <stop offset="80%" stop-color="#476b92" />
+          <stop offset="100%" stop-color="#263e59" />
+        </linearGradient>
+
+        <!-- 7. 金茂大廈古銅金色寶塔漸層 -->
+        <linearGradient id="jinmaoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#b59469" />
+          <stop offset="35%" stop-color="#e8cf9f" />
+          <stop offset="70%" stop-color="#96774e" />
+          <stop offset="100%" stop-color="#5a4224" />
+        </linearGradient>
+
+        <!-- 8. 國際會議中心玻璃球體世界地圖漸層 -->
+        <radialGradient id="globeGrad" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#a4f3e6" />
+          <stop offset="35%" stop-color="#38bdf8" />
+          <stop offset="75%" stop-color="#0284c7" />
+          <stop offset="100%" stop-color="#082f49" />
+        </radialGradient>
+
+        <!-- 9. 太陽發光濾鏡 -->
+        <filter id="sunGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="16" result="blur1" />
+          <feGaussianBlur stdDeviation="35" result="blur2" />
+          <feMerge>
+            <feMergeNode in="blur2" />
+            <feMergeNode in="blur1" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <!-- 10. 霓虹外發光濾鏡 -->
+        <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <!-- 11. 水面倒影柔和模糊濾鏡 -->
+        <filter id="waterBlur" x="0%" y="0%" width="100%" height="100%">
+          <feGaussianBlur stdDeviation="3 0.8" />
+        </filter>
+      </defs>
+
+      <!-- =======================================================
+           LAYER 1: 天空與天體背景 (Sky, Sun, Moon, Stars)
+      ======================================================= -->
+      <rect id="sky-canvas" width="1000" height="805" fill="url(#skyGrad)" />
+
+      <!-- 繁星群 (夜間顯現) -->
+      <g id="starfield" class="anim-stars" fill="#ffffff">
+        <circle cx="80" cy="90" r="1.4" opacity="0.9" />
+        <circle cx="140" cy="50" r="1" opacity="0.7" />
+        <circle cx="210" cy="110" r="1.8" opacity="0.95" />
+        <circle cx="270" cy="70" r="1.2" opacity="0.8" />
+        <circle cx="340" cy="40" r="1.5" opacity="0.9" />
+        <circle cx="410" cy="120" r="1" opacity="0.6" />
+        <circle cx="480" cy="80" r="1.7" opacity="0.95" />
+        <circle cx="530" cy="50" r="1.3" opacity="0.85" />
+        <circle cx="590" cy="110" r="1.2" opacity="0.7" />
+        <circle cx="650" cy="75" r="1.9" opacity="0.9" />
+        <circle cx="720" cy="45" r="1.1" opacity="0.8" />
+        <circle cx="780" cy="130" r="1.6" opacity="0.85" />
+        <circle cx="830" cy="90" r="1.3" opacity="0.75" />
+        <circle cx="890" cy="60" r="1.8" opacity="0.9" />
+        <circle cx="950" cy="110" r="1.2" opacity="0.8" />
+        <circle cx="60" cy="160" r="1" opacity="0.7" />
+        <circle cx="180" cy="180" r="1.5" opacity="0.85" />
+        <circle cx="320" cy="190" r="1.1" opacity="0.6" />
+        <circle cx="460" cy="170" r="1.4" opacity="0.8" />
+        <circle cx="600" cy="200" r="1" opacity="0.75" />
+        <circle cx="750" cy="170" r="1.6" opacity="0.9" />
+      </g>
+
+      <!-- 太陽與耀光 (日間運作) -->
+      <g class="anim-sun-group">
+        <g transform="translate(500, 160)">
+          <circle cx="0" cy="0" r="42" fill="#fff9db" filter="url(#sunGlow)" />
+          <circle cx="0" cy="0" r="28" fill="#ffffff" />
+          <!-- 太陽光芒 -->
+          <line x1="-55" y1="0" x2="55" y2="0" stroke="#fff1b8" stroke-width="2.5" opacity="0.6" />
+          <line x1="0" y1="-55" x2="0" y2="55" stroke="#fff1b8" stroke-width="2.5" opacity="0.6" />
+          <line x1="-38" y1="-38" x2="38" y2="38" stroke="#fff1b8" stroke-width="2" opacity="0.5" />
+          <line x1="-38" y1="38" x2="38" y2="-38" stroke="#fff1b8" stroke-width="2" opacity="0.5" />
+        </g>
+      </g>
+
+      <!-- 月亮與柔和月暈 (夜間升起) -->
+      <g class="anim-moon-group">
+        <g transform="translate(420, 120)">
+          <circle cx="0" cy="0" r="26" fill="#fef08a" opacity="0.18" filter="url(#sunGlow)" />
+          <path d="M 16 -18 A 24 24 0 1 0 16 18 A 20 20 0 1 1 16 -18 Z" fill="#fef9c3" />
+        </g>
+      </g>
+
+      <!-- 飄浮白雲 (日間微動態) -->
+      <g opacity="0.75">
+        <path d="M 240 180 Q 260 160 290 165 Q 320 150 350 170 Q 375 165 390 185 Q 400 205 380 215 Q 340 220 260 215 Q 230 205 240 180 Z" fill="#ffffff" opacity="0.5" />
+        <path d="M 680 140 Q 700 125 730 130 Q 755 118 780 135 Q 805 130 820 150 Q 825 170 800 175 Q 750 180 690 175 Q 670 160 680 140 Z" fill="#ffffff" opacity="0.4" />
+      </g>
+
+
+      <!-- =======================================================
+           LAYER 2: 遠景高樓群 (Distant Background Skyline)
+      ======================================================= -->
+      <g id="distant-skyline" class="anim-day-facade">
+        <!-- 遠景淡色摩天大樓剪影 (x: 0 ~ 1000) -->
+        <rect x="0" y="560" width="45" height="230" fill="#5a7fa3" opacity="0.65" />
+        <rect x="35" y="520" width="40" height="270" fill="#4d7296" opacity="0.7" />
+        <rect x="70" y="540" width="55" height="250" fill="#5d84ab" opacity="0.65" />
+        <rect x="230" y="530" width="60" height="260" fill="#5881a8" opacity="0.65" />
+        
+        <!-- 遠景細長雙塔與尖塔群 -->
+        <rect x="390" y="605" width="28" height="185" fill="#6c93b8" />
+        <polygon points="390,605 404,580 418,605" fill="#4a7094" />
+        <rect x="425" y="615" width="26" height="175" fill="#6289ae" />
+        <polygon points="425,615 438,590 451,615" fill="#4a7094" />
+
+        <!-- 遠景針狀電視/電信天線塔 (x: 470) -->
+        <rect x="478" y="540" width="22" height="250" fill="#5f86ac" />
+        <line x1="489" y1="540" x2="489" y2="480" stroke="#486d91" stroke-width="2.5" />
+
+        <!-- 弧形現代大廈 (x: 290 ~ 370) -->
+        <path d="M 292 460 Q 330 445 368 460 L 368 790 L 292 790 Z" fill="#3b688c" />
+        <path d="M 300 470 L 360 470 L 360 790 L 300 790 Z" fill="#5d8eb8" opacity="0.7" />
+      </g>
+
+
+      <!-- =======================================================
+           LAYER 3: 標誌性摩天大樓群 (Landmark Skyscrapers)
+      ======================================================= -->
+
+      <!-- [A] 上海中心大廈 (Shanghai Tower, x: 840 ~ 950, y: 50 ~ 790) -->
+      <g id="shanghai-tower">
+        <!-- 建築本體：120度螺旋扭轉圓錐幾何主體 -->
+        <path d="M 855 790 
+                 C 850 640, 856 460, 866 310 
+                 C 872 200, 878 120, 882 60 
+                 L 908 60 
+                 C 916 120, 928 240, 938 400 
+                 C 945 550, 952 680, 950 790 Z" 
+              fill="url(#shanghaiTowerGrad)" class="anim-day-facade" />
+
+        <!-- 扭轉螺旋凹槽陰影弧線 (表現外幕牆三大曲面扭轉結構) -->
+        <path d="M 882 60 
+                 C 878 160, 895 280, 908 420 
+                 C 918 540, 930 680, 936 790" 
+              fill="none" stroke="#325778" stroke-width="4.5" opacity="0.75" />
+
+        <path d="M 866 310 
+                 C 876 430, 892 560, 902 790" 
+              fill="none" stroke="#254663" stroke-width="3" opacity="0.6" />
+
+        <!-- 9 個垂直結構分區環狀支撐橫樑 (Belt Trusses) -->
+        <g stroke="#ffffff" stroke-width="1.8" opacity="0.45">
+          <line x1="880" y1="130" x2="912" y2="130" />
+          <line x1="875" y1="210" x2="919" y2="210" />
+          <line x1="870" y1="295" x2="926" y2="295" />
+          <line x1="866" y1="380" x2="932" y2="380" />
+          <line x1="862" y1="470" x2="938" y2="470" />
+          <line x1="858" y1="560" x2="943" y2="560" />
+          <line x1="855" y1="650" x2="947" y2="650" />
+          <line x1="853" y1="735" x2="949" y2="735" />
+        </g>
+
+        <!-- 頂部皇冠斜口與天線 -->
+        <polygon points="882,60 895,46 908,60" fill="#678cae" />
+        <line x1="895" y1="46" x2="895" y2="32" stroke="#486d91" stroke-width="2" />
+        <!-- 頂部航空警示紅燈 -->
+        <circle cx="895" cy="32" r="3" fill="#ff2222" class="anim-antenna-beacon" />
+
+        <!-- [夜間燈光秀]：螺旋流動 LED 霓虹色彩光帶 -->
+        <g class="anim-night-lights">
+          <path d="M 882 60 
+                   C 878 160, 895 280, 908 420 
+                   C 918 540, 930 680, 936 790" 
+                fill="none" stroke="#00f5ff" stroke-width="5" 
+                class="anim-shanghai-spiral" filter="url(#neonGlow)" />
+
+          <path d="M 866 310 
+                   C 876 430, 892 560, 902 790" 
+                fill="none" stroke="#ff00a0" stroke-width="4" 
+                class="anim-shanghai-spiral" filter="url(#neonGlow)" />
+
+          <!-- 頂部皇冠彩色矩陣投光 -->
+          <polygon points="882,60 895,46 908,60" fill="#00e5ff" opacity="0.8" filter="url(#neonGlow)" />
+        </g>
+      </g>
+
+
+      <!-- [B] 上海環球金融中心 (SWFC 開瓶器, x: 645 ~ 820, y: 260 ~ 790) -->
+      <g id="swfc-tower">
+        <!-- 梯形向頂部收斂雙斜切面立體本體 -->
+        <polygon points="656,790 668,360 676,270 796,260 806,350 818,790" 
+                 fill="url(#swfcGrad)" class="anim-day-facade" />
+
+        <!-- 正面幾何斜切對角線稜脊 -->
+        <polygon points="676,270 796,260 746,470 726,790 688,790" 
+                 fill="#88b2db" opacity="0.5" class="anim-day-facade" />
+
+        <!-- 頂部標誌性「梯形風洞 (開瓶器空洞)」 -->
+        <polygon points="706,290 766,285 754,360 716,365" fill="#3a6085" />
+        <!-- 風洞透出天空色 -->
+        <polygon points="710,295 762,290 750,355 720,360" fill="url(#skyGrad)" />
+        <!-- 風洞觀光天橋橫樑 -->
+        <line x1="712" y1="302" x2="758" y2="298" stroke="#ffffff" stroke-width="2.5" opacity="0.8" />
+
+        <!-- [夜間燈光秀]：SWFC 藍白雷射外框與風洞霓虹 -->
+        <g class="anim-night-lights">
+          <!-- 風洞外框純白高光霓虹 -->
+          <polygon points="706,290 766,285 754,360 716,365" 
+                   fill="none" stroke="#ffffff" stroke-width="3" filter="url(#neonGlow)" />
+          <!-- 建築雙側斜脊冰藍光刃 -->
+          <line x1="676" y1="270" x2="656" y2="790" stroke="#38bdf8" stroke-width="3.5" filter="url(#neonGlow)" />
+          <line x1="796" y1="260" x2="818" y2="790" stroke="#38bdf8" stroke-width="3.5" filter="url(#neonGlow)" />
+          <!-- 頂部水準線條燈 -->
+          <line x1="676" y1="270" x2="796" y2="260" stroke="#ffffff" stroke-width="3.5" filter="url(#neonGlow)" />
+        </g>
+      </g>
+
+
+      <!-- [C] 金茂大廈 (Jin Mao Tower 寶塔多層結構, x: 650 ~ 735, y: 310 ~ 790) -->
+      <g id="jinmao-tower">
+        <!-- 16段中式佛塔遞減階梯式剪影本體 -->
+        <!-- 第 1-4 節 (底座寬廣段) -->
+        <rect x="652" y="710" width="76" height="80" fill="url(#jinmaoGrad)" class="anim-day-facade" />
+        <rect x="656" y="640" width="68" height="70" fill="url(#jinmaoGrad)" class="anim-day-facade" />
+        <rect x="660" y="575" width="60" height="65" fill="url(#jinmaoGrad)" class="anim-day-facade" />
+        <!-- 第 5-8 節 (中段收攏) -->
+        <rect x="664" y="515" width="52" height="60" fill="url(#jinmaoGrad)" class="anim-day-facade" />
+        <rect x="668" y="460" width="44" height="55" fill="url(#jinmaoGrad)" class="anim-day-facade" />
+        <rect x="672" y="410" width="36" height="50" fill="url(#jinmaoGrad)" class="anim-day-facade" />
+        <!-- 第 9-13 節 (高空段) -->
+        <rect x="676" y="365" width="28" height="45" fill="url(#jinmaoGrad)" class="anim-day-facade" />
+        <rect x="680" y="330" width="20" height="35" fill="url(#jinmaoGrad)" class="anim-day-facade" />
+        <!-- 塔頂佛塔屋簷與細長金屬避雷針 (x: 690) -->
+        <polygon points="678,330 690,312 702,330" fill="#e8cf9f" />
+        <line x1="690" y1="312" x2="690" y2="278" stroke="#d4af37" stroke-width="2.5" />
+        <!-- 頂端障礙燈 -->
+        <circle cx="690" cy="278" r="2.5" fill="#ff3333" class="anim-antenna-beacon" />
+
+        <!-- 各層階梯突起飛簷線條 -->
+        <g stroke="#ffffff" stroke-width="1.6" opacity="0.5">
+          <line x1="650" y1="710" x2="730" y2="710" />
+          <line x1="654" y1="640" x2="726" y2="640" />
+          <line x1="658" y1="575" x2="722" y2="575" />
+          <line x1="662" y1="515" x2="718" y2="515" />
+          <line x1="666" y1="460" x2="714" y2="460" />
+          <line x1="670" y1="410" x2="710" y2="410" />
+          <line x1="674" y1="365" x2="706" y2="365" />
+        </g>
+
+        <!-- [夜間燈光秀]：金茂大廈全塔盛世金碧輝煌金黃投光 -->
+        <g class="anim-night-lights">
+          <!-- 逐層金光投射輪廓 -->
+          <g fill="none" stroke="#fbbf24" stroke-width="2.8" filter="url(#neonGlow)">
+            <rect x="652" y="710" width="76" height="80" />
+            <rect x="656" y="640" width="68" height="70" />
+            <rect x="660" y="575" width="60" height="65" />
+            <rect x="664" y="515" width="52" height="60" />
+            <rect x="668" y="460" width="44" height="55" />
+            <rect x="672" y="410" width="36" height="50" />
+            <rect x="676" y="365" width="28" height="45" />
+            <rect x="680" y="330" width="20" height="35" />
+            <polygon points="678,330 690,312 702,330" fill="#f59e0b" />
+            <line x1="690" y1="312" x2="690" y2="278" stroke="#fef08a" stroke-width="3" />
+          </g>
+        </g>
+      </g>
+
+
+      <!-- [D] 其他重要配角高樓 (中景與右翼辦公大樓群) -->
+      <g id="surrounding-towers">
+        <!-- 中國銀行大廈等藍色玻璃帷幕大樓 (x: 560 ~ 645, y: 370 ~ 790) -->
+        <rect x="562" y="375" width="86" height="415" fill="#2d5276" class="anim-day-facade" />
+        <rect x="568" y="380" width="74" height="400" fill="#4a769f" class="anim-day-facade" />
+        <!-- 垂直百葉遮陽窗櫺 -->
+        <g stroke="#6ea1cc" stroke-width="1.2" opacity="0.6">
+          <line x1="580" y1="380" x2="580" y2="780" />
+          <line x1="595" y1="380" x2="595" y2="780" />
+          <line x1="610" y1="380" x2="610" y2="780" />
+          <line x1="625" y1="380" x2="625" y2="780" />
+        </g>
+
+        <!-- 金黃圓頂低層塔樓 (SWFC 前方, x: 640 ~ 725, y: 520 ~ 790) -->
+        <rect x="635" y="560" width="78" height="230" fill="#887055" class="anim-day-facade" />
+        <ellipse cx="674" cy="545" rx="34" ry="15" fill="#d4af37" />
+        <path d="M 640 545 Q 674 515 708 545 Z" fill="#bfa034" />
+        <line x1="674" y1="515" x2="674" y2="495" stroke="#d4af37" stroke-width="2" />
+
+        <!-- 右側白色方格現代大廈 (x: 760 ~ 910, y: 570 ~ 790) -->
+        <rect x="760" y="570" width="148" height="220" fill="#f1f5f9" class="anim-day-facade" />
+        <!-- 網格窗陣列 -->
+        <g fill="#334155" opacity="0.8">
+          <rect x="770" y="585" width="16" height="20" />
+          <rect x="795" y="585" width="16" height="20" />
+          <rect x="820" y="585" width="16" height="20" />
+          <rect x="845" y="585" width="16" height="20" />
+          <rect x="870" y="585" width="16" height="20" />
+
+          <rect x="770" y="620" width="16" height="20" />
+          <rect x="795" y="620" width="16" height="20" />
+          <rect x="820" y="620" width="16" height="20" />
+          <rect x="845" y="620" width="16" height="20" />
+          <rect x="870" y="620" width="16" height="20" />
+
+          <rect x="770" y="655" width="16" height="20" />
+          <rect x="795" y="655" width="16" height="20" />
+          <rect x="820" y="655" width="16" height="20" />
+          <rect x="845" y="655" width="16" height="20" />
+          <rect x="870" y="655" width="16" height="20" />
+        </g>
+
+        <!-- 最右側翠綠玻璃大廈 (x: 940 ~ 1000) -->
+        <rect x="945" y="480" width="55" height="310" fill="#2d6a4f" opacity="0.9" class="anim-day-facade" />
+        <rect x="950" y="485" width="45" height="295" fill="#52b788" opacity="0.75" class="anim-day-facade" />
+
+        <!-- 濱江淺綠玻璃長形低樓 (x: 840 ~ 1000, y: 700 ~ 790) -->
+        <rect x="840" y="695" width="160" height="95" fill="#1b4965" />
+        <rect x="860" y="705" width="140" height="55" fill="#48cae4" opacity="0.7" />
+      </g>
+
+
+      <!-- [E] 上海國際會議中心 (Shanghai International Convention Center, x: 130 ~ 670, y: 640 ~ 790) -->
+      <g id="convention-center">
+        <!-- 1. 新古典主義羅馬式立柱長廊主樓 (Colonnade Building, x: 230 ~ 535) -->
+        <rect x="230" y="660" width="305" height="130" fill="#dfd4c4" class="anim-day-facade" />
+        <!-- 頂部古典女兒牆欄杆與飛簷 -->
+        <rect x="225" y="655" width="315" height="9" fill="#c4b59f" />
+        <!-- 玻璃穹頂後照 -->
+        <ellipse cx="380" cy="655" rx="90" ry="16" fill="#6baed6" opacity="0.6" />
+
+        <!-- 11 組羅馬立柱與拱形玻璃長窗 -->
+        <g fill="#203d59">
+          <!-- 拱窗陣列 -->
+          <rect x="245" y="675" width="18" height="95" rx="9" />
+          <rect x="272" y="675" width="18" height="95" rx="9" />
+          <rect x="299" y="675" width="18" height="95" rx="9" />
+          <rect x="326" y="675" width="18" height="95" rx="9" />
+          <rect x="353" y="675" width="18" height="95" rx="9" />
+          <rect x="380" y="675" width="18" height="95" rx="9" />
+          <rect x="407" y="675" width="18" height="95" rx="9" />
+          <rect x="434" y="675" width="18" height="95" rx="9" />
+          <rect x="461" y="675" width="18" height="95" rx="9" />
+          <rect x="488" y="675" width="18" height="95" rx="9" />
+          <rect x="515" y="675" width="14" height="95" rx="7" />
+        </g>
+        <!-- 白色古典支撐立柱 -->
+        <g fill="#f5f0e8" opacity="0.95">
+          <rect x="238" y="664" width="7" height="115" />
+          <rect x="265" y="664" width="7" height="115" />
+          <rect x="292" y="664" width="7" height="115" />
+          <rect x="319" y="664" width="7" height="115" />
+          <rect x="346" y="664" width="7" height="115" />
+          <rect x="373" y="664" width="7" height="115" />
+          <rect x="400" y="664" width="7" height="115" />
+          <rect x="427" y="664" width="7" height="115" />
+          <rect x="454" y="664" width="7" height="115" />
+          <rect x="481" y="664" width="7" height="115" />
+          <rect x="508" y="664" width="7" height="115" />
+        </g>
+
+        <!-- 2. 左側玻璃圓球 (Left Dome, x: 130 ~ 240, center: 185, 715) -->
+        <g id="convention-left-dome">
+          <circle cx="188" cy="710" r="54" fill="#3b82a6" opacity="0.85" />
+          <path d="M 134 710 A 54 54 0 0 1 242 710 Z" fill="#67b2d6" opacity="0.75" />
+          <!-- 測地線幾何玻璃格線 -->
+          <ellipse cx="188" cy="710" rx="54" ry="24" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.6" />
+          <ellipse cx="188" cy="710" rx="54" ry="42" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.6" />
+          <line x1="188" y1="656" x2="188" y2="764" stroke="#ffffff" stroke-width="1.2" opacity="0.6" />
+        </g>
+
+        <!-- 3. 右側標誌性「世界地圖玻璃大球」 (Right Globe, center: 600, 705, r: 65) -->
+        <g id="convention-right-globe">
+          <circle cx="600" cy="705" r="66" fill="url(#globeGrad)" />
+          <!-- 經緯線網格 (Latitude & Longitude) -->
+          <ellipse cx="600" cy="705" rx="66" ry="24" fill="none" stroke="#ffffff" stroke-width="1.3" opacity="0.5" />
+          <ellipse cx="600" cy="705" rx="66" ry="46" fill="none" stroke="#ffffff" stroke-width="1.3" opacity="0.5" />
+          <ellipse cx="600" cy="705" rx="30" ry="66" fill="none" stroke="#ffffff" stroke-width="1.3" opacity="0.5" />
+          <!-- 地圖陸地幾何色塊 (Green continents) -->
+          <path d="M 570 680 Q 590 660 615 675 Q 630 690 610 710 Q 585 715 570 680 Z" fill="#22c55e" opacity="0.75" />
+          <path d="M 610 715 Q 635 705 645 725 Q 630 745 615 735 Z" fill="#22c55e" opacity="0.75" />
+          <path d="M 555 715 Q 575 730 565 745 Q 550 740 555 715 Z" fill="#22c55e" opacity="0.7" />
+
+          <!-- 金屬球體基座底座支架 -->
+          <rect x="545" y="755" width="110" height="35" rx="4" fill="#64748b" />
+          <line x1="550" y1="765" x2="650" y2="765" stroke="#94a3b8" stroke-width="2" />
+        </g>
+
+        <!-- [夜間燈光秀]：會議中心雙球世界地圖矩陣投光與古典廊柱金光 -->
+        <g class="anim-night-lights">
+          <!-- 大球彩色旋轉 LED 燈效 -->
+          <circle cx="600" cy="705" r="66" fill="none" stroke="#10b981" stroke-width="3" 
+                  class="anim-globe-led" opacity="0.9" filter="url(#neonGlow)" />
+          <!-- 左球藍色霓虹 -->
+          <circle cx="188" cy="710" r="54" fill="none" stroke="#00d4ff" stroke-width="2.5" 
+                  opacity="0.8" filter="url(#neonGlow)" />
+          <!-- 羅馬長廊柱底暖黃投光 -->
+          <rect x="230" y="660" width="305" height="130" fill="#f59e0b" opacity="0.25" />
+          <line x1="230" y1="775" x2="535" y2="775" stroke="#fde68a" stroke-width="4" filter="url(#neonGlow)" />
+        </g>
+      </g>
+
+
+      <!-- [F] 東方明珠廣播電視塔 (Oriental Pearl Tower, x: 35 ~ 240, 核心 x: 148, y: 15 ~ 790) -->
+      <g id="oriental-pearl-tower">
+        <!-- 1. 底部三根斜撐巨柱 (Tripod Legs) 與底座小球體 -->
+        <g stroke="#9e3146" stroke-width="12" stroke-linecap="round" class="anim-day-facade">
+          <!-- 左斜撐 -->
+          <line x1="60" y1="785" x2="135" y2="610" />
+          <!-- 右斜撐 -->
+          <line x1="235" y1="785" x2="160" y2="610" />
+          <!-- 中央支撐 -->
+          <line x1="148" y1="785" x2="148" y2="610" stroke-width="16" />
+        </g>
+        <!-- 斜撐底座裝飾球體 (直徑約 20px) -->
+        <circle cx="60" cy="775" r="11" fill="url(#pearlSphereGrad)" />
+        <circle cx="235" cy="775" r="11" fill="url(#pearlSphereGrad)" />
+
+        <!-- 2. 下球體 (Lower Giant Sphere, center: 148, 595, r: 58) -->
+        <g id="pearl-lower-sphere">
+          <circle cx="148" cy="595" r="58" fill="url(#pearlSphereGrad)" />
+          <!-- 幾何幾何三角切面裝飾網格 (Geodesic Triangles) -->
+          <g stroke="#ffa8bd" stroke-width="1" opacity="0.6">
+            <ellipse cx="148" cy="595" rx="58" ry="24" fill="none" />
+            <ellipse cx="148" cy="595" rx="58" ry="44" fill="none" />
+            <ellipse cx="148" cy="595" rx="28" ry="58" fill="none" />
+            <line x1="90" y1="595" x2="206" y2="595" stroke-width="2" />
+          </g>
+          <!-- 觀光層中央窗帶 (Viewing ring) -->
+          <rect x="92" y="591" width="112" height="8" rx="2" fill="#2b0914" />
+          <line x1="94" y1="595" x2="202" y2="595" stroke="#ffe4e6" stroke-width="2.5" />
+        </g>
+
+        <!-- 3. 中央三根主立柱 (3 Central Columns, y: 537 ~ 240) 與五座小球艙 -->
+        <g class="anim-day-facade">
+          <!-- 三根垂直電梯套筒柱 -->
+          <rect x="135" y="240" width="8" height="298" fill="#a8324a" />
+          <rect x="145" y="240" width="7" height="298" fill="#e65573" />
+          <rect x="153" y="240" width="8" height="298" fill="#8a2037" />
+          <!-- 中間柱段點綴之 5 座微型太空艙小球 -->
+          <circle cx="148" cy="500" r="7" fill="url(#pearlSphereGrad)" />
+          <circle cx="148" cy="445" r="7.5" fill="url(#pearlSphereGrad)" />
+          <circle cx="148" cy="390" r="8" fill="url(#pearlSphereGrad)" />
+          <circle cx="148" cy="335" r="8.5" fill="url(#pearlSphereGrad)" />
+          <circle cx="148" cy="280" r="9" fill="url(#pearlSphereGrad)" />
+        </g>
+
+        <!-- 4. 上球體 (Upper Sphere, center: 148, 200, r: 44) -->
+        <g id="pearl-upper-sphere">
+          <circle cx="148" cy="200" r="44" fill="url(#pearlSphereGrad)" />
+          <!-- 切面格線 -->
+          <g stroke="#ffa8bd" stroke-width="1" opacity="0.65">
+            <ellipse cx="148" cy="200" rx="44" ry="18" fill="none" />
+            <ellipse cx="148" cy="200" rx="44" ry="32" fill="none" />
+            <ellipse cx="148" cy="200" rx="22" ry="44" fill="none" />
+          </g>
+          <!-- 旋轉觀景台窗環 (Revolving restaurant deck) -->
+          <rect x="106" y="197" width="84" height="6.5" rx="2" fill="#2b0914" />
+          <line x1="108" y1="200" x2="188" y2="200" stroke="#fff1f2" stroke-width="2" />
+        </g>
+
+        <!-- 5. 頂層太空艙 (Space Capsule, center: 148, 108, r: 15) -->
+        <g id="pearl-space-capsule">
+          <!-- 上球與太空艙之間的柱體 -->
+          <rect x="144" y="122" width="9" height="35" fill="#801b31" />
+          <circle cx="148" cy="108" r="14" fill="url(#pearlSphereGrad)" />
+          <line x1="134" y1="108" x2="162" y2="108" stroke="#ffe4e6" stroke-width="1.8" />
+        </g>
+
+        <!-- 6. 避雷針天線發射塔架 (Antenna Mast, y: 15 ~ 94) -->
+        <g id="pearl-antenna-spire">
+          <!-- 主天線金屬桅杆 (由粗漸細) -->
+          <polygon points="145,94 151,94 149,15 147,15" fill="#e2e8f0" />
+          <!-- 4 組同心圓盤微波天線雷達 -->
+          <line x1="140" y1="80" x2="156" y2="80" stroke="#ffffff" stroke-width="3" />
+          <line x1="142" y1="62" x2="154" y2="62" stroke="#ffffff" stroke-width="2.5" />
+          <line x1="144" y1="46" x2="152" y2="46" stroke="#ffffff" stroke-width="2" />
+          <line x1="145" y1="32" x2="151" y2="32" stroke="#ffffff" stroke-width="2" />
+
+          <!-- 天線頂端航空障礙警示紅燈 (閃爍) -->
+          <circle cx="148" cy="15" r="3.5" fill="#ff0000" class="anim-antenna-beacon" />
+        </g>
+
+        <!-- [夜間燈光秀]：東方明珠璀璨粉紅/洋紅/青藍呼吸霓虹光雕全開 -->
+        <g class="anim-night-lights">
+          <!-- 下球體洋紅巨光 -->
+          <circle cx="148" cy="595" r="58" fill="url(#pearlNightGlow)" 
+                  class="anim-pearl-led" opacity="0.9" />
+          <!-- 上球體粉紫巨光 -->
+          <circle cx="148" cy="200" r="44" fill="url(#pearlNightGlow)" 
+                  class="anim-pearl-led" opacity="0.92" />
+          <!-- 太空艙 -->
+          <circle cx="148" cy="108" r="14" fill="#ff00a0" filter="url(#neonGlow)" />
+
+          <!-- 立柱霓虹流動燈條 (Chasing LED bars) -->
+          <g stroke="#00ffff" stroke-width="3.5" filter="url(#neonGlow)" class="anim-shanghai-spiral">
+            <line x1="135" y1="240" x2="135" y2="538" />
+            <line x1="148" y1="240" x2="148" y2="538" stroke="#ff00d4" />
+            <line x1="161" y1="240" x2="161" y2="538" />
+          </g>
+
+          <!-- 三根斜撐霓虹輪廓 -->
+          <line x1="60" y1="785" x2="135" y2="610" stroke="#ff1493" stroke-width="4.5" filter="url(#neonGlow)" />
+          <line x1="235" y1="785" x2="160" y2="610" stroke="#ff1493" stroke-width="4.5" filter="url(#neonGlow)" />
+          <line x1="148" y1="785" x2="148" y2="610" stroke="#00ffff" stroke-width="4.5" filter="url(#neonGlow)" />
+
+          <!-- 天線雷達發光束 -->
+          <line x1="140" y1="80" x2="156" y2="80" stroke="#ffffff" stroke-width="4" filter="url(#neonGlow)" />
+          <line x1="142" y1="62" x2="154" y2="62" stroke="#ffffff" stroke-width="3.5" filter="url(#neonGlow)" />
+        </g>
+      </g>
+
+
+      <!-- =======================================================
+           LAYER 4: 濱江綠帶與堤岸 (Promenade, Autumn Trees & Embankment)
+      ======================================================= -->
+      <g id="promenade-embankment">
+        <!-- 沿江親水步道石欄與防汛牆 (y: 785 ~ 805) -->
+        <rect x="0" y="785" width="1000" height="20" fill="#94a3b8" />
+        <rect x="0" y="800" width="1000" height="5" fill="#475569" />
+        <line x1="0" y1="785" x2="1000" y2="785" stroke="#cbd5e1" stroke-width="2.5" />
+
+        <!-- 濱江秋季樹冠綠帶 (混雜綠葉、楓紅、金橙，完美還原圖片細節) -->
+        <g id="autumn-trees">
+          <!-- 深綠樹叢 -->
+          <circle cx="270" cy="782" r="14" fill="#2d6a4f" />
+          <circle cx="310" cy="780" r="18" fill="#1b4332" />
+          <circle cx="340" cy="783" r="15" fill="#40916c" />
+          <circle cx="380" cy="781" r="19" fill="#2d6a4f" />
+          <circle cx="430" cy="780" r="17" fill="#1b4332" />
+          <circle cx="490" cy="783" r="16" fill="#40916c" />
+
+          <!-- 秋季楓紅與橘紅樹冠 (特別集中於 600 ~ 870 區段) -->
+          <circle cx="640" cy="780" r="14" fill="#b91c1c" />
+          <circle cx="660" cy="778" r="16" fill="#dc2626" />
+          <circle cx="685" cy="776" r="18" fill="#c2410c" />
+          <circle cx="710" cy="778" r="17" fill="#ea580c" />
+          <circle cx="735" cy="777" r="16" fill="#b91c1c" />
+          <circle cx="760" cy="779" r="18" fill="#991b1b" />
+          <circle cx="785" cy="781" r="16" fill="#ea580c" />
+          <circle cx="810" cy="780" r="15" fill="#dc2626" />
+          <circle cx="835" cy="783" r="14" fill="#b91c1c" />
+          <circle cx="865" cy="782" r="16" fill="#2d6a4f" />
+        </g>
+
+        <!-- 步道路燈 (景觀路燈陣列) -->
+        <g stroke="#ffffff" stroke-width="1.5">
+          <line x1="285" y1="775" x2="285" y2="785" />
+          <line x1="420" y1="775" x2="420" y2="785" />
+          <line x1="560" y1="775" x2="560" y2="785" />
+          <line x1="700" y1="775" x2="700" y2="785" />
+          <line x1="840" y1="775" x2="840" y2="785" />
+        </g>
+        <!-- [夜間燈光秀]：路燈溫暖金黃光球 -->
+        <g class="anim-night-lights" fill="#fef08a" filter="url(#neonGlow)">
+          <circle cx="285" cy="773" r="3.5" />
+          <circle cx="420" cy="773" r="3.5" />
+          <circle cx="560" cy="773" r="3.5" />
+          <circle cx="700" cy="773" r="3.5" />
+          <circle cx="840" cy="773" r="3.5" />
+        </g>
+      </g>
+
+
+      <!-- =======================================================
+           LAYER 5: 黃浦江江面、倒影與船舶 (River, Reflections & Ships)
+      ======================================================= -->
+      <g id="huangpu-river">
+        <!-- 基礎水體 (y: 805 ~ 1000) -->
+        <rect x="0" y="805" width="1000" height="195" fill="url(#riverGrad)" />
+
+        <!-- 江面動態水紋波光 (多層水平微波曲線) -->
+        <g class="anim-wave-shimmer" stroke="#ffffff" stroke-width="1" opacity="0.35">
+          <path d="M 0 820 Q 120 823 250 819 T 500 820 T 750 822 T 1000 819" />
+          <path d="M 0 838 Q 140 842 300 837 T 620 839 T 920 837 T 1000 839" stroke-width="1.3" opacity="0.4" />
+          <path d="M 0 860 Q 180 865 380 858 T 720 862 T 1000 859" stroke-width="1.6" opacity="0.45" />
+          <path d="M 0 890 Q 220 896 460 888 T 840 892 T 1000 889" stroke-width="2" opacity="0.5" />
+          <path d="M 0 930 Q 250 938 520 928 T 920 934 T 1000 930" stroke-width="2.4" opacity="0.55" />
+          <path d="M 0 970 Q 280 979 580 968 T 1000 972" stroke-width="2.8" opacity="0.6" />
+        </g>
+
+        <!-- 倒影圖層 (Reflections): 日夜交替呈現震撼倒影 -->
+        <g id="water-reflections" class="anim-reflection-glow" filter="url(#waterBlur)">
+          <!-- 1. 東方明珠紅寶石巨柱與球體倒影 (x: 100 ~ 190, y: 810 ~ 980) -->
+          <ellipse cx="148" cy="840" rx="36" ry="12" fill="#ff1493" opacity="0.8" />
+          <path d="M 125 820 L 170 820 L 180 960 L 115 960 Z" fill="#ff007f" opacity="0.55" />
+          <ellipse cx="148" cy="910" rx="48" ry="18" fill="#e11d48" opacity="0.65" />
+          <ellipse cx="148" cy="960" rx="32" ry="14" fill="#fb7185" opacity="0.5" />
+
+          <!-- 2. 國際會議中心綠藍大球倒影 (x: 550 ~ 650) -->
+          <ellipse cx="600" cy="850" rx="45" ry="15" fill="#10b981" opacity="0.6" />
+          <ellipse cx="600" cy="900" rx="35" ry="12" fill="#06b6d4" opacity="0.5" />
+
+          <!-- 3. 金茂大廈璀璨金光倒影 (x: 660 ~ 720) -->
+          <path d="M 670 815 L 710 815 L 705 940 L 675 940 Z" fill="#f59e0b" opacity="0.65" />
+
+          <!-- 4. SWFC 與上海中心螺旋霓虹倒影 (x: 750 ~ 940) -->
+          <path d="M 740 815 L 790 815 L 780 920 L 750 920 Z" fill="#38bdf8" opacity="0.6" />
+          <path d="M 865 815 L 935 815 L 925 960 L 875 960 Z" fill="#00f5ff" opacity="0.55" />
+          <ellipse cx="895" cy="870" rx="35" ry="14" fill="#ec4899" opacity="0.5" />
+        </g>
+
+
+        <!-- [G] 航行船舶 (Navigating Vessels) -->
+
+        <!-- 1. 左側觀光遊覽船 (White Cruise Ship, x: 10 ~ 130, y: 805 ~ 835) -->
+        <g id="cruise-ship" class="anim-ship-cruise">
+          <g transform="translate(10, 808)">
+            <!-- 船首白浪 (Bow Wave) -->
+            <path d="M 105 18 Q 120 19 135 23 Q 115 22 95 21" fill="none" stroke="#ffffff" stroke-width="1.8" opacity="0.8" />
+            <!-- 白色雙層船體 (Hull) -->
+            <polygon points="10,14 105,12 115,20 15,22" fill="#ffffff" />
+            <polygon points="15,20 115,20 110,24 20,24" fill="#0284c7" />
+            <!-- 上層觀光甲板客艙 (Cabins) -->
+            <rect x="25" y="4" width="65" height="9" rx="2" fill="#f8fafc" />
+            <!-- 觀光客艙窗戶 -->
+            <g fill="#0f172a">
+              <rect x="30" y="6" width="8" height="5" />
+              <rect x="42" y="6" width="8" height="5" />
+              <rect x="54" y="6" width="8" height="5" />
+              <rect x="66" y="6" width="8" height="5" />
+              <rect x="78" y="6" width="8" height="5" />
+            </g>
+            <!-- 船尾國旗桿 -->
+            <line x1="12" y1="12" x2="12" y2="3" stroke="#94a3b8" stroke-width="1.5" />
+            <polygon points="12,3 4,5 12,7" fill="#ef4444" />
+            <!-- [夜間船舶導航燈] -->
+            <g class="anim-night-lights">
+              <circle cx="112" cy="14" r="2.5" fill="#22c55e" filter="url(#neonGlow)" /> <!-- 右舷綠燈 -->
+              <circle cx="12" cy="5" r="2" fill="#ffffff" filter="url(#neonGlow)" />    <!-- 船尾白燈 -->
+              <rect x="30" y="6" width="56" height="5" fill="#fef08a" opacity="0.9" /> <!-- 客艙暖黃燈火 -->
+            </g>
+          </g>
+        </g>
+
+        <!-- 2. 右側深藍貨運駁船 (Cargo Barge, x: 760 ~ 940, y: 825 ~ 860) -->
+        <g id="cargo-barge" class="anim-barge-drift">
+          <g transform="translate(760, 825)">
+            <!-- 船尾螺旋槳航行尾浪 (Stern Wake) -->
+            <path d="M 0 25 Q -25 24 -50 28 Q -30 29 0 27" fill="none" stroke="#ffffff" stroke-width="2.5" opacity="0.85" />
+            <!-- 低矮深色鋼質貨船船身 (Low Hull) -->
+            <polygon points="0,22 175,20 188,28 0,28" fill="#1e293b" />
+            <line x1="5" y1="21" x2="175" y2="19" stroke="#64748b" stroke-width="1.5" />
+            <!-- 船艉藍色駕駛室座艙 (Blue Wheelhouse) -->
+            <rect x="18" y="10" width="36" height="13" fill="#1d4ed8" />
+            <rect x="22" y="12" width="28" height="5" fill="#bae6fd" />
+            <!-- 駕駛艙頂部雷達桅杆 -->
+            <line x1="36" y1="10" x2="36" y2="2" stroke="#94a3b8" stroke-width="1.5" />
+            <!-- 貨艙防撞輪胎與船員剪影 -->
+            <circle cx="34" cy="7" r="2" fill="#f59e0b" /> <!-- 船員人物 -->
+            <circle cx="65" cy="23" r="2.5" fill="#0f172a" />
+            <circle cx="95" cy="23" r="2.5" fill="#0f172a" />
+            <circle cx="125" cy="23" r="2.5" fill="#0f172a" />
+            <circle cx="155" cy="23" r="2.5" fill="#0f172a" />
+            <!-- [夜間船舶導航燈] -->
+            <g class="anim-night-lights">
+              <circle cx="185" cy="22" r="2.5" fill="#ef4444" filter="url(#neonGlow)" /> <!-- 左舷紅燈 -->
+              <circle cx="36" cy="2" r="2" fill="#ffffff" filter="url(#neonGlow)" />
+              <rect x="22" y="12" width="28" height="5" fill="#fef08a" opacity="0.85" />
+            </g>
+          </g>
+        </g>
+
+        <!-- 3. 紅色江面航標浮標 (Navigation Buoy, x: 955, y: 810) -->
+        <g id="river-buoy" class="anim-buoy-bob">
+          <!-- 浮標錐體 -->
+          <polygon points="951,822 959,822 956,808 954,808" fill="#dc2626" />
+          <rect x="948" y="820" width="14" height="4" rx="2" fill="#991b1b" />
+          <!-- 航標頂部警示閃爍燈 -->
+          <circle cx="955" cy="806" r="2.8" fill="#ff0000" class="anim-beacon-flash" />
+          <!-- 水面漣漪圈 -->
+          <ellipse cx="955" cy="823" rx="8" ry="2.5" fill="none" stroke="#ffffff" stroke-width="0.8" opacity="0.6" />
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 底部懸浮互動控制台 (HUD Dock) -->
+  <div class="hud-dock" id="hud-dock">
+    <!-- 第一列：播放狀態與時間滑桿 -->
+    <div class="hud-row">
+      <div class="control-group">
+        <button class="btn btn-icon active" id="btn-play-pause" title="播放 / 暫停 (Space)">
+          <span id="play-icon">⏸</span>
+        </button>
+      </div>
+
+      <div class="slider-container">
+        <span style="font-size:12px; color:var(--text-muted);">00:00</span>
+        <input type="range" id="time-slider" class="timeline-slider" min="0" max="100" step="0.1" value="37.5">
+        <span style="font-size:12px; color:var(--text-muted);">24:00</span>
+      </div>
+
+      <div class="control-group">
+        <button class="btn" id="btn-speed" title="切換循環速度">1.0x</button>
+      </div>
+    </div>
+
+    <!-- 第二列：預設時段快選與特效開關 -->
+    <div class="hud-row">
+      <div class="control-group">
+        <button class="btn" data-time="15">☀️ 白天 (Day)</button>
+        <button class="btn" data-time="38">🌅 黃昏 (Sunset)</button>
+        <button class="btn" data-time="58">🌙 夜晚 (Night)</button>
+        <button class="btn" data-time="82">🌄 黎明 (Dawn)</button>
+      </div>
+
+      <div class="control-group">
+        <button class="btn active" id="btn-toggle-lights">💡 霓虹光雕</button>
+        <button class="btn active" id="btn-toggle-reflections">🌊 江面波光</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 折疊控制台按鈕 -->
+  <button class="dock-toggle-btn" id="btn-toggle-dock" title="顯示/隱藏控制台">
+    ⚙️
+  </button>
+
+  <!-- =======================================================
+       互動控制邏輯 (JavaScript Controller)
+  ======================================================= -->
+  <script>
+    (function() {
+      // 核心變數
+      let isPlaying = true;
+      let durationSec = 32; // 一天完整循環秒數
+      let currentTimePercent = 37.5; // 當前進度 (0~100%)
+      let lastTimestamp = performance.now();
+      let playbackRate = 1.0;
+
+      // DOM 元素
+      const clockDisplay = document.getElementById('clock-display');
+      const timeSlider = document.getElementById('time-slider');
+      const btnPlayPause = document.getElementById('btn-play-pause');
+      const playIcon = document.getElementById('play-icon');
+      const btnSpeed = document.getElementById('btn-speed');
+      const hudDock = document.getElementById('hud-dock');
+      const btnToggleDock = document.getElementById('btn-toggle-dock');
+      const btnToggleLights = document.getElementById('btn-toggle-lights');
+      const btnToggleReflections = document.getElementById('btn-toggle-reflections');
+      const quickTimeBtns = document.querySelectorAll('button[data-time]');
+
+      // SVG 動畫圖層
+      const nightLights = document.querySelectorAll('.anim-night-lights');
+      const reflections = document.getElementById('water-reflections');
+
+      // 更新時鐘文字 (將 0~100% 映射為 00:00 ~ 23:59)
+      function updateClock(percent) {
+        const totalMinutes = Math.floor((percent / 100) * 1440);
+        const hours = Math.floor(totalMinutes / 60) % 24;
+        const minutes = totalMinutes % 60;
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+        const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+        
+        let phaseLabel = '日間';
+        if (percent >= 30 && percent < 46) phaseLabel = '黃昏';
+        else if (percent >= 46 && percent < 74) phaseLabel = '深夜';
+        else if (percent >= 74 && percent < 90) phaseLabel = '黎明';
+
+        clockDisplay.textContent = `${formattedHours}:${formattedMinutes} ${ampm} (${phaseLabel})`;
+      }
+
+      // 同步 SVG 動畫進度
+      // 透過設置 negative animation-delay，精準控制所有 CSS keyframe 動畫之時間點
+      function syncAnimationTime(percent) {
+        const elapsedSec = (percent / 100) * durationSec;
+        const animatedElements = document.querySelectorAll(
+          '.anim-sky-top, .anim-sky-bottom, .anim-sun-group, .anim-moon-group, ' +
+          '.anim-stars, .anim-night-lights, .anim-day-facade, .anim-river-water, ' +
+          '.anim-reflection-glow'
+        );
+
+        animatedElements.forEach(el => {
+          el.style.animationDelay = `-${elapsedSec}s`;
+          if (!isPlaying) {
+            el.style.animationPlayState = 'paused';
+          } else {
+            el.style.animationPlayState = 'running';
+          }
+        });
+      }
+
+      // 主動畫迴圈
+      function animLoop(now) {
+        const delta = (now - lastTimestamp) / 1000;
+        lastTimestamp = now;
+
+        if (isPlaying) {
+          const increment = (delta / durationSec) * 100 * playbackRate;
+          currentTimePercent = (currentTimePercent + increment) % 100;
+          timeSlider.value = currentTimePercent;
+          updateClock(currentTimePercent);
+          syncAnimationTime(currentTimePercent);
+        }
+
+        requestAnimationFrame(animLoop);
+      }
+
+      // 滑桿事件 (手動拖曳時間)
+      timeSlider.addEventListener('input', (e) => {
+        currentTimePercent = parseFloat(e.target.value);
+        updateClock(currentTimePercent);
+        syncAnimationTime(currentTimePercent);
+      });
+
+      // 播放 / 暫停切換
+      function togglePlayPause() {
+        isPlaying = !isPlaying;
+        playIcon.textContent = isPlaying ? '⏸' : '▶';
+        btnPlayPause.classList.toggle('active', isPlaying);
+        syncAnimationTime(currentTimePercent);
+      }
+      btnPlayPause.addEventListener('click', togglePlayPause);
+
+      // 速度切換 (1x -> 2x -> 4x -> 0.5x)
+      const speeds = [1.0, 2.0, 4.0, 0.5];
+      let speedIdx = 0;
+      btnSpeed.addEventListener('click', () => {
+        speedIdx = (speedIdx + 1) % speeds.length;
+        playbackRate = speeds[speedIdx];
+        btnSpeed.textContent = `${playbackRate}x`;
+      });
+
+      // 快速時段按鈕
+      quickTimeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetTime = parseFloat(btn.getAttribute('data-time'));
+          currentTimePercent = targetTime;
+          timeSlider.value = targetTime;
+          updateClock(targetTime);
+          syncAnimationTime(targetTime);
+        });
+      });
+
+      // 特效開關
+      let lightsEnabled = true;
+      btnToggleLights.addEventListener('click', () => {
+        lightsEnabled = !lightsEnabled;
+        btnToggleLights.classList.toggle('active', lightsEnabled);
+        nightLights.forEach(el => {
+          el.style.display = lightsEnabled ? '' : 'none';
+        });
+      });
+
+      let reflectionsEnabled = true;
+      btnToggleReflections.addEventListener('click', () => {
+        reflectionsEnabled = !reflectionsEnabled;
+        btnToggleReflections.classList.toggle('active', reflectionsEnabled);
+        if (reflections) {
+          reflections.style.display = reflectionsEnabled ? '' : 'none';
+        }
+      });
+
+      // 收合 HUD Dock
+      btnToggleDock.addEventListener('click', () => {
+        hudDock.classList.toggle('minimized');
+      });
+
+      // 鍵盤快捷鍵 (Space: 暫停/播放, ArrowLeft/Right: 微調時間)
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          togglePlayPause();
+        } else if (e.code === 'ArrowRight') {
+          currentTimePercent = (currentTimePercent + 2) % 100;
+          timeSlider.value = currentTimePercent;
+          updateClock(currentTimePercent);
+          syncAnimationTime(currentTimePercent);
+        } else if (e.code === 'ArrowLeft') {
+          currentTimePercent = (currentTimePercent - 2 + 100) % 100;
+          timeSlider.value = currentTimePercent;
+          updateClock(currentTimePercent);
+          syncAnimationTime(currentTimePercent);
+        }
+      });
+
+      // 初始化啟動
+      updateClock(currentTimePercent);
+      syncAnimationTime(currentTimePercent);
+      requestAnimationFrame(animLoop);
+    })();
+  </script>
+</body>
+</html>
