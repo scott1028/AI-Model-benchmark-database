@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shanghai Skyline Day-Night Animation</title>
+    <style>
+        :root {
+            --day-sky-top: #4facfe;
+            --day-sky-bottom: #00f2fe;
+            --night-sky-top: #020024;
+            --night-sky-bottom: #090979;
+            --day-water: #3a7bd5;
+            --day-water-bottom: #00d2ff;
+            --night-water: #000c24;
+            --night-water-bottom: #001a33;
+            --transition-duration: 20s;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: sans-serif;
+        }
+
+        .canvas {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 1200px;
+            max-height: 800px;
+            background: #000;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Animation Definitions */
+        @keyframes skyCycle {
+            0%, 100% { stop-color: var(--day-sky-top); }
+            50% { stop-color: var(--night-sky-top); }
+        }
+        @keyframes skyCycleBottom {
+            0%, 100% { stop-color: var(--day-sky-bottom); }
+            50% { stop-color: var(--night-sky-bottom); }
+        }
+        @keyframes waterCycle {
+            0%, 100% { fill: var(--day-water); }
+            50% { fill: var(--night-water); }
+        }
+        @keyframes waterCycleBottom {
+            0%, 100% { stop-color: var(--day-water-bottom); }
+            50% { stop-color: var(--night-water-bottom); }
+        }
+        @keyframes celestialPath {
+            0% { transform: translate(-100px, 100px); }
+            25% { transform: translate(400px, 50px); }
+            50% { transform: translate(800px, 100px); }
+            75% { transform: translate(400px, 600px); }
+            100% { transform: translate(-100px, 100px); }
+        }
+        @keyframes celestialColor {
+            0%, 100% { fill: #FFD700; r: 45; filter: url(#sun-glow); }
+            50% { fill: #fdfdfd; r: 38; filter: url(#moon-glow); }
+        }
+        @keyframes lightUp {
+            0%, 20%, 80%, 100% { opacity: 0; }
+            40%, 60% { opacity: 1; }
+        }
+        @keyframes buildingFill {
+            0%, 100% { fill: #B0C4DE; }
+            50% { fill: #050510; }
+        }
+
+        #sky-top { animation: skyCycle var(--transition-duration) infinite ease-in-out; }
+        #sky-bottom { animation: skyCycleBottom var(--transition-duration) infinite ease-in-out; }
+        #water { animation: waterCycle var(--transition-duration) infinite ease-in-out; }
+        #water-grad-top { animation: waterCycle var(--transition-duration) infinite ease-in-out; }
+        #water-grad-bottom { animation: waterCycleBottom var(--transition-duration) infinite ease-in-out; }
+        
+        #celestial-group { animation: celestialPath var(--transition-duration) infinite linear; }
+        #sun-moon { animation: celestialColor var(--transition-duration) infinite ease-in-out; }
+        
+        .window {
+            fill: #FFFFB0;
+            animation: lightUp var(--transition-duration) infinite ease-in-out;
+        }
+        .building {
+            animation: buildingFill var(--transition-duration) infinite ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas">
+        <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="sky-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop id="sky-top" offset="0%" stop-color="var(--day-sky-top)" />
+                    <stop id="sky-bottom" offset="100%" stop-color="var(--day-sky-bottom)" />
+                </linearGradient>
+                
+                <linearGradient id="water-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop id="water-grad-top" offset="0%" stop-color="var(--day-water)" />
+                    <stop id="water-grad-bottom" offset="100%" stop-color="var(--day-water-bottom)" />
+                </linearGradient>
+
+                <filter id="sun-glow" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur stdDeviation="10" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+                <filter id="moon-glow" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+            </defs>
+
+            <!-- Sky Background -->
+            <rect x="0" y="0" width="1200" height="650" fill="url(#sky-grad)" />
+
+            <!-- Celestial Body (Sun/Moon) -->
+            <g id="celestial-group">
+                <circle id="sun-moon" cx="0" cy="0" r="45" fill="#FFD700" />
+            </g>
+
+            <!-- Water -->
+            <rect id="water" x="0" y="650" width="1200" height="150" fill="url(#water-grad)" />
+
+            <!-- City Skyline -->
+            <g transform="translate(0, 0)">
+                <!-- Generic Background Buildings -->
+                <rect class="building" x="100" y="480" width="50" height="170" />
+                <rect class="building" x="160" y="500" width="40" height="150" />
+                <rect class="building" x="210" y="460" width="60" height="190" />
+                <rect class="building" x="750" y="440" width="70" height="210" />
+                <rect class="building" x="830" y="470" width="50" height="180" />
+                <rect class="building" x="890" y="450" width="60" height="200" />
+
+                <!-- Shanghai Tower (Spiral) -->
+                <g transform="translate(680, 0)">
+                    <path class="building" d="M0 650 Q30 400 20 120 Q60 100 70 120 Q80 400 110 650 Z" />
+                    <g class="windows">
+                        <path class="window" d="M20 600 Q30 400 20 200" fill="none" stroke="#FFFFB0" stroke-width="0.5" stroke-dasharray="2 2" />
+                        <path class="window" d="M40 600 Q50 400 40 200" fill="none" stroke="#FFFFB0" stroke-width="0.5" stroke-dasharray="2 2" />
+                        <path class="window" d="M60 600 Q70 400 60 200" fill="none" stroke="#FFFFB0" stroke-width="0.5" stroke-dasharray="2 2" />
+                    </g>
+                </g>
+
+                <!-- SWFC (Bottle Opener) -->
+                <g transform="translate(550, 0)">
+                    <path class="building" d="M0 650 L0 280 L20 280 L20 240 L80 240 L80 280 L100 280 L100 650 Z" />
+                    <g class="windows">
+                        <rect class="window" x="10" y="290" width="2" height="2" />
+                        <rect class="window" x="10" y="310" width="2" height="2" />
+                        <rect class="window" x="90" y="290" width="2" height="2" />
+                        <rect class="window" x="90" y="310" width="2" height="2" />
+                    </g>
+                </g>
+
+                <!-- Jin Mao Tower -->
+                <g transform="translate(470, 0)">
+                    <path class="building" d="M0 650 L0 320 L10 310 L40 310 L50 320 L50 650 Z" />
+                    <path class="building" d="M10 320 L10 260 L20 250 L40 250 L50 260 L50 320 Z" />
+                    <path class="building" d="M20 260 L20 210 L30 200 L40 200 L50 210 L50 260 Z" />
+                    <g class="windows">
+                        <rect class="window" x="25" y="220" width="10" height="2" />
+                        <rect class="window" x="25" y="240" width="10" height="2" />
+                        <rect class="window" x="25" y="280" width="10" height="2" />
+                    </g>
+                </g>
+
+                <!-- Oriental Pearl Tower -->
+                <g transform="translate(180, 0)">
+                    <rect class="building" x="-4" y="220" width="8" height="430" />
+                    <circle class="building" cx="0" cy="590" r="32" />
+                    <circle class="building" cx="0" cy="460" r="42" />
+                    <circle class="building" cx="0" cy="330" r="28" />
+                    <rect class="building" x="-2" y="160" width="4" height="60" />
+                    <circle class="building" cx="0" cy="160" r="10" />
+                    
+                    <g class="windows">
+                        <circle class="window" cx="0" cy="590" r="6" />
+                        <circle class="window" cx="0" cy="460" r="8" />
+                        <circle class="window" cx="0" cy="330" r="5" />
+                    </g>
+                </g>
+            </g>
+
+            <!-- Water Reflections -->
+            <g opacity="0.4" filter="url(#water-glow)">
+                <rect class="window" x="170" y="660" width="20" height="4" rx="2" />
+                <rect class="window" x="470" y="660" width="50" height="4" rx="2" />
+                <rect class="window" x="550" y="660" width="100" height="4" rx="2" />
+                <rect class="window" x="680" y="660" width="110" height="4" rx="2" />
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
