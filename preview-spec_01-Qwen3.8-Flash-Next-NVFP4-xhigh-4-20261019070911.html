@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview spec 01 — Tuscany Day/Night — SVG infinite loop</title>
+<style>
+  :root { --cycle: 60s; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: #0b0e15; overflow: hidden; }
+  body { display: grid; place-items: center; }
+  svg.stage { width: 100vw; height: 100vh; display: block; }
+  .caption {
+    position: fixed; left: 14px; bottom: 10px; z-index: 2;
+    font: 11px/1.5 ui-monospace, monospace; color: #8a93a6; opacity: .75;
+    pointer-events: none; user-select: none;
+  }
+
+  /* ============ master day/night timeline (60s loop) ============
+     phases: 0-14% golden day | 14-24% noon | 24-34% sunset
+             34-40% dusk | 40-64% night | 64-72% dawn | 72-100% sunrise->golden */
+  .m { animation-duration: var(--cycle); animation-iteration-count: infinite; animation-timing-function: linear; }
+
+  #sky-day     { animation-name: skyDay; }
+  #sky-sunset  { animation-name: skySunset; }
+  #sky-twilight{ animation-name: skyTwilight; }
+  #sky-night   { animation-name: skyNight; }
+  #stars       { animation-name: starsFade; }
+  #sun         { animation-name: sunTrack; }
+  #moon        { animation-name: moonTrack; }
+  #land-dark   { animation-name: landDark; }
+  #land-warm   { animation-name: landWarm; }
+  #lights      { animation-name: lightsFade; }
+  #fireflies   { animation-name: lightsFade; }
+  #lamps       { animation-name: lightsFade; }
+  #birds       { animation-name: birdsFade; }
+  #sun-glint   { animation-name: landWarm; }
+  #balloon     { animation-name: balloonDark; }
+  #clouds      { animation-name: cloudsLight; }
+  #moon-glint  { animation-name: lightsFade; }
+
+  @keyframes skyDay {
+    0%, 22%   { opacity: 1; }
+    36%, 66%  { opacity: 0; }
+    74%       { opacity: .92; }
+    80%, 100% { opacity: 1; }
+  }
+  @keyframes skySunset {
+    0%, 16%   { opacity: 0; }
+    30%, 34%  { opacity: 1; }
+    42%, 60%  { opacity: 0; }
+    68%       { opacity: 1; }
+    78%, 100% { opacity: 0; }
+  }
+  @keyframes skyTwilight {
+    0%, 30%   { opacity: 0; }
+    37%       { opacity: 1; }
+    44%, 60%  { opacity: 0; }
+    65%       { opacity: 1; }
+    72%, 100% { opacity: 0; }
+  }
+  @keyframes skyNight {
+    0%, 36%   { opacity: 0; }
+    44%, 64%  { opacity: 1; }
+    70%, 100% { opacity: 0; }
+  }
+  @keyframes starsFade {
+    0%, 34%   { opacity: 0; }
+    42%, 66%  { opacity: 1; }
+    74%, 100% { opacity: 0; }
+  }
+  @keyframes sunTrack {
+    0%        { transform: translate(258px, 98px); opacity: 1; }
+    24%       { transform: translate(352px, 62px); opacity: 1; }
+    34%       { transform: translate(462px, 252px); opacity: 1; }
+    40%, 64%  { transform: translate(512px, 335px); opacity: 0; }
+    70%       { transform: translate(160px, 300px); opacity: 0; }
+    72%       { transform: translate(190px, 225px); opacity: 1; }
+    82%       { transform: translate(232px, 128px); opacity: 1; }
+    100%      { transform: translate(258px, 98px); opacity: 1; }
+  }
+  @keyframes moonTrack {
+    0%, 36%   { transform: translate(180px, 320px); opacity: 0; }
+    40%       { transform: translate(300px, 258px); opacity: 0; }
+    44%       { transform: translate(390px, 150px); opacity: 1; }
+    54%       { transform: translate(760px, 80px);  opacity: 1; }
+    62%       { transform: translate(1075px, 108px); opacity: 1; }
+    66%, 100% { transform: translate(1215px, 210px); opacity: 0; }
+  }
+  @keyframes landDark {
+    0%, 22%   { opacity: 0; }
+    30%       { opacity: .14; }
+    36%       { opacity: .30; }
+    44%, 62%  { opacity: .48; }
+    68%       { opacity: .26; }
+    74%       { opacity: .08; }
+    80%, 100% { opacity: 0; }
+  }
+  @keyframes landWarm {
+    0%, 14%   { opacity: 0; }
+    28%       { opacity: .28; }
+    34%       { opacity: .22; }
+    42%, 60%  { opacity: 0; }
+    67%       { opacity: .24; }
+    76%, 100% { opacity: 0; }
+  }
+  @keyframes lightsFade {
+    0%, 28%   { opacity: 0; }
+    40%, 64%  { opacity: 1; }
+    74%, 100% { opacity: 0; }
+  }
+  @keyframes birdsFade {
+    0%, 26%   { opacity: 1; }
+    34%, 68%  { opacity: 0; }
+    76%, 100% { opacity: 1; }
+  }
+  @keyframes balloonDark {
+    0%, 24%   { filter: brightness(1); }
+    30%       { filter: brightness(.95) saturate(1.15); }
+    42%, 62%  { filter: brightness(.42) saturate(.7); }
+    70%       { filter: brightness(.8); }
+    78%, 100% { filter: brightness(1); }
+  }
+  @keyframes cloudsLight {
+    0%, 20%   { filter: brightness(1.02); }
+    30%       { filter: brightness(1.06) saturate(1.35); }
+    44%, 62%  { filter: brightness(.32) saturate(.5); }
+    68%       { filter: brightness(.9); }
+    76%, 100% { filter: brightness(1.02); }
+  }
+
+  /* ---- local loops (independent of master cycle) ---- */
+  #sun-halo   { animation: haloPulse 6s ease-in-out infinite alternate; }
+  #sun-rays   { animation: raysSpin 140s linear infinite; transform-origin: 0 0; }
+  .cloudA     { animation: driftA 90s ease-in-out infinite alternate; }
+  .cloudB     { animation: driftB 120s ease-in-out infinite alternate; }
+  .tw         { animation: twinkle 2.6s ease-in-out infinite alternate; }
+  .shoot      { animation: shoot 11s linear infinite; opacity: 0; }
+  .glint      { animation: glint 4.2s ease-in-out infinite alternate; }
+  .flick      { animation: flicker 3.1s ease-in-out infinite alternate; }
+  #balloon-bob{ animation: bob 7s ease-in-out infinite alternate; }
+  #birds-fly  { animation: flyBy 240s linear infinite; }
+  .bird       { animation: flap .7s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+  .ff         { animation: ffBlink 2.2s ease-in-out infinite alternate; }
+
+  @keyframes haloPulse { from { transform: scale(1); } to { transform: scale(1.07); } }
+  @keyframes raysSpin  { to { transform: rotate(360deg); } }
+  @keyframes driftA    { to { transform: translateX(46px); } }
+  @keyframes driftB    { to { transform: translateX(-52px); } }
+  @keyframes twinkle   { from { opacity: 1; } to { opacity: .2; } }
+  @keyframes shoot {
+    0%   { transform: translate(0, 0); opacity: 0; }
+    3%   { opacity: 1; }
+    10%  { transform: translate(230px, 96px); opacity: 0; }
+    100% { transform: translate(230px, 96px); opacity: 0; }
+  }
+  @keyframes glint   { from { opacity: .28; } to { opacity: .75; } }
+  @keyframes flicker { from { opacity: 1; } to { opacity: .68; } }
+  @keyframes bob     { to { transform: translateY(10px); } }
+  @keyframes flyBy   { from { transform: translateX(-60px); } to { transform: translateX(70px); } }
+  @keyframes flap    { to { transform: scaleY(.55); } }
+  @keyframes ffBlink { from { opacity: .15; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+<svg class="stage" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Tuscan panorama with infinite day night cycle">
+  <defs>
+    <linearGradient id="gDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ba4cc"/>
+      <stop offset=".42" stop-color="#a9c3d8"/>
+      <stop offset=".76" stop-color="#e9d4ae"/>
+      <stop offset="1" stop-color="#f6c98a"/>
+    </linearGradient>
+    <linearGradient id="gSunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#65699f"/>
+      <stop offset=".35" stop-color="#b0708f"/>
+      <stop offset=".7" stop-color="#e8895a"/>
+      <stop offset="1" stop-color="#ffc46e"/>
+    </linearGradient>
+    <linearGradient id="gTwilight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f2752"/>
+      <stop offset=".45" stop-color="#514a7b"/>
+      <stop offset=".8" stop-color="#9c6a86"/>
+      <stop offset="1" stop-color="#d9906f"/>
+    </linearGradient>
+    <linearGradient id="gNight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#04081f"/>
+      <stop offset=".45" stop-color="#0c1640"/>
+      <stop offset=".8" stop-color="#1d2c5e"/>
+      <stop offset="1" stop-color="#36447e"/>
+    </linearGradient>
+    <linearGradient id="gHaze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2d9ae" stop-opacity="0"/>
+      <stop offset="1" stop-color="#f2c98d" stop-opacity=".65"/>
+    </linearGradient>
+    <radialGradient id="gSunGlow">
+      <stop offset="0" stop-color="#fff8d8" stop-opacity=".95"/>
+      <stop offset=".38" stop-color="#ffe9a0" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ffd97a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gMoonGlow">
+      <stop offset="0" stop-color="#e8f0ff" stop-opacity=".8"/>
+      <stop offset=".4" stop-color="#bdcdf2" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#9db0e0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gVignette" cx=".5" cy=".46" r=".75">
+      <stop offset=".62" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#241a10" stop-opacity=".34"/>
+    </radialGradient>
+    <radialGradient id="gLamp">
+      <stop offset="0" stop-color="#ffdf9a" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#ffb24d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0cf92"/>
+      <stop offset=".3" stop-color="#c7a377"/>
+      <stop offset=".65" stop-color="#7e93a4"/>
+      <stop offset="1" stop-color="#587690"/>
+    </linearGradient>
+    <linearGradient id="gMilky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9fb4e8" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#c3d0f2" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#9fb4e8" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="fBlur3" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="fBlur6" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="fRefl" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+  </defs>
+
+  <!-- ================= SKY ================= -->
+  <rect id="sky-day" class="m" x="0" y="0" width="1280" height="720" fill="url(#gDay)"/>
+  <rect id="sky-sunset" class="m" x="0" y="0" width="1280" height="720" fill="url(#gSunset)" opacity="0"/>
+  <rect id="sky-twilight" class="m" x="0" y="0" width="1280" height="720" fill="url(#gTwilight)" opacity="0"/>
+  <rect id="sky-night" class="m" x="0" y="0" width="1280" height="720" fill="url(#gNight)" opacity="0"/>
+
+  <!-- ================= STARS ================= -->
+  <g id="stars" class="m" opacity="0">
+    <ellipse cx="760" cy="130" rx="520" ry="90" fill="url(#gMilky)" opacity=".55" filter="url(#fBlur6)" transform="rotate(-14 760 130)"/>
+    <g fill="#ffffff">
+      <circle class="tw" cx="60" cy="42" r="1.2"/><circle cx="118" cy="96" r="0.9" opacity=".8"/>
+      <circle class="tw" cx="170" cy="30" r="1.5"/><circle cx="205" cy="150" r="0.8" opacity=".7"/>
+      <circle cx="255" cy="66" r="1" opacity=".9"/><circle class="tw" cx="310" cy="24" r="1.1"/>
+      <circle cx="352" cy="118" r="1.4" opacity=".85"/><circle cx="398" cy="52" r="0.8" opacity=".7"/>
+      <circle class="tw" cx="444" cy="140" r="1.2"/><circle cx="486" cy="30" r="1" opacity=".9"/>
+      <circle cx="520" cy="88" r="1.6" opacity=".9"/><circle class="tw" cx="566" cy="168" r="0.9"/>
+      <circle cx="608" cy="46" r="1.1" opacity=".8"/><circle cx="650" cy="110" r="0.8" opacity=".65"/>
+      <circle class="tw" cx="700" cy="28" r="1.3"/><circle cx="742" cy="74" r="1" opacity=".85"/>
+      <circle cx="788" cy="152" r="1.5" opacity=".9"/><circle cx="826" cy="40" r="0.9" opacity=".7"/>
+      <circle class="tw" cx="872" cy="98" r="1.2"/><circle cx="915" cy="20" r="1" opacity=".85"/>
+      <circle cx="952" cy="132" r="0.8" opacity=".6"/><circle class="tw" cx="998" cy="60" r="1.4"/>
+      <circle cx="1040" cy="110" r="1" opacity=".8"/><circle cx="1084" cy="34" r="1.2" opacity=".9"/>
+      <circle class="tw" cx="1126" cy="160" r="0.9"/><circle cx="1168" cy="70" r="1.3" opacity=".85"/>
+      <circle cx="1214" cy="120" r="0.8" opacity=".7"/><circle class="tw" cx="1252" cy="44" r="1.5"/>
+      <circle cx="88" cy="190" r="0.8" opacity=".6"/><circle cx="238" cy="208" r="1" opacity=".7"/>
+      <circle class="tw" cx="420" cy="196" r="1.1"/><circle cx="640" cy="204" r="0.9" opacity=".75"/>
+      <circle cx="850" cy="186" r="1.2" opacity=".8"/><circle class="tw" cx="1062" cy="198" r="1"/>
+      <circle cx="1190" cy="210" r="0.8" opacity=".65"/><circle cx="332" cy="84" r="0.7" opacity=".6"/>
+      <circle cx="674" cy="140" r="0.7" opacity=".6"/><circle cx="930" cy="170" r="0.7" opacity=".55"/>
+    </g>
+    <g fill="#dfe8ff" opacity=".95">
+      <path class="tw" d="M150 60 l1.6 4.6 4.6 1.6 -4.6 1.6 -1.6 4.6 -1.6 -4.6 -4.6 -1.6 4.6 -1.6 z" style="animation-delay:.8s"/>
+      <path class="tw" d="M540 40 l1.8 5.2 5.2 1.8 -5.2 1.8 -1.8 5.2 -1.8 -5.2 -5.2 -1.8 5.2 -1.8 z" style="animation-delay:1.6s"/>
+      <path class="tw" d="M960 84 l1.6 4.6 4.6 1.6 -4.6 1.6 -1.6 4.6 -1.6 -4.6 -4.6 -1.6 4.6 -1.6 z" style="animation-delay:.4s"/>
+      <path class="tw" d="M1120 40 l1.4 4 4 1.4 -4 1.4 -1.4 4 -1.4 -4 -4 -1.4 4 -1.4 z" style="animation-delay:2s"/>
+    </g>
+    <g class="shoot" transform="translate(0 0)">
+      <path d="M300 60 l34 15" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".9"/>
+      <circle cx="334" cy="75" r="1.4" fill="#fff"/>
+    </g>
+    <g class="shoot" style="animation-delay:5.5s">
+      <path d="M760 36 l30 14" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>
+      <circle cx="790" cy="50" r="1.2" fill="#fff"/>
+    </g>
+  </g>
+
+  <!-- ================= MOON ================= -->
+  <g id="moon" class="m" opacity="0">
+    <circle cx="0" cy="0" r="70" fill="url(#gMoonGlow)"/>
+    <circle cx="0" cy="0" r="26" fill="#eef2e4"/>
+    <circle cx="-8" cy="-7" r="4.5" fill="#d6dcc8" opacity=".8"/>
+    <circle cx="7" cy="4" r="6" fill="#d6dcc8" opacity=".7"/>
+    <circle cx="-3" cy="11" r="2.6" fill="#d6dcc8" opacity=".75"/>
+    <circle cx="12" cy="-10" r="2.2" fill="#d6dcc8" opacity=".6"/>
+    <circle cx="-15" cy="8" r="2" fill="#cfd5c0" opacity=".6"/>
+  </g>
+
+  <!-- ================= SUN ================= -->
+  <g id="sun" class="m">
+    <g id="sun-rays" opacity=".22">
+      <g fill="#fff3c0">
+        <path d="M0 -34 L4 -108 L-4 -108 Z"/><path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(30)"/>
+        <path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(60)"/><path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(90)"/>
+        <path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(120)"/><path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(150)"/>
+        <path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(180)"/><path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(210)"/>
+        <path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(240)"/><path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(270)"/>
+        <path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(300)"/><path d="M0 -34 L4 -108 L-4 -108 Z" transform="rotate(330)"/>
+      </g>
+    </g>
+    <g id="sun-halo"><circle cx="0" cy="0" r="110" fill="url(#gSunGlow)"/></g>
+    <circle cx="0" cy="0" r="52" fill="#fff6d0"/>
+    <circle cx="0" cy="0" r="44" fill="#fffdf0"/>
+  </g>
+
+  <!-- ================= CLOUDS ================= -->
+  <g id="clouds" class="m">
+    <g class="cloudA" fill="#fff5e6">
+      <g opacity=".92">
+        <ellipse cx="180" cy="140" rx="72" ry="22"/><ellipse cx="240" cy="126" rx="58" ry="20"/>
+        <ellipse cx="120" cy="128" rx="44" ry="15"/><ellipse cx="205" cy="152" rx="86" ry="14" fill="#ffdcae"/>
+      </g>
+      <g opacity=".8">
+        <ellipse cx="1090" cy="102" rx="66" ry="16"/><ellipse cx="1150" cy="92" rx="46" ry="13"/>
+        <ellipse cx="1225" cy="108" rx="52" ry="12"/><ellipse cx="1130" cy="112" rx="80" ry="10" fill="#ffdcae"/>
+      </g>
+    </g>
+    <g class="cloudB" fill="#fdf0dd">
+      <g opacity=".9">
+        <ellipse cx="700" cy="168" rx="80" ry="18"/><ellipse cx="770" cy="156" rx="56" ry="15"/>
+        <ellipse cx="640" cy="158" rx="44" ry="12"/><ellipse cx="710" cy="180" rx="96" ry="11" fill="#ffcf9d"/>
+      </g>
+      <g opacity=".72">
+        <ellipse cx="920" cy="212" rx="64" ry="12"/><ellipse cx="975" cy="204" rx="40" ry="10"/>
+        <ellipse cx="940" cy="220" rx="72" ry="8" fill="#ffcf9d"/>
+      </g>
+      <g opacity=".6">
+        <ellipse cx="420" cy="200" rx="52" ry="9"/><ellipse cx="470" cy="194" rx="34" ry="8"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- horizon haze -->
+  <rect x="0" y="215" width="1280" height="130" fill="url(#gHaze)" opacity=".8"/>
+
+  <!-- ================= LANDSCAPE (below this line is layered) ================= -->
+  <!-- far mountains, hazy layers -->
+  <g id="mountains">
+    <path d="M0,306 L88,280 L168,264 L238,288 L330,270 L418,292 L520,264 L600,256 L700,286 L782,272 L862,258 L950,246 L1055,232 L1132,258 L1212,248 L1280,260 L1280,342 L0,342 Z" fill="#8ea4bf" opacity=".85"/>
+    <path d="M1055,232 L1132,258 L1212,248 L1280,260 L1280,342 L1010,342 Z" fill="#8299b5" opacity=".8"/>
+    <path d="M0,324 L80,302 L162,316 L252,298 L342,314 L432,292 L522,310 L612,296 L702,308 L792,292 L882,302 L982,274 L1072,294 L1162,284 L1280,298 L1280,364 L0,364 Z" fill="#7a90ae"/>
+    <path d="M982,274 L1072,294 L1120,288 L1008,318 L942,300 Z" fill="#6f86a6" opacity=".7"/>
+  </g>
+  <!-- rolling green hills -->
+  <g id="hills">
+    <path d="M0,338 Q140,310 300,332 T620,328 T940,320 T1280,338 L1280,430 L0,430 Z" fill="#93a874"/>
+    <path d="M0,368 Q180,340 380,362 T760,354 T1100,346 L1280,362 L1280,458 L0,458 Z" fill="#88a06b"/>
+    <path d="M0,398 Q220,370 460,394 T900,386 T1280,402 L1280,486 L0,486 Z" fill="#7c9560"/>
+    <!-- olive grove speckles on mid hills -->
+    <g fill="#6d8754" opacity=".65">
+      <circle cx="640" cy="384" r="4"/><circle cx="668" cy="392" r="3.4"/><circle cx="700" cy="382" r="3"/>
+      <circle cx="732" cy="394" r="4"/><circle cx="612" cy="398" r="3"/><circle cx="764" cy="386" r="3.4"/>
+      <circle cx="560" cy="404" r="3"/><circle cx="820" cy="396" r="3.6"/><circle cx="880" cy="402" r="3"/>
+    </g>
+  </g>
+
+  <!-- right vineyard hill -->
+  <g id="vineyard-hill">
+    <path d="M792,364 Q940,318 1090,340 Q1204,356 1280,372 L1280,568 L900,528 Q806,458 792,364 Z" fill="#7f9a5e"/>
+    <path d="M792,364 Q940,318 1090,340 Q1010,372 900,404 Q840,412 792,364 Z" fill="#8aa566"/>
+    <g stroke="#5d7a44" stroke-width="3" stroke-dasharray="9 6" fill="none" opacity=".8">
+      <path d="M842,414 Q990,382 1276,398"/>
+      <path d="M848,428 Q996,396 1276,412"/>
+      <path d="M854,442 Q1002,410 1276,426"/>
+      <path d="M862,456 Q1008,426 1276,440"/>
+      <path d="M870,470 Q1016,442 1276,455"/>
+      <path d="M880,485 Q1024,458 1276,470"/>
+      <path d="M892,500 Q1034,474 1276,486"/>
+      <path d="M906,515 Q1046,492 1276,502"/>
+    </g>
+    <g stroke="#6b7f52" stroke-width="2" opacity=".5">
+      <path d="M960,382 L982,522" fill="none"/>
+      <path d="M1100,376 L1116,502" fill="none"/>
+      <path d="M1210,388 L1222,498" fill="none"/>
+    </g>
+  </g>
+
+  <!-- left hill with villa and tower -->
+  <g id="left-villa">
+    <path d="M0,356 Q90,332 210,350 L210,392 L0,392 Z" fill="#8ba26f"/>
+    <rect x="70" y="328" width="36" height="26" fill="#f2e8d2"/>
+    <path d="M66,328 L88,317 L110,328 Z" fill="#bc5f3a"/>
+    <rect x="104" y="336" width="28" height="18" fill="#eadfc6"/>
+    <path d="M101,336 L118,327 L135,336 Z" fill="#c46a40"/>
+    <rect x="150" y="298" width="15" height="56" fill="#f4ecd8"/>
+    <path d="M147,298 L157.5,286 L168,298 Z" fill="#a85236"/>
+    <rect x="153" y="310" width="3" height="6" fill="#5a5f6e"/><rect x="159" y="310" width="3" height="6" fill="#5a5f6e"/>
+    <rect x="153" y="326" width="3" height="6" fill="#5a5f6e"/><rect x="159" y="326" width="3" height="6" fill="#5a5f6e"/>
+    <g fill="#7a6a52" opacity=".7"><rect x="76" y="336" width="3" height="5"/><rect x="86" y="336" width="3" height="5"/><rect x="96" y="336" width="3" height="5"/></g>
+  </g>
+
+  <!-- big autumn tree + companions -->
+  <g id="autumn-tree">
+    <rect x="326" y="384" width="8" height="30" fill="#6b4a2e"/>
+    <rect x="268" y="388" width="6" height="22" fill="#5d4128"/>
+    <circle cx="272" cy="376" r="22" fill="#5d7a44"/>
+    <circle cx="388" cy="382" r="16" fill="#64804a"/>
+    <circle cx="330" cy="354" r="44" fill="#c46a33"/>
+    <circle cx="298" cy="368" r="30" fill="#b25a2c"/>
+    <circle cx="360" cy="372" r="27" fill="#d07a3c"/>
+    <circle cx="322" cy="342" r="20" fill="#dd8a4a"/>
+    <circle cx="346" cy="356" r="14" fill="#c96f38"/>
+  </g>
+
+  <!-- ============ RIVER ============ -->
+  <path id="water" d="M310,396 C332,470 382,562 452,652 L452,720 L1150,720 C1098,640 1028,574 948,522 C848,458 700,412 560,396 C470,384 360,384 310,396 Z" fill="url(#gWater)"/>
+  <g id="sun-glint" class="m" opacity="0" filter="url(#fBlur6)">
+    <ellipse cx="430" cy="450" rx="88" ry="26" fill="#ffcf7e" opacity=".55"/>
+    <ellipse cx="520" cy="500" rx="70" ry="18" fill="#ffc06a" opacity=".4"/>
+  </g>
+  <g id="moon-glint" class="m" opacity="0" fill="#cfe0ff" filter="url(#fRefl)">
+    <rect class="glint" x="780" y="540" width="46" height="3" rx="1.5" style="animation-delay:.4s"/>
+    <rect class="glint" x="826" y="572" width="58" height="3" rx="1.5" style="animation-delay:1.2s"/>
+    <rect class="glint" x="866" y="604" width="44" height="3" rx="1.5" style="animation-delay:.8s"/>
+    <rect class="glint" x="806" y="628" width="66" height="3" rx="1.5" style="animation-delay:1.8s"/>
+  </g>
+  <g fill="#ffffff" opacity=".5">
+    <rect class="glint" x="360" y="428" width="52" height="2.6" rx="1.3" style="animation-delay:.2s"/>
+    <rect class="glint" x="452" y="462" width="72" height="2.6" rx="1.3" style="animation-delay:1.1s"/>
+    <rect class="glint" x="548" y="436" width="46" height="2.4" rx="1.2" style="animation-delay:.6s"/>
+    <rect class="glint" x="396" y="512" width="60" height="2.6" rx="1.3" style="animation-delay:1.7s"/>
+    <rect class="glint" x="500" y="548" width="80" height="2.8" rx="1.4" style="animation-delay:.9s"/>
+    <rect class="glint" x="600" y="502" width="54" height="2.4" rx="1.2" style="animation-delay:2.3s"/>
+    <rect class="glint" x="660" y="560" width="70" height="2.8" rx="1.4" style="animation-delay:.5s"/>
+    <rect class="glint" x="560" y="600" width="90" height="3" rx="1.5" style="animation-delay:1.4s"/>
+    <rect class="glint" x="700" y="632" width="76" height="3" rx="1.5" style="animation-delay:2s"/>
+    <rect class="glint" x="480" y="660" width="100" height="3.2" rx="1.6" style="animation-delay:.7s"/>
+    <rect class="glint" x="820" y="660" width="86" height="3" rx="1.5" style="animation-delay:1.9s"/>
+    <rect class="glint" x="330" y="470" width="38" height="2.2" rx="1.1" style="animation-delay:2.6s"/>
+  </g>
+
+   <!-- ================= CATHEDRAL (Duomo) ================= -->
+  <g id="duomo">
+    <!-- basilica body behind -->
+    <rect x="556" y="342" width="60" height="30" fill="#efe2c6"/>
+    <path d="M552,342 L586,326 L620,342 Z" fill="#7c8f66"/>
+    <rect x="548" y="356" width="70" height="16" fill="#e8dab8"/>
+    <!-- drum -->
+    <rect x="612" y="330" width="158" height="36" fill="#f3e7d0"/>
+    <g stroke="#ddcba6" stroke-width="1.4">
+      <line x1="640" y1="330" x2="640" y2="366"/><line x1="668" y1="330" x2="668" y2="366"/>
+      <line x1="696" y1="330" x2="696" y2="366"/><line x1="724" y1="330" x2="724" y2="366"/><line x1="750" y1="330" x2="750" y2="366"/>
+    </g>
+    <g fill="#4a5568">
+      <path d="M624,358 v-12 a5,5 0 0 1 10,0 v12 z"/><path d="M652,358 v-12 a5,5 0 0 1 10,0 v12 z"/>
+      <path d="M680,358 v-12 a5,5 0 0 1 10,0 v12 z"/><path d="M708,358 v-12 a5,5 0 0 1 10,0 v12 z"/>
+      <path d="M736,358 v-12 a5,5 0 0 1 10,0 v12 z"/>
+    </g>
+    <rect x="610" y="327" width="162" height="4" fill="#e0d0b2"/>
+    <rect x="610" y="363" width="162" height="4" fill="#d8c8a8"/>
+    <!-- dome shell -->
+    <path d="M616,328 C622,266 652,240 691,236 C730,240 760,268 766,328 Z" fill="#c96f43"/>
+    <path d="M691,236 C730,240 760,268 766,328 L736,328 C732,274 714,248 691,236 Z" fill="#ad5c35" opacity=".8"/>
+    <!-- white ribs -->
+    <g stroke="#f2e8d5" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M638,326 C644,276 664,248 689,240"/>
+      <path d="M664,327 C668,280 678,252 690,241"/>
+      <path d="M691,238 L691,327"/>
+      <path d="M718,327 C714,280 704,252 692,241"/>
+      <path d="M744,326 C738,276 718,248 693,240"/>
+    </g>
+    <g stroke="#f0e4cc" stroke-width="2" fill="none" opacity=".8">
+      <path d="M624,298 Q691,280 758,298"/>
+      <path d="M632,270 Q691,256 750,270"/>
+    </g>
+    <!-- lantern -->
+    <rect x="674" y="224" width="34" height="13" fill="#efe4cc"/>
+    <rect x="678" y="210" width="26" height="15" fill="#f4ead4"/>
+    <g fill="#4a5568"><rect x="681" y="213" width="4" height="9"/><rect x="689" y="213" width="4" height="9"/><rect x="697" y="213" width="4" height="9"/></g>
+    <path d="M674,210 L691,194 L708,210 Z" fill="#d8824f"/>
+    <circle cx="691" cy="190" r="4.5" fill="#b8c4a8"/>
+    <line x1="691" y1="186" x2="691" y2="178" stroke="#8a946e" stroke-width="2"/>
+    <line x1="687" y1="181" x2="695" y2="181" stroke="#8a946e" stroke-width="2"/>
+    <!-- secondary dome -->
+    <rect x="780" y="318" width="48" height="24" fill="#efe2c8"/>
+    <path d="M782,318 Q804,286 826,318 Z" fill="#d98d5f"/>
+    <path d="M804,289 L804,318" stroke="#f2e8d5" stroke-width="2.4"/>
+    <rect x="799" y="278" width="10" height="11" fill="#efe4cc"/>
+    <circle cx="804" cy="274" r="3" fill="#b8c4a8"/>
+    <!-- small green rotunda -->
+    <rect x="844" y="326" width="38" height="14" fill="#e8dcc2"/>
+    <ellipse cx="863" cy="318" rx="21" ry="14" fill="#6f8f6a"/>
+    <rect x="859" y="298" width="8" height="8" fill="#e8dcc2"/>
+    <circle cx="863" cy="296" r="2.4" fill="#c9b46a"/>
+  </g>
+
+  <!-- ================= CLOCK TOWER ================= -->
+  <g id="clock-tower">
+    <rect x="400" y="272" width="36" height="94" fill="#efe3cb"/>
+    <rect x="428" y="272" width="8" height="94" fill="#dccfb0"/>
+    <g stroke="#d6c6a2" stroke-width="1.5"><line x1="400" y1="306" x2="436" y2="306"/><line x1="400" y1="336" x2="436" y2="336"/></g>
+    <g fill="#4a5568"><rect x="407" y="316" width="5" height="11"/><rect x="424" y="316" width="5" height="11"/><rect x="407" y="344" width="5" height="11"/><rect x="424" y="344" width="5" height="11"/></g>
+    <!-- clock face -->
+    <circle cx="418" cy="290" r="9.5" fill="#1f2c44" stroke="#d9b96a" stroke-width="2"/>
+    <line x1="418" y1="290" x2="418" y2="284" stroke="#e8cf8a" stroke-width="1.6"/>
+    <line x1="418" y1="290" x2="423" y2="292" stroke="#e8cf8a" stroke-width="1.6"/>
+    <!-- crenellations + belfry -->
+    <rect x="396" y="268" width="44" height="6" fill="#e8dcc0"/>
+    <g fill="#e8dcc0"><rect x="398" y="261" width="5" height="7"/><rect x="408" y="261" width="5" height="7"/><rect x="418" y="261" width="5" height="7"/><rect x="428" y="261" width="5" height="7"/></g>
+    <rect x="406" y="244" width="24" height="18" fill="#e6d9bc"/>
+    <path d="M410,262 v-9 a4,4 0 0 1 8,0 v9 z" fill="#3d4a5e"/>
+    <path d="M420,262 v-9 a4,4 0 0 1 8,0 v9 z" fill="#3d4a5e"/>
+    <rect x="404" y="239" width="28" height="5" fill="#ddd0b0"/>
+    <g fill="#ddd0b0"><rect x="406" y="233" width="4" height="6"/><rect x="414" y="233" width="4" height="6"/><rect x="422" y="233" width="4" height="6"/><rect x="428" y="233" width="4" height="6"/></g>
+    <line x1="418" y1="233" x2="418" y2="216" stroke="#7a6a52" stroke-width="2"/>
+    <path d="M418,216 L430,220 L418,224 Z" fill="#c94f3c"/>
+  </g>
+
+  <!-- cypresses beside tower -->
+  <g fill="#2f4a30"><ellipse cx="450" cy="342" rx="8" ry="28"/><ellipse cx="466" cy="352" rx="7" ry="23"/></g>
+
+  <!-- ================= LEFT-BANK CITY ================= -->
+  <g id="city-left">
+    <!-- back row -->
+    <g>
+      <rect x="120" y="356" width="30" height="24" fill="#efe0c2"/><path d="M116,356 L135,346 L154,356 Z" fill="#bc5f3a"/>
+      <rect x="152" y="362" width="26" height="22" fill="#e6d4b2"/><path d="M148,362 L165,353 L182,362 Z" fill="#c46a40"/>
+      <rect x="180" y="356" width="34" height="26" fill="#f2e6c8"/><path d="M176,356 L197,345 L218,356 Z" fill="#b55836"/>
+      <rect x="214" y="366" width="28" height="22" fill="#eadfc6"/><path d="M210,366 L228,357 L246,366 Z" fill="#c46a40"/>
+      <rect x="242" y="360" width="30" height="26" fill="#efe0c2"/><path d="M238,360 L257,350 L276,360 Z" fill="#bc5f3a"/>
+      <rect x="272" y="368" width="26" height="22" fill="#e6d4b2"/><path d="M268,368 L285,359 L302,368 Z" fill="#b55836"/>
+      <rect x="300" y="362" width="32" height="26" fill="#f2e6c8"/><path d="M296,362 L316,351 L336,362 Z" fill="#c46a40"/>
+      <rect x="336" y="370" width="26" height="22" fill="#eadfc6"/><path d="M332,370 L349,361 L366,370 Z" fill="#bc5f3a"/>
+      <rect x="366" y="364" width="30" height="26" fill="#efe0c2"/><path d="M362,364 L381,354 L400,364 Z" fill="#b55836"/>
+    </g>
+    <!-- mid row -->
+    <g>
+      <rect x="60" y="392" width="34" height="30" fill="#e8d7b6"/><path d="M55,392 L77,380 L99,392 Z" fill="#c46a40"/>
+      <rect x="94" y="398" width="28" height="28" fill="#f2e6c8"/><path d="M89,398 L108,387 L127,398 Z" fill="#bc5f3a"/>
+      <rect x="122" y="392" width="36" height="32" fill="#efe0c2"/><path d="M117,392 L140,380 L163,392 Z" fill="#b55836"/>
+      <rect x="158" y="400" width="30" height="28" fill="#eadfc6"/><path d="M153,400 L173,389 L193,400 Z" fill="#c46a40"/>
+      <rect x="188" y="394" width="38" height="32" fill="#f2e6c8"/><path d="M183,394 L207,382 L231,394 Z" fill="#bc5f3a"/>
+      <rect x="226" y="402" width="30" height="28" fill="#e6d4b2"/><path d="M221,402 L241,391 L261,402 Z" fill="#b55836"/>
+      <rect x="256" y="396" width="36" height="32" fill="#efe0c2"/><path d="M251,396 L274,384 L297,396 Z" fill="#c46a40"/>
+      <rect x="292" y="404" width="30" height="28" fill="#eadfc6"/><path d="M287,404 L307,393 L327,404 Z" fill="#bc5f3a"/>
+      <rect x="322" y="398" width="36" height="32" fill="#f2e6c8"/><path d="M317,398 L340,386 L363,398 Z" fill="#b55836"/>
+      <rect x="358" y="406" width="28" height="28" fill="#e6d4b2"/><path d="M353,406 L372,395 L391,406 Z" fill="#c46a40"/>
+    </g>
+    <!-- waterfront row (stepped along bank) -->
+    <g>
+      <rect x="40" y="436" width="42" height="38" fill="#f2e6c8"/><path d="M34,436 L61,422 L88,436 Z" fill="#bc5f3a"/>
+      <rect x="80" y="444" width="36" height="36" fill="#e8d7b6"/><path d="M74,444 L98,431 L122,444 Z" fill="#c46a40"/>
+      <rect x="116" y="438" width="46" height="40" fill="#efe0c2"/><path d="M110,438 L139,424 L168,438 Z" fill="#b55836"/>
+      <rect x="160" y="448" width="38" height="38" fill="#eadfc6"/><path d="M154,448 L179,435 L204,448 Z" fill="#bc5f3a"/>
+      <rect x="196" y="442" width="44" height="42" fill="#f2e6c8"/><path d="M190,442 L218,427 L246,442 Z" fill="#c46a40"/>
+      <rect x="240" y="452" width="38" height="38" fill="#e6d4b2"/><path d="M234,452 L259,439 L284,452 Z" fill="#b55836"/>
+      <rect x="276" y="446" width="46" height="44" fill="#efe0c2"/><path d="M270,446 L299,431 L328,446 Z" fill="#bc5f3a"/>
+      <rect x="320" y="456" width="38" height="40" fill="#eadfc6"/><path d="M314,456 L339,443 L364,456 Z" fill="#c46a40"/>
+    </g>
+    <!-- palazzoni (big facades near water) -->
+    <g>
+      <rect x="20" y="492" width="70" height="70" fill="#f0e2c2"/><path d="M12,492 L55,474 L98,492 Z" fill="#b55836"/>
+      <rect x="86" y="502" width="60" height="66" fill="#e9dabd"/><path d="M78,502 L116,486 L154,502 Z" fill="#c46a40"/>
+      <rect x="142" y="494" width="72" height="72" fill="#f2e6c8"/><path d="M134,494 L178,476 L222,494 Z" fill="#bc5f3a"/>
+      <rect x="210" y="506" width="58" height="66" fill="#eadfc6"/><path d="M202,506 L239,490 L276,506 Z" fill="#b55836"/>
+      <rect x="264" y="498" width="72" height="74" fill="#efe0c2"/><path d="M256,498 L300,480 L344,498 Z" fill="#c46a40"/>
+      <rect x="330" y="510" width="58" height="66" fill="#e6d4b2"/><path d="M322,510 L359,494 L396,510 Z" fill="#bc5f3a"/>
+    </g>
+    <!-- nearest block bottom-left -->
+    <g>
+      <rect x="0" y="572" width="84" height="90" fill="#ecdcb8"/><path d="M-8,572 L42,551 L92,572 Z" fill="#bc5f3a"/>
+      <rect x="76" y="586" width="70" height="82" fill="#f2e6c8"/><path d="M68,586 L111,566 L154,586 Z" fill="#b55836"/>
+      <rect x="140" y="578" width="84" height="90" fill="#e9dabd"/><path d="M132,578 L182,557 L232,578 Z" fill="#c46a40"/>
+      <rect x="218" y="592" width="72" height="76" fill="#f0e2c2"/><path d="M210,592 L254,572 L298,592 Z" fill="#bc5f3a"/>
+      <rect x="284" y="584" width="88" height="86" fill="#efe0c2"/><path d="M276,584 L328,562 L380,584 Z" fill="#b55836"/>
+      <rect x="366" y="598" width="66" height="72" fill="#eadfc6"/><path d="M358,598 L399,578 L440,598 Z" fill="#c46a40"/>
+    </g>
+    <!-- shaded wall strips for depth -->
+    <g fill="#c9b795" opacity=".55">
+      <rect x="60" y="416" width="34" height="6"/><rect x="122" y="418" width="36" height="6"/><rect x="188" y="420" width="38" height="6"/><rect x="256" y="422" width="36" height="6"/><rect x="322" y="424" width="36" height="6"/>
+      <rect x="80" y="474" width="36" height="6"/><rect x="160" y="478" width="38" height="6"/><rect x="240" y="482" width="38" height="6"/><rect x="320" y="488" width="38" height="6"/>
+    </g>
+  </g>
+
+  <!-- quay wall along left bank -->
+  <path d="M306,392 C328,466 378,558 448,648 L450,660 L436,660 C364,568 314,476 294,398 Z" fill="#c9b48f"/>
+  <path d="M300,404 C318,468 360,548 420,626" stroke="#a8946e" stroke-width="2" fill="none" opacity=".7"/>
+
+  <!-- cypress cluster near left bridgehead -->
+  <g id="cypress-left" fill="#2f4a30">
+    <ellipse cx="222" cy="342" rx="9" ry="32"/>
+    <ellipse cx="240" cy="350" rx="8" ry="27"/>
+    <ellipse cx="206" cy="352" rx="7" ry="23"/>
+  </g>
+
+  <!-- ============ OLD STONE BRIDGE (Ponte Vecchio style) ============ -->
+  <g id="bridge">
+    <!-- arch openings -->
+    <g fill="#2a4a55">
+      <path d="M262,406 Q302,364 342,406 Z"/>
+      <path d="M376,404 Q416,362 456,404 Z"/>
+      <path d="M490,402 Q530,362 570,402 Z"/>
+    </g>
+    <!-- pier shadows in water -->
+    <g fill="#7a6248" opacity=".4" filter="url(#fRefl)">
+      <rect x="284" y="406" width="16" height="14"/><rect x="398" y="404" width="16" height="14"/><rect x="512" y="402" width="16" height="14"/>
+    </g>
+    <!-- stone body -->
+    <path d="M250,378 L582,372 L582,404 L570,402 Q530,362 490,402 L456,404 Q416,362 376,404 L342,406 Q302,364 262,406 L250,408 Z" fill="#dcc6a2"/>
+    <path d="M250,400 L582,396 L582,404 L250,408 Z" fill="#bfa87f"/>
+    <rect x="248" y="373" width="336" height="5" fill="#ecd9b4"/>
+    <!-- houses on the deck -->
+    <g>
+      <rect x="256" y="356" width="24" height="20" fill="#efe0c2"/><path d="M253,356 L268,347 L283,356 Z" fill="#bc5f3a"/>
+      <rect x="282" y="352" width="20" height="24" fill="#e8d7b6"/><path d="M279,352 L292,344 L305,352 Z" fill="#c46a40"/>
+      <rect x="304" y="358" width="26" height="18" fill="#f2e6c8"/><path d="M301,358 L317,350 L333,358 Z" fill="#b55836"/>
+      <rect x="332" y="350" width="20" height="26" fill="#e6d4b2"/><path d="M329,350 L342,342 L355,350 Z" fill="#c46a40"/>
+      <rect x="354" y="356" width="24" height="20" fill="#efe0c2"/><path d="M351,356 L366,348 L381,356 Z" fill="#bc5f3a"/>
+      <rect x="380" y="342" width="32" height="34" fill="#f4e8ca"/><path d="M376,342 L396,330 L416,342 Z" fill="#a85236"/>
+      <rect x="386" y="318" width="20" height="16" fill="#efe3c5"/>
+      <path d="M384,318 h4 v-5 h4 v5 h4 v-5 h4 v5 h4 v-5 h4 v5 h2" fill="none" stroke="#d9c9a4" stroke-width="2.4"/>
+      <rect x="414" y="352" width="22" height="24" fill="#e8d7b6"/><path d="M411,352 L425,344 L439,352 Z" fill="#c46a40"/>
+      <rect x="438" y="358" width="26" height="18" fill="#f2e6c8"/><path d="M435,358 L451,350 L467,358 Z" fill="#b55836"/>
+      <rect x="466" y="352" width="20" height="24" fill="#e6d4b2"/><path d="M463,352 L476,344 L489,352 Z" fill="#c46a40"/>
+      <rect x="488" y="356" width="26" height="20" fill="#efe0c2"/><path d="M485,356 L501,348 L517,356 Z" fill="#bc5f3a"/>
+      <rect x="516" y="350" width="20" height="26" fill="#e8d7b6"/><path d="M513,350 L526,342 L539,350 Z" fill="#c46a40"/>
+      <rect x="538" y="356" width="28" height="20" fill="#f2e6c8"/><path d="M535,356 L552,348 L569,356 Z" fill="#b55836"/>
+      <!-- open loggias showing sky -->
+      <rect x="363" y="362" width="7" height="12" fill="#9db8cf"/><rect x="446" y="364" width="7" height="10" fill="#9db8cf"/>
+      <rect x="498" y="362" width="7" height="12" fill="#9db8cf"/>
+    </g>
+    <!-- bridge reflection -->
+    <g opacity=".38" filter="url(#fRefl)">
+      <rect x="252" y="408" width="330" height="10" fill="#8a6f4e"/>
+      <g fill="#a04f33"><rect x="266" y="412" width="20" height="12"/><rect x="316" y="412" width="18" height="14"/><rect x="384" y="412" width="26" height="16"/><rect x="444" y="412" width="18" height="14"/><rect x="494" y="412" width="20" height="12"/><rect x="540" y="412" width="22" height="12"/></g>
+      <rect x="262" y="408" width="80" height="20" fill="#2a4a55" opacity=".5"/><rect x="376" y="408" width="80" height="20" fill="#2a4a55" opacity=".5"/><rect x="490" y="408" width="80" height="18" fill="#2a4a55" opacity=".5"/>
+    </g>
+  </g>
+
+  <!-- right bridgehead buildings -->
+  <g id="bridgehead-right">
+    <rect x="578" y="358" width="34" height="42" fill="#eedfc0"/><path d="M574,358 L595,346 L616,358 Z" fill="#b55836"/>
+    <rect x="608" y="366" width="28" height="38" fill="#e6d4b2"/><path d="M604,366 L622,356 L640,366 Z" fill="#c46a40"/>
+    <circle cx="600" cy="342" r="13" fill="#4a6b3e"/>
+    <rect x="598" y="350" width="4" height="10" fill="#3c4a36"/>
+  </g>
+
+  <!-- ================= RIGHT-BANK TOWN (Oltrarno) ================= -->
+  <g id="city-right">
+    <g>
+      <rect x="596" y="382" width="36" height="30" fill="#efe0c2"/><path d="M591,382 L614,371 L637,382 Z" fill="#bc5f3a"/>
+      <rect x="634" y="396" width="34" height="30" fill="#eadfc6"/><path d="M629,396 L651,385 L673,396 Z" fill="#c46a40"/>
+      <rect x="670" y="410" width="38" height="32" fill="#f2e6c8"/><path d="M665,410 L689,398 L713,410 Z" fill="#b55836"/>
+      <rect x="708" y="426" width="34" height="32" fill="#e6d4b2"/><path d="M703,426 L725,414 L747,426 Z" fill="#bc5f3a"/>
+      <rect x="746" y="442" width="38" height="34" fill="#efe0c2"/><path d="M741,442 L765,430 L789,442 Z" fill="#c46a40"/>
+      <rect x="786" y="458" width="36" height="36" fill="#eadfc6"/><path d="M781,458 L804,446 L827,458 Z" fill="#b55836"/>
+      <rect x="826" y="476" width="40" height="38" fill="#f2e6c8"/><path d="M821,476 L846,463 L871,476 Z" fill="#bc5f3a"/>
+      <rect x="870" y="496" width="38" height="40" fill="#e6d4b2"/><path d="M865,496 L889,483 L913,496 Z" fill="#c46a40"/>
+    </g>
+    <!-- small church on right bank -->
+    <rect x="656" y="380" width="16" height="26" fill="#f4ead4"/>
+    <path d="M653,380 L664,368 L675,380 Z" fill="#8a9a70"/>
+    <rect x="661" y="386" width="5" height="8" fill="#4a5568"/>
+  </g>
+  <g fill="#2f4a30"><ellipse cx="818" cy="332" rx="8" ry="26"/><ellipse cx="842" cy="344" rx="7" ry="22"/><ellipse cx="940" cy="472" rx="8" ry="26"/><ellipse cx="960" cy="486" rx="7" ry="22"/></g>
+
+  <!-- embankment wall right bank -->
+  <path d="M556,396 C698,410 848,456 948,520 C1030,574 1102,640 1154,716 L1166,712 C1112,634 1038,568 956,512 C854,446 702,402 556,388 Z" fill="#c3ad86"/>
+  <!-- ================= RIGHT HILL VILLAGE ================= -->
+  <g id="village-right">
+    <rect x="1044" y="340" width="15" height="56" fill="#f4ead4"/>
+    <path d="M1041,340 L1051.5,312 L1062,340 Z" fill="#6f8f6a"/>
+    <rect x="1048" y="352" width="6" height="9" fill="#4a5568"/>
+    <rect x="1058" y="368" width="36" height="28" fill="#f2e6c8"/><path d="M1053,368 L1076,356 L1099,368 Z" fill="#bc5f3a"/>
+    <rect x="1000" y="384" width="28" height="24" fill="#e9dabd"/><path d="M995,384 L1014,374 L1033,384 Z" fill="#c46a40"/>
+    <rect x="1026" y="392" width="26" height="22" fill="#f0e2c2"/><path d="M1021,392 L1039,382 L1057,392 Z" fill="#b55836"/>
+    <rect x="1090" y="380" width="32" height="26" fill="#e6d4b2"/><path d="M1085,380 L1106,369 L1127,380 Z" fill="#bc5f3a"/>
+    <rect x="1120" y="392" width="26" height="22" fill="#f2e6c8"/><path d="M1115,392 L1133,382 L1151,392 Z" fill="#c46a40"/>
+    <rect x="1050" y="400" width="36" height="26" fill="#eadfc6"/><path d="M1045,400 L1068,389 L1091,400 Z" fill="#b55836"/>
+    <rect x="1088" y="408" width="30" height="24" fill="#efe0c2"/><path d="M1083,408 L1103,398 L1123,408 Z" fill="#c46a40"/>
+    <g fill="#5a5f6e" opacity=".8">
+      <rect x="1008" y="392" width="4" height="6"/><rect x="1018" y="392" width="4" height="6"/>
+      <rect x="1098" y="388" width="4" height="6"/><rect x="1108" y="388" width="4" height="6"/>
+      <rect x="1128" y="400" width="4" height="6"/><rect x="1058" y="408" width="4" height="6"/><rect x="1070" y="408" width="4" height="6"/>
+    </g>
+    <g fill="#2f4a30"><ellipse cx="984" cy="378" rx="7" ry="24"/><ellipse cx="1156" cy="384" rx="7" ry="22"/></g>
+  </g>
+
+  <!-- ================= BOTTOM-RIGHT TERRACED GARDEN ================= -->
+  <g id="garden-right">
+    <path d="M860,522 C960,542 1080,596 1180,668 L1280,704 L1280,720 L906,720 C884,652 862,590 860,522 Z" fill="#6f8f52"/>
+    <g stroke="#4c6b3a" stroke-width="5" fill="none" opacity=".75">
+      <path d="M890,560 C970,580 1060,622 1140,672"/>
+      <path d="M906,600 C976,618 1054,654 1122,696"/>
+      <path d="M922,640 C978,654 1030,680 1078,712"/>
+    </g>
+    <path d="M1246,556 C1156,586 1086,618 1024,654 C984,678 962,700 944,720" stroke="#d9b98a" stroke-width="10" fill="none"/>
+    <path d="M1246,556 C1156,586 1086,618 1024,654 C984,678 962,700 944,720" stroke="#b89a6e" stroke-width="1.4" stroke-dasharray="7 7" fill="none" opacity=".7"/>
+    <!-- small stone arch bridges over the road -->
+    <g>
+      <path d="M1028,654 q13,-17 26,0 v12 h-26 z" fill="#cbb590"/>
+      <path d="M1033,654 q8,-10 16,0 z" fill="#3a3226"/>
+      <path d="M966,694 q12,-15 24,0 v10 h-24 z" fill="#cbb590"/>
+      <path d="M971,694 q7,-9 14,0 z" fill="#3a3226"/>
+    </g>
+    <!-- garden pavilion -->
+    <rect x="1164" y="596" width="38" height="30" fill="#eedfc0"/><path d="M1158,596 L1183,582 L1208,596 Z" fill="#b55836"/>
+    <g fill="#2f4a30"><ellipse cx="1244" cy="560" rx="8" ry="26"/><ellipse cx="1264" cy="574" rx="7" ry="22"/></g>
+  </g>
+
+  <!-- ================= LEFT WINDING ROAD ================= -->
+  <g id="road-left">
+    <path d="M196,468 C146,494 154,528 104,554 C64,574 72,608 34,638" stroke="#d9b98a" stroke-width="9" fill="none"/>
+    <path d="M196,468 C146,494 154,528 104,554 C64,574 72,608 34,638" stroke="#b89a6e" stroke-width="1.3" stroke-dasharray="6 6" fill="none" opacity=".7"/>
+    <path d="M202,472 C154,496 162,530 112,556" stroke="#a08a64" stroke-width="2" fill="none" opacity=".5"/>
+  </g>
+
+  <!-- ================= FOREGROUND HEDGE ================= -->
+  <g id="hedge">
+    <path d="M0,652 Q120,638 260,654 Q400,668 540,656 Q680,644 820,658 Q960,670 1100,654 Q1200,644 1280,656 L1280,720 L0,720 Z" fill="#16301f"/>
+    <g fill="#1d3a27">
+      <circle cx="40" cy="650" r="16"/><circle cx="130" cy="644" r="13"/><circle cx="236" cy="652" r="15"/>
+      <circle cx="330" cy="660" r="12"/><circle cx="450" cy="662" r="14"/><circle cx="560" cy="654" r="12"/>
+      <circle cx="660" cy="650" r="15"/><circle cx="760" cy="656" r="13"/><circle cx="870" cy="662" r="15"/>
+      <circle cx="980" cy="662" r="12"/><circle cx="1080" cy="654" r="14"/><circle cx="1180" cy="648" r="13"/><circle cx="1260" cy="654" r="14"/>
+    </g>
+    <g fill="#2c5033" opacity=".5">
+      <circle cx="34" cy="644" r="8"/><circle cx="230" cy="646" r="7"/><circle cx="444" cy="656" r="7"/>
+      <circle cx="654" cy="644" r="8"/><circle cx="864" cy="656" r="7"/><circle cx="1074" cy="648" r="7"/><circle cx="1254" cy="648" r="7"/>
+    </g>
+  </g>
+
+  <!-- ================= HOT AIR BALLOON ================= -->
+  <g id="balloon" class="m" transform="translate(533 205)">
+    <g id="balloon-bob">
+      <path d="M0,-17 C10,-17 17,-7 17,2 C17,11 9,17 0,17 C-9,17 -17,11 -17,2 C-17,-7 -10,-17 0,-17 Z" fill="#e8823c"/>
+      <path d="M-6,-15 C-2,-17 2,-17 6,-15 C3,-6 3,8 5,16 C1,17 -1,17 -5,16 C-3,8 -3,-6 -6,-15 Z" fill="#f6e8d0"/>
+      <path d="M-14,-9 C-11,-13 -9,-14 -8,-14 C-9,-6 -9,6 -7,15 C-11,13 -14,9 -15,3 C-15,-2 -15,-6 -14,-9 Z" fill="#f6e8d0"/>
+      <path d="M14,-9 C11,-13 9,-14 8,-14 C9,-6 9,6 7,15 C11,13 14,9 15,3 C15,-2 15,-6 14,-9 Z" fill="#f6e8d0"/>
+      <rect x="-17" y="1" width="34" height="3.4" fill="#d06a2c" opacity=".8"/>
+      <line x1="-4" y1="17" x2="-3.4" y2="23" stroke="#7a5a34" stroke-width="1"/>
+      <line x1="4" y1="17" x2="3.4" y2="23" stroke="#7a5a34" stroke-width="1"/>
+      <rect x="-4.5" y="23" width="9" height="6" rx="1" fill="#7a5a34"/>
+    </g>
+  </g>
+
+  <!-- ================= BIRDS ================= -->
+  <g id="birds" class="m">
+    <g id="birds-fly" fill="none" stroke="#3a3f4a" stroke-width="2" stroke-linecap="round">
+      <path class="bird" d="M286,140 q4,-4 8,0 q4,-4 8,0" style="animation-delay:.1s"/>
+      <path class="bird" d="M330,116 q3.4,-3.4 6.8,0 q3.4,-3.4 6.8,0" style="animation-delay:.35s"/>
+      <path class="bird" d="M388,150 q3,-3 6,0 q3,-3 6,0" style="animation-delay:.2s"/>
+      <path class="bird" d="M500,80 q3.4,-3.4 6.8,0 q3.4,-3.4 6.8,0" style="animation-delay:.5s"/>
+      <path class="bird" d="M700,120 q4,-4 8,0 q4,-4 8,0" style="animation-delay:.15s"/>
+      <path class="bird" d="M762,92 q3,-3 6,0 q3,-3 6,0" style="animation-delay:.45s"/>
+      <path class="bird" d="M856,140 q3.4,-3.4 6.8,0 q3.4,-3.4 6.8,0" style="animation-delay:.25s"/>
+      <path class="bird" d="M920,112 q3,-3 6,0 q3,-3 6,0" style="animation-delay:.6s"/>
+    </g>
+  </g>
+
+  <!-- ================= ATMOSPHERE OVERLAYS (above land, below lights) ================= -->
+  <rect id="land-dark" class="m" x="0" y="248" width="1280" height="472" fill="#0a1733" opacity="0"/>
+  <rect id="land-warm" class="m" x="0" y="248" width="1280" height="472" fill="#ff7a2e" opacity="0"/>
+  <rect x="0" y="0" width="1280" height="720" fill="url(#gVignette)"/>
+
+  <!-- ================= NIGHT LIGHTS (above dark overlay) ================= -->
+  <g id="lights" class="m" opacity="0" fill="#ffd27a">
+    <!-- left city -->
+    <rect class="flick" x="32" y="504" width="5" height="8"/><rect x="46" y="504" width="5" height="8" style="animation-delay:.7s"/><rect x="60" y="504" width="5" height="8"/><rect class="flick" x="74" y="504" width="5" height="8" style="animation-delay:1.3s"/>
+    <rect x="32" y="524" width="5" height="8"/><rect class="flick" x="60" y="524" width="5" height="8" style="animation-delay:.4s"/>
+    <rect x="154" y="510" width="5" height="8"/><rect class="flick" x="168" y="510" width="5" height="8" style="animation-delay:1.1s"/><rect x="182" y="510" width="5" height="8"/><rect x="196" y="510" width="5" height="8" style="animation-delay:.9s"/>
+    <rect class="flick" x="154" y="532" width="5" height="8" style="animation-delay:.5s"/><rect x="182" y="532" width="5" height="8"/>
+    <rect x="276" y="512" width="5" height="8"/><rect class="flick" x="290" y="512" width="5" height="8" style="animation-delay:1.5s"/><rect x="304" y="512" width="5" height="8"/><rect x="318" y="512" width="5" height="8" style="animation-delay:.3s"/>
+    <rect x="28" y="596" width="6" height="9"/><rect class="flick" x="48" y="596" width="6" height="9" style="animation-delay:1s"/><rect x="68" y="596" width="6" height="9"/>
+    <rect x="94" y="608" width="6" height="9"/><rect class="flick" x="116" y="608" width="6" height="9" style="animation-delay:.6s"/>
+    <rect x="160" y="600" width="6" height="9"/><rect x="182" y="600" width="6" height="9" style="animation-delay:1.8s"/><rect class="flick" x="204" y="600" width="6" height="9" style="animation-delay:.2s"/>
+    <rect x="236" y="614" width="6" height="9"/><rect x="300" y="606" width="6" height="9" style="animation-delay:1.4s"/><rect class="flick" x="322" y="606" width="6" height="9" style="animation-delay:.8s"/><rect x="344" y="606" width="6" height="9"/>
+    <rect x="382" y="620" width="6" height="9"/><rect class="flick" x="404" y="620" width="6" height="9" style="animation-delay:1.2s"/>
+    <rect x="128" y="404" width="4" height="6"/><rect x="196" y="406" width="4" height="6" style="animation-delay:.5s"/><rect class="flick" x="264" y="408" width="4" height="6" style="animation-delay:1.6s"/><rect x="332" y="410" width="4" height="6"/>
+    <!-- bridge houses -->
+    <rect x="262" y="362" width="4" height="6"/><rect class="flick" x="288" y="360" width="4" height="6" style="animation-delay:.9s"/><rect x="312" y="364" width="4" height="6"/>
+    <rect x="338" y="356" width="4" height="6"/><rect class="flick" x="360" y="362" width="4" height="6" style="animation-delay:.4s"/><rect x="388" y="350" width="4" height="6"/>
+    <rect x="420" y="360" width="4" height="6"/><rect x="444" y="366" width="4" height="6" style="animation-delay:1.9s"/><rect class="flick" x="472" y="360" width="4" height="6" style="animation-delay:.7s"/>
+    <rect x="494" y="362" width="4" height="6"/><rect x="522" y="358" width="4" height="6"/><rect class="flick" x="546" y="364" width="4" height="6" style="animation-delay:1.3s"/>
+    <!-- cathedral: drum windows, lantern, tower -->
+    <g fill="#ffcf8a">
+      <path d="M624,358 v-12 a5,5 0 0 1 10,0 v12 z"/><path d="M652,358 v-12 a5,5 0 0 1 10,0 v12 z"/><path d="M680,358 v-12 a5,5 0 0 1 10,0 v12 z"/>
+      <path d="M708,358 v-12 a5,5 0 0 1 10,0 v12 z"/><path d="M736,358 v-12 a5,5 0 0 1 10,0 v12 z"/>
+      <rect x="681" y="213" width="4" height="9"/><rect x="689" y="213" width="4" height="9"/><rect x="697" y="213" width="4" height="9"/>
+      <path d="M410,262 v-9 a4,4 0 0 1 8,0 v9 z" opacity=".9"/><path d="M420,262 v-9 a4,4 0 0 1 8,0 v9 z" opacity=".9"/>
+    </g>
+    <!-- right bank town -->
+    <rect x="604" y="392" width="5" height="7"/><rect class="flick" x="644" y="404" width="5" height="7" style="animation-delay:.8s"/><rect x="682" y="420" width="5" height="7"/>
+    <rect x="716" y="436" width="5" height="7" style="animation-delay:1.5s"/><rect class="flick" x="754" y="452" width="5" height="7" style="animation-delay:.3s"/><rect x="794" y="468" width="5" height="7"/>
+    <rect x="836" y="486" width="5" height="7" style="animation-delay:1.1s"/><rect class="flick" x="880" y="506" width="5" height="7" style="animation-delay:.6s"/>
+    <!-- right village -->
+    <rect x="1008" y="392" width="4" height="6"/><rect x="1018" y="392" width="4" height="6" style="animation-delay:.9s"/>
+    <rect class="flick" x="1098" y="388" width="4" height="6" style="animation-delay:.4s"/><rect x="1108" y="388" width="4" height="6"/>
+    <rect x="1128" y="400" width="4" height="6"/><rect class="flick" x="1058" y="408" width="4" height="6" style="animation-delay:1.7s"/><rect x="1050" y="352" width="6" height="9" fill="#ffcf8a"/>
+    <!-- garden pavilion -->
+    <rect x="1172" y="606" width="6" height="8"/><rect class="flick" x="1186" y="606" width="6" height="8" style="animation-delay:.5s"/>
+  </g>
+
+  <!-- street lamps -->
+  <g id="lamps" class="m" opacity="0">
+    <g fill="url(#gLamp)">
+      <circle cx="152" cy="512" r="8"/><circle cx="106" cy="552" r="8"/><circle cx="58" cy="604" r="8"/>
+      <circle cx="404" cy="582" r="8"/><circle cx="446" cy="640" r="8"/>
+      <circle cx="1062" cy="636" r="8"/><circle cx="998" cy="674" r="8"/><circle cx="1212" cy="572" r="8"/>
+    </g>
+    <g fill="#ffe7ae">
+      <circle cx="152" cy="512" r="1.6"/><circle cx="106" cy="552" r="1.6"/><circle cx="58" cy="604" r="1.6"/>
+      <circle cx="404" cy="582" r="1.6"/><circle cx="446" cy="640" r="1.6"/>
+      <circle cx="1062" cy="636" r="1.6"/><circle cx="998" cy="674" r="1.6"/><circle cx="1212" cy="572" r="1.6"/>
+    </g>
+  </g>
+
+  <!-- fireflies near hedge -->
+  <g id="fireflies" class="m" opacity="0" fill="#ffe98a">
+    <circle class="ff" cx="120" cy="640" r="1.5"/><circle class="ff" cx="260" cy="648" r="1.4" style="animation-delay:.7s"/>
+    <circle class="ff" cx="400" cy="652" r="1.5" style="animation-delay:1.4s"/><circle class="ff" cx="560" cy="646" r="1.4" style="animation-delay:.3s"/>
+    <circle class="ff" cx="700" cy="650" r="1.5" style="animation-delay:1.9s"/><circle class="ff" cx="840" cy="656" r="1.4" style="animation-delay:.9s"/>
+    <circle class="ff" cx="980" cy="650" r="1.5" style="animation-delay:2.3s"/><circle class="ff" cx="1120" cy="646" r="1.4" style="animation-delay:.5s"/>
+    <circle class="ff" cx="200" cy="630" r="1.3" style="animation-delay:1.2s"/><circle class="ff" cx="620" cy="636" r="1.3" style="animation-delay:1.7s"/>
+    <circle class="ff" cx="1020" cy="634" r="1.3" style="animation-delay:.2s"/><circle class="ff" cx="340" cy="660" r="1.3" style="animation-delay:2.1s"/>
+  </g>
+</svg>
+<div class="caption">preview · spec_01 · Tuscany golden-hour panorama · SVG day/night infinite loop (60s)</div>
+</body>
+</html>
