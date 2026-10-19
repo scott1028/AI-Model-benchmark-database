@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>preview spec_01 — Shanghai Lujiazui day/night loop</title>
+<style>
+  :root { --cy: 60s; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 30%, #16202c 0%, #0a0e14 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: "Segoe UI", "Noto Sans TC", sans-serif;
+  }
+  main.stage { width: min(92vmin, 760px); }
+  svg.scene {
+    display: block;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 18px 60px rgba(0,0,0,.65);
+  }
+  figcaption { color: #93a5b8; font-size: 12px; margin-top: 10px; text-align: center; }
+  figcaption b { color: #c8d6e4; }
+
+  /* ============ day/night master keyframes (all share --cy) ============ */
+  #skyDawn  { animation: dawnK  var(--cy) linear infinite; }
+  #skyDusk  { animation: duskK  var(--cy) linear infinite; }
+  #skyNight { animation: nightK var(--cy) linear infinite; }
+  #sunG     { animation: sunK   var(--cy) linear infinite; }
+  #moonG    { animation: moonK  var(--cy) linear infinite; }
+  #stars    { animation: starsK var(--cy) linear infinite; }
+  #gradeWarm{ animation: wgK    var(--cy) linear infinite; }
+  #gradeNight { animation: ngK  var(--cy) linear infinite; }
+  .nl       { animation: nlK    var(--cy) linear infinite; }
+  .birdFlock{ animation: flyK  42s linear infinite, bdK var(--cy) linear infinite; }
+
+  @keyframes dawnK {
+    0% { opacity: 1; } 7% { opacity: 0; }
+    93% { opacity: 0; } 96% { opacity: .45; } 100% { opacity: 1; }
+  }
+  @keyframes duskK {
+    0% { opacity: 1; } 3% { opacity: 0; }
+    54% { opacity: 0; } 63% { opacity: 1; } 73% { opacity: 0; } 100% { opacity: 0; }
+  }
+  @keyframes nightK {
+    0%, 60% { opacity: 0; } 74% { opacity: 1; }
+    92% { opacity: 1; } 100% { opacity: 0; }
+  }
+  @keyframes sunK {
+    0%, 1.5% { opacity: 0; } 5% { opacity: 1; }
+    58% { opacity: 1; } 63% { opacity: 0; } 100% { opacity: 0; }
+  }
+  @keyframes moonK {
+    0% { opacity: 1; } 7% { opacity: 1; } 11% { opacity: 0; }
+    62% { opacity: 0; } 70% { opacity: 1; } 100% { opacity: 1; }
+  }
+  @keyframes starsK {
+    0% { opacity: .55; } 7% { opacity: 0; }
+    56% { opacity: 0; } 73% { opacity: 1; } 94% { opacity: 1; } 100% { opacity: .55; }
+  }
+  @keyframes wgK {
+    0% { opacity: .16; } 8% { opacity: 0; }
+    52% { opacity: 0; } 62% { opacity: .5; } 66% { opacity: .32; } 74% { opacity: 0; }
+    96% { opacity: 0; } 100% { opacity: .14; }
+  }
+  @keyframes ngK {
+    0% { opacity: .32; } 9% { opacity: 0; }
+    58% { opacity: 0; } 74% { opacity: .62; } 92% { opacity: .62; } 100% { opacity: .28; }
+  }
+  /* night lights master: fade in at dusk, out after dawn */
+  @keyframes nlK {
+    0% { opacity: .5; } 4% { opacity: 0; }
+    56% { opacity: 0; } 68% { opacity: 1; } 95% { opacity: 1; } 100% { opacity: .5; }
+  }
+  /* aviation obstruction blink (inside .nl wrapper) */
+  .blink  { animation: blinkK 2s   linear infinite; }
+  .blink2 { animation: blinkK 2.6s linear .8s infinite; }
+  @keyframes blinkK {
+    0%, 44% { opacity: 0; } 50%, 94% { opacity: 1; } 100% { opacity: 0; }
+  }
+  /* twinkling stars */
+  .tw  { animation: twK 1.9s ease-in-out infinite alternate; }
+  .tw2 { animation: twK 2.7s ease-in-out .6s infinite alternate; }
+  .tw3 { animation: twK 3.4s ease-in-out 1.1s infinite alternate; }
+  @keyframes twK { from { opacity: .25; } to { opacity: 1; } }
+  /* clouds slow drift */
+  .cl1 { animation: driftK 46s ease-in-out infinite alternate; }
+  .cl2 { animation: driftK 62s ease-in-out 4s infinite alternate-reverse; }
+  .cl3 { animation: driftK 54s ease-in-out 8s infinite alternate; }
+  @keyframes driftK { from { transform: translateX(-16px); } to { transform: translateX(18px); } }
+  /* water surface: shimmer lines + slow swell */
+  .wl  { animation: wlK 3.2s ease-in-out infinite alternate; }
+  .wl2 { animation: wlK 4.6s ease-in-out .9s infinite alternate-reverse; }
+  .wl3 { animation: wlK 3.9s ease-in-out 1.6s infinite alternate; }
+  @keyframes wlK { from { transform: translateX(-6px); } to { transform: translateX(8px); } }
+  .wv  { animation: wvK 7s ease-in-out infinite alternate; }
+  .wv2 { animation: wvK 9s ease-in-out 2s infinite alternate-reverse; }
+  @keyframes wvK { from { transform: translateY(-2px); } to { transform: translateY(3px); } }
+  /* reflections breathe */
+  .ref { animation: refK 3.6s ease-in-out infinite alternate; transform-origin: center top; }
+  .ref2 { animation: refK 4.8s ease-in-out 1s infinite alternate-reverse; transform-origin: center top; }
+  @keyframes refK { from { opacity: .38; transform: scaleY(1); } to { opacity: .62; transform: scaleY(1.06); } }
+  /* sun glitter on water (day only) */
+  #glitter { animation: glitK var(--cy) linear infinite; }
+  @keyframes glitK {
+    0%, 4% { opacity: 0; } 12% { opacity: .5; } 52% { opacity: .5; }
+    60% { opacity: 0; } 100% { opacity: 0; }
+  }
+  #moonPath { animation: mpK var(--cy) linear infinite; }
+  @keyframes mpK {
+    0% { opacity: .5; } 9% { opacity: 0; } 60% { opacity: 0; }
+    74% { opacity: .55; } 95% { opacity: .55; } 100% { opacity: .5; }
+  }
+  /* barge crossing + gentle bob */
+  #bargeSail { animation: sailK 150s linear infinite; }
+  @keyframes sailK { from { transform: translateX(0); } to { transform: translateX(-1010px); } }
+  #bobA { animation: bobK 4.4s ease-in-out infinite alternate; }
+  #bobB { animation: bobK 3.7s ease-in-out .8s infinite alternate-reverse; }
+  @keyframes bobK { from { transform: translateY(-1.4px); } to { transform: translateY(1.4px); } }
+  /* birds */
+  @keyframes flyK { from { transform: translate(-90px, 26px); } to { transform: translate(680px, -34px); } }
+  @keyframes bdK {
+    0%, 9% { opacity: 0; } 16% { opacity: .8; } 54% { opacity: .8; } 64% { opacity: 0; } 100% { opacity: 0; }
+  }
+  /* dome glass slow sheen */
+  .sheen { animation: sheenK var(--cy) linear infinite; }
+  @keyframes sheenK {
+    0%, 6% { opacity: 0; } 20% { opacity: .45; } 50% { opacity: .45; } 60% { opacity: 0; } 100% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<main class="stage">
+<svg class="scene" viewBox="0 0 745 742" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Shanghai Lujiazui skyline day and night animation">
+  <defs>
+    <!-- ======== sky ======== -->
+    <linearGradient id="gDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a55c4"/>
+      <stop offset=".5" stop-color="#3e96e4"/>
+      <stop offset=".8" stop-color="#9fd0f2"/>
+      <stop offset="1" stop-color="#e8f5fd"/>
+    </linearGradient>
+    <linearGradient id="gDawn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#171a4a"/>
+      <stop offset=".42" stop-color="#5c5590"/>
+      <stop offset=".72" stop-color="#df8e68"/>
+      <stop offset="1" stop-color="#ffdca6"/>
+    </linearGradient>
+    <linearGradient id="gDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#20255c"/>
+      <stop offset=".48" stop-color="#a34e78"/>
+      <stop offset=".78" stop-color="#f0864c"/>
+      <stop offset="1" stop-color="#ffcd8d"/>
+    </linearGradient>
+    <linearGradient id="gNight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#02040d"/>
+      <stop offset=".55" stop-color="#071031"/>
+      <stop offset="1" stop-color="#0f2249"/>
+    </linearGradient>
+    <radialGradient id="gSun">
+      <stop offset="0" stop-color="#fffdef"/>
+      <stop offset=".35" stop-color="#ffe27a"/>
+      <stop offset=".7" stop-color="#ffb63a" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ff9d2e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gMoon">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".72" stop-color="#e4ecf8"/>
+      <stop offset="1" stop-color="#b9c9e2"/>
+    </radialGradient>
+    <!-- ======== water ======== -->
+    <linearGradient id="gWaterDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6f9ecb"/>
+      <stop offset=".14" stop-color="#3f7cb1"/>
+      <stop offset=".55" stop-color="#1d5a94"/>
+      <stop offset="1" stop-color="#123f70"/>
+    </linearGradient>
+    <linearGradient id="gRefPink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff9c85" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#ff9c85" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gRefWarm" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd28a" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#ffd28a" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gRefCool" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d5e7ff" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#d5e7ff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gRefGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7fd8b0" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#7fd8b0" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="gGlitter" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#fff9d8" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#fff9d8" stop-opacity="0"/>
+    </radialGradient>
+    <!-- ======== buildings ======== -->
+    <linearGradient id="gSWFC" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0d2f5e"/>
+      <stop offset=".55" stop-color="#164a86"/>
+      <stop offset="1" stop-color="#0a2247"/>
+    </linearGradient>
+    <linearGradient id="gShTower" x1="0" y1="0" x2="1" y2=".2">
+      <stop offset="0" stop-color="#2c4d7d"/>
+      <stop offset=".35" stop-color="#84a6c8"/>
+      <stop offset=".62" stop-color="#d3e2f2"/>
+      <stop offset="1" stop-color="#37547f"/>
+    </linearGradient>
+    <linearGradient id="gTeal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7fb9c8"/>
+      <stop offset=".5" stop-color="#33708a"/>
+      <stop offset="1" stop-color="#1d4d68"/>
+    </linearGradient>
+    <linearGradient id="gBright" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f6efda"/>
+      <stop offset=".55" stop-color="#c8d8e8"/>
+      <stop offset="1" stop-color="#8faecc"/>
+    </linearGradient>
+    <linearGradient id="gGreenT" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8fdcb4"/>
+      <stop offset=".55" stop-color="#3f9c78"/>
+      <stop offset="1" stop-color="#1f6b4e"/>
+    </linearGradient>
+    <linearGradient id="gBlueT" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3c6ea6"/>
+      <stop offset=".5" stop-color="#123a6e"/>
+      <stop offset="1" stop-color="#0b2547"/>
+    </linearGradient>
+    <linearGradient id="gBeige" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f2e6ca"/>
+      <stop offset=".7" stop-color="#dcc49c"/>
+      <stop offset="1" stop-color="#b99e76"/>
+    </linearGradient>
+    <linearGradient id="gJinS" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9fb4c8"/>
+      <stop offset=".3" stop-color="#eef3f8"/>
+      <stop offset=".55" stop-color="#5d7c9c"/>
+      <stop offset=".8" stop-color="#dbe5ee"/>
+      <stop offset="1" stop-color="#8399b1"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe08a"/>
+      <stop offset=".6" stop-color="#d99a36"/>
+      <stop offset="1" stop-color="#9c6a1d"/>
+    </linearGradient>
+    <linearGradient id="gBlock" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f7f3e8"/>
+      <stop offset=".75" stop-color="#e4d9c4"/>
+      <stop offset="1" stop-color="#c6b193"/>
+    </linearGradient>
+    <radialGradient id="gSphereUp" cx=".42" cy=".38" r=".85">
+      <stop offset="0" stop-color="#f5a68e"/>
+      <stop offset=".55" stop-color="#d96a55"/>
+      <stop offset="1" stop-color="#a23f38"/>
+    </radialGradient>
+    <radialGradient id="gSphereLow" cx=".42" cy=".38" r=".85">
+      <stop offset="0" stop-color="#e8e4da"/>
+      <stop offset=".6" stop-color="#b8b2a6"/>
+      <stop offset="1" stop-color="#7e786e"/>
+    </radialGradient>
+    <radialGradient id="gDome" cx=".4" cy=".34" r=".8">
+      <stop offset="0" stop-color="#cdeede"/>
+      <stop offset=".45" stop-color="#4f9fb4"/>
+      <stop offset=".8" stop-color="#1e5f8c"/>
+      <stop offset="1" stop-color="#123a66"/>
+    </radialGradient>
+    <radialGradient id="gDomeGlow" cx=".5" cy=".45" r=".6">
+      <stop offset="0" stop-color="#8fe8ff"/>
+      <stop offset="1" stop-color="#8fe8ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gPearlGlow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ff5f7a" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#ff5f7a" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ff5f7a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gArch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#20486e"/>
+      <stop offset="1" stop-color="#0e2740"/>
+    </linearGradient>
+    <linearGradient id="gGreenLow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#79cfc0"/>
+      <stop offset="1" stop-color="#1f8a86"/>
+    </linearGradient>
+    <!-- ======== window patterns ======== -->
+    <pattern id="pCurt" width="4" height="9" patternUnits="userSpaceOnUse">
+      <rect width="4" height="9" fill="none"/>
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#ffffff" stroke-opacity=".16" stroke-width="1"/>
+      <line x1="0" y1="8.5" x2="4" y2="8.5" stroke="#ffffff" stroke-opacity=".08" stroke-width=".7"/>
+    </pattern>
+    <pattern id="pBandH" width="7" height="6" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="5.5" x2="7" y2="5.5" stroke="#ffffff" stroke-opacity=".2" stroke-width=".8"/>
+    </pattern>
+    <pattern id="pGridW" width="10" height="13" patternUnits="userSpaceOnUse">
+      <rect x="2" y="2.5" width="5.4" height="8" fill="#8a5a41"/>
+    </pattern>
+    <pattern id="pGridG" width="8" height="9" patternUnits="userSpaceOnUse">
+      <rect width="8" height="9" fill="none"/>
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#eaffef" stroke-opacity=".28" stroke-width=".7"/>
+      <line x1="0" y1="8.6" x2="8" y2="8.6" stroke="#eaffef" stroke-opacity=".22" stroke-width=".7"/>
+    </pattern>
+    <pattern id="pDomeG" width="11" height="11" patternUnits="userSpaceOnUse">
+      <rect width="11" height="11" fill="none"/>
+      <line x1="0" y1="0" x2="0" y2="11" stroke="#eafcf6" stroke-opacity=".38" stroke-width=".8"/>
+      <line x1="0" y1="10.6" x2="11" y2="10.6" stroke="#eafcf6" stroke-opacity=".3" stroke-width=".8"/>
+    </pattern>
+    <pattern id="pLattice" width="9" height="9" patternUnits="userSpaceOnUse">
+      <path d="M0 4.5 L4.5 0 L9 4.5 L4.5 9 Z" fill="none" stroke="#8e2c28" stroke-opacity=".8" stroke-width="1.1"/>
+    </pattern>
+    <pattern id="pNightW" width="26" height="14" patternUnits="userSpaceOnUse">
+      <rect x="3" y="3" width="2" height="2.6" fill="#ffd684"/>
+      <rect x="13" y="8" width="2" height="2.6" fill="#ffe4a8"/>
+      <rect x="20" y="2" width="2" height="2.6" fill="#ffcf6e"/>
+    </pattern>
+    <pattern id="pNightC" width="22" height="12" patternUnits="userSpaceOnUse">
+      <rect x="4" y="4" width="1.8" height="2.2" fill="#cfe4ff"/>
+      <rect x="14" y="8" width="1.8" height="2.2" fill="#e8f2ff"/>
+    </pattern>
+    <!-- ======== filters ======== -->
+    <filter id="fSoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="fGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.4"/>
+    </filter>
+    <filter id="fRef" x="-20%" y="-10%" width="140%" height="130%">
+      <feGaussianBlur stdDeviation="2 1.2"/>
+    </filter>
+    <!-- ======== motion paths ======== -->
+    <path id="sunArc" d="M52,472 Q373,58 696,472"/>
+    <path id="moonArc" d="M52,502 Q373,86 696,502"/>
+    <!-- ======== clips ======== -->
+    <clipPath id="cWater"><rect x="0" y="598" width="745" height="144"/></clipPath>
+    <clipPath id="cDomeL"><circle cx="148" cy="500" r="58"/></clipPath>
+    <clipPath id="cDomeR"><circle cx="418" cy="488" r="62"/></clipPath>
+    <clipPath id="cSphereU"><circle cx="104" cy="146" r="40"/></clipPath>
+    <clipPath id="cSphereL"><circle cx="102" cy="436" r="40"/></clipPath>
+    <clipPath id="cSWFC"><path d="M452 498 L466 190 L536 190 L550 498 Z M484 242 L490 206 L514 206 L520 242 Z" clip-rule="evenodd"/></clipPath>
+    <clipPath id="cSh"><path d="M614 532 C611 350 623 150 645 44 L671 50 C692 168 699 368 701 532 Z"/></clipPath>
+    <clipPath id="cTeal"><rect x="398" y="268" width="68" height="230"/></clipPath>
+    <clipPath id="cBlueT"><rect x="212" y="334" width="52" height="166"/></clipPath>
+    <clipPath id="cGreenR"><rect x="652" y="338" width="74" height="164"/></clipPath>
+    <clipPath id="cGreenF"><rect x="628" y="432" width="72" height="134"/></clipPath>
+    <clipPath id="cBlock"><rect x="552" y="408" width="100" height="128"/></clipPath>
+    <clipPath id="cJin"><rect x="488" y="300" width="52" height="198"/></clipPath>
+  </defs>
+
+  <!-- ================= SKY ================= -->
+  <g id="skybox">
+    <rect width="745" height="742" fill="url(#gDay)"/>
+    <rect id="skyDawn" width="745" height="742" fill="url(#gDawn)"/>
+    <rect id="skyDusk" width="745" height="742" fill="url(#gDusk)"/>
+    <rect id="skyNight" width="745" height="742" fill="url(#gNight)"/>
+  </g>
+
+  <!-- clouds -->
+  <g id="clouds" fill="#ffffff">
+    <g class="cl1" opacity=".9">
+      <ellipse cx="170" cy="120" rx="46" ry="13"/>
+      <ellipse cx="200" cy="112" rx="30" ry="11"/>
+      <ellipse cx="140" cy="114" rx="22" ry="8"/>
+    </g>
+    <g class="cl2" opacity=".75">
+      <ellipse cx="470" cy="80" rx="52" ry="12"/>
+      <ellipse cx="505" cy="72" rx="28" ry="9"/>
+    </g>
+    <g class="cl3" opacity=".65">
+      <ellipse cx="300" cy="300" rx="60" ry="11"/>
+      <ellipse cx="345" cy="292" rx="34" ry="8"/>
+      <ellipse cx="255" cy="294" rx="24" ry="7"/>
+    </g>
+  </g>
+
+  <!-- birds -->
+  <g transform="translate(150,210)">
+    <g class="birdFlock" fill="none" stroke="#2a3542" stroke-width="1.6" stroke-linecap="round" opacity="0">
+      <path d="M0 0 q4 -4 8 0 q4 -4 8 0"/>
+      <path d="M26 10 q3.4 -3.4 6.8 0 q3.4 -3.4 6.8 0"/>
+      <path d="M44 -6 q3 -3 6 0 q3 -3 6 0"/>
+    </g>
+  </g>
+  <!-- ================= BACKGROUND SKYLINE ================= -->
+  <g id="backTowers">
+    <!-- far left towers -->
+    <rect x="0" y="352" width="46" height="248" fill="url(#gBlueT)"/>
+    <rect x="0" y="352" width="46" height="248" fill="url(#pCurt)"/>
+    <rect x="46" y="368" width="68" height="232" fill="url(#gBeige)"/>
+    <rect x="50" y="376" width="60" height="224" fill="url(#pGridW)" opacity=".7"/>
+    <rect x="112" y="430" width="58" height="170" fill="#e6e0d2"/>
+    <rect x="116" y="438" width="50" height="162" fill="url(#pGridW)" opacity=".55"/>
+    <rect x="160" y="452" width="122" height="148" fill="#d5cfc4"/>
+    <rect x="164" y="460" width="114" height="140" fill="url(#pGridW)" opacity=".4"/>
+    <rect x="300" y="440" width="112" height="160" fill="#cfd6dc"/>
+    <rect x="304" y="448" width="104" height="152" fill="url(#pGridW)" opacity=".45"/>
+    <!-- twin green-crown turrets -->
+    <g>
+      <rect x="293" y="446" width="11" height="36" fill="#e4dcc8"/>
+      <polygon points="293,446 304,446 298.5,432" fill="#4fae8e"/>
+      <line x1="298.5" y1="432" x2="298.5" y2="426" stroke="#8a857a" stroke-width="1"/>
+      <rect x="307" y="450" width="11" height="32" fill="#ded6c2"/>
+      <polygon points="307,450 318,450 312.5,437" fill="#4fae8e"/>
+      <line x1="312.5" y1="437" x2="312.5" y2="431" stroke="#8a857a" stroke-width="1"/>
+    </g>
+    <!-- slim spire tower -->
+    <rect x="338" y="412" width="22" height="88" fill="url(#gTeal)"/>
+    <rect x="338" y="412" width="22" height="88" fill="url(#pBandH)"/>
+    <rect x="342" y="398" width="14" height="16" fill="#e8ecec"/>
+    <line x1="349" y1="398" x2="349" y2="372" stroke="#a8b0b8" stroke-width="2"/>
+    <circle cx="349" cy="390" r="3.4" fill="#cdd6de"/>
+    <!-- oval-crown blue tower -->
+    <g id="blueTower">
+      <rect x="212" y="336" width="52" height="164" fill="url(#gBlueT)"/>
+      <rect x="212" y="334" width="52" height="166" fill="url(#pCurt)" clip-path="url(#cBlueT)"/>
+      <rect x="215" y="342" width="46" height="6" fill="#234a7c"/>
+      <ellipse cx="238" cy="336" rx="27" ry="9" fill="#eef4f8"/>
+      <ellipse cx="238" cy="334.5" rx="17" ry="5" fill="#9fb4c6"/>
+      <polygon points="218,500 238,408 258,500" fill="#f0f5f8" opacity=".8"/>
+      <polygon points="230,500 238,438 246,500" fill="#15375f"/>
+    </g>
+    <!-- teal flat-top tower -->
+    <g id="tealTower">
+      <rect x="398" y="268" width="68" height="232" fill="url(#gTeal)"/>
+      <rect x="398" y="268" width="68" height="232" fill="url(#pBandH)" clip-path="url(#cTeal)"/>
+      <rect x="398" y="268" width="68" height="7" fill="#eaf2f0"/>
+      <rect x="398" y="275" width="5" height="225" fill="#cfe2e6" opacity=".55"/>
+      <rect x="431" y="275" width="2" height="225" fill="#0c2c44" opacity=".35"/>
+    </g>
+    <!-- SWFC (bottle opener) -->
+    <g id="swfc">
+      <path d="M452 498 L466 190 L536 190 L550 498 Z M484 242 L490 206 L514 206 L520 242 Z"
+            fill="url(#gSWFC)" fill-rule="evenodd"/>
+      <rect x="452" y="190" width="98" height="308" fill="url(#pCurt)" clip-path="url(#cSWFC)"/>
+      <line x1="466" y1="190" x2="452" y2="498" stroke="#3f6da8" stroke-width="1.6"/>
+      <line x1="536" y1="190" x2="550" y2="498" stroke="#071c3a" stroke-width="2"/>
+      <rect x="488" y="204" width="28" height="2.6" fill="#eaf4fc"/>
+      <line x1="484" y1="242" x2="490" y2="206" stroke="#27508c" stroke-width="1.2"/>
+      <line x1="520" y1="242" x2="514" y2="206" stroke="#27508c" stroke-width="1.2"/>
+    </g>
+    <!-- Jin Mao Tower -->
+    <g id="jinmao">
+      <polygon points="492,450 538,450 534,500 496,500" fill="#e6ebf0"/>
+      <rect x="492" y="400" width="46" height="52" fill="#b4714d"/>
+      <rect x="492" y="400" width="46" height="52" fill="url(#pBandH)"/>
+      <rect x="494" y="392" width="42" height="10" fill="#8a5233"/>
+      <polygon points="497,392 533,392 527,376 503,376" fill="url(#gGold)"/>
+      <rect x="497" y="352" width="36" height="26" fill="url(#gJinS)"/>
+      <rect x="500" y="322" width="30" height="32" fill="url(#gJinS)"/>
+      <rect x="503" y="298" width="24" height="26" fill="url(#gJinS)"/>
+      <rect x="508" y="300" width="14" height="78" fill="#8fc0e4"/>
+      <rect x="488" y="296" width="52" height="202" fill="url(#pCurt)" clip-path="url(#cJin)"/>
+      <rect x="512" y="258" width="6" height="42" fill="#c4ced8"/>
+      <line x1="515" y1="258" x2="515" y2="246" stroke="#aab4be" stroke-width="2"/>
+      <circle cx="515" cy="268" r="2.6" fill="#dde5ec"/>
+      <circle cx="515" cy="282" r="2.6" fill="#dde5ec"/>
+    </g>
+    <!-- angled-top bright tower -->
+    <g id="angTower">
+      <polygon points="540,500 548,258 584,268 594,500" fill="url(#gBright)"/>
+      <polygon points="540,500 548,258 584,268 594,500" fill="url(#pBandH)" opacity=".8"/>
+      <line x1="548" y1="258" x2="540" y2="500" stroke="#fbf6e8" stroke-width="1.6"/>
+      <line x1="584" y1="268" x2="594" y2="500" stroke="#5f7d9c" stroke-width="1.6"/>
+    </g>
+    <!-- white grid block -->
+    <g id="whiteBlock">
+      <rect x="552" y="408" width="100" height="128" fill="url(#gBlock)"/>
+      <rect x="549" y="406" width="106" height="7" fill="#d9cdb6"/>
+      <rect x="556" y="417" width="92" height="119" fill="url(#pGridW)" clip-path="url(#cBlock)"/>
+      <rect x="634" y="408" width="18" height="128" fill="#b09a7c" opacity=".45"/>
+    </g>
+    <!-- right green towers -->
+    <g id="greenTowerR">
+      <rect x="652" y="338" width="74" height="164" fill="url(#gGreenT)"/>
+      <rect x="652" y="338" width="74" height="164" fill="url(#pGridG)" clip-path="url(#cGreenR)"/>
+      <circle cx="701" cy="346" r="3.4" fill="#e0392e"/>
+    </g>
+    <g id="greenTowerF">
+      <rect x="628" y="432" width="72" height="140" fill="#2c8468"/>
+      <rect x="628" y="432" width="72" height="140" fill="url(#pGridG)" clip-path="url(#cGreenF)"/>
+      <circle cx="634" cy="439" r="3" fill="#e0392e"/>
+      <rect x="628" y="432" width="72" height="5" fill="#1c5c48"/>
+    </g>
+    <!-- Shanghai Tower (twisted) -->
+    <g id="shTower">
+      <path d="M614 532 C611 350 623 150 645 44 L671 50 C692 168 699 368 701 532 Z" fill="url(#gShTower)"/>
+      <g clip-path="url(#cSh)">
+        <path d="M610 330 Q660 298 704 320 L704 340 Q660 318 610 350 Z" fill="#eef5fc" opacity=".5"/>
+        <path d="M610 180 Q655 152 700 172 L700 188 Q655 170 610 196 Z" fill="#eef5fc" opacity=".42"/>
+        <path d="M610 440 Q662 412 704 432 L704 448 Q662 430 610 456 Z" fill="#eef5fc" opacity=".45"/>
+        <path d="M640 60 Q652 90 652 150 L659 150 Q659 88 649 58 Z" fill="#f6fafd" opacity=".5"/>
+        <path d="M688 120 Q697 260 700 430 L704 430 Q701 258 693 118 Z" fill="#f6fafd" opacity=".35"/>
+        <rect x="610" y="118" width="94" height="2" fill="#dce9f5" opacity=".6"/>
+        <rect x="610" y="252" width="94" height="2" fill="#dce9f5" opacity=".55"/>
+        <rect x="610" y="382" width="94" height="2" fill="#dce9f5" opacity=".55"/>
+      </g>
+      <path d="M614 532 C611 350 623 150 645 44" fill="none" stroke="#20375c" stroke-width="1.6"/>
+      <path d="M671 50 C692 168 699 368 701 532" fill="none" stroke="#c8daf0" stroke-width="2"/>
+      <ellipse cx="658" cy="47" rx="13" ry="4" fill="#cfe0f2"/>
+    </g>
+  </g>
+
+  <!-- ================= ORIENTAL PEARL TOWER ================= -->
+  <g id="pearl">
+    <!-- legs -->
+    <polygon points="84,470 98,464 48,592 32,592" fill="#ddd0b8"/>
+    <polygon points="84,470 90,467 44,592 36,592" fill="#f0e6cf" opacity=".7"/>
+    <polygon points="108,464 122,470 170,592 154,592" fill="#d4c6ac"/>
+    <polygon points="94,470 112,470 110,592 96,592" fill="#d8cbb2"/>
+    <polygon points="94,470 100,470 99,592 94,592" fill="#efe5cd" opacity=".7"/>
+    <!-- thin diagonal strut with ball joint -->
+    <line x1="62" y1="588" x2="94" y2="462" stroke="#c9c2b8" stroke-width="5"/>
+    <circle cx="74" cy="538" r="6.5" fill="url(#gSphereLow)"/>
+    <!-- lower sphere: silver w/ red lattice band -->
+    <circle cx="102" cy="436" r="40" fill="url(#gSphereLow)"/>
+    <g clip-path="url(#cSphereL)">
+      <rect x="60" y="414" width="84" height="30" fill="#cf655a"/>
+      <rect x="60" y="414" width="84" height="30" fill="url(#pLattice)"/>
+      <line x1="60" y1="414" x2="144" y2="414" stroke="#7e2c28" stroke-width="1.6"/>
+      <line x1="60" y1="444" x2="144" y2="444" stroke="#7e2c28" stroke-width="1.6"/>
+      <circle cx="80"  cy="454" r="1.5" fill="#8a3028"/>
+      <circle cx="88"  cy="456" r="1.5" fill="#8a3028"/>
+      <circle cx="96"  cy="457" r="1.5" fill="#8a3028"/>
+      <circle cx="104" cy="457" r="1.5" fill="#8a3028"/>
+      <circle cx="112" cy="456" r="1.5" fill="#8a3028"/>
+      <circle cx="120" cy="454" r="1.5" fill="#8a3028"/>
+    </g>
+    <circle cx="102" cy="436" r="40" fill="none" stroke="#6e685e" stroke-width="1" opacity=".6"/>
+    <path d="M76 462 Q102 486 128 462 L119 500 L85 500 Z" fill="#e8e0d0"/>
+    <path d="M85 500 L119 500 L114 512 L90 512 Z" fill="#cfc7b6"/>
+    <!-- mid column + pods -->
+    <rect x="92" y="176" width="20" height="240" fill="url(#gBeige)"/>
+    <rect x="92" y="176" width="6" height="240" fill="#f4ead2" opacity=".8"/>
+    <g id="pearlPods">
+      <rect x="94" y="224" width="16" height="7" fill="#e2d6bc"/>
+      <ellipse cx="102" cy="233" rx="10.5" ry="4" fill="#d0685c"/>
+      <ellipse cx="102" cy="237" rx="6" ry="2.2" fill="#b8b2a6"/>
+      <rect x="94" y="262" width="16" height="7" fill="#e2d6bc"/>
+      <ellipse cx="102" cy="271" rx="10.5" ry="4" fill="#d0685c"/>
+      <ellipse cx="102" cy="275" rx="6" ry="2.2" fill="#b8b2a6"/>
+      <rect x="94" y="300" width="16" height="7" fill="#e2d6bc"/>
+      <ellipse cx="102" cy="309" rx="10.5" ry="4" fill="#d0685c"/>
+      <ellipse cx="102" cy="313" rx="6" ry="2.2" fill="#b8b2a6"/>
+      <rect x="94" y="338" width="16" height="7" fill="#e2d6bc"/>
+      <ellipse cx="102" cy="347" rx="10.5" ry="4" fill="#d0685c"/>
+      <ellipse cx="102" cy="351" rx="6" ry="2.2" fill="#b8b2a6"/>
+    </g>
+    <!-- upper sphere: pink lattice -->
+    <circle cx="104" cy="146" r="40" fill="url(#gSphereUp)"/>
+    <circle cx="104" cy="146" r="40" fill="url(#pLattice)"/>
+    <g clip-path="url(#cSphereU)">
+      <rect x="62" y="166" width="84" height="24" fill="#c9c3b8"/>
+      <line x1="62" y1="166" x2="146" y2="166" stroke="#7e2c28" stroke-width="1.4"/>
+      <circle cx="82"  cy="176" r="1.5" fill="#8a3028"/>
+      <circle cx="90"  cy="178" r="1.5" fill="#8a3028"/>
+      <circle cx="98"  cy="179" r="1.5" fill="#8a3028"/>
+      <circle cx="106" cy="179" r="1.5" fill="#8a3028"/>
+      <circle cx="114" cy="178" r="1.5" fill="#8a3028"/>
+      <circle cx="122" cy="176" r="1.5" fill="#8a3028"/>
+      <path d="M124 108 A40 40 0 0 1 124 184 L146 184 L146 108 Z" fill="#6d2a26" opacity=".28"/>
+    </g>
+    <circle cx="104" cy="146" r="40" fill="none" stroke="#8e3a30" stroke-width="1" opacity=".7"/>
+    <ellipse cx="104" cy="188" rx="26" ry="5" fill="#d8d2c6"/>
+    <!-- mast -->
+    <rect x="99" y="96" width="10" height="14" fill="#cfc9c0"/>
+    <circle cx="104" cy="74" r="13" fill="url(#gSphereUp)"/>
+    <circle cx="104" cy="74" r="13" fill="url(#pLattice)"/>
+    <ellipse cx="104" cy="85" rx="9" ry="2.6" fill="#b8b2a6"/>
+    <rect x="101.5" y="30" width="5" height="34" fill="#b8b2a6"/>
+    <circle cx="104" cy="32" r="6.5" fill="#cfc9c0"/>
+    <rect x="103" y="4" width="2.4" height="26" fill="#9a948a"/>
+    <path d="M113 66 A13 13 0 0 1 113 82 L118 82 L118 66 Z" fill="#6d2a26" opacity=".25"/>
+  </g>
+
+  <!-- ================= CONVENTION CENTER ================= -->
+  <defs>
+    <path id="archD" d="M0 58 L0 0 A5.5 5.5 0 0 1 11 0 L11 58 Z"/>
+    <pattern id="pTick" width="26" height="12" patternUnits="userSpaceOnUse">
+      <rect x="2" y="0" width="2.4" height="12" fill="#6e675c" opacity=".55"/>
+    </pattern>
+    <pattern id="pStripeW" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="2.4" height="6" fill="#ffffff" opacity=".5"/>
+    </pattern>
+  </defs>
+  <g id="convCenter">
+    <!-- facade -->
+    <rect x="185" y="474" width="260" height="92" fill="url(#gBeige)"/>
+    <rect x="183" y="466" width="264" height="4" fill="#c17a64"/>
+    <rect x="183" y="470" width="264" height="7" fill="#a8625a"/>
+    <use href="#archD" x="194" y="492" fill="#c9b898"/>
+    <use href="#archD" x="214" y="492" fill="#c9b898"/>
+    <use href="#archD" x="234" y="492" fill="#c9b898"/>
+    <use href="#archD" x="254" y="492" fill="#c9b898"/>
+    <use href="#archD" x="274" y="492" fill="#c9b898"/>
+    <use href="#archD" x="294" y="492" fill="#c9b898"/>
+    <use href="#archD" x="314" y="492" fill="#c9b898"/>
+    <use href="#archD" x="334" y="492" fill="#c9b898"/>
+    <use href="#archD" x="354" y="492" fill="#c9b898"/>
+    <use href="#archD" x="374" y="492" fill="#c9b898"/>
+    <use href="#archD" x="394" y="492" fill="#c9b898"/>
+    <use href="#archD" x="414" y="492" fill="#c9b898"/>
+    <use href="#archD" x="434" y="492" fill="#c9b898"/>
+    <g fill="url(#gArch)">
+      <use href="#archD" x="196.5" y="497" transform="scale(1)"/>
+      <use href="#archD" x="216.5" y="497"/>
+      <use href="#archD" x="236.5" y="497"/>
+      <use href="#archD" x="256.5" y="497"/>
+      <use href="#archD" x="276.5" y="497"/>
+      <use href="#archD" x="296.5" y="497"/>
+      <use href="#archD" x="316.5" y="497"/>
+      <use href="#archD" x="336.5" y="497"/>
+      <use href="#archD" x="356.5" y="497"/>
+      <use href="#archD" x="376.5" y="497"/>
+      <use href="#archD" x="396.5" y="497"/>
+      <use href="#archD" x="416.5" y="497"/>
+    </g>
+    <rect x="185" y="552" width="260" height="7" fill="#cfc4ae"/>
+    <rect x="183" y="559" width="264" height="22" fill="#b9b0a0"/>
+    <rect x="183" y="559" width="264" height="3" fill="#d3cbb9"/>
+    <!-- left dome -->
+    <g id="domeL">
+      <circle cx="148" cy="500" r="58" fill="url(#gDome)"/>
+      <g clip-path="url(#cDomeL)">
+        <rect x="90" y="518" width="116" height="42" fill="#1c5f96" opacity=".75"/>
+        <rect x="90" y="442" width="116" height="116" fill="url(#pDomeG)"/>
+        <ellipse cx="148" cy="500" rx="18" ry="58" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <ellipse cx="148" cy="500" rx="38" ry="58" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <ellipse cx="148" cy="500" rx="52" ry="58" fill="none" stroke="#eafcf6" stroke-opacity=".35" stroke-width=".9"/>
+        <ellipse cx="148" cy="486" rx="55" ry="8" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <ellipse cx="148" cy="472" rx="50" ry="8" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <ellipse cx="148" cy="458" rx="40" ry="8" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <path class="sheen" d="M104 452 L128 442 L176 512 L152 524 Z" fill="#ffffff" opacity="0"/>
+      </g>
+      <circle cx="148" cy="500" r="58" fill="none" stroke="#0e3a5e" stroke-width="1.2" opacity=".7"/>
+      <rect x="116" y="548" width="64" height="18" fill="#efe9dc"/>
+      <rect x="116" y="548" width="64" height="18" fill="url(#pBandH)"/>
+    </g>
+    <!-- right dome -->
+    <g id="domeR">
+      <circle cx="418" cy="488" r="62" fill="url(#gDome)"/>
+      <g clip-path="url(#cDomeR)">
+        <rect x="356" y="452" width="52" height="44" fill="#d9663a" opacity=".45"/>
+        <rect x="384" y="500" width="60" height="30" fill="#6fbf6a" opacity=".4"/>
+        <rect x="430" y="460" width="40" height="30" fill="#bfe4d2" opacity=".4"/>
+        <rect x="356" y="508" width="124" height="44" fill="#1c5f96" opacity=".7"/>
+        <rect x="356" y="426" width="124" height="124" fill="url(#pDomeG)"/>
+        <ellipse cx="418" cy="488" rx="20" ry="62" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <ellipse cx="418" cy="488" rx="40" ry="62" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <ellipse cx="418" cy="488" rx="55" ry="62" fill="none" stroke="#eafcf6" stroke-opacity=".35" stroke-width=".9"/>
+        <ellipse cx="418" cy="473" rx="59" ry="8" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <ellipse cx="418" cy="458" rx="54" ry="8" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <ellipse cx="418" cy="443" rx="44" ry="8" fill="none" stroke="#eafcf6" stroke-opacity=".4" stroke-width=".9"/>
+        <path class="sheen" d="M372 440 L398 430 L452 500 L426 512 Z" fill="#ffffff" opacity="0"/>
+      </g>
+      <circle cx="418" cy="488" r="62" fill="none" stroke="#0e3a5e" stroke-width="1.2" opacity=".7"/>
+      <rect x="380" y="540" width="76" height="30" fill="#efe9dc"/>
+      <rect x="380" y="540" width="76" height="30" fill="url(#pStripeW)"/>
+      <rect x="380" y="540" width="76" height="4" fill="#d8d0be"/>
+    </g>
+  </g>
+
+  <!-- ================= SHORE ================= -->
+  <g id="shore">
+    <rect x="0" y="578" width="470" height="22" fill="#8d867a"/>
+    <rect x="0" y="578" width="470" height="3" fill="#a49c8e"/>
+    <rect x="0" y="582" width="470" height="12" fill="url(#pTick)"/>
+    <rect x="470" y="570" width="232" height="30" fill="#ddd6c6"/>
+    <rect x="470" y="570" width="232" height="3" fill="#f0ead8"/>
+    <rect x="470" y="580" width="232" height="14" fill="url(#pTick)" opacity=".7"/>
+    <rect x="662" y="556" width="83" height="44" fill="#cfc4ac"/>
+    <rect x="662" y="556" width="83" height="3" fill="#e6dcc6"/>
+    <!-- green tree cluster -->
+    <g>
+      <circle cx="225" cy="556" r="13" fill="#4a7d43"/>
+      <circle cx="245" cy="560" r="11" fill="#558c4c"/>
+      <circle cx="262" cy="554" r="10" fill="#3f6e3a"/>
+      <circle cx="280" cy="558" r="12" fill="#4a7d43"/>
+      <circle cx="296" cy="561" r="9" fill="#558c4c"/>
+      <circle cx="311" cy="563" r="8" fill="#c14e2c"/>
+    </g>
+    <!-- red maples -->
+    <g>
+      <circle cx="440" cy="566" r="10" fill="#c14e2c"/>
+      <circle cx="453" cy="560" r="9" fill="#a83826"/>
+      <circle cx="466" cy="566" r="10" fill="#d96a35"/>
+      <circle cx="530" cy="560" r="12" fill="#c14e2c"/>
+      <circle cx="545" cy="556" r="10" fill="#a83826"/>
+      <circle cx="560" cy="560" r="11" fill="#d96a35"/>
+      <circle cx="575" cy="556" r="10" fill="#c14e2c"/>
+      <circle cx="590" cy="560" r="12" fill="#a83826"/>
+      <circle cx="605" cy="556" r="10" fill="#d96a35"/>
+      <circle cx="620" cy="560" r="11" fill="#c14e2c"/>
+      <circle cx="635" cy="556" r="10" fill="#a83826"/>
+      <circle cx="650" cy="560" r="11" fill="#d96a35"/>
+      <circle cx="662" cy="558" r="9" fill="#c14e2c"/>
+    </g>
+    <!-- beacon tower -->
+    <g id="beacon">
+      <rect x="696" y="552" width="10" height="26" fill="#d8402f"/>
+      <rect x="696" y="560" width="10" height="4" fill="#f4ece0"/>
+      <polygon points="693,552 709,552 701,543" fill="#a8302a"/>
+      <circle cx="701" cy="548" r="2.2" fill="#ffe9b8"/>
+    </g>
+    <circle cx="702" cy="594" r="4" fill="#d8402f"/>
+    <path d="M698.5 593 A4 4 0 0 1 705.5 593 Z" fill="#f4ece0"/>
+  </g>
+
+  <!-- ================= WATER ================= -->
+  <g id="water">
+    <rect x="0" y="598" width="745" height="144" fill="url(#gWaterDay)"/>
+    <rect x="0" y="598" width="745" height="6" fill="#2a5578" opacity=".55"/>
+    <g clip-path="url(#cWater)">
+      <!-- reflections -->
+      <rect class="ref"  x="74"  y="602" width="64"  height="98" fill="url(#gRefPink)"  filter="url(#fRef)"/>
+      <rect class="ref2" x="190" y="602" width="212" height="62" fill="url(#gRefWarm)"  filter="url(#fRef)" opacity=".5"/>
+      <rect class="ref"  x="452" y="602" width="100" height="46" fill="url(#gRefCool)"  filter="url(#fRef)"/>
+      <rect class="ref2" x="612" y="602" width="90"  height="62" fill="url(#gRefCool)"  filter="url(#fRef)"/>
+      <rect class="ref"  x="652" y="602" width="70"  height="52" fill="url(#gRefGreen)" filter="url(#fRef)"/>
+      <!-- sun glitter -->
+      <g id="glitter" opacity="0">
+        <ellipse cx="340" cy="628" rx="150" ry="8" fill="url(#gGlitter)"/>
+        <ellipse cx="300" cy="652" rx="95"  ry="6" fill="url(#gGlitter)"/>
+        <ellipse cx="390" cy="676" rx="70"  ry="5" fill="url(#gGlitter)" opacity=".7"/>
+      </g>
+      <!-- moon path on water -->
+      <g id="moonPath" opacity="0" fill="#dfe9ff">
+        <ellipse cx="373" cy="636" rx="58" ry="6" filter="url(#fRef)"/>
+        <ellipse cx="373" cy="664" rx="42" ry="5" opacity=".6"/>
+        <ellipse cx="373" cy="694" rx="28" ry="4" opacity=".45"/>
+      </g>
+      <!-- shimmer lines -->
+      <g fill="#dceef8">
+        <rect class="wl"  x="40"  y="612" width="64" height="1.4" opacity=".28"/>
+        <rect class="wl2" x="150" y="620" width="46" height="1.4" opacity=".2"/>
+        <rect class="wl3" x="255" y="610" width="80" height="1.4" opacity=".26"/>
+        <rect class="wl"  x="420" y="618" width="52" height="1.4" opacity=".22"/>
+        <rect class="wl2" x="530" y="612" width="70" height="1.4" opacity=".26"/>
+        <rect class="wl3" x="660" y="622" width="56" height="1.4" opacity=".2"/>
+        <rect class="wl"  x="90"  y="636" width="88" height="1.6" opacity=".22"/>
+        <rect class="wl3" x="230" y="644" width="60" height="1.6" opacity=".18"/>
+        <rect class="wl2" x="400" y="640" width="90" height="1.6" opacity=".24"/>
+        <rect class="wl"  x="560" y="648" width="64" height="1.6" opacity=".2"/>
+        <rect class="wl2" x="680" y="642" width="48" height="1.6" opacity=".22"/>
+        <rect class="wl3" x="30"  y="664" width="70" height="1.6" opacity=".18"/>
+        <rect class="wl"  x="190" y="672" width="96" height="1.6" opacity=".2"/>
+        <rect class="wl2" x="360" y="668" width="60" height="1.6" opacity=".18"/>
+        <rect class="wl3" x="500" y="678" width="84" height="1.6" opacity=".2"/>
+        <rect class="wl"  x="640" y="670" width="60" height="1.6" opacity=".18"/>
+        <rect class="wl2" x="80"  y="698" width="90" height="1.8" opacity=".16"/>
+        <rect class="wl3" x="280" y="706" width="70" height="1.8" opacity=".16"/>
+        <rect class="wl"  x="470" y="700" width="96" height="1.8" opacity=".16"/>
+        <rect class="wl2" x="620" y="712" width="70" height="1.8" opacity=".14"/>
+        <rect class="wl3" x="150" y="726" width="80" height="1.8" opacity=".14"/>
+        <rect class="wl"  x="360" y="730" width="86" height="1.8" opacity=".14"/>
+      </g>
+      <rect class="wv"  x="0" y="640" width="745" height="2.2" fill="#ffffff" opacity=".06"/>
+      <rect class="wv2" x="0" y="676" width="745" height="2.6" fill="#ffffff" opacity=".05"/>
+      <rect class="wv"  x="0" y="710" width="745" height="2"   fill="#ffffff" opacity=".05"/>
+    </g>
+  </g>
+
+  <!-- ================= BOATS ================= -->
+  <g id="ferry" transform="translate(0,570)">
+    <g id="bobA">
+      <line x1="30" y1="-6" x2="30" y2="8" stroke="#5a6068" stroke-width="1.4"/>
+      <rect x="12" y="7" width="72" height="9" fill="#274b6d"/>
+      <rect x="15" y="9" width="6" height="5" fill="#9fc4e0"/>
+      <rect x="25" y="9" width="6" height="5" fill="#9fc4e0"/>
+      <rect x="35" y="9" width="6" height="5" fill="#9fc4e0"/>
+      <rect x="45" y="9" width="6" height="5" fill="#9fc4e0"/>
+      <rect x="55" y="9" width="6" height="5" fill="#9fc4e0"/>
+      <rect x="65" y="9" width="6" height="5" fill="#9fc4e0"/>
+      <rect x="75" y="9" width="6" height="5" fill="#9fc4e0"/>
+      <rect x="60" y="-1" width="22" height="9" fill="#f4f4f2"/>
+      <rect x="63" y="1.5" width="16" height="4" fill="#7ba6c8"/>
+      <path d="M2 16 L92 16 L86 30 L8 30 Z" fill="#f4f4f2"/>
+      <rect x="7" y="23" width="80" height="3.4" fill="#c0392b"/>
+      <line x1="34" y1="7" x2="34" y2="16" stroke="#c8ccd2" stroke-width="1.2"/>
+      <line x1="50" y1="7" x2="50" y2="16" stroke="#c8ccd2" stroke-width="1.2"/>
+    </g>
+  </g>
+  <g id="pontoon">
+    <rect x="96" y="586" width="138" height="9" fill="#b23a2c"/>
+    <rect x="96" y="586" width="138" height="2.6" fill="#d0503c"/>
+    <circle cx="110" cy="588" r="1.2" fill="#efe9dc"/>
+    <circle cx="160" cy="588" r="1.2" fill="#efe9dc"/>
+    <circle cx="210" cy="588" r="1.2" fill="#efe9dc"/>
+  </g>
+  <g transform="translate(772,570)">
+    <g id="bargeSail">
+      <g id="bobB">
+        <ellipse cx="136" cy="33" rx="11" ry="3" fill="#ffffff" opacity=".45"/>
+        <ellipse cx="150" cy="30" rx="7"  ry="2" fill="#ffffff" opacity=".3"/>
+        <rect x="0" y="22" width="126" height="10" fill="#26303c"/>
+        <polygon points="126,22 130,26 130,32 126,32" fill="#26303c"/>
+        <rect x="0" y="29.6" width="129" height="2.6" fill="#7e3a26"/>
+        <path d="M6 22 Q22 10 40 22 Q58 8 76 22 Q92 12 104 22 Z" fill="#2b2b30"/>
+        <rect x="104" y="4" width="20" height="18" fill="#2f66c8"/>
+        <rect x="103" y="1.6" width="22" height="3" fill="#e8eef4"/>
+        <rect x="107" y="7" width="14" height="6" fill="#bfe0ff"/>
+        <rect x="92" y="10" width="12" height="12" fill="#2f66c8"/>
+        <rect x="94.5" y="12.5" width="7" height="5" fill="#bfe0ff"/>
+        <line x1="114" y1="1.6" x2="114" y2="-4" stroke="#5a6068" stroke-width="1.2"/>
+        <g fill="#e8e4da">
+          <circle cx="10" cy="27" r="2.1"/>
+          <circle cx="24" cy="27" r="2.1"/>
+          <circle cx="38" cy="27" r="2.1"/>
+          <circle cx="52" cy="27" r="2.1"/>
+          <circle cx="66" cy="27" r="2.1"/>
+          <circle cx="80" cy="27" r="2.1"/>
+          <circle cx="94" cy="27" r="2.1"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ================= LIGHT GRADE (multiply) ================= -->
+  <rect id="gradeWarm"  x="0" y="0" width="745" height="742" fill="#ff8a4a" style="mix-blend-mode:multiply" opacity="0"/>
+  <rect id="gradeNight" x="0" y="0" width="745" height="742" fill="#071026" style="mix-blend-mode:multiply" opacity="0"/>
+
+  <!-- ================= STARS (above grade) ================= -->
+  <g id="stars" fill="#dfeaff">
+    <circle class="tw"  cx="40"  cy="42"  r="1.3"/>
+    <circle class="tw2" cx="96"  cy="90"  r="1"/>
+    <circle class="tw3" cx="150" cy="30"  r="1.4"/>
+    <circle        cx="190" cy="120" r=".9"/>
+    <circle class="tw"  cx="233" cy="66"  r="1.1"/>
+    <circle        cx="280" cy="26"  r="1"/>
+    <circle class="tw3" cx="320" cy="150" r=".8"/>
+    <circle class="tw2" cx="360" cy="52"  r="1.3"/>
+    <circle        cx="398" cy="110" r=".9"/>
+    <circle class="tw"  cx="436" cy="30"  r="1.2"/>
+    <circle class="tw2" cx="480" cy="96"  r="1"/>
+    <circle        cx="524" cy="46"  r="1.1"/>
+    <circle class="tw3" cx="560" cy="130" r=".9"/>
+    <circle class="tw"  cx="606" cy="70"  r="1.2"/>
+    <circle        cx="652" cy="24"  r="1"/>
+    <circle class="tw2" cx="700" cy="100" r="1.2"/>
+    <circle class="tw"  cx="726" cy="170" r=".9"/>
+    <circle        cx="70"  cy="190" r=".8"/>
+    <circle class="tw3" cx="26"  cy="270" r=".9"/>
+    <circle class="tw"  cx="330" cy="210" r=".8"/>
+    <circle class="tw2" cx="590" cy="200" r=".9"/>
+    <circle        cx="470" cy="170" r=".8"/>
+    <circle class="tw3" cx="712" cy="260" r=".8"/>
+    <circle class="tw"  cx="255" cy="290" r=".8"/>
+    <circle class="tw2" cx="150" cy="240" r=".8"/>
+  </g>
+
+  <!-- ================= SUN / MOON ================= -->
+  <g id="sunG" opacity="0">
+    <circle r="52" fill="url(#gSun)"/>
+    <circle r="15" fill="#fff6d0"/>
+    <animateMotion dur="60s" repeatCount="indefinite" calcMode="linear"
+                   keyTimes="0;0.63;1" keyPoints="0;1;1"
+                   path="M52,472 Q373,58 696,472"/>
+  </g>
+  <g id="moonG" opacity="0">
+    <circle r="24" fill="#cfe0ff" opacity=".35" filter="url(#fSoft)"/>
+    <circle r="12" fill="url(#gMoon)"/>
+    <circle cx="-3" cy="-2" r="2.4" fill="#cbd6e6" opacity=".5"/>
+    <circle cx="4"  cy="3"  r="1.8" fill="#cbd6e6" opacity=".45"/>
+    <circle cx="5"  cy="-4" r="1.2" fill="#cbd6e6" opacity=".4"/>
+    <animateMotion dur="60s" repeatCount="indefinite" calcMode="linear"
+                   keyTimes="0;0.09;0.62;1" keyPoints="0.9;1;0;1"
+                   path="M52,502 Q373,86 696,502"/>
+  </g>
+
+  <!-- ================= NIGHT LIGHTS ================= -->
+  <g id="nightWindows" class="nl" opacity="0">
+    <!-- lit windows -->
+    <rect x="0"   y="352" width="46"  height="246" fill="url(#pNightC)" opacity=".7"/>
+    <rect x="50"  y="376" width="60"  height="222" fill="url(#pNightW)" opacity=".7"/>
+    <rect x="116" y="438" width="50"  height="160" fill="url(#pNightW)" opacity=".6"/>
+    <rect x="338" y="412" width="22"  height="86"  fill="url(#pNightC)" opacity=".7"/>
+    <rect x="212" y="336" width="52"  height="162" fill="url(#pNightW)" clip-path="url(#cBlueT)" opacity=".8"/>
+    <rect x="398" y="268" width="68"  height="230" fill="url(#pNightC)" clip-path="url(#cTeal)"  opacity=".8"/>
+    <rect x="452" y="190" width="98"  height="308" fill="url(#pNightC)" clip-path="url(#cSWFC)"  opacity=".9"/>
+    <rect x="488" y="296" width="52"  height="202" fill="url(#pNightW)" clip-path="url(#cJin)"   opacity=".85"/>
+    <polygon points="540,500 548,258 584,268 594,500" fill="url(#pNightC)" opacity=".8"/>
+    <rect x="556" y="417" width="92"  height="116" fill="url(#pNightW)" clip-path="url(#cBlock)" opacity=".75"/>
+    <rect x="628" y="432" width="72"  height="136" fill="url(#pNightC)" clip-path="url(#cGreenF)" opacity=".8"/>
+    <rect x="652" y="338" width="74"  height="160" fill="url(#pNightC)" clip-path="url(#cGreenR)" opacity=".8"/>
+    <rect x="610" y="44"  width="94"  height="488" fill="url(#pNightC)" clip-path="url(#cSh)"     opacity=".9"/>
+    <!-- SWFC aperture neon + edges -->
+    <path d="M484 242 L490 206 L514 206 L520 242 Z" fill="none" stroke="#7fd0ff" stroke-width="1.6" opacity=".9"/>
+    <line x1="466" y1="190" x2="452" y2="498" stroke="#4f8fd0" stroke-width="1.4" opacity=".8"/>
+    <line x1="536" y1="190" x2="550" y2="498" stroke="#4f8fd0" stroke-width="1.2" opacity=".6"/>
+    <!-- Jin Mao gold crown glow -->
+    <ellipse cx="515" cy="384" rx="18" ry="8" fill="#ffbe52" filter="url(#fGlow)" opacity=".8"/>
+    <!-- Shanghai Tower edge neon -->
+    <path d="M671 50 C692 168 699 368 701 532" fill="none" stroke="#9fd4ff" stroke-width="1.8" opacity=".8"/>
+    <ellipse cx="658" cy="47" rx="14" ry="5" fill="#bfe4ff" filter="url(#fGlow)" opacity=".7"/>
+    <!-- Pearl glows -->
+    <circle cx="104" cy="146" r="52" fill="url(#gPearlGlow)" filter="url(#fSoft)" opacity=".5"/>
+    <ellipse cx="104" cy="153" rx="34" ry="9" fill="#ff7a6a" filter="url(#fGlow)" opacity=".7"/>
+    <circle cx="102" cy="436" r="52" fill="url(#gPearlGlow)" filter="url(#fSoft)" opacity=".4"/>
+    <ellipse cx="102" cy="429" rx="30" ry="10" fill="#ff6a6a" filter="url(#fGlow)" opacity=".75"/>
+    <circle cx="104" cy="74" r="18" fill="url(#gPearlGlow)" filter="url(#fSoft)" opacity=".65"/>
+    <ellipse cx="102" cy="233" rx="12" ry="5" fill="#ff6a5e" filter="url(#fGlow)" opacity=".7"/>
+    <ellipse cx="102" cy="271" rx="12" ry="5" fill="#ff6a5e" filter="url(#fGlow)" opacity=".7"/>
+    <ellipse cx="102" cy="309" rx="12" ry="5" fill="#ff6a5e" filter="url(#fGlow)" opacity=".7"/>
+    <ellipse cx="102" cy="347" rx="12" ry="5" fill="#ff6a5e" filter="url(#fGlow)" opacity=".7"/>
+    <!-- convention center arch lights -->
+    <g fill="#f6c079" opacity=".65">
+      <use href="#archD" x="196.5" y="497"/>
+      <use href="#archD" x="216.5" y="497"/>
+      <use href="#archD" x="236.5" y="497"/>
+      <use href="#archD" x="256.5" y="497"/>
+      <use href="#archD" x="276.5" y="497"/>
+      <use href="#archD" x="296.5" y="497"/>
+      <use href="#archD" x="316.5" y="497"/>
+      <use href="#archD" x="336.5" y="497"/>
+      <use href="#archD" x="356.5" y="497"/>
+      <use href="#archD" x="376.5" y="497"/>
+      <use href="#archD" x="396.5" y="497"/>
+      <use href="#archD" x="416.5" y="497"/>
+    </g>
+    <!-- dome glows -->
+    <circle cx="148" cy="500" r="60" fill="url(#gDomeGlow)" opacity=".8"/>
+    <circle cx="418" cy="488" r="64" fill="url(#gDomeGlow)" opacity=".8"/>
+    <ellipse cx="148" cy="500" rx="38" ry="58" fill="none" stroke="#9fefff" stroke-width=".9" opacity=".5" clip-path="url(#cDomeL)"/>
+    <ellipse cx="418" cy="488" rx="40" ry="62" fill="none" stroke="#9fefff" stroke-width=".9" opacity=".5" clip-path="url(#cDomeR)"/>
+    <!-- promenade lamps -->
+    <g fill="#ffdf9a">
+      <circle cx="24" cy="576" r="1.6"/><circle cx="64" cy="576" r="1.6"/>
+      <circle cx="128" cy="576" r="1.6"/><circle cx="176" cy="576" r="1.6"/>
+      <circle cx="472" cy="568" r="1.6"/><circle cx="512" cy="568" r="1.6"/>
+      <circle cx="552" cy="568" r="1.6"/><circle cx="592" cy="568" r="1.6"/>
+      <circle cx="632" cy="568" r="1.6"/>
+    </g>
+    <!-- green tower logo -->
+    <circle cx="701" cy="346" r="5" fill="#ff3326" filter="url(#fGlow)" opacity=".9"/>
+    <circle cx="634" cy="439" r="4" fill="#ff3326" filter="url(#fGlow)" opacity=".8"/>
+    <!-- city line reflection -->
+    <g clip-path="url(#cWater)" opacity=".3">
+      <rect x="0" y="602" width="745" height="46" fill="url(#gRefWarm)" filter="url(#fRef)"/>
+    </g>
+  </g>
+  <!-- blinking aviation lights (inside night master) -->
+  <g class="nl" opacity="0">
+    <circle class="blink"  cx="104" cy="5"   r="2.4" fill="#ff3b30"/>
+    <circle class="blink2" cx="658" cy="44"  r="2.2" fill="#ff4438"/>
+    <circle class="blink"  cx="515" cy="246" r="1.8" fill="#ff4438"/>
+    <circle class="blink2" cx="462" cy="266" r="1.6" fill="#ff4438"/>
+    <circle class="blink"  cx="701" cy="547" r="2.2" fill="#ffd9a0"/>
+    <circle class="blink2" cx="702" cy="592" r="1.6" fill="#ff5040"/>
+  </g>
+</svg>
+<figcaption><b>Shanghai · Lujiazui</b> — 陸家嘴日夜循環 (SVG, 60s infinity loop)</figcaption>
+</main>
+</body>
+</html>
