@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>spec_01 — 上海浦江天際線 日夜循環 SVG</title>
+<style>
+  :root { --cycle: 60s; }
+  html, body { margin: 0; padding: 0; background: #0d1117; }
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .stage { width: min(96vw, 96vh); aspect-ratio: 745 / 742; box-shadow: 0 8px 40px rgba(0,0,0,.55); border-radius: 6px; overflow: hidden; }
+  svg { width: 100%; height: 100%; display: block; }
+
+  /* ============ 天空三層交叉淡入淡出 ============
+     時間軸(週期 60s): 0% 拂曉 → 8% 白天 → 46% 白晝尾聲 → 54% 黃昏峰
+     → 62% 深夜 → 90% 拂曉前 → 100% 回到拂曉 */
+  #skyDay  { animation: opDay var(--cycle) linear infinite; }
+  #skyGold { animation: opGold var(--cycle) linear infinite; }
+  @keyframes opDay {
+     0% {opacity:0} 7% {opacity:1} 46% {opacity:1} 56% {opacity:0}
+     92% {opacity:0} 100% {opacity:0}
+  }
+  @keyframes opGold {
+     0% {opacity:.9} 11% {opacity:0} 44% {opacity:0} 54% {opacity:.95}
+     65% {opacity:0} 89% {opacity:0} 100% {opacity:.9}
+  }
+  /* ============ 水面同節奏 ============ */
+  #waterDay  { animation: opDay var(--cycle) linear infinite; }
+  #waterGold { animation: opGold var(--cycle) linear infinite; }
+  /* ============ 城市夜暗化罩 ============ */
+  #nightDim { animation: opDim var(--cycle) linear infinite; }
+  @keyframes opDim {
+     0% {opacity:.45} 8% {opacity:0} 48% {opacity:0} 60% {opacity:.52}
+     88% {opacity:.52} 96% {opacity:.45} 100% {opacity:.45}
+  }
+  /* ============ 城市燈光 / 窗燈 ============ */
+  #cityWin, #domeGlow, #pearlGlow, #moonGlit, #towerRefl, #cityHalo {
+     animation: opWin var(--cycle) linear infinite;
+  }
+  @keyframes opWin {
+     0% {opacity:.55} 9% {opacity:0} 50% {opacity:0} 62% {opacity:1}
+     88% {opacity:1} 95% {opacity:.55} 100% {opacity:.55}
+  }
+  /* ============ 太陽 ============ */
+  #sun { animation: opSun var(--cycle) linear infinite; }
+  @keyframes opSun {
+     0% {opacity:0} 5% {opacity:0} 8% {opacity:1} 50% {opacity:1}
+     55% {opacity:0} 100% {opacity:0}
+  }
+  #sunGlit { animation: opSunGlit var(--cycle) linear infinite; }
+  @keyframes opSunGlit {
+     0% {opacity:0} 8% {opacity:.4} 46% {opacity:.4} 54% {opacity:0}
+     100% {opacity:0}
+  }
+  /* ============ 月亮 ============ */
+  #moon { animation: opMoon var(--cycle) linear infinite; }
+  @keyframes opMoon {
+     0% {opacity:.75} 9% {opacity:0} 55% {opacity:0} 60% {opacity:1}
+     91% {opacity:1} 96% {opacity:0} 100% {opacity:.75}
+  }
+  /* ============ 星星 ============ */
+  #stars { animation: opStars var(--cycle) linear infinite; }
+  @keyframes opStars {
+     0% {opacity:.5} 9% {opacity:0} 54% {opacity:0} 63% {opacity:1}
+     88% {opacity:1} 95% {opacity:.5} 100% {opacity:.5}
+  }
+  .tw1 { animation: twinkle 2.6s ease-in-out infinite alternate; }
+  .tw2 { animation: twinkle 3.4s ease-in-out infinite alternate; }
+  .tw3 { animation: twinkle 4.1s ease-in-out infinite alternate; }
+  @keyframes twinkle { from {opacity:.35} to {opacity:1} }
+  /* ============ 雲 ============ */
+  #clouds { animation: cloudFade var(--cycle) linear infinite; }
+  @keyframes cloudFade {
+     0% {opacity:.35} 10% {opacity:.85} 46% {opacity:.85}
+     54% {opacity:.75} 64% {opacity:.14} 90% {opacity:.14} 100% {opacity:.35}
+  }
+  .drift1 { animation: drift 70s ease-in-out infinite alternate; }
+  .drift2 { animation: drift 95s ease-in-out infinite alternate-reverse; }
+  @keyframes drift { from {transform:translateX(-26px)} to {transform:translateX(30px)} }
+  /* ============ 船 ============ */
+  #barge { animation: bargeMove var(--cycle) linear infinite; }
+  @keyframes bargeMove {
+     0%   {transform:translateX(150px)}
+     100% {transform:translateX(-660px)}
+  }
+  #ferry  { animation: bob 4.2s ease-in-out infinite alternate; }
+  #buoyS  { animation: bobS 5.1s ease-in-out infinite alternate; }
+  @keyframes bob  { from {transform:translateY(0)} to {transform:translateY(2px)} }
+  @keyframes bobS { from {transform:translateY(0)} to {transform:translateY(-1.5px)} }
+  /* ============ 水面漣漪 ============ */
+  .shimA { animation: shim 7s ease-in-out infinite alternate; }
+  .shimB { animation: shim 9s ease-in-out infinite alternate-reverse; }
+  .shimC { animation: shim 11s ease-in-out infinite alternate; }
+  @keyframes shim { from {transform:translateX(-7px)} to {transform:translateX(7px)} }
+  /* ============ 航空障礙燈 ============ */
+  .beacon { animation: beacon 1.8s ease-in-out infinite; }
+  @keyframes beacon { 0%,100% {opacity:.15} 45%,55% {opacity:1} }
+  /* ============ 候鳥(白天) ============ */
+  #birds { animation: opBirds var(--cycle) linear infinite; }
+  @keyframes opBirds { 0% {opacity:0} 12% {opacity:0} 16% {opacity:1} 44% {opacity:1} 50% {opacity:0} 100% {opacity:0} }
+  #birds g { animation: fly 26s linear infinite; }
+  @keyframes fly { from {transform:translate(-80px,10px)} to {transform:translate(560px,-40px)} }
+  /* ============ 時段標籤 ============ */
+  .lbl { font: 600 15px/1 "Noto Sans TC", "Microsoft JhengHei", sans-serif; letter-spacing: 2px; }
+  #lDawn { animation: phDawn var(--cycle) linear infinite; }
+  #lDay  { animation: phDay  var(--cycle) linear infinite; }
+  #lDusk { animation: phDusk var(--cycle) linear infinite; }
+  #lNight{ animation: phNight var(--cycle) linear infinite; }
+  @keyframes phDawn  { 0%{opacity:1} 7%{opacity:1} 11%{opacity:0} 88%{opacity:0} 93%{opacity:1} 100%{opacity:1} }
+  @keyframes phDay   { 0%{opacity:0} 12%{opacity:1} 45%{opacity:1} 49%{opacity:0} 100%{opacity:0} }
+  @keyframes phDusk  { 0%{opacity:0} 47%{opacity:0} 51%{opacity:1} 61%{opacity:1} 65%{opacity:0} 100%{opacity:0} }
+  @keyframes phNight { 0%{opacity:0} 63%{opacity:0} 67%{opacity:1} 88%{opacity:1} 92%{opacity:0} 100%{opacity:0} }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg viewBox="0 0 745 742" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+  <!-- ======== 天空 / 水面漸層 ======== -->
+  <linearGradient id="gSkyDay" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#1663c8"/>
+    <stop offset=".45" stop-color="#2f83dd"/>
+    <stop offset=".78" stop-color="#7ab4ea"/>
+    <stop offset="1"   stop-color="#cfe5f4"/>
+  </linearGradient>
+  <linearGradient id="gSkyGold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#4c3a7a"/>
+    <stop offset=".35" stop-color="#8a5a83"/>
+    <stop offset=".62" stop-color="#e07a52"/>
+    <stop offset=".85" stop-color="#ffb15e"/>
+    <stop offset="1"   stop-color="#ffdfa0"/>
+  </linearGradient>
+  <linearGradient id="gSkyNight" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#02040f"/>
+    <stop offset=".5"  stop-color="#081430"/>
+    <stop offset=".82" stop-color="#10254a"/>
+    <stop offset="1"   stop-color="#1b3a63"/>
+  </linearGradient>
+  <linearGradient id="gWaterDay" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#6b9ed6"/>
+    <stop offset=".35" stop-color="#4a7cc0"/>
+    <stop offset="1"   stop-color="#2f5fa5"/>
+  </linearGradient>
+  <linearGradient id="gWaterGold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#d98b55"/>
+    <stop offset=".4"  stop-color="#7a6a8f"/>
+    <stop offset="1"   stop-color="#33406e"/>
+  </linearGradient>
+  <linearGradient id="gWaterNight" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#15294c"/>
+    <stop offset=".5"  stop-color="#0b1834"/>
+    <stop offset="1"   stop-color="#050b1c"/>
+  </linearGradient>
+  <!-- ======== 日月 ======== -->
+  <radialGradient id="gSun">
+    <stop offset="0"   stop-color="#fffce8"/>
+    <stop offset=".4"  stop-color="#ffe9a6"/>
+    <stop offset=".75" stop-color="#ffbe55" stop-opacity=".9"/>
+    <stop offset="1"   stop-color="#ff9a3c" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gMoon">
+    <stop offset="0"   stop-color="#ffffff"/>
+    <stop offset=".62" stop-color="#eef2e4"/>
+    <stop offset="1"   stop-color="#cfd8c8"/>
+  </radialGradient>
+  <linearGradient id="gGlitSun" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#ffdf9e" stop-opacity=".85"/>
+    <stop offset="1"   stop-color="#ffdf9e" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="gGlitMoon" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#dbe7f5" stop-opacity=".8"/>
+    <stop offset="1"   stop-color="#dbe7f5" stop-opacity="0"/>
+  </linearGradient>
+  <!-- ======== 東方明珠 ======== -->
+  <radialGradient id="gPearl" cx=".36" cy=".3" r=".95">
+    <stop offset="0"   stop-color="#f4b3ab"/>
+    <stop offset=".45" stop-color="#d96a68"/>
+    <stop offset=".8"  stop-color="#b14a52"/>
+    <stop offset="1"   stop-color="#7d2c3c"/>
+  </radialGradient>
+  <radialGradient id="gPearlGray" cx=".38" cy=".3" r="1">
+    <stop offset="0"   stop-color="#efe6d6"/>
+    <stop offset=".6"  stop-color="#cbb691"/>
+    <stop offset="1"   stop-color="#96805c"/>
+  </radialGradient>
+  <linearGradient id="gColConc" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0"   stop-color="#f3e6c9"/>
+    <stop offset=".55" stop-color="#ddc49a"/>
+    <stop offset="1"   stop-color="#ab9068"/>
+  </linearGradient>
+  <radialGradient id="gGlowPink">
+    <stop offset="0"   stop-color="#ff7d8a" stop-opacity=".95"/>
+    <stop offset=".6"  stop-color="#ff5f74" stop-opacity=".45"/>
+    <stop offset="1"   stop-color="#ff5f74" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gGlowWarm">
+    <stop offset="0"   stop-color="#ffe3a1" stop-opacity=".95"/>
+    <stop offset=".55" stop-color="#ffc766" stop-opacity=".5"/>
+    <stop offset="1"   stop-color="#ffbf5e" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="gCityHalo" x1="0" y1="1" x2="0" y2="0">
+    <stop offset="0"   stop-color="#ff9c5a" stop-opacity=".38"/>
+    <stop offset="1"   stop-color="#ff9c5a" stop-opacity="0"/>
+  </linearGradient>
+  <!-- ======== 玻璃帷幕 ======== -->
+  <linearGradient id="gGlassBlue" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0"   stop-color="#4a86c2"/>
+    <stop offset=".45" stop-color="#2e639f"/>
+    <stop offset="1"   stop-color="#173a63"/>
+  </linearGradient>
+  <linearGradient id="gGlassDeep" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0"   stop-color="#1d466f"/>
+    <stop offset=".55" stop-color="#12314f"/>
+    <stop offset="1"   stop-color="#0a2038"/>
+  </linearGradient>
+  <linearGradient id="gShtower" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0"   stop-color="#93a7ba"/>
+    <stop offset=".3"  stop-color="#6f8aa2"/>
+    <stop offset=".62" stop-color="#49627c"/>
+    <stop offset="1"   stop-color="#2c4056"/>
+  </linearGradient>
+  <linearGradient id="gJin" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0"   stop-color="#c2cfd6"/>
+    <stop offset=".5"  stop-color="#93a6b2"/>
+    <stop offset="1"   stop-color="#5f7584"/>
+  </linearGradient>
+  <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0"   stop-color="#43b071"/>
+    <stop offset=".5"  stop-color="#22875a"/>
+    <stop offset="1"   stop-color="#0f5c3c"/>
+  </linearGradient>
+  <linearGradient id="gCream" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0"   stop-color="#f4eede"/>
+    <stop offset=".7"  stop-color="#e2d7bf"/>
+    <stop offset="1"   stop-color="#c2b394"/>
+  </linearGradient>
+  <linearGradient id="gFac" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#eed3ae"/>
+    <stop offset="1"   stop-color="#d8b287"/>
+  </linearGradient>
+  <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0"   stop-color="#f0d488"/>
+    <stop offset=".5"  stop-color="#c89c45"/>
+    <stop offset="1"   stop-color="#8f6c2c"/>
+  </linearGradient>
+  <linearGradient id="gDomeBlue" x1=".2" y1="0" x2=".9" y2="1">
+    <stop offset="0"   stop-color="#7cc3dd"/>
+    <stop offset=".4"  stop-color="#3d8fbf"/>
+    <stop offset=".8"  stop-color="#1f5c8d"/>
+    <stop offset="1"   stop-color="#154468"/>
+  </linearGradient>
+  <!-- ======== 窗格 pattern ======== -->
+  <pattern id="pWinBlue" width="9" height="11" patternUnits="userSpaceOnUse">
+    <rect x="1" y="1" width="5.4" height="6.4" fill="rgba(8,26,48,.34)"/>
+  </pattern>
+  <pattern id="pWinWhite" width="11" height="13" patternUnits="userSpaceOnUse">
+    <rect x="1.5" y="1.5" width="7" height="8.4" fill="#4c5e6e"/>
+  </pattern>
+  <pattern id="pBandJin" width="12" height="9" patternUnits="userSpaceOnUse">
+    <rect width="12" height="2.4" fill="rgba(52,70,86,.55)"/>
+  </pattern>
+  <pattern id="pShtBand" width="10" height="8" patternUnits="userSpaceOnUse">
+    <rect width="10" height="1.8" fill="rgba(222,233,240,.5)"/>
+    <rect y="4" width="10" height="1.1" fill="rgba(140,160,180,.4)"/>
+  </pattern>
+  <pattern id="pWinLitA" width="14" height="16" patternUnits="userSpaceOnUse">
+    <rect x="1" y="2"  width="5.4" height="6.6" fill="#ffd98a" opacity=".9"/>
+    <rect x="8" y="10" width="4.6" height="5.4" fill="#ffbe66" opacity=".55"/>
+  </pattern>
+  <pattern id="pWinLitB" width="18" height="21" patternUnits="userSpaceOnUse">
+    <rect x="3" y="4" width="4.6" height="5.6" fill="#ffcf7f" opacity=".85"/>
+    <rect x="11" y="13" width="4" height="5" fill="#ffe1a6" opacity=".5"/>
+  </pattern>
+  <pattern id="pWinLitC" width="12" height="14" patternUnits="userSpaceOnUse">
+    <rect x="2" y="2" width="4.6" height="5.4" fill="#bfe0ff" opacity=".8"/>
+  </pattern>
+  <pattern id="pLattice" width="15" height="15" patternUnits="userSpaceOnUse">
+    <path d="M0 0 L15 15 M15 0 L0 15" stroke="#8d3a48" stroke-width="1.6" fill="none" opacity=".85"/>
+  </pattern>
+  <pattern id="pRipple" width="44" height="11" patternUnits="userSpaceOnUse">
+    <path d="M0 5 q5.5 -1.6 11 0 t11 0 t11 0 t11 0" stroke="rgba(190,220,245,.26)" stroke-width=".9" fill="none"/>
+    <path d="M4 9 q6 1.2 12 0 t12 0" stroke="rgba(160,195,235,.16)" stroke-width=".8" fill="none"/>
+  </pattern>
+  <pattern id="pRippleN" width="44" height="11" patternUnits="userSpaceOnUse">
+    <path d="M0 5 q5.5 -1.6 11 0 t11 0 t11 0 t11 0" stroke="rgba(120,160,210,.13)" stroke-width=".9" fill="none"/>
+  </pattern>
+  <pattern id="pMosaic" width="12" height="12" patternUnits="userSpaceOnUse">
+    <rect width="12" height="12" fill="#c0503f"/>
+    <rect x="6" y="0" width="6" height="6" fill="#e0954a"/>
+    <rect x="0" y="6" width="6" height="6" fill="#4a9a62"/>
+    <rect x="6" y="6" width="6" height="6" fill="#3a6fb0"/>
+  </pattern>
+  <pattern id="pGridLine" width="12" height="12" patternUnits="userSpaceOnUse">
+    <path d="M0 0 H12 M0 0 V12" stroke="#d9e2e6" stroke-width="1" fill="none" opacity=".75"/>
+  </pattern>
+  <pattern id="pWinGreen" width="10" height="12" patternUnits="userSpaceOnUse">
+    <rect x="1" y="1" width="6" height="7.6" fill="rgba(6,40,24,.4)"/>
+  </pattern>
+  <!-- ======== 濾鏡 ======== -->
+  <filter id="fGlow" x="-80%" y="-80%" width="260%" height="260%">
+    <feGaussianBlur stdDeviation="6"/>
+  </filter>
+  <filter id="fSoft" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="1.6"/>
+  </filter>
+  <filter id="fBig" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="12"/>
+  </filter>
+  <!-- ======== 裁切 ======== -->
+  <clipPath id="cSphereTop"><circle cx="111" cy="152" r="51"/></clipPath>
+  <clipPath id="cSphereMid"><circle cx="111" cy="441" r="50"/></clipPath>
+  <clipPath id="cDomeL"><path d="M142 552 a62 62 0 0 1 124 0 z"/></clipPath>
+  <clipPath id="cSphR"><circle cx="415" cy="503" r="60"/></clipPath>
+  <clipPath id="cSht"><path d="M644 44 h44 l14 556 h-70 z"/></clipPath>
+  <clipPath id="cWater"><rect x="0" y="600" width="745" height="142"/></clipPath>
+  <clipPath id="cFacade"><rect x="148" y="470" width="352" height="100"/></clipPath>
+  <!-- 日/月軌道 -->
+  <path id="pathSun"  d="M 20 655 C 210 110, 530 110, 728 655"/>
+  <path id="pathMoon" d="M 30 665 C 240 30, 505 30, 720 665"/>
+</defs>
+
+<!-- ======== 天空 ======== -->
+<rect id="skyNight" x="0" y="0" width="745" height="604" fill="url(#gSkyNight)"/>
+<rect id="skyGold"  x="0" y="0" width="745" height="604" fill="url(#gSkyGold)" opacity="0"/>
+<rect id="skyDay"   x="0" y="0" width="745" height="604" fill="url(#gSkyDay)" opacity="0"/>
+
+<!-- ======== 星星 ======== -->
+<g id="stars" opacity="0" fill="#ffffff">
+  <circle class="tw1" cx="35"  cy="42"  r="1.3"/>
+  <circle class="tw2" cx="96"  cy="95"  r="1"/>
+  <circle class="tw3" cx="150" cy="30"  r="1.5"/>
+  <circle class="tw1" cx="188" cy="140" r=".9"/>
+  <circle class="tw2" cx="232" cy="66"  r="1.2"/>
+  <circle class="tw3" cx="276" cy="118" r=".8"/>
+  <circle class="tw1" cx="305" cy="34"  r="1.1"/>
+  <circle class="tw2" cx="342" cy="200" r=".9"/>
+  <circle class="tw3" cx="370" cy="86"  r="1.4"/>
+  <circle class="tw1" cx="398" cy="150" r=".8"/>
+  <circle class="tw2" cx="430" cy="42"  r="1.2"/>
+  <circle class="tw3" cx="462" cy="108" r=".9"/>
+  <circle class="tw1" cx="501" cy="60"  r="1.3"/>
+  <circle class="tw2" cx="540" cy="170" r=".9"/>
+  <circle class="tw3" cx="568" cy="96"  r="1.1"/>
+  <circle class="tw1" cx="601" cy="150" r=".8"/>
+  <circle class="tw2" cx="640" cy="52"  r="1.4"/>
+  <circle class="tw3" cx="676" cy="126" r=".9"/>
+  <circle class="tw1" cx="705" cy="70"  r="1.2"/>
+  <circle class="tw2" cx="726" cy="190" r=".9"/>
+  <circle class="tw3" cx="60"  cy="215" r=".9"/>
+  <circle class="tw1" cx="120" cy="260" r=".8"/>
+  <circle class="tw2" cx="205" cy="232" r="1"/>
+  <circle class="tw3" cx="262" cy="290" r=".8"/>
+  <circle class="tw1" cx="333" cy="255" r=".9"/>
+  <circle class="tw2" cx="412" cy="230" r=".8"/>
+  <circle class="tw3" cx="478" cy="262" r=".9"/>
+  <circle class="tw1" cx="552" cy="240" r=".8"/>
+  <circle class="tw2" cx="618" cy="215" r="1"/>
+  <circle class="tw3" cx="690" cy="265" r=".8"/>
+  <circle class="tw1" cx="180" cy="52"  r=".9"/>
+  <circle class="tw2" cx="455" cy="175" r="1"/>
+  <circle class="tw3" cx="515" cy="30"  r=".9"/>
+  <circle class="tw1" cx="86"  cy="160" r=".8"/>
+  <circle class="tw2" cx="356" cy="126" r=".9"/>
+  <circle cx="40"  cy="120" r=".7"/>
+  <circle cx="242" cy="180" r=".7"/>
+  <circle cx="318" cy="76"  r=".7"/>
+  <circle cx="488" cy="205" r=".7"/>
+  <circle cx="596" cy="40"  r=".7"/>
+  <circle cx="664" cy="205" r=".7"/>
+</g>
+
+<!-- ======== 雲 ======== -->
+<g id="clouds" opacity=".85">
+  <g class="drift1" fill="#ffffff" opacity=".9">
+    <g filter="url(#fSoft)">
+      <ellipse cx="160" cy="105" rx="52" ry="12"/>
+      <ellipse cx="195" cy="96"  rx="34" ry="10"/>
+      <ellipse cx="128" cy="98"  rx="26" ry="8"/>
+    </g>
+  </g>
+  <g class="drift2" fill="#ffffff" opacity=".8">
+    <g filter="url(#fSoft)">
+      <ellipse cx="560" cy="150" rx="62" ry="13"/>
+      <ellipse cx="600" cy="140" rx="36" ry="10"/>
+      <ellipse cx="522" cy="141" rx="28" ry="8"/>
+    </g>
+  </g>
+  <g class="drift1" fill="#ffffff" opacity=".6">
+    <g filter="url(#fSoft)">
+      <ellipse cx="380" cy="52" rx="44" ry="9"/>
+      <ellipse cx="410" cy="45" rx="26" ry="7"/>
+    </g>
+  </g>
+</g>
+
+<!-- ======== 太陽(沿弧線移動) ======== -->
+<g id="sun">
+  <circle r="52" fill="url(#gSun)"/>
+  <circle r="17" fill="#fff6d8"/>
+  <animateMotion dur="60s" repeatCount="indefinite" calcMode="linear"
+    keyTimes="0;0.06;0.55;1" keyPoints="0;0;1;1">
+    <mpath href="#pathSun"/>
+  </animateMotion>
+</g>
+
+<!-- ======== 月亮(沿弧線移動, 帶隕坑) ======== -->
+<g id="moon">
+  <circle r="24" fill="#cfe0f2" opacity=".35" filter="url(#fGlow)"/>
+  <circle r="14" fill="url(#gMoon)"/>
+  <circle cx="-4" cy="-4" r="2.6" fill="#c9d2bd" opacity=".7"/>
+  <circle cx="4"  cy="2"  r="3.4" fill="#c9d2bd" opacity=".55"/>
+  <circle cx="-2" cy="6"  r="1.8" fill="#c9d2bd" opacity=".6"/>
+  <animateMotion dur="60s" repeatCount="indefinite" calcMode="linear"
+    keyTimes="0;0.56;0.94;1" keyPoints="0;0;1;1">
+    <mpath href="#pathMoon"/>
+  </animateMotion>
+</g>
+
+<!-- ======== 夜間城市光暈 ======== -->
+<rect id="cityHalo" x="0" y="430" width="745" height="174" fill="url(#gCityHalo)" opacity="0"/>
+
+<!-- ======== 候鳥 ======== -->
+<g id="birds" opacity="0" stroke="#3a4a5c" stroke-width="1.6" fill="none" stroke-linecap="round">
+  <g>
+    <path d="M120 210 q4 -4 8 0 q4 -4 8 0"/>
+    <path d="M146 224 q3.4 -3.4 6.8 0 q3.4 -3.4 6.8 0"/>
+    <path d="M104 232 q3 -3 6 0 q3 -3 6 0"/>
+  </g>
+</g>
+
+<!-- ======== 後景天際線 ======== -->
+<g id="cityBack">
+  <!-- 左側建築群 -->
+  <g>
+    <rect x="-4" y="458" width="40" height="146" fill="url(#gGlassBlue)"/>
+    <rect x="-4" y="458" width="40" height="146" fill="url(#pWinBlue)"/>
+    <rect x="26" y="420" width="44" height="184" fill="url(#gCream)"/>
+    <rect x="30" y="428" width="36" height="170" fill="url(#pWinWhite)" opacity=".8"/>
+    <line x1="52" y1="356" x2="52" y2="420" stroke="#b9bfc4" stroke-width="1.6"/>
+    <circle cx="52" cy="354" r="1.6" fill="#d8dce0"/>
+    <rect x="66" y="388" width="52" height="216" fill="url(#gGlassBlue)"/>
+    <rect x="66" y="388" width="52" height="216" fill="url(#pWinBlue)"/>
+    <rect x="70" y="388" width="4" height="212" fill="rgba(235,244,250,.5)"/>
+    <line x1="108" y1="352" x2="108" y2="388" stroke="#c4c9ce" stroke-width="1.4"/>
+  </g>
+  <!-- 明珠後方米色中层 -->
+  <rect x="118" y="445" width="74" height="159" fill="url(#gCream)"/>
+  <rect x="122" y="452" width="66" height="146" fill="url(#pWinWhite)" opacity=".7"/>
+  <!-- 帶紅色招牌的米色大樓 -->
+  <g>
+    <rect x="186" y="402" width="68" height="202" fill="url(#gCream)"/>
+    <rect x="190" y="430" width="60" height="168" fill="url(#pWinWhite)" opacity=".7"/>
+    <g fill="#c03a2e">
+      <rect x="196" y="408" width="11" height="11"/>
+      <rect x="210" y="408" width="11" height="11"/>
+      <rect x="224" y="408" width="11" height="11"/>
+      <rect x="238" y="408" width="10" height="11"/>
+    </g>
+  </g>
+  <!-- 斜頂藍玻璃大樓(金冠) -->
+  <g>
+    <path d="M222 604 L224 340 L282 322 L287 604 Z" fill="url(#gGlassBlue)"/>
+    <path d="M222 604 L224 340 L282 322 L287 604 Z" fill="url(#pWinBlue)"/>
+    <path d="M224 340 L282 322 L282 330 L224 348 Z" fill="url(#gGold)"/>
+    <path d="M226 344 L228 600" stroke="rgba(235,244,250,.45)" stroke-width="3"/>
+  </g>
+  <!-- 雙塔(東方風屋頂) -->
+  <g fill="url(#gCream)">
+    <g>
+      <rect x="296" y="448" width="22" height="150"/>
+      <rect x="298" y="452" width="18" height="140" fill="url(#pWinWhite)" opacity=".6"/>
+      <path d="M296 448 L318 448 L314 440 L300 440 Z" fill="#3a7d5c"/>
+      <path d="M300 440 L314 440 L311 433 L303 433 Z" fill="#3a7d5c"/>
+      <line x1="307" y1="433" x2="307" y2="424" stroke="#cfd3d6" stroke-width="1.2"/>
+    </g>
+    <g>
+      <rect x="321" y="442" width="22" height="156"/>
+      <rect x="323" y="446" width="18" height="146" fill="url(#pWinWhite)" opacity=".6"/>
+      <path d="M321 442 L343 442 L339 434 L325 434 Z" fill="#3a7d5c"/>
+      <path d="M325 434 L339 434 L336 427 L328 427 Z" fill="#3a7d5c"/>
+      <line x1="332" y1="427" x2="332" y2="418" stroke="#cfd3d6" stroke-width="1.2"/>
+    </g>
+  </g>
+  <!-- 施建中細塔 + 塔吊 -->
+  <g>
+    <rect x="331" y="440" width="15" height="160" fill="#7f9db8"/>
+    <rect x="331" y="440" width="15" height="160" fill="url(#pWinBlue)" opacity=".8"/>
+    <line x1="338.5" y1="396" x2="338.5" y2="440" stroke="#d3d7db" stroke-width="1.8"/>
+    <line x1="330" y1="401" x2="352" y2="401" stroke="#d3d7db" stroke-width="1.2"/>
+    <line x1="338.5" y1="396" x2="352" y2="401" stroke="#d3d7db" stroke-width=".8"/>
+  </g>
+  <!-- 中間藍玻璃巨塔 -->
+  <g>
+    <path d="M392 604 L395 272 L456 268 L460 604 Z" fill="url(#gGlassDeep)"/>
+    <path d="M392 604 L395 272 L456 268 L460 604 Z" fill="url(#pWinBlue)"/>
+    <rect x="396" y="330" width="61" height="5" fill="rgba(20,44,70,.8)"/>
+    <rect x="396" y="345" width="61" height="3" fill="rgba(20,44,70,.8)"/>
+    <rect x="395" y="272" width="61" height="4" fill="rgba(220,232,242,.7)"/>
+    <line x1="426" y1="246" x2="426" y2="268" stroke="#c8cdd2" stroke-width="1.6"/>
+  </g>
+  <!-- 金茂大樓(階梯段+塔尖) -->
+  <g>
+    <rect x="447" y="438" width="78" height="170" fill="url(#gJin)"/>
+    <rect x="453" y="406" width="66" height="40" fill="url(#gJin)"/>
+    <rect x="459" y="376" width="54" height="36" fill="url(#gJin)"/>
+    <rect x="465" y="348" width="42" height="34" fill="url(#gJin)"/>
+    <rect x="471" y="322" width="30" height="32" fill="url(#gJin)"/>
+    <rect x="477" y="306" width="18" height="20" fill="url(#gJin)"/>
+    <g>
+      <rect x="447" y="438" width="78" height="170" fill="url(#pBandJin)"/>
+      <rect x="453" y="406" width="66" height="40" fill="url(#pBandJin)"/>
+      <rect x="459" y="376" width="54" height="36" fill="url(#pBandJin)"/>
+      <rect x="465" y="348" width="42" height="34" fill="url(#pBandJin)"/>
+      <rect x="471" y="322" width="30" height="32" fill="url(#pBandJin)"/>
+      <rect x="477" y="306" width="18" height="20" fill="url(#pBandJin)"/>
+    </g>
+    <line x1="486" y1="286" x2="486" y2="306" stroke="#b9c4cc" stroke-width="2.4"/>
+    <circle class="beacon" cx="486" cy="285" r="2" fill="#ff5340"/>
+  </g>
+  <!-- 環球金融中心(開瓶器) -->
+  <g>
+    <path fill-rule="evenodd" fill="url(#gGlassDeep)"
+      d="M462 192 L540 190 L553 604 L451 604 Z
+         M479 201 L524 200 L516 258 L487 259 Z"/>
+    <path fill-rule="evenodd" fill="url(#pWinBlue)" opacity=".8"
+      d="M462 192 L540 190 L553 604 L451 604 Z
+         M479 201 L524 200 L516 258 L487 259 Z"/>
+    <path d="M462 192 L464 604" stroke="rgba(120,160,200,.5)" stroke-width="3"/>
+    <path d="M479 201 L524 200 L516 258 L487 259 Z" fill="url(#gSkyDay)" opacity="0"/>
+  </g>
+  <!-- 白色斜頂大樓 -->
+  <g>
+    <path d="M525 604 L521 300 L600 262 L608 604 Z" fill="url(#gCream)"/>
+    <path d="M528 306 L598 272 L604 596 L532 596 Z" fill="url(#pWinWhite)" opacity=".75"/>
+    <path d="M521 300 L525 604 L536 604 L533 296 Z" fill="url(#gGlassBlue)" opacity=".9"/>
+  </g>
+  <!-- 上海中心(螺旋) -->
+  <g>
+    <path d="M646 54 Q668 38 692 52 L710 604 L614 604 Z" fill="url(#gShtower)"/>
+    <g clip-path="url(#cSht)">
+      <rect x="600" y="40" width="130" height="570" fill="url(#pShtBand)"/>
+      <path d="M686 60 L678 200 Q674 240 690 280 L700 470 L706 604 L690 604 L680 400 Q672 300 676 220 Z"
+        fill="#dde7ee" opacity=".55"/>
+      <path d="M650 44 L648 130 L660 132 L662 46 Z" fill="rgba(28,52,74,.5)"/>
+      <rect x="648" y="92" width="40" height="8" fill="rgba(210,225,236,.75)"/>
+      <path d="M622 604 L646 56 L652 56 L632 604 Z" fill="rgba(240,246,250,.25)"/>
+    </g>
+    <circle class="beacon" cx="669" cy="40" r="2.2" fill="#ff5340"/>
+  </g>
+  <!-- 飛碟金頂塔 -->
+  <g>
+    <rect x="499" y="418" width="30" height="186" fill="#a05f42"/>
+    <rect x="502" y="426" width="24" height="170" fill="url(#pWinWhite)" opacity=".5"/>
+    <path d="M503 420 L525 420 L521 434 L507 434 Z" fill="#8b8178"/>
+    <path d="M505 410 L523 410 L520 402 L508 402 Z" fill="url(#gGold)"/>
+    <path d="M508 402 Q514 394 520 402 Z" fill="#e8c56a"/>
+    <ellipse cx="514" cy="415" rx="31" ry="7.5" fill="url(#gGold)"/>
+    <ellipse cx="514" cy="413" rx="31" ry="6" fill="#f0d488" opacity=".7"/>
+  </g>
+  <!-- 白色格窗辦公樓 -->
+  <g>
+    <rect x="560" y="424" width="96" height="180" fill="url(#gCream)"/>
+    <rect x="564" y="430" width="88" height="168" fill="url(#pWinWhite)" opacity=".85"/>
+    <rect x="640" y="424" width="16" height="180" fill="rgba(60,70,80,.28)"/>
+  </g>
+  <!-- 小型白色方塊樓(帶標誌) -->
+  <g>
+    <rect x="452" y="470" width="48" height="122" fill="#ece7db"/>
+    <rect x="466" y="486" width="9" height="12" fill="#3a6fb0" opacity=".8"/>
+    <rect x="466" y="502" width="9" height="9" fill="#c0503f" opacity=".8"/>
+  </g>
+  <!-- 右側綠玻璃塔 -->
+  <g>
+    <path d="M682 604 L684 352 L745 344 L745 604 Z" fill="url(#gGreen)"/>
+    <path d="M682 604 L684 352 L745 344 L745 604 Z" fill="url(#pWinGreen)"/>
+    <line x1="700" y1="350" x2="699" y2="604" stroke="rgba(220,240,225,.4)" stroke-width="2.4"/>
+    <line x1="722" y1="346" x2="721" y2="604" stroke="rgba(220,240,225,.4)" stroke-width="2.4"/>
+    <rect x="684" y="352" width="61" height="4" fill="rgba(230,244,232,.6)"/>
+  </g>
+  <!-- 低矮白色現代樓(綠帶) -->
+  <g>
+    <rect x="556" y="520" width="192" height="84" fill="#e9e5d9"/>
+    <rect x="572" y="532" width="176" height="34" fill="#2e8b6f"/>
+    <rect x="572" y="532" width="176" height="34" fill="url(#pWinGreen)" opacity=".7"/>
+    <rect x="556" y="572" width="192" height="4" fill="rgba(120,115,100,.4)"/>
+    <rect x="556" y="520" width="192" height="4" fill="rgba(255,255,255,.5)"/>
+  </g>
+</g>
+
+<!-- ======== 東方明珠广播电视塔 ======== -->
+<g id="pearl">
+  <!-- 天線桅杆 -->
+  <rect x="109.6" y="6" width="2.8" height="48" fill="#d0d4d8"/>
+  <rect x="107" y="40" width="8" height="3" fill="#b9bfc4"/>
+  <circle class="beacon" cx="111" cy="8" r="2.4" fill="#ff5340"/>
+  <!-- 頂部小球 -->
+  <g>
+    <circle cx="111" cy="70" r="15" fill="url(#gPearl)"/>
+    <path d="M97 66 h28 M97 74 h28" stroke="#8d3a48" stroke-width="1.4"/>
+    <path d="M99 58 Q111 52 123 58 M99 82 Q111 88 123 82" stroke="#8d3a48" stroke-width="1.2" fill="none"/>
+    <path d="M98 78 A15 15 0 0 0 124 78 L121 88 L101 88 Z" fill="#c2ad8b"/>
+  </g>
+  <path d="M103 88 L119 88 L121 104 L101 104 Z" fill="url(#gColConc)"/>
+  <!-- 上球體 -->
+  <g>
+    <circle cx="111" cy="152" r="51" fill="url(#gPearl)"/>
+    <g clip-path="url(#cSphereTop)">
+      <rect x="58" y="98" width="106" height="108" fill="url(#pLattice)"/>
+      <ellipse cx="111" cy="140" rx="51" ry="9" fill="none" stroke="#8d3a48" stroke-width="1.8"/>
+      <ellipse cx="111" cy="164" rx="51" ry="9" fill="none" stroke="#8d3a48" stroke-width="1.8"/>
+      <path d="M60 152 Q111 138 162 152" stroke="#f4c1b8" stroke-width="1.4" fill="none" opacity=".7"/>
+    </g>
+    <!-- 球下灰色裙座 + 圓孔帶 -->
+    <path d="M64 172 A51 51 0 0 0 158 172 L153 196 Q111 212 69 196 Z" fill="url(#gPearlGray)"/>
+    <g fill="#77624a">
+      <circle cx="82" cy="186" r="1.6"/><circle cx="94" cy="190" r="1.6"/>
+      <circle cx="106" cy="192" r="1.6"/><circle cx="118" cy="192" r="1.6"/>
+      <circle cx="130" cy="190" r="1.6"/><circle cx="142" cy="186" r="1.6"/>
+    </g>
+  </g>
+  <!-- 三柱與球莢 -->
+  <g>
+    <rect x="95" y="204" width="9" height="190" fill="url(#gColConc)"/>
+    <rect x="118" y="204" width="9" height="190" fill="url(#gColConc)"/>
+    <rect x="106" y="210" width="10" height="185" fill="url(#gColConc)" filter="url(#fSoft)" opacity=".9"/>
+    <g fill="url(#gPearlGray)">
+      <circle cx="111" cy="240" r="8.5"/>
+      <circle cx="111" cy="294" r="9.5"/>
+      <circle cx="111" cy="350" r="11"/>
+    </g>
+    <g fill="none" stroke="#c0392b" stroke-width="2">
+      <ellipse cx="111" cy="240" rx="8.5" ry="2.6"/>
+      <ellipse cx="111" cy="294" rx="9.5" ry="2.8"/>
+      <ellipse cx="111" cy="350" rx="11" ry="3.2"/>
+    </g>
+    <g fill="#c0392b">
+      <rect x="94" y="252" width="11" height="5"/><rect x="117" y="252" width="11" height="5"/>
+      <rect x="94" y="306" width="11" height="5"/><rect x="117" y="306" width="11" height="5"/>
+      <rect x="94" y="360" width="11" height="5"/><rect x="117" y="360" width="11" height="5"/>
+    </g>
+  </g>
+  <!-- 下球體 -->
+  <g>
+    <circle cx="111" cy="441" r="50" fill="url(#gPearlGray)"/>
+    <g clip-path="url(#cSphereMid)">
+      <rect x="58" y="398" width="106" height="52" fill="url(#gPearl)"/>
+      <rect x="58" y="398" width="106" height="52" fill="url(#pLattice)"/>
+      <ellipse cx="111" cy="422" rx="50" ry="8" fill="none" stroke="#8d3a48" stroke-width="1.8"/>
+      <ellipse cx="111" cy="448" rx="50" ry="8" fill="none" stroke="#8d3a48" stroke-width="1.4" opacity=".8"/>
+      <g fill="#6f5b3e">
+        <circle cx="74" cy="468" r="1.7"/><circle cx="86" cy="472" r="1.7"/>
+        <circle cx="98" cy="474" r="1.7"/><circle cx="111" cy="475" r="1.7"/>
+        <circle cx="124" cy="474" r="1.7"/><circle cx="136" cy="472" r="1.7"/>
+        <circle cx="148" cy="468" r="1.7"/>
+      </g>
+    </g>
+  </g>
+  <!-- 塔座圓錐與三腳支架 -->
+  <g>
+    <path d="M88 468 L134 468 L124 566 L98 566 Z" fill="url(#gColConc)"/>
+    <polygon points="98,470 88,472 36,586 46,588" fill="url(#gColConc)"/>
+    <polygon points="124,470 134,472 161,574 151,576" fill="url(#gColConc)"/>
+    <circle cx="62" cy="532" r="9" fill="url(#gPearlGray)"/>
+    <ellipse cx="111" cy="576" rx="26" ry="7" fill="#cbbfa4"/>
+    <rect x="97" y="566" width="28" height="24" fill="url(#gColConc)"/>
+  </g>
+</g>
+
+<!-- ======== 古典立面 + 雙玻璃球 ======== -->
+<g id="opera">
+  <!-- 左玻璃半球 -->
+  <g>
+    <path d="M142 552 a62 62 0 0 1 124 0 z" fill="url(#gDomeBlue)"/>
+    <g clip-path="url(#cDomeL)" stroke="#d8e4e8" stroke-width=".9" fill="none" opacity=".75">
+      <ellipse cx="204" cy="552" rx="14" ry="62"/>
+      <ellipse cx="204" cy="552" rx="30" ry="62"/>
+      <ellipse cx="204" cy="552" rx="46" ry="62"/>
+      <ellipse cx="204" cy="552" rx="59" ry="62"/>
+      <path d="M142 540 H266 M146 524 H262 M156 508 H252 M172 494 H236"/>
+    </g>
+    <circle cx="204" cy="490.5" r="4" fill="#cfd8b8"/>
+    <rect x="140" y="552" width="128" height="44" fill="#ddd6c8"/>
+    <rect x="140" y="556" width="128" height="3" fill="#c2b9a6"/>
+    <line x1="146" y1="572" x2="262" y2="572" stroke="#8a94a0" stroke-width="7" stroke-dasharray="4 6"/>
+  </g>
+  <!-- 古典立面 -->
+  <g>
+    <rect x="148" y="474" width="352" height="98" fill="url(#gFac)"/>
+    <rect x="146" y="468" width="356" height="7" fill="#caa176"/>
+    <line x1="150" y1="464" x2="498" y2="464" stroke="#e6c9a2" stroke-width="4" stroke-dasharray="3 7"/>
+    <g fill="#74879c" stroke="#f2e7d3" stroke-width="1.5">
+      <path d="M166 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M196 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M226 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M256 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M286 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M316 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M346 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M376 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M406 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M436 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+      <path d="M466 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+    </g>
+    <g fill="#63748a" stroke="#efe5cf" stroke-width="1">
+      <rect x="169" y="536" width="14" height="24"/><rect x="199" y="536" width="14" height="24"/>
+      <rect x="229" y="536" width="14" height="24"/><rect x="259" y="536" width="14" height="24"/>
+      <rect x="289" y="536" width="14" height="24"/><rect x="319" y="536" width="14" height="24"/>
+      <rect x="349" y="536" width="14" height="24"/><rect x="379" y="536" width="14" height="24"/>
+      <rect x="409" y="536" width="14" height="24"/><rect x="439" y="536" width="14" height="24"/>
+      <rect x="469" y="536" width="14" height="24"/>
+    </g>
+    <rect x="148" y="564" width="352" height="8" fill="#f0e8d8"/>
+  </g>
+  <!-- 右彩色鑲嵌玻璃球 -->
+  <g>
+    <circle cx="415" cy="503" r="60" fill="url(#gDomeBlue)"/>
+    <g clip-path="url(#cSphR)">
+      <rect x="355" y="443" width="120" height="120" fill="url(#pMosaic)" opacity=".85"/>
+      <rect x="355" y="443" width="120" height="120" fill="url(#pGridLine)"/>
+      <ellipse cx="390" cy="474" rx="30" ry="20" fill="#ffffff" opacity=".18"/>
+      <path d="M355 503 a60 60 0 0 0 120 0" fill="rgba(12,24,44,.35)"/>
+    </g>
+    <circle cx="415" cy="503" r="60" fill="none" stroke="#d9e2e6" stroke-width="1.6"/>
+    <!-- 球底白色環座 -->
+    <rect x="356" y="548" width="118" height="22" fill="#ece7db"/>
+    <line x1="360" y1="559" x2="470" y2="559" stroke="#7a8590" stroke-width="8" stroke-dasharray="5 7"/>
+    <path d="M356 570 L474 570 L466 596 L364 596 Z" fill="#d9d2c2"/>
+  </g>
+</g>
+
+<!-- ======== 岸邊綠化與堤岸 ======== -->
+<g id="shore">
+  <g fill="#2f6b33">
+    <ellipse cx="70" cy="586" rx="22" ry="13"/><ellipse cx="120" cy="584" rx="26" ry="14"/>
+    <ellipse cx="175" cy="585" rx="24" ry="13"/><ellipse cx="235" cy="586" rx="26" ry="13"/>
+    <ellipse cx="295" cy="585" rx="24" ry="13"/><ellipse cx="350" cy="586" rx="22" ry="12"/>
+    <ellipse cx="405" cy="585" rx="26" ry="13"/><ellipse cx="462" cy="586" rx="22" ry="12"/>
+    <ellipse cx="515" cy="585" rx="24" ry="13"/>
+  </g>
+  <g fill="#3f8a44">
+    <ellipse cx="95" cy="580" rx="16" ry="10"/><ellipse cx="150" cy="579" rx="15" ry="9"/>
+    <ellipse cx="210" cy="580" rx="17" ry="10"/><ellipse cx="268" cy="579" rx="15" ry="9"/>
+    <ellipse cx="322" cy="580" rx="16" ry="10"/><ellipse cx="378" cy="579" rx="15" ry="9"/>
+    <ellipse cx="436" cy="580" rx="16" ry="10"/><ellipse cx="490" cy="579" rx="15" ry="9"/>
+  </g>
+  <g fill="#547f36" opacity=".9">
+    <ellipse cx="60" cy="590" rx="14" ry="7"/><ellipse cx="200" cy="590" rx="14" ry="7"/>
+    <ellipse cx="340" cy="590" rx="14" ry="7"/><ellipse cx="470" cy="590" rx="14" ry="7"/>
+  </g>
+  <!-- 右側紅葉樹行 -->
+  <g>
+    <g fill="#b8412f">
+      <ellipse cx="548" cy="576" rx="10" ry="13"/><ellipse cx="566" cy="575" rx="10" ry="14"/>
+      <ellipse cx="584" cy="576" rx="10" ry="13"/><ellipse cx="602" cy="575" rx="10" ry="14"/>
+      <ellipse cx="620" cy="576" rx="10" ry="13"/><ellipse cx="638" cy="576" rx="9" ry="12"/>
+    </g>
+    <g fill="#c9583b" opacity=".8">
+      <ellipse cx="556" cy="571" rx="7" ry="8"/><ellipse cx="592" cy="570" rx="7" ry="8"/>
+      <ellipse cx="628" cy="571" rx="7" ry="8"/>
+    </g>
+    <g stroke="#6e4326" stroke-width="1.6">
+      <line x1="548" y1="588" x2="548" y2="596"/><line x1="566" y1="588" x2="566" y2="596"/>
+      <line x1="584" y1="588" x2="584" y2="596"/><line x1="602" y1="588" x2="602" y2="596"/>
+      <line x1="620" y1="588" x2="620" y2="596"/><line x1="638" y1="588" x2="638" y2="596"/>
+    </g>
+  </g>
+  <!-- 堤岸牆 -->
+  <rect x="430" y="580" width="318" height="20" fill="#d8d2c4"/>
+  <rect x="430" y="580" width="318" height="3" fill="#efeadf"/>
+  <rect x="140" y="592" width="290" height="8" fill="#b03a2e"/>
+  <line x1="250" y1="576" x2="330" y2="576" stroke="#f4f0e6" stroke-width="4" stroke-dasharray="3 6"/>
+</g>
+
+<!-- ======== 夜色暗化罩 ======== -->
+<rect id="nightDim" x="0" y="0" width="745" height="602" fill="#0a1230" opacity="0"/>
+
+<!-- ======== 夜間燈光 ======== -->
+<g id="cityWin" opacity="0">
+  <!-- 各棟大樓窗燈 -->
+  <path fill-rule="evenodd" fill="url(#pWinLitC)" opacity=".85"
+    d="M462 192 L540 190 L553 604 L451 604 Z M479 201 L524 200 L516 258 L487 259 Z"/>
+  <g fill="url(#pWinLitB)">
+    <rect x="447" y="438" width="78" height="170"/><rect x="453" y="406" width="66" height="40"/>
+    <rect x="459" y="376" width="54" height="36"/><rect x="465" y="348" width="42" height="34"/>
+    <rect x="471" y="322" width="30" height="32"/>
+  </g>
+  <g clip-path="url(#cSht)">
+    <rect x="614" y="52" width="96" height="552" fill="url(#pWinLitB)"/>
+    <rect x="614" y="52" width="96" height="552" fill="url(#pWinLitC)" opacity=".6"/>
+  </g>
+  <path d="M392 604 L395 272 L456 268 L460 604 Z" fill="url(#pWinLitA)" opacity=".85"/>
+  <rect x="560" y="424" width="96" height="180" fill="url(#pWinLitB)" opacity=".9"/>
+  <path d="M222 604 L224 340 L282 322 L287 604 Z" fill="url(#pWinLitA)" opacity=".8"/>
+  <path d="M525 604 L521 300 L600 262 L608 604 Z" fill="url(#pWinLitB)" opacity=".7"/>
+  <path d="M682 604 L684 352 L745 344 L745 604 Z" fill="url(#pWinLitC)" opacity=".7"/>
+  <rect x="26" y="420" width="44" height="184" fill="url(#pWinLitA)" opacity=".8"/>
+  <rect x="66" y="388" width="52" height="216" fill="url(#pWinLitB)" opacity=".8"/>
+  <rect x="-4" y="458" width="40" height="146" fill="url(#pWinLitA)" opacity=".7"/>
+  <rect x="186" y="402" width="68" height="202" fill="url(#pWinLitB)" opacity=".8"/>
+  <rect x="572" y="532" width="176" height="34" fill="url(#pWinLitA)" opacity=".6"/>
+  <!-- 古典立面拱窗燈 -->
+  <g fill="#ffd98a" opacity=".8">
+    <path d="M166 528 V498 a10 10 0 0 1 20 0 V528 Z"/><path d="M196 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+    <path d="M226 528 V498 a10 10 0 0 1 20 0 V528 Z"/><path d="M256 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+    <path d="M286 528 V498 a10 10 0 0 1 20 0 V528 Z"/><path d="M316 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+    <path d="M346 528 V498 a10 10 0 0 1 20 0 V528 Z"/><path d="M376 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+    <path d="M406 528 V498 a10 10 0 0 1 20 0 V528 Z"/><path d="M436 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+    <path d="M466 528 V498 a10 10 0 0 1 20 0 V528 Z"/>
+  </g>
+  <g fill="#ffce7c" opacity=".65">
+    <rect x="169" y="536" width="14" height="24"/><rect x="229" y="536" width="14" height="24"/>
+    <rect x="289" y="536" width="14" height="24"/><rect x="349" y="536" width="14" height="24"/>
+    <rect x="409" y="536" width="14" height="24"/><rect x="469" y="536" width="14" height="24"/>
+  </g>
+  <!-- 零星閃爍窗 -->
+  <g fill="#fff2c4">
+    <rect class="tw1" x="574" y="446" width="4" height="5"/>
+    <rect class="tw2" x="596" y="480" width="4" height="5"/>
+    <rect class="tw3" x="410" y="330" width="4" height="5"/>
+    <rect class="tw1" x="660" y="200" width="4" height="6"/>
+    <rect class="tw2" x="676" y="320" width="4" height="6"/>
+  </g>
+</g>
+<!-- 明珠球體夜光 -->
+<g id="pearlGlow" opacity="0">
+  <circle cx="111" cy="152" r="66" fill="url(#gGlowPink)"/>
+  <circle cx="111" cy="441" r="64" fill="url(#gGlowPink)"/>
+  <circle cx="111" cy="70" r="22" fill="url(#gGlowPink)" opacity=".8"/>
+  <ellipse cx="111" cy="240" rx="14" ry="5" fill="url(#gGlowPink)" opacity=".7"/>
+  <ellipse cx="111" cy="294" rx="15" ry="5" fill="url(#gGlowPink)" opacity=".7"/>
+  <ellipse cx="111" cy="350" rx="17" ry="6" fill="url(#gGlowPink)" opacity=".7"/>
+</g>
+<!-- 玻璃球內部暖光 -->
+<g id="domeGlow" opacity="0">
+  <circle cx="204" cy="540" r="66" fill="url(#gGlowWarm)"/>
+  <circle cx="415" cy="510" r="64" fill="url(#gGlowWarm)"/>
+</g>
+
+<!-- ======== 黃浦江 ======== -->
+<g id="river" clip-path="url(#cWater)">
+  <rect x="0" y="600" width="745" height="142" fill="url(#gWaterNight)"/>
+  <rect id="waterGold" x="0" y="600" width="745" height="142" fill="url(#gWaterGold)" opacity="0"/>
+  <rect id="waterDay" x="0" y="600" width="745" height="142" fill="url(#gWaterDay)" opacity="0"/>
+  <!-- 漣漪 -->
+  <g>
+    <rect class="shimA" x="-40" y="600" width="830" height="142" fill="url(#pRipple)"/>
+    <g class="shimB"><rect x="-60" y="630" width="870" height="70" fill="url(#pRippleN)"/></g>
+    <g class="shimC"><rect x="-30" y="668" width="810" height="74" fill="url(#pRipple)" opacity=".8"/></g>
+  </g>
+  <!-- 日間粉紅反光(明珠/彩球倒影) -->
+  <g filter="url(#fSoft)" opacity=".55">
+    <rect class="shimC" x="130" y="604" width="14" height="52" fill="#e08a8a"/>
+    <rect class="shimA" x="152" y="604" width="10" height="40" fill="#d98597"/>
+    <rect class="shimB" x="170" y="604" width="16" height="30" fill="#cf7d7d"/>
+    <rect class="shimA" x="392" y="604" width="12" height="34" fill="#c96a4a" opacity=".7"/>
+    <rect class="shimC" x="412" y="604" width="14" height="28" fill="#4a9a62" opacity=".5"/>
+  </g>
+  <!-- 太陽水面粼光 -->
+  <ellipse id="sunGlit" cx="430" cy="636" rx="110" ry="34" fill="url(#gGlitSun)" opacity="0" filter="url(#fSoft)"/>
+  <!-- 夜間燈火倒影 -->
+  <g id="towerRefl" opacity="0" filter="url(#fSoft)">
+    <line x1="111" y1="602" x2="111" y2="676" stroke="#ff8f8f" stroke-width="8" stroke-dasharray="4 8" opacity=".65"/>
+    <line x1="204" y1="602" x2="204" y2="656" stroke="#ffd98a" stroke-width="6" stroke-dasharray="3 7" opacity=".5"/>
+    <line x1="415" y1="602" x2="415" y2="662" stroke="#ffce7c" stroke-width="7" stroke-dasharray="4 7" opacity=".5"/>
+    <line x1="486" y1="602" x2="486" y2="640" stroke="#cfe0f2" stroke-width="4" stroke-dasharray="3 8" opacity=".4"/>
+    <line x1="500" y1="602" x2="500" y2="634" stroke="#ffd98a" stroke-width="3" stroke-dasharray="3 9" opacity=".4"/>
+    <line x1="668" y1="602" x2="668" y2="644" stroke="#bfe0ff" stroke-width="5" stroke-dasharray="3 8" opacity=".45"/>
+    <line x1="300" y1="602" x2="300" y2="628" stroke="#ffce7c" stroke-width="3" stroke-dasharray="2 8" opacity=".35"/>
+  </g>
+  <!-- 月光水面粼光 -->
+  <ellipse id="moonGlit" cx="400" cy="628" rx="80" ry="24" fill="url(#gGlitMoon)" opacity="0" filter="url(#fSoft)"/>
+</g>
+
+<!-- ======== 船隻與浮標 ======== -->
+<g id="ferry">
+  <path d="M-16 574 L88 574 L84 596 L-12 596 Z" fill="#f2f0ea"/>
+  <rect x="-12" y="592" width="96" height="4" fill="#b03a2e"/>
+  <line x1="-6" y1="580" x2="82" y2="580" stroke="#35506e" stroke-width="6" stroke-dasharray="6 5"/>
+  <rect x="4" y="560" width="56" height="14" fill="#e8e6de"/>
+  <line x1="10" y1="566" x2="54" y2="566" stroke="#35506e" stroke-width="4" stroke-dasharray="4 4"/>
+  <rect x="62" y="552" width="3" height="22" fill="#c8cdd2"/>
+</g>
+<g id="barge">
+  <path d="M556 606 L684 606 L678 626 L562 626 Z" fill="#1d1d1f"/>
+  <rect x="560" y="621" width="122" height="3.4" fill="#c03a2e"/>
+  <g fill="#2b62c9">
+    <rect x="580" y="584" width="56" height="22"/>
+    <rect x="590" y="574" width="14" height="10" fill="#e8e6de"/>
+  </g>
+  <line x1="584" y1="590" x2="630" y2="590" stroke="#cfe0f2" stroke-width="5" stroke-dasharray="5 5"/>
+  <rect x="624" y="588" width="7" height="18" fill="#c0392b"/>
+  <g fill="#3a3a3c">
+    <ellipse cx="652" cy="600" rx="12" ry="6"/>
+    <ellipse cx="670" cy="602" rx="10" ry="5"/>
+  </g>
+  <line x1="566" y1="614" x2="576" y2="614" stroke="#8f8f92" stroke-width="2"/>
+  <g stroke="#dceaf4" stroke-width="2" opacity=".75">
+    <line x1="688" y1="620" x2="738" y2="620" stroke-dasharray="8 10"/>
+    <path d="M554 616 q-10 2 -18 0" fill="none"/>
+  </g>
+</g>
+<g id="buoyS">
+  <path d="M666 604 L674 582 L682 604 Z" fill="#c0392b"/>
+  <circle cx="674" cy="580" r="2" fill="#e0604d"/>
+</g>
+
+<!-- ======== 時段標籤 ======== -->
+<g text-anchor="end" style="paint-order:stroke" stroke="rgba(0,0,0,.35)" stroke-width="3">
+  <text id="lDawn"  class="lbl" x="730" y="40" fill="#ffe3c2" opacity="0">拂曉 05:30</text>
+  <text id="lDay"   class="lbl" x="730" y="40" fill="#ffffff" opacity="0">白晝 12:00</text>
+  <text id="lDusk"  class="lbl" x="730" y="40" fill="#ffd9a6" opacity="0">黃昏 18:00</text>
+  <text id="lNight" class="lbl" x="730" y="40" fill="#c8d8ee" opacity="0">深夜 23:00</text>
+</g>
+
+
+</svg>
+</div>
+<script>
+/* 除錯/回看: 加 ?t=秒數 可直接跳到循環中任意時刻 (CSS 用負延遲, SMIL 用 setCurrentTime) */
+(function () {
+  var t = parseFloat(new URLSearchParams(location.search).get('t'));
+  if (isNaN(t)) return;
+  document.querySelector('svg').setCurrentTime(t);
+  var d = -t + 's';
+  document.querySelectorAll(
+    '#skyDay,#skyGold,#waterDay,#waterGold,#nightDim,#cityWin,#domeGlow,#pearlGlow,#moonGlit,' +
+    '#towerRefl,#cityHalo,#sun,#sunGlit,#moon,#stars,#clouds,#birds,#birds g,' +
+    '#lDawn,#lDay,#lDusk,#lNight,#barge,#ferry,#buoyS,' +
+    '.tw1,.tw2,.tw3,.drift1,.drift2,.shimA,.shimB,.shimC,.beacon'
+  ).forEach(function (el) { el.style.animationDelay = d; });
+})();
+</script>
+</body>
+</html>
