@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>preview-spec_01 · 上海陸家嘴 日夜循環 · SVG</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: radial-gradient(circle at 50% 20%, #16222e 0%, #0a0f16 70%);
+    color: #cdd8e4;
+    font-family: "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  header {
+    text-align: center;
+    padding: 22px 16px 8px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #e8f0f8;
+  }
+  header p {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: #7f93a8;
+    letter-spacing: 0.5px;
+  }
+  .stage {
+    width: min(92vw, 860px);
+    margin: 14px 0 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    background: #000;
+  }
+  .stage svg { display: block; width: 100%; height: auto; }
+  footer {
+    font-size: 11px;
+    color: #5c6f82;
+    padding: 4px 0 22px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>上海 · 陸家嘴天際線　日夜循環</h1>
+  <p>Shanghai Lujiazui Skyline — Infinite Day / Night Cycle · Pure SVG · 24s loop</p>
+</header>
+<div class="stage">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 900" preserveAspectRatio="xMidYMid meet" role="img" aria-label="上海陸家嘴日夜循環動畫">
+<defs>
+  <style>
+    .tw { animation: tw 3.6s ease-in-out infinite alternate; }
+    .tw:nth-child(2n) { animation-duration: 4.6s; animation-delay: -1.3s; }
+    .tw:nth-child(3n) { animation-duration: 2.9s; animation-delay: -2.1s; }
+    .tw:nth-child(5n) { animation-duration: 5.3s; animation-delay: -0.7s; }
+    @keyframes tw { from { opacity: 0.2; } to { opacity: 1; } }
+    text { font-family: "Segoe UI", "Noto Sans TC", sans-serif; }
+  </style>
+
+  <!-- Sky day/night gradient : 12-phase cycle, master 24s -->
+  <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#2257ae">
+      <animate attributeName="stop-color" dur="24s" repeatCount="indefinite" calcMode="linear"
+        keyTimes="0;0.045;0.1;0.18;0.32;0.5;0.565;0.62;0.68;0.74;0.86;1"
+        values="#1a2a55;#4a3a6e;#6a4a80;#2a5fb0;#1e63c4;#2257ae;#4a4a96;#3a2f66;#1c2246;#0a1228;#050a1e;#1a2a55"/>
+    </stop>
+    <stop offset="0.55" stop-color="#4a82c4">
+      <animate attributeName="stop-color" dur="24s" repeatCount="indefinite" calcMode="linear"
+        keyTimes="0;0.045;0.1;0.18;0.32;0.5;0.565;0.62;0.68;0.74;0.86;1"
+        values="#22335e;#8a5a7a;#9a6a86;#4a86c8;#4f92d8;#4a82c4;#b06a62;#6a4272;#222e58;#101c3a;#0a142e;#22335e"/>
+    </stop>
+    <stop offset="1" stop-color="#bcd2e6">
+      <animate attributeName="stop-color" dur="24s" repeatCount="indefinite" calcMode="linear"
+        keyTimes="0;0.045;0.1;0.18;0.32;0.5;0.565;0.62;0.68;0.74;0.86;1"
+        values="#3a4a72;#ffab7e;#ffc89a;#b9d6ee;#a8ccec;#bcd2e6;#ffc27a;#ff9a5a;#8a5f8a;#26365e;#182a50;#3a4a72"/>
+    </stop>
+  </linearGradient>
+
+  <radialGradient id="sunGlow">
+    <stop offset="0" stop-color="#ffe9a0" stop-opacity="0.9"/>
+    <stop offset="0.35" stop-color="#ffd76a" stop-opacity="0.45"/>
+    <stop offset="1" stop-color="#ffd76a" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="moonGlow">
+    <stop offset="0" stop-color="#dfe8ff" stop-opacity="0.7"/>
+    <stop offset="0.4" stop-color="#b8c8ef" stop-opacity="0.25"/>
+    <stop offset="1" stop-color="#9ab0e0" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="cityGlow">
+    <stop offset="0" stop-color="#ff9c5a" stop-opacity="0.75"/>
+    <stop offset="0.6" stop-color="#c26a4a" stop-opacity="0.28"/>
+    <stop offset="1" stop-color="#7a4a5a" stop-opacity="0"/>
+  </radialGradient>
+
+  <!-- Water day/night gradient -->
+  <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#4478ac">
+      <animate attributeName="stop-color" dur="24s" repeatCount="indefinite" calcMode="linear"
+        keyTimes="0;0.045;0.1;0.18;0.32;0.5;0.565;0.62;0.68;0.74;0.86;1"
+        values="#1c3a66;#5a4a6e;#7a5a76;#3f7ab4;#4a82b8;#4478ac;#8a6a78;#4a3a68;#1c2c50;#101e40;#0a1632;#1c3a66"/>
+    </stop>
+    <stop offset="0.45" stop-color="#4880b4">
+      <animate attributeName="stop-color" dur="24s" repeatCount="indefinite" calcMode="linear"
+        keyTimes="0;0.045;0.1;0.18;0.32;0.5;0.565;0.62;0.68;0.74;0.86;1"
+        values="#2a5f9e;#7a5a78;#8a6080;#4a86be;#4f8ac0;#4880b4;#c88a66;#54406e;#1a2a4e;#0e1a3a;#081228;#2a5f9e"/>
+    </stop>
+    <stop offset="1" stop-color="#2a568e">
+      <animate attributeName="stop-color" dur="24s" repeatCount="indefinite" calcMode="linear"
+        keyTimes="0;0.045;0.1;0.18;0.32;0.5;0.565;0.62;0.68;0.74;0.86;1"
+        values="#16406f;#2a2a4e;#3a3056;#2a5c96;#2f629c;#2a568e;#6a4a5a;#2e2450;#0e1a34;#081026;#050c1e;#16406f"/>
+    </stop>
+  </linearGradient>
+
+  <!-- reflection strips (vertical fade toward bottom) -->
+  <linearGradient id="refWarm" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffc87a" stop-opacity="0.75"/>
+    <stop offset="1" stop-color="#ffc87a" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="refCool" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8fc8ff" stop-opacity="0.7"/>
+    <stop offset="1" stop-color="#8fc8ff" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="refMagenta" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ff5a9d" stop-opacity="0.8"/>
+    <stop offset="1" stop-color="#ff5a9d" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="refTeal" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#2fe6c2" stop-opacity="0.7"/>
+    <stop offset="1" stop-color="#2fe6c2" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="refWhite" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#eef4ff" stop-opacity="0.8"/>
+    <stop offset="1" stop-color="#eef4ff" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="refPinkDay" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f0a090" stop-opacity="0.5"/>
+    <stop offset="1" stop-color="#f0a090" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="sunGlitterGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffe8b0" stop-opacity="0.85"/>
+    <stop offset="1" stop-color="#ffe8b0" stop-opacity="0"/>
+  </linearGradient>
+
+  <!-- night lit-window tiles -->
+  <pattern id="litCool" width="44" height="52" patternUnits="userSpaceOnUse">
+    <rect x="3" y="4" width="4" height="6" fill="#a8ccf2"/>
+    <rect x="13" y="4" width="4" height="6" fill="#e8f2ff"/>
+    <rect x="25" y="9" width="4" height="6" fill="#ffd9a0"/>
+    <rect x="35" y="2" width="4" height="6" fill="#8fb8e8"/>
+    <rect x="8" y="17" width="4" height="6" fill="#ffcf87"/>
+    <rect x="20" y="20" width="4" height="6" fill="#a8ccf2"/>
+    <rect x="31" y="15" width="4" height="6" fill="#fff2d0"/>
+    <rect x="3" y="30" width="4" height="6" fill="#8fb8e8"/>
+    <rect x="15" y="33" width="4" height="6" fill="#ffd9a0"/>
+    <rect x="27" y="28" width="4" height="6" fill="#e8f2ff"/>
+    <rect x="38" y="32" width="4" height="6" fill="#a8ccf2"/>
+    <rect x="10" y="44" width="4" height="6" fill="#fff2d0"/>
+    <rect x="22" y="46" width="4" height="6" fill="#8fb8e8"/>
+    <rect x="34" y="42" width="4" height="6" fill="#ffcf87"/>
+  </pattern>
+  <pattern id="litWarm" width="40" height="48" patternUnits="userSpaceOnUse">
+    <rect x="4" y="5" width="4" height="6" fill="#ffd98a"/>
+    <rect x="14" y="12" width="4" height="6" fill="#ffe9b8"/>
+    <rect x="26" y="4" width="4" height="6" fill="#ffcf70"/>
+    <rect x="33" y="18" width="4" height="6" fill="#fff0c8"/>
+    <rect x="7" y="24" width="4" height="6" fill="#e8c890"/>
+    <rect x="19" y="30" width="4" height="6" fill="#ffd98a"/>
+    <rect x="30" y="34" width="4" height="6" fill="#ffe9b8"/>
+    <rect x="3" y="40" width="4" height="6" fill="#ffcf70"/>
+    <rect x="24" y="43" width="4" height="6" fill="#fff0c8"/>
+  </pattern>
+  <!-- Shanghai Tower night floor bands -->
+  <pattern id="litFloorBands" width="12" height="7" patternUnits="userSpaceOnUse">
+    <rect width="12" height="1.6" fill="#bfe0ff"/>
+  </pattern>
+  <!-- Jin Mao night: warm vertical stripes -->
+  <pattern id="litJinMao" width="8" height="10" patternUnits="userSpaceOnUse">
+    <rect width="2" height="10" fill="#ffcf87"/>
+  </pattern>
+
+  <!-- ============ day facade gradients / patterns ============ -->
+  <linearGradient id="citiGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#6a96c4"/><stop offset="0.45" stop-color="#40699e"/>
+    <stop offset="1" stop-color="#28497a"/>
+  </linearGradient>
+  <linearGradient id="slopeTopGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#7aa8c8"/><stop offset="0.5" stop-color="#4a76a4"/>
+    <stop offset="1" stop-color="#2e5680"/>
+  </linearGradient>
+  <linearGradient id="swfcGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#3e6ea8"/><stop offset="0.55" stop-color="#2a4f86"/>
+    <stop offset="1" stop-color="#1e3a66"/>
+  </linearGradient>
+  <linearGradient id="jinmaoGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#eef3f7"/><stop offset="0.5" stop-color="#d3dde6"/>
+    <stop offset="1" stop-color="#aebcc9"/>
+  </linearGradient>
+  <linearGradient id="brightGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#f4eee0"/><stop offset="0.6" stop-color="#e2e2da"/>
+    <stop offset="1" stop-color="#c4ced8"/>
+  </linearGradient>
+  <pattern id="checkerBand" width="12" height="16" patternUnits="userSpaceOnUse">
+    <rect width="12" height="16" fill="#d8cfa8"/>
+    <rect width="6" height="8" fill="#7ab86a"/><rect x="6" y="8" width="6" height="8" fill="#7ab86a"/>
+    <rect x="6" width="6" height="8" fill="#d8a850"/><rect y="8" width="6" height="8" fill="#d8a850"/>
+  </pattern>
+  <linearGradient id="shangGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#41608a"/><stop offset="0.45" stop-color="#5d80a8"/>
+    <stop offset="0.8" stop-color="#a8c2da"/><stop offset="1" stop-color="#7e9ec4"/>
+  </linearGradient>
+  <pattern id="floorBands" width="10" height="7" patternUnits="userSpaceOnUse">
+    <rect width="10" height="1.4" fill="#8fa8c4" opacity="0.55"/>
+  </pattern>
+  <pattern id="dayWinDark" width="14" height="16" patternUnits="userSpaceOnUse">
+    <rect width="14" height="16" fill="#e8dfca"/>
+    <rect x="2" y="2" width="9" height="11" fill="#3a4f66"/>
+  </pattern>
+  <linearGradient id="brassGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#e0bc7c"/><stop offset="0.6" stop-color="#b8924e"/>
+    <stop offset="1" stop-color="#8a6a3a"/>
+  </linearGradient>
+  <linearGradient id="pearlLeg" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#e6cba4"/><stop offset="0.6" stop-color="#cfae86"/>
+    <stop offset="1" stop-color="#a8875f"/>
+  </linearGradient>
+  <radialGradient id="legBall">
+    <stop offset="0" stop-color="#eef0f2"/><stop offset="1" stop-color="#9aa0a6"/>
+  </radialGradient>
+  <radialGradient id="pearlSphere" cx="0.38" cy="0.35" r="0.85">
+    <stop offset="0" stop-color="#efe9dc"/><stop offset="0.5" stop-color="#d2ccc0"/>
+    <stop offset="1" stop-color="#8f8a80"/>
+  </radialGradient>
+  <radialGradient id="sphereShade" cx="0.35" cy="0.32" r="0.95">
+    <stop offset="0" stop-color="#ffffff" stop-opacity="0.25"/>
+    <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000000" stop-opacity="0.38"/>
+  </radialGradient>
+  <pattern id="pearlBand" width="14" height="14" patternUnits="userSpaceOnUse">
+    <rect width="14" height="14" fill="#b8455a"/>
+    <path d="M7,0 L14,7 L7,14 L0,7 Z" fill="none" stroke="#e8d8d0" stroke-width="1.4"/>
+    <circle cx="7" cy="7" r="1.6" fill="#7a2532"/>
+  </pattern>
+  <radialGradient id="beadBall" cx="0.4" cy="0.35" r="0.9">
+    <stop offset="0" stop-color="#f2b8a8"/><stop offset="0.6" stop-color="#cf6a68"/>
+    <stop offset="1" stop-color="#8a4048"/>
+  </radialGradient>
+  <linearGradient id="classGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#eed9b2"/><stop offset="1" stop-color="#d4b98e"/>
+  </linearGradient>
+  <linearGradient id="archWin" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8aa4c4"/><stop offset="1" stop-color="#5a7494"/>
+  </linearGradient>
+  <linearGradient id="domeLGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#7ec87a"/><stop offset="0.45" stop-color="#4a9ab8"/>
+    <stop offset="1" stop-color="#2a5f9e"/>
+  </linearGradient>
+  <linearGradient id="domeRGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#78c070"/><stop offset="0.4" stop-color="#c8a860"/>
+    <stop offset="0.7" stop-color="#5aa0b8"/><stop offset="1" stop-color="#2f6aa0"/>
+  </linearGradient>
+
+  <!-- clip paths -->
+  <clipPath id="clipJinMao">
+    <polygon points="659,716 655,520 659,506 659,406 663,390 667,376 671,364 675,352 679,342 683,330 695,300 707,330 711,342 715,352 719,364 723,376 727,390 731,406 731,506 735,520 731,716"/>
+    <rect x="657" y="406" width="76" height="100"/>
+    <rect x="655" y="506" width="80" height="110"/>
+    <rect x="653" y="616" width="84" height="100"/>
+  </clipPath>
+  <clipPath id="clipUpperSphere"><circle cx="141" cy="172" r="42"/></clipPath>
+  <clipPath id="clipLowerSphere"><circle cx="141" cy="524" r="70"/></clipPath>
+  <clipPath id="clipDomeL"><ellipse cx="197" cy="645" rx="72" ry="62"/></clipPath>
+  <clipPath id="clipDomeR"><ellipse cx="604" cy="640" rx="68" ry="66"/></clipPath>
+  <clipPath id="clipShang">
+    <path d="M846,55 C846,45 926,45 926,55 L924,140 C932,300 939,500 944,679 L828,679 C833,500 840,300 846,140 Z"/>
+  </clipPath>
+</defs>
+
+<!-- ===================== SKY ===================== -->
+<rect x="0" y="-2" width="1000" height="732" fill="url(#skyGrad)"/>
+
+<!-- night city sky-glow (rises behind skyline) -->
+<ellipse cx="560" cy="716" rx="640" ry="160" fill="url(#cityGlow)" opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.6;0.72;0.93;0.99;1" values="0;0;0.5;0.5;0;0"/>
+</ellipse>
+
+<!-- ===================== STARS ===================== -->
+<g fill="#dfe8ff" opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.63;0.72;0.93;0.99;1" values="0;0;1;1;0;0"/>
+  <circle class="tw" cx="42" cy="60" r="1.3"/><circle class="tw" cx="97" cy="130" r="1"/>
+  <circle class="tw" cx="150" cy="45" r="1.5"/><circle class="tw" cx="205" cy="185" r="0.9"/>
+  <circle class="tw" cx="255" cy="90" r="1.2"/><circle class="tw" cx="300" cy="35" r="1"/>
+  <circle class="tw" cx="338" cy="150" r="1.4"/><circle class="tw" cx="392" cy="70" r="0.9"/>
+  <circle class="tw" cx="440" cy="210" r="1.1"/><circle class="tw" cx="488" cy="40" r="1.3"/>
+  <circle class="tw" cx="520" cy="120" r="1"/><circle class="tw" cx="565" cy="65" r="1.5"/>
+  <circle class="tw" cx="608" cy="175" r="0.9"/><circle class="tw" cx="650" cy="95" r="1.2"/>
+  <circle class="tw" cx="700" cy="30" r="1"/><circle class="tw" cx="742" cy="150" r="1.4"/>
+  <circle class="tw" cx="780" cy="60" r="1.1"/><circle class="tw" cx="820" cy="200" r="0.9"/>
+  <circle class="tw" cx="860" cy="105" r="1.3"/><circle class="tw" cx="905" cy="45" r="1"/>
+  <circle class="tw" cx="950" cy="160" r="1.2"/><circle class="tw" cx="975" cy="80" r="0.9"/>
+  <circle class="tw" cx="70" cy="235" r="1"/><circle class="tw" cx="175" cy="285" r="1.2"/>
+  <circle class="tw" cx="285" cy="250" r="0.9"/><circle class="tw" cx="415" cy="305" r="1.1"/>
+  <circle class="tw" cx="540" cy="260" r="1.3"/><circle class="tw" cx="668" cy="290" r="1"/>
+  <circle class="tw" cx="790" cy="255" r="1.2"/><circle class="tw" cx="915" cy="275" r="0.9"/>
+  <circle class="tw" cx="120" cy="340" r="1"/><circle class="tw" cx="355" cy="380" r="1.1"/>
+  <circle class="tw" cx="620" cy="360" r="0.9"/><circle class="tw" cx="865" cy="350" r="1.2"/>
+  <circle class="tw" cx="960" cy="330" r="1"/><circle class="tw" cx="480" cy="145" r="0.8"/>
+  <circle class="tw" cx="30" cy="150" r="1.1"/><circle class="tw" cx="230" cy="20" r="0.9"/>
+  <circle class="tw" cx="725" cy="220" r="1"/><circle class="tw" cx="585" cy="30" r="1.3"/>
+</g>
+
+<!-- ===================== SUN ===================== -->
+<g>
+  <animateTransform attributeName="transform" type="translate" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.08;0.16;0.24;0.32;0.4;0.48;0.56;0.645;1"
+    values="80 760; 187 522; 295 250; 395 123; 510 80; 620 123; 725 250; 835 522; 940 760; 940 760"/>
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.6;0.66;1" values="1;1;0;0"/>
+  <circle r="120" fill="url(#sunGlow)"/>
+  <circle r="26" fill="#ffd76a"/>
+  <circle r="19" fill="#fff3c4"/>
+</g>
+
+<!-- ===================== MOON ===================== -->
+<g>
+  <animateTransform attributeName="transform" type="translate" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.68;0.76;0.84;0.92;1"
+    values="200 850; 200 760; 390 330; 580 150; 770 330; 960 760"/>
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.7;0.75;0.9;0.97;1" values="0;0;1;1;0;0"/>
+  <circle r="70" fill="url(#moonGlow)"/>
+  <circle r="21" fill="#eef2fb"/>
+  <circle cx="-6" cy="-4" r="4.5" fill="#d4dcec" opacity="0.8"/>
+  <circle cx="5" cy="7" r="3" fill="#d4dcec" opacity="0.7"/>
+  <circle cx="9" cy="-7" r="2.2" fill="#d4dcec" opacity="0.6"/>
+</g>
+
+<!-- ===================== CLOUDS ===================== -->
+<g fill="#ffffff" opacity="0.85">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.5;0.64;0.78;0.94;1" values="0.95;0.9;0.25;0.12;0.5;0.95"/>
+  <g transform="translate(150 95)">
+    <animateTransform attributeName="transform" type="translate" additive="sum" dur="70s" repeatCount="indefinite"
+      values="0 0; -70 0; 0 0"/>
+    <ellipse cx="0" cy="0" rx="52" ry="13"/><ellipse cx="34" cy="-8" rx="38" ry="11"/>
+    <ellipse cx="-30" cy="5" rx="34" ry="9"/><ellipse cx="10" cy="6" rx="46" ry="10"/>
+  </g>
+  <g transform="translate(620 60)" opacity="0.85">
+    <animateTransform attributeName="transform" type="translate" additive="sum" dur="95s" repeatCount="indefinite"
+      values="0 0; 90 0; 0 0"/>
+    <ellipse cx="0" cy="0" rx="60" ry="12"/><ellipse cx="40" cy="-7" rx="40" ry="10"/>
+    <ellipse cx="-42" cy="4" rx="36" ry="8"/>
+  </g>
+  <g transform="translate(880 170)" opacity="0.7">
+    <animateTransform attributeName="transform" type="translate" additive="sum" dur="120s" repeatCount="indefinite"
+      values="0 0; -120 0; 0 0"/>
+    <ellipse cx="0" cy="0" rx="46" ry="9"/><ellipse cx="30" cy="-5" rx="30" ry="8"/>
+  </g>
+  <g transform="translate(360 190)" opacity="0.55">
+    <animateTransform attributeName="transform" type="translate" additive="sum" dur="150s" repeatCount="indefinite"
+      values="0 0; 60 0; 0 0"/>
+    <ellipse cx="0" cy="0" rx="36" ry="7"/><ellipse cx="24" cy="-4" rx="24" ry="6"/>
+  </g>
+</g>
+
+<!-- ===================== BIRDS (day only) ===================== -->
+<g stroke="#1c2c40" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.02;0.55;0.63;1" values="0;1;1;0;0"/>
+  <g transform="translate(0 200)">
+    <animateTransform attributeName="transform" type="translate" additive="sum" dur="42s" repeatCount="indefinite"
+      values="-80 60; 1080 -60"/>
+    <path d="M0 0 q5 -5 10 0 M10 0 q5 -5 10 0"/>
+    <path d="M-28 16 q4.5 -4.5 9 0 M-19 16 q4.5 -4.5 9 0"/>
+    <path d="M16 26 q4 -4 8 0 M24 26 q4 -4 8 0"/>
+  </g>
+</g>
+<!-- ===================== CITY (back to front) ===================== -->
+<g id="city">
+  <!-- far-left background towers -->
+  <rect x="0" y="570" width="54" height="146" fill="#dfe6ec"/>
+  <rect x="27" y="473" width="73" height="243" fill="#5f86b4"/>
+  <g stroke="#42648e" stroke-width="1" opacity="0.6">
+    <line x1="40" y1="478" x2="40" y2="716"/><line x1="55" y1="478" x2="55" y2="716"/>
+    <line x1="70" y1="478" x2="70" y2="716"/><line x1="85" y1="478" x2="85" y2="716"/>
+  </g>
+  <rect x="60" y="406" width="94" height="310" fill="#e2e6ea"/>
+  <g stroke="#b8c4d0" stroke-width="2" opacity="0.8">
+    <line x1="64" y1="428" x2="150" y2="428"/><line x1="64" y1="450" x2="150" y2="450"/>
+    <line x1="64" y1="472" x2="150" y2="472"/><line x1="64" y1="494" x2="150" y2="494"/>
+    <line x1="64" y1="516" x2="150" y2="516"/><line x1="64" y1="538" x2="150" y2="538"/>
+    <line x1="64" y1="560" x2="150" y2="560"/><line x1="64" y1="582" x2="150" y2="582"/>
+  </g>
+  <!-- tan office with red sign -->
+  <rect x="158" y="479" width="97" height="237" fill="#d8c2a0"/>
+  <rect x="166" y="494" width="52" height="11" fill="#c04838"/>
+  <g fill="#a88f6e">
+    <rect x="165" y="515" width="80" height="4"/><rect x="165" y="533" width="80" height="4"/>
+    <rect x="165" y="551" width="80" height="4"/><rect x="165" y="569" width="80" height="4"/>
+    <rect x="165" y="587" width="80" height="4"/><rect x="165" y="605" width="80" height="4"/>
+    <rect x="165" y="623" width="80" height="4"/>
+  </g>
+  <line x1="186" y1="455" x2="186" y2="479" stroke="#c8b494" stroke-width="2"/>
+  <!-- distant twin-antenna tower -->
+  <rect x="430" y="522" width="54" height="150" fill="#b8c8d8"/>
+  <line x1="416" y1="470" x2="416" y2="522" stroke="#9fb0c0" stroke-width="2"/>
+  <line x1="443" y1="476" x2="443" y2="522" stroke="#9fb0c0" stroke-width="2"/>
+  <circle cx="416" cy="470" r="2" fill="#8fa0b0"/><circle cx="443" cy="476" r="2" fill="#8fa0b0"/>
+
+  <!-- Citi cylindrical tower -->
+  <polygon points="357,470 389,560 389,660 357,660" fill="#c9ad84"/>
+  <rect x="297" y="415" width="64" height="245" fill="url(#citiGrad)"/>
+  <polygon points="305,420 318,420 306,540 299,540" fill="#a8c8e8" opacity="0.3"/>
+  <polygon points="334,425 344,425 340,560 331,560" fill="#cfe2f2" opacity="0.25"/>
+  <polygon points="350,430 358,430 357,600 349,600" fill="#a8c8e8" opacity="0.2"/>
+  <rect x="293" y="401" width="72" height="14" fill="#cfd8e0"/>
+  <g stroke="#8a98a6" stroke-width="2">
+    <line x1="299" y1="403" x2="299" y2="413"/><line x1="311" y1="403" x2="311" y2="413"/>
+    <line x1="323" y1="403" x2="323" y2="413"/><line x1="335" y1="403" x2="335" y2="413"/>
+    <line x1="347" y1="403" x2="347" y2="413"/><line x1="359" y1="403" x2="359" y2="413"/>
+  </g>
+
+  <!-- sloped-top glass tower (left of Jin Mao) -->
+  <polygon points="545,712 552,352 570,337 637,352 637,712" fill="url(#slopeTopGrad)"/>
+  <g stroke="#2e5680" stroke-width="1.2" opacity="0.55">
+    <line x1="550" y1="380" x2="636" y2="380"/><line x1="549" y1="410" x2="636" y2="410"/>
+    <line x1="549" y1="440" x2="636" y2="440"/><line x1="548" y1="470" x2="636" y2="470"/>
+    <line x1="548" y1="500" x2="636" y2="500"/><line x1="547" y1="530" x2="636" y2="530"/>
+    <line x1="547" y1="560" x2="636" y2="560"/><line x1="546" y1="590" x2="636" y2="590"/>
+    <line x1="546" y1="620" x2="636" y2="620"/><line x1="546" y1="650" x2="636" y2="650"/>
+    <line x1="546" y1="680" x2="636" y2="680"/>
+  </g>
+  <polygon points="552,352 570,337 570,712 552,712" fill="#8fc09a" opacity="0.35"/>
+
+  <!-- SWFC -->
+  <polygon points="611,716 631,234 765,234 785,716" fill="url(#swfcGrad)"/>
+  <polygon points="611,716 631,234 663,234 645,716" fill="#5888bc" opacity="0.75"/>
+  <g stroke="#7fa2cc" stroke-width="1" opacity="0.3">
+    <line x1="688" y1="240" x2="692" y2="716"/><line x1="736" y1="240" x2="740" y2="716"/>
+  </g>
+  <polygon points="655,246 742,246 726,284 671,284" fill="url(#skyGrad)"/>
+  <polygon points="655,246 742,246 726,284 671,284" fill="none" stroke="#a8ccf0" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Jin Mao Tower -->
+  <g id="jinmao">
+    <polygon points="659,716 655,520 659,506 659,406 663,390 667,376 671,364 675,352 679,342 683,330 695,300 707,330 711,342 715,352 719,364 723,376 727,390 731,406 731,506 735,520 731,716" fill="url(#jinmaoGrad)"/>
+    <rect x="681" y="330" width="28" height="12" fill="#dfe7ee"/>
+    <rect x="677" y="342" width="36" height="10" fill="#d6dfe8"/>
+    <rect x="673" y="352" width="44" height="12" fill="#dfe7ee"/>
+    <rect x="669" y="364" width="52" height="12" fill="#d6dfe8"/>
+    <rect x="665" y="376" width="60" height="14" fill="#dfe7ee"/>
+    <rect x="661" y="390" width="68" height="16" fill="#d6dfe8"/>
+    <rect x="657" y="406" width="76" height="100" fill="url(#jinmaoGrad)"/>
+    <rect x="655" y="506" width="80" height="110" fill="url(#jinmaoGrad)"/>
+    <rect x="653" y="616" width="84" height="100" fill="url(#jinmaoGrad)"/>
+    <line x1="695" y1="270" x2="695" y2="300" stroke="#f0f5f9" stroke-width="2.5"/>
+    <polygon points="691,300 699,300 703,330 687,330" fill="#eef3f7"/>
+    <g stroke="#a8b8c6" stroke-width="1" opacity="0.55">
+      <line x1="668" y1="410" x2="668" y2="716"/><line x1="679" y1="400" x2="679" y2="716"/>
+      <line x1="690" y1="395" x2="690" y2="716"/><line x1="701" y1="395" x2="701" y2="716"/>
+      <line x1="712" y1="400" x2="712" y2="716"/><line x1="723" y1="410" x2="723" y2="716"/>
+    </g>
+    <g stroke="#9fb0c0" stroke-width="1" opacity="0.5">
+      <line x1="657" y1="440" x2="733" y2="440"/><line x1="657" y1="480" x2="733" y2="480"/>
+      <line x1="655" y1="545" x2="735" y2="545"/><line x1="655" y1="585" x2="735" y2="585"/>
+      <line x1="653" y1="650" x2="737" y2="650"/><line x1="653" y1="690" x2="737" y2="690"/>
+    </g>
+  </g>
+
+  <!-- bright slant-top tower -->
+  <polygon points="729,612 729,415 748,330 830,345 838,612 838,716 729,716" fill="url(#brightGrad)"/>
+  <rect x="729" y="415" width="13" height="301" fill="#9fb8cc" opacity="0.6"/>
+  <rect x="731" y="440" width="105" height="16" fill="url(#checkerBand)"/>
+  <g stroke="#b0b8c0" stroke-width="0.8" opacity="0.5">
+    <line x1="732" y1="380" x2="834" y2="392"/><line x1="731" y1="470" x2="836" y2="470"/>
+    <line x1="731" y1="505" x2="836" y2="505"/><line x1="730" y1="540" x2="837" y2="540"/>
+    <line x1="730" y1="575" x2="837" y2="575"/><line x1="730" y1="610" x2="838" y2="610"/>
+    <line x1="730" y1="645" x2="838" y2="645"/><line x1="730" y1="680" x2="838" y2="680"/>
+  </g>
+
+  <!-- Shanghai Tower -->
+  <path d="M846,55 C846,45 926,45 926,55 L924,140 C932,300 939,500 944,679 L828,679 C833,500 840,300 846,140 Z" fill="url(#shangGrad)"/>
+  <g clip-path="url(#clipShang)">
+    <rect x="820" y="45" width="130" height="640" fill="url(#floorBands)"/>
+    <rect x="862" y="102" width="18" height="11" fill="#2a4a70"/>
+    <rect x="862" y="100" width="18" height="2.5" fill="#cfe0ee" opacity="0.8"/>
+    <ellipse cx="886" cy="56" rx="38" ry="8" fill="#cfe0ee" opacity="0.45"/>
+  </g>
+  <path d="M828,679 C836,470 856,300 886,170 C900,120 910,85 915,52" fill="none" stroke="#d9e6f2" stroke-width="7" opacity="0.85"/>
+  <path d="M821,679 C829,470 849,300 879,170 C893,120 903,85 908,52" fill="none" stroke="#3a5a80" stroke-width="3" opacity="0.4"/>
+
+  <!-- green towers -->
+  <polygon points="797,679 797,525 843,511 888,527 888,679" fill="#2f8f52"/>
+  <g stroke="#24703f" stroke-width="1.5" opacity="0.7">
+    <line x1="799" y1="545" x2="886" y2="545"/><line x1="799" y1="570" x2="886" y2="570"/>
+    <line x1="799" y1="595" x2="886" y2="595"/><line x1="799" y1="620" x2="886" y2="620"/>
+    <line x1="799" y1="645" x2="886" y2="645"/><line x1="799" y1="670" x2="886" y2="670"/>
+  </g>
+  <line x1="843" y1="511" x2="843" y2="679" stroke="#6fcf7f" stroke-width="2" opacity="0.6"/>
+  <polygon points="926,679 926,548 966,534 1000,545 1000,679" fill="#43b568"/>
+  <g stroke="#2f8f4a" stroke-width="1.5" opacity="0.7">
+    <line x1="928" y1="565" x2="1000" y2="565"/><line x1="928" y1="590" x2="1000" y2="590"/>
+    <line x1="928" y1="615" x2="1000" y2="615"/><line x1="928" y1="640" x2="1000" y2="640"/>
+    <line x1="928" y1="665" x2="1000" y2="665"/>
+  </g>
+
+  <!-- white slab + green-band low building (right foreground) -->
+  <rect x="759" y="510" width="153" height="206" fill="#f2ead8"/>
+  <rect x="868" y="510" width="44" height="206" fill="#ddd2ba"/>
+  <rect x="764" y="520" width="100" height="186" fill="url(#dayWinDark)"/>
+  <g fill="url(#dayWinDark)" opacity="0.9">
+    <rect x="874" y="524" width="34" height="160"/>
+  </g>
+  <rect x="860" y="631" width="140" height="85" fill="#efe8d8"/>
+  <rect x="866" y="652" width="128" height="40" fill="#3f9a7a"/>
+  <g stroke="#68b898" stroke-width="1" opacity="0.7">
+    <line x1="880" y1="654" x2="880" y2="690"/><line x1="896" y1="654" x2="896" y2="690"/>
+    <line x1="912" y1="654" x2="912" y2="690"/><line x1="928" y1="654" x2="928" y2="690"/>
+    <line x1="944" y1="654" x2="944" y2="690"/><line x1="960" y1="654" x2="960" y2="690"/>
+    <line x1="976" y1="654" x2="976" y2="690"/>
+  </g>
+  <!-- small stele tower -->
+  <rect x="644" y="570" width="34" height="146" fill="#e6d9c2"/>
+  <g fill="#8a7a62">
+    <rect x="655" y="582" width="8" height="8"/><rect x="655" y="596" width="8" height="8"/>
+    <rect x="655" y="610" width="8" height="8"/><rect x="655" y="624" width="8" height="8"/>
+  </g>
+
+  <!-- red-brick tower with brass cap -->
+  <g id="brickTower">
+    <rect x="671" y="505" width="74" height="211" fill="#a85a44"/>
+    <g fill="#e8d8c0" opacity="0.55">
+      <rect x="676" y="505" width="3" height="211"/><rect x="696" y="505" width="3" height="211"/>
+      <rect x="716" y="505" width="3" height="211"/><rect x="736" y="505" width="3" height="211"/>
+    </g>
+    <g fill="#8f4a38">
+      <rect x="673" y="496" width="8" height="10"/><rect x="689" y="496" width="8" height="10"/>
+      <rect x="705" y="496" width="8" height="10"/><rect x="721" y="496" width="8" height="10"/>
+      <rect x="737" y="496" width="8" height="10"/>
+    </g>
+    <polygon points="662,497 754,497 742,484 674,484" fill="url(#brassGrad)"/>
+    <path d="M681,484 Q698,466 715,484 Z" fill="#6a5a4a"/>
+    <line x1="698" y1="464" x2="698" y2="471" stroke="#8a7a5a" stroke-width="2"/>
+    <rect x="679" y="521" width="58" height="4" fill="#7a3f30"/>
+  </g>
+
+  <!-- ============ ORIENTAL PEARL TOWER ============ -->
+  <g id="pearl">
+    <!-- legs -->
+    <polygon points="98,560 118,570 62,712 40,704" fill="url(#pearlLeg)"/>
+    <polygon points="128,592 152,592 148,712 132,712" fill="url(#pearlLeg)"/>
+    <polygon points="162,568 180,558 224,700 206,710" fill="url(#pearlLeg)"/>
+    <circle cx="74" cy="650" r="8" fill="#c8cdd2"/>
+    <circle cx="74" cy="650" r="8" fill="url(#legBall)"/>
+    <circle cx="197" cy="653" r="6" fill="#c8cdd2"/>
+    <!-- antenna -->
+    <line x1="141" y1="2" x2="141" y2="20" stroke="#cfc4b4" stroke-width="2"/>
+    <rect x="136" y="18" width="10" height="22" fill="#cfc4b4"/>
+    <g stroke="#a89878" stroke-width="1" opacity="0.8">
+      <line x1="136" y1="24" x2="146" y2="30"/><line x1="146" y1="24" x2="136" y2="30"/>
+      <line x1="136" y1="32" x2="146" y2="38"/><line x1="146" y1="32" x2="136" y2="38"/>
+    </g>
+    <circle cx="141" cy="44" r="6" fill="#d8b898"/>
+    <rect x="137" y="48" width="8" height="82" fill="#cfc4b4"/>
+    <ellipse cx="141" cy="66" rx="7" ry="2.5" fill="#b8a888"/>
+    <!-- upper sphere -->
+    <circle cx="141" cy="172" r="42" fill="url(#pearlSphere)"/>
+    <g clip-path="url(#clipUpperSphere)">
+      <rect x="99" y="150" width="84" height="42" fill="url(#pearlBand)"/>
+      <circle cx="141" cy="172" r="42" fill="url(#sphereShade)"/>
+    </g>
+    <ellipse cx="141" cy="211" rx="27" ry="6" fill="#c8c2b8"/>
+    <path d="M129,133 Q141,124 153,133 L150,140 L132,140 Z" fill="#c8c2b8"/>
+    <!-- shaft with beads -->
+    <rect x="112" y="214" width="15" height="248" fill="#d9b992"/>
+    <rect x="127" y="214" width="28" height="248" fill="#a8875f"/>
+    <rect x="155" y="214" width="15" height="248" fill="#c3a179"/>
+    <g fill="#e0c8a8">
+      <rect x="108" y="248" width="66" height="5"/><rect x="108" y="277" width="66" height="5"/>
+      <rect x="108" y="306" width="66" height="5"/><rect x="108" y="335" width="66" height="5"/>
+    </g>
+    <g fill="url(#beadBall)">
+      <circle cx="141" cy="259" r="8"/><circle cx="141" cy="288" r="8"/>
+      <circle cx="141" cy="317" r="8"/><circle cx="141" cy="346" r="8"/>
+      <circle cx="141" cy="425" r="12"/>
+    </g>
+    <!-- lower sphere -->
+    <circle cx="141" cy="524" r="70" fill="url(#pearlSphere)"/>
+    <g clip-path="url(#clipLowerSphere)">
+      <rect x="71" y="486" width="140" height="5" fill="#6a655c"/>
+      <rect x="71" y="494" width="140" height="58" fill="url(#pearlBand)"/>
+      <rect x="71" y="554" width="140" height="5" fill="#6a655c"/>
+      <circle cx="141" cy="524" r="70" fill="url(#sphereShade)"/>
+    </g>
+  </g>
+
+  <!-- ============ CONVENTION CENTER ============ -->
+  <!-- classical colonnade building -->
+  <g id="classic">
+    <rect x="232" y="592" width="318" height="124" fill="url(#classGrad)"/>
+    <rect x="226" y="582" width="330" height="11" fill="#f2e6c8"/>
+    <g stroke="#d8bf98" stroke-width="2">
+      <line x1="234" y1="576" x2="552" y2="576"/>
+      <g stroke-width="2">
+        <line x1="240" y1="576" x2="240" y2="582"/><line x1="270" y1="576" x2="270" y2="582"/>
+        <line x1="300" y1="576" x2="300" y2="582"/><line x1="330" y1="576" x2="330" y2="582"/>
+        <line x1="360" y1="576" x2="360" y2="582"/><line x1="390" y1="576" x2="390" y2="582"/>
+        <line x1="420" y1="576" x2="420" y2="582"/><line x1="450" y1="576" x2="450" y2="582"/>
+        <line x1="480" y1="576" x2="480" y2="582"/><line x1="510" y1="576" x2="510" y2="582"/>
+        <line x1="540" y1="576" x2="540" y2="582"/>
+      </g>
+    </g>
+    <rect x="228" y="700" width="326" height="16" fill="#c8ae86"/>
+    <!-- arched windows x9 -->
+    <g fill="url(#archWin)">
+      <path d="M246,652 v-38 a10,10 0 0 1 20,0 v38 Z"/><path d="M280,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+      <path d="M314,652 v-38 a10,10 0 0 1 20,0 v38 Z"/><path d="M348,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+      <path d="M382,652 v-38 a10,10 0 0 1 20,0 v38 Z"/><path d="M416,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+      <path d="M450,652 v-38 a10,10 0 0 1 20,0 v38 Z"/><path d="M484,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+      <path d="M518,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+    </g>
+    <g fill="#6b86aa">
+      <rect x="250" y="664" width="12" height="32"/><rect x="284" y="664" width="12" height="32"/>
+      <rect x="318" y="664" width="12" height="32"/><rect x="352" y="664" width="12" height="32"/>
+      <rect x="386" y="664" width="12" height="32"/><rect x="420" y="664" width="12" height="32"/>
+      <rect x="454" y="664" width="12" height="32"/><rect x="488" y="664" width="12" height="32"/>
+      <rect x="522" y="664" width="12" height="32"/>
+    </g>
+    <g fill="#d8bf98">
+      <rect x="270" y="600" width="6" height="100"/><rect x="304" y="600" width="6" height="100"/>
+      <rect x="338" y="600" width="6" height="100"/><rect x="372" y="600" width="6" height="100"/>
+      <rect x="406" y="600" width="6" height="100"/><rect x="440" y="600" width="6" height="100"/>
+      <rect x="474" y="600" width="6" height="100"/><rect x="508" y="600" width="6" height="100"/>
+      <rect x="542" y="600" width="6" height="100"/>
+    </g>
+  </g>
+  <!-- left glass dome -->
+  <g id="domeL">
+    <rect x="133" y="690" width="128" height="26" fill="#e8eef2"/>
+    <rect x="139" y="696" width="116" height="14" fill="url(#dayWinDark)" opacity="0.85"/>
+    <ellipse cx="197" cy="645" rx="72" ry="62" fill="url(#domeLGrad)"/>
+    <g clip-path="url(#clipDomeL)" fill="none" stroke="#dcecef" stroke-width="1.2" opacity="0.55">
+      <ellipse cx="197" cy="645" rx="24" ry="62"/><ellipse cx="197" cy="645" rx="48" ry="62"/>
+      <line x1="125" y1="645" x2="269" y2="645"/>
+      <path d="M131,618 Q197,606 263,618"/><path d="M131,672 Q197,684 263,672"/>
+      <path d="M142,600 Q197,588 252,600"/>
+    </g>
+    <ellipse cx="172" cy="618" rx="20" ry="11" fill="#ffffff" opacity="0.3"/>
+  </g>
+  <!-- right glass dome -->
+  <g id="domeR">
+    <rect x="543" y="688" width="122" height="28" fill="#eef2f4"/>
+    <rect x="549" y="694" width="110" height="15" fill="url(#dayWinDark)" opacity="0.85"/>
+    <ellipse cx="604" cy="640" rx="68" ry="66" fill="url(#domeRGrad)"/>
+    <g clip-path="url(#clipDomeR)" opacity="0.45">
+      <rect x="566" y="604" width="26" height="24" fill="#e08a4a"/>
+      <rect x="610" y="596" width="30" height="26" fill="#5aae60"/>
+      <rect x="585" y="648" width="34" height="24" fill="#4a90c8"/>
+      <rect x="622" y="652" width="26" height="22" fill="#7ac88a"/>
+    </g>
+    <g clip-path="url(#clipDomeR)" fill="none" stroke="#dcecef" stroke-width="1.2" opacity="0.55">
+      <ellipse cx="604" cy="640" rx="22" ry="66"/><ellipse cx="604" cy="640" rx="45" ry="66"/>
+      <line x1="536" y1="640" x2="672" y2="640"/>
+      <path d="M541,612 Q604,600 667,612"/><path d="M541,668 Q604,680 667,668"/>
+      <path d="M551,594 Q604,582 657,594"/>
+    </g>
+    <ellipse cx="580" cy="612" rx="18" ry="11" fill="#ffffff" opacity="0.28"/>
+  </g>
+  <!-- small pavilion -->
+  <rect x="678" y="660" width="42" height="30" fill="#eef2f4"/>
+  <rect x="675" y="654" width="48" height="7" fill="#dde4e8"/>
+</g>
+<!-- ===================== SHORELINE + WATER ===================== -->
+<!-- trees behind the quay wall -->
+<g id="trees">
+  <g fill="#2f5f2e">
+    <ellipse cx="20" cy="698" rx="26" ry="14"/><ellipse cx="70" cy="694" rx="28" ry="16"/>
+    <ellipse cx="120" cy="696" rx="24" ry="14"/><ellipse cx="300" cy="692" rx="30" ry="18"/>
+    <ellipse cx="350" cy="696" rx="26" ry="15"/><ellipse cx="420" cy="698" rx="24" ry="13"/>
+    <ellipse cx="465" cy="700" rx="20" ry="11"/><ellipse cx="885" cy="698" rx="26" ry="13"/>
+    <ellipse cx="945" cy="700" rx="30" ry="13"/>
+  </g>
+  <g fill="#3f7a3a">
+    <ellipse cx="45" cy="690" rx="20" ry="12"/><ellipse cx="95" cy="688" rx="22" ry="13"/>
+    <ellipse cx="150" cy="694" rx="18" ry="10"/><ellipse cx="270" cy="688" rx="24" ry="14"/>
+    <ellipse cx="325" cy="684" rx="20" ry="13"/><ellipse cx="395" cy="692" rx="20" ry="12"/>
+    <ellipse cx="915" cy="692" rx="24" ry="12"/>
+  </g>
+  <!-- autumn red trees -->
+  <g fill="#c04a30">
+    <ellipse cx="600" cy="694" rx="16" ry="15"/><ellipse cx="630" cy="692" rx="17" ry="17"/>
+    <ellipse cx="662" cy="694" rx="16" ry="16"/><ellipse cx="694" cy="692" rx="17" ry="17"/>
+    <ellipse cx="726" cy="694" rx="16" ry="16"/><ellipse cx="758" cy="692" rx="17" ry="17"/>
+    <ellipse cx="790" cy="694" rx="16" ry="15"/><ellipse cx="822" cy="694" rx="16" ry="16"/>
+    <ellipse cx="854" cy="696" rx="15" ry="14"/>
+  </g>
+  <g fill="#d86a38" opacity="0.85">
+    <ellipse cx="615" cy="686" rx="11" ry="11"/><ellipse cx="647" cy="684" rx="12" ry="12"/>
+    <ellipse cx="679" cy="686" rx="11" ry="11"/><ellipse cx="711" cy="684" rx="12" ry="12"/>
+    <ellipse cx="743" cy="686" rx="11" ry="11"/><ellipse cx="775" cy="684" rx="12" ry="12"/>
+    <ellipse cx="807" cy="686" rx="11" ry="11"/><ellipse cx="840" cy="688" rx="10" ry="10"/>
+  </g>
+</g>
+<!-- quay wall -->
+<rect x="0" y="708" width="1000" height="22" fill="#a9895e"/>
+<rect x="0" y="708" width="1000" height="4" fill="#c8a878"/>
+<rect x="479" y="708" width="100" height="24" fill="#e8e4da"/>
+<rect x="792" y="708" width="120" height="24" fill="#e8e4da"/>
+<rect x="0" y="724" width="1000" height="6" fill="#6a5a44"/>
+<!-- floating pontoon pier -->
+<rect x="60" y="718" width="260" height="10" fill="#b8483c"/>
+<rect x="60" y="718" width="260" height="2.5" fill="#e8e4da"/>
+<g fill="#3a4a58">
+  <rect x="90" y="712" width="3" height="7"/><rect x="160" y="712" width="3" height="7"/>
+  <rect x="230" y="712" width="3" height="7"/><rect x="290" y="712" width="3" height="7"/>
+</g>
+
+<!-- ===================== WATER ===================== -->
+<rect x="0" y="728" width="1000" height="172" fill="url(#waterGrad)"/>
+<defs><clipPath id="clipWater"><rect x="0" y="728" width="1000" height="172"/></clipPath></defs>
+<g clip-path="url(#clipWater)">
+  <!-- day shimmer of pearl lower sphere -->
+  <g opacity="0.55">
+    <animateTransform attributeName="transform" type="translate" dur="6s" repeatCount="indefinite"
+      values="-3 0; 3 0; -3 0"/>
+    <rect x="110" y="728" width="60" height="130" fill="url(#refPinkDay)"/>
+    <rect x="120" y="736" width="40" height="60" fill="url(#refPinkDay)" opacity="0.7"/>
+  </g>
+  <!-- ripple lines -->
+  <g fill="none" stroke="#d8ecf8" stroke-linecap="round">
+    <path d="M-40 740 Q 120 737 300 740 T 660 740 T 1040 740" stroke-width="1.5" opacity="0.16" stroke-dasharray="34 66">
+      <animate attributeName="stroke-dashoffset" values="0;-160" dur="11s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-60 756 Q 100 753 280 756 T 640 756 T 1060 756" stroke-width="2" opacity="0.2" stroke-dasharray="50 90">
+      <animate attributeName="stroke-dashoffset" values="0;-182" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-30 774 Q 150 771 330 774 T 690 774 T 1030 774" stroke-width="1.5" opacity="0.14" stroke-dasharray="28 74">
+      <animate attributeName="stroke-dashoffset" values="0;-163" dur="13s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-50 796 Q 110 792 290 796 T 650 796 T 1050 796" stroke-width="2.5" opacity="0.17" stroke-dasharray="60 110">
+      <animate attributeName="stroke-dashoffset" values="0;-187" dur="8s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-20 820 Q 160 816 340 820 T 700 820 T 1020 820" stroke-width="2" opacity="0.12" stroke-dasharray="36 90">
+      <animate attributeName="stroke-dashoffset" values="0;-168" dur="12s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-60 848 Q 120 843 300 848 T 660 848 T 1060 848" stroke-width="3" opacity="0.14" stroke-dasharray="70 130">
+      <animate attributeName="stroke-dashoffset" values="0;-219" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-40 878 Q 140 872 320 878 T 680 878 T 1040 878" stroke-width="2.5" opacity="0.1" stroke-dasharray="44 120">
+      <animate attributeName="stroke-dashoffset" values="0;-180" dur="14s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <!-- sun glitter trail (follows sun x) -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" dur="24s" repeatCount="indefinite"
+      keyTimes="0;0.08;0.16;0.24;0.32;0.4;0.48;0.56;0.645;1"
+      values="80 0; 187 0; 295 0; 395 0; 510 0; 620 0; 725 0; 835 0; 940 0; 940 0"/>
+    <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+      keyTimes="0;0.08;0.16;0.24;0.4;0.48;0.56;0.645;0.68;1"
+      values="0.5;0.42;0.25;0.15;0.15;0.25;0.42;0.55;0;0"/>
+    <g filter="url(#refBlur)">
+      <g>
+        <animateTransform attributeName="transform" type="translate" dur="4.5s" repeatCount="indefinite"
+          values="-5 0; 5 0; -5 0"/>
+        <path d="M-34 728 L34 728 L66 912 L-66 912 Z" fill="url(#sunGlitterGrad)"/>
+        <path d="M-18 728 L18 728 L36 912 L-36 912 Z" fill="url(#sunGlitterGrad)" opacity="0.8"/>
+      </g>
+    </g>
+  </g>
+</g>
+
+<!-- ===================== SIGHTSEEING FERRY (drifts right to left) ===================== -->
+<g id="ferry">
+  <animateTransform attributeName="transform" type="translate" dur="150s" begin="-120s" repeatCount="indefinite"
+    values="1250 742; -260 742"/>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" additive="sum" dur="6s" repeatCount="indefinite"
+      values="-0.7; 0.7; -0.7"/>
+    <g fill="#cfe4f5" opacity="0.5">
+      <ellipse cx="128" cy="13" rx="26" ry="3"/>
+      <ellipse cx="152" cy="10" rx="16" ry="2"/>
+    </g>
+    <path d="M-14 0 L122 0 L114 14 L-6 14 Z" fill="#f4f2ec"/>
+    <path d="M-14 0 L122 0 L121 3 L-13 3 Z" fill="#2a3a50"/>
+    <rect x="-8" y="9" width="122" height="3" fill="#b8483c"/>
+    <rect x="6" y="-14" width="100" height="14" fill="#fdfcf8"/>
+    <rect x="18" y="-26" width="70" height="12" fill="#fdfcf8"/>
+    <rect x="78" y="-34" width="18" height="8" fill="#eef2f4"/>
+    <line x1="87" y1="-34" x2="87" y2="-42" stroke="#5a6a7a" stroke-width="1.5"/>
+    <g fill="#35507a">
+      <rect x="12" y="-10" width="5" height="6"/><rect x="22" y="-10" width="5" height="6"/>
+      <rect x="32" y="-10" width="5" height="6"/><rect x="42" y="-10" width="5" height="6"/>
+      <rect x="52" y="-10" width="5" height="6"/><rect x="62" y="-10" width="5" height="6"/>
+      <rect x="72" y="-10" width="5" height="6"/><rect x="82" y="-10" width="5" height="6"/>
+      <rect x="92" y="-10" width="5" height="6"/>
+      <rect x="24" y="-22" width="5" height="5"/><rect x="34" y="-22" width="5" height="5"/>
+      <rect x="44" y="-22" width="5" height="5"/><rect x="54" y="-22" width="5" height="5"/>
+      <rect x="64" y="-22" width="5" height="5"/><rect x="74" y="-22" width="5" height="5"/>
+    </g>
+    <polygon points="-14,0 -22,-4 -14,-3" fill="#e8e4da"/>
+  </g>
+</g>
+
+<!-- ===================== TUG + BARGE (drifts left to right) ===================== -->
+<g id="tug">
+  <animateTransform attributeName="transform" type="translate" dur="110s" begin="-90s" repeatCount="indefinite"
+    values="-190 752; 1190 752"/>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" additive="sum" dur="5s" repeatCount="indefinite"
+      values="0.6; -0.6; 0.6"/>
+    <g fill="#cfe4f5" opacity="0.55">
+      <ellipse cx="-16" cy="12" rx="24" ry="3"/>
+      <ellipse cx="-40" cy="10" rx="16" ry="2"/>
+    </g>
+    <path d="M-4 -2 Q-10 4 -6 12 L150 12 L154 -2 Z" fill="#141a22"/>
+    <rect x="98" y="-8" width="62" height="7" fill="#8a4a3a"/>
+    <rect x="98" y="-3" width="62" height="2.5" fill="#e8e4da"/>
+    <rect x="120" y="-13" width="10" height="5" fill="#5a3a2c"/>
+    <g fill="#0a0e12" stroke="#2a323c" stroke-width="1">
+      <circle cx="8" cy="9" r="4"/><circle cx="24" cy="9" r="4"/><circle cx="40" cy="9" r="4"/>
+      <circle cx="56" cy="9" r="4"/><circle cx="72" cy="9" r="4"/><circle cx="88" cy="9" r="4"/>
+      <circle cx="104" cy="9" r="4"/><circle cx="120" cy="9" r="4"/><circle cx="136" cy="9" r="4"/>
+    </g>
+    <rect x="30" y="-26" width="58" height="24" fill="#2a5fc8"/>
+    <rect x="30" y="-26" width="58" height="3" fill="#1c4894"/>
+    <g fill="#bcd4e8">
+      <rect x="36" y="-21" width="7" height="7"/><rect x="48" y="-21" width="7" height="7"/>
+      <rect x="60" y="-21" width="7" height="7"/>
+    </g>
+    <rect x="74" y="-19" width="8" height="17" fill="#c03830"/>
+    <rect x="50" y="-38" width="7" height="12" fill="#14181e"/>
+    <rect x="63" y="-40" width="7" height="14" fill="#14181e"/>
+    <rect x="50" y="-38" width="7" height="2.5" fill="#c8483c"/>
+    <rect x="63" y="-40" width="7" height="2.5" fill="#c8483c"/>
+    <line x1="34" y1="-26" x2="34" y2="-42" stroke="#3a4a58" stroke-width="1.5"/>
+  </g>
+</g>
+
+<!-- navigation buoy -->
+<g id="buoy">
+  <path d="M926 726 L940 726 L936 702 L930 702 Z" fill="#c8402f"/>
+  <line x1="933" y1="702" x2="933" y2="694" stroke="#8a2a20" stroke-width="1.5"/>
+  <ellipse cx="933" cy="727" rx="9" ry="2.5" fill="#2a4a70" opacity="0.7"/>
+</g>
+
+<!-- ===================== DAY -> NIGHT TINT OVERLAY ===================== -->
+<rect x="0" y="0" width="1000" height="900" fill="#ff8a50" style="mix-blend-mode:multiply" opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.045;0.13;0.5;0.565;0.62;0.7;0.93;1"
+    values="0.3;0.38;0;0;0.42;0.3;0;0;0.3"/>
+</rect>
+<rect x="0" y="0" width="1000" height="900" fill="#101a3c" style="mix-blend-mode:multiply" opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.5;0.62;0.72;0.93;0.99;1"
+    values="0;0;0.34;0.56;0.56;0.08;0"/>
+</rect>
+<!-- ===================== NIGHT LIGHTS (above tint) ===================== -->
+<defs>
+  <radialGradient id="glowMagenta">
+    <stop offset="0" stop-color="#ff4d9d" stop-opacity="0.9"/>
+    <stop offset="0.55" stop-color="#ff4d9d" stop-opacity="0.28"/>
+    <stop offset="1" stop-color="#ff4d9d" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="glowTeal">
+    <stop offset="0" stop-color="#2fe6c2" stop-opacity="0.75"/>
+    <stop offset="0.6" stop-color="#2fe6c2" stop-opacity="0.22"/>
+    <stop offset="1" stop-color="#2fe6c2" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="glowWarmLamp">
+    <stop offset="0" stop-color="#ffd9a0" stop-opacity="0.9"/>
+    <stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="refBlur" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="3"/>
+  </filter>
+  <pattern id="pearlBandNight" width="14" height="14" patternUnits="userSpaceOnUse">
+    <rect width="14" height="14" fill="#c02a6a"/>
+    <path d="M7,0 L14,7 L7,14 L0,7 Z" fill="none" stroke="#ff7ab0" stroke-width="1.4"/>
+    <circle cx="7" cy="7" r="1.6" fill="#ffc0dc"/>
+  </pattern>
+  <pattern id="dotColumn" width="15" height="24" patternUnits="userSpaceOnUse">
+    <circle cx="7.5" cy="12" r="1.6" fill="#ffd9a0"/>
+  </pattern>
+  <pattern id="lampRow" width="55" height="10" patternUnits="userSpaceOnUse">
+    <circle cx="27.5" cy="5" r="4.5" fill="url(#glowWarmLamp)"/>
+    <circle cx="27.5" cy="5" r="1.4" fill="#ffe8b8"/>
+  </pattern>
+</defs>
+<g id="lights" opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.6;0.7;0.93;0.99;1" values="0;0;1;1;0;0"/>
+
+  <!-- night facade bases: keep silhouettes readable vs dark sky -->
+  <g fill="#24395f">
+    <rect x="27" y="473" width="73" height="243" opacity="0.5"/>
+    <rect x="64" y="414" width="86" height="298" fill="#2b3f5e" opacity="0.5"/>
+    <rect x="165" y="509" width="80" height="207" fill="#2b3f5e" opacity="0.5"/>
+    <rect x="299" y="417" width="60" height="243" fill="#1f3457" opacity="0.55"/>
+    <polygon points="549,712 556,356 566,344 633,356 633,712" fill="#1d3155" opacity="0.55"/>
+    <polygon points="614,716 634,240 762,240 782,716" fill="#182c52" opacity="0.65"/>
+    <g clip-path="url(#clipJinMao)"><rect x="653" y="330" width="84" height="386" fill="#2a4570" opacity="0.5"/></g>
+    <rect x="733" y="352" width="100" height="360" fill="#2e4868" opacity="0.45"/>
+    <g clip-path="url(#clipShang)"><rect x="824" y="45" width="124" height="640" fill="#1c3557" opacity="0.6"/></g>
+    <rect x="799" y="527" width="87" height="150" fill="#1d5a3c" opacity="0.5"/>
+    <rect x="928" y="550" width="70" height="127" fill="#1d5a3c" opacity="0.5"/>
+    <rect x="764" y="520" width="148" height="186" fill="#2b4164" opacity="0.55"/>
+  </g>
+
+  <!-- background city windows -->
+  <rect x="27" y="473" width="73" height="243" fill="url(#litCool)" opacity="0.85"/>
+  <rect x="64" y="414" width="86" height="298" fill="url(#litWarm)" opacity="0.5"/>
+  <rect x="165" y="509" width="80" height="207" fill="url(#litWarm)" opacity="0.5"/>
+  <rect x="299" y="417" width="60" height="243" fill="url(#litCool)" opacity="0.55"/>
+  <rect x="293" y="401" width="72" height="8" fill="#d8ecff" opacity="0.85"/>
+  <polygon points="549,712 556,356 566,344 633,356 633,712" fill="url(#litCool)" opacity="0.6"/>
+
+  <!-- SWFC -->
+  <polygon points="614,716 634,240 762,240 782,716" fill="url(#litCool)" opacity="0.9"/>
+  <polygon points="655,246 742,246 726,284 671,284" fill="none" stroke="#8fd8ff" stroke-width="2" opacity="0.9"/>
+  <rect x="631" y="232" width="134" height="3" fill="#bfe4ff" opacity="0.8"/>
+
+  <!-- Jin Mao: golden night facade -->
+  <g clip-path="url(#clipJinMao)">
+    <rect x="660" y="332" width="70" height="174" fill="url(#litJinMao)" opacity="0.6"/>
+    <rect x="656" y="506" width="78" height="110" fill="url(#litJinMao)" opacity="0.65"/>
+    <rect x="654" y="616" width="82" height="100" fill="url(#litJinMao)" opacity="0.65"/>
+  </g>
+  <line x1="695" y1="270" x2="695" y2="330" stroke="#cfe4ff" stroke-width="3" opacity="0.9"/>
+  <circle cx="695" cy="300" r="10" fill="url(#glowWarmLamp)" opacity="0.8"/>
+
+  <!-- bright tower subtle -->
+  <rect x="733" y="352" width="100" height="360" fill="url(#litCool)" opacity="0.3"/>
+
+  <!-- Shanghai Tower -->
+  <g clip-path="url(#clipShang)">
+    <rect x="824" y="50" width="124" height="630" fill="url(#litFloorBands)" opacity="0.8"/>
+  </g>
+  <path d="M828,679 C836,470 856,300 886,170 C900,120 910,85 915,52" fill="none" stroke="#7fe8ff" stroke-width="3" opacity="0.65"/>
+  <ellipse cx="886" cy="54" rx="40" ry="9" fill="#dfeeff" opacity="0.7"/>
+  <circle cx="886" cy="44" r="2.5" fill="#ff5040">
+    <animate attributeName="opacity" values="1;0.15;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- green + white right cluster -->
+  <rect x="799" y="527" width="87" height="150" fill="url(#litCool)" opacity="0.18"/>
+  <rect x="928" y="550" width="70" height="127" fill="url(#litCool)" opacity="0.2"/>
+  <rect x="764" y="520" width="100" height="186" fill="url(#litCool)" opacity="0.95"/>
+  <rect x="874" y="524" width="34" height="160" fill="url(#litWarm)" opacity="0.5"/>
+  <rect x="866" y="652" width="128" height="40" fill="#35c894" opacity="0.4"/>
+  <rect x="646" y="572" width="30" height="142" fill="#ffc880" opacity="0.18"/>
+  <g fill="#ffe0a0" opacity="0.85">
+    <rect x="655" y="582" width="8" height="8"/><rect x="655" y="596" width="8" height="8"/>
+    <rect x="655" y="610" width="8" height="8"/><rect x="655" y="624" width="8" height="8"/>
+  </g>
+
+  <!-- colonnade building warm wash -->
+  <rect x="232" y="592" width="318" height="124" fill="#ffc07a" opacity="0.12"/>
+  <rect x="226" y="582" width="330" height="2.5" fill="#ffd9a0" opacity="0.6"/>
+  <g fill="#ffcf87" opacity="0.75">
+    <path d="M246,652 v-38 a10,10 0 0 1 20,0 v38 Z"/><path d="M280,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+    <path d="M314,652 v-38 a10,10 0 0 1 20,0 v38 Z"/><path d="M348,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+    <path d="M382,652 v-38 a10,10 0 0 1 20,0 v38 Z"/><path d="M416,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+    <path d="M450,652 v-38 a10,10 0 0 1 20,0 v38 Z"/><path d="M484,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+    <path d="M518,652 v-38 a10,10 0 0 1 20,0 v38 Z"/>
+  </g>
+  <g fill="#ffd9a0" opacity="0.5">
+    <rect x="250" y="664" width="12" height="32"/><rect x="284" y="664" width="12" height="32"/>
+    <rect x="318" y="664" width="12" height="32"/><rect x="352" y="664" width="12" height="32"/>
+    <rect x="386" y="664" width="12" height="32"/><rect x="420" y="664" width="12" height="32"/>
+    <rect x="454" y="664" width="12" height="32"/><rect x="488" y="664" width="12" height="32"/>
+    <rect x="522" y="664" width="12" height="32"/>
+  </g>
+
+  <!-- glowing domes -->
+  <circle cx="197" cy="645" r="78" fill="url(#glowTeal)" opacity="0.55"/>
+  <g clip-path="url(#clipDomeL)" fill="none" stroke="#2fe6c2" stroke-width="1.8" opacity="0.85">
+    <ellipse cx="197" cy="645" rx="24" ry="62"/><ellipse cx="197" cy="645" rx="48" ry="62"/>
+    <line x1="125" y1="645" x2="269" y2="645"/>
+    <path d="M131,618 Q197,606 263,618"/><path d="M131,672 Q197,684 263,672"/>
+    <path d="M142,600 Q197,588 252,600"/>
+  </g>
+  <rect x="139" y="696" width="116" height="14" fill="#bfeee0" opacity="0.7"/>
+  <circle cx="604" cy="640" r="84" fill="url(#glowTeal)" opacity="0.6"/>
+  <g clip-path="url(#clipDomeR)" fill="none" stroke="#2fe6c2" stroke-width="1.8" opacity="0.85">
+    <ellipse cx="604" cy="640" rx="22" ry="66"/><ellipse cx="604" cy="640" rx="45" ry="66"/>
+    <line x1="536" y1="640" x2="672" y2="640"/>
+    <path d="M541,612 Q604,600 667,612"/><path d="M541,668 Q604,680 667,668"/>
+    <path d="M551,594 Q604,582 657,594"/>
+  </g>
+  <rect x="549" y="694" width="110" height="15" fill="#bfeee0" opacity="0.7"/>
+
+  <!-- Oriental Pearl: magenta night glow -->
+  <circle cx="141" cy="524" r="100" fill="url(#glowMagenta)" opacity="0.5"/>
+  <g clip-path="url(#clipLowerSphere)">
+    <rect x="71" y="494" width="140" height="58" fill="url(#pearlBandNight)" opacity="0.9"/>
+  </g>
+  <circle cx="141" cy="172" r="62" fill="url(#glowMagenta)" opacity="0.55"/>
+  <g clip-path="url(#clipUpperSphere)">
+    <rect x="99" y="150" width="84" height="42" fill="url(#pearlBandNight)" opacity="0.9"/>
+  </g>
+  <g fill="#ff9ab8">
+    <circle cx="141" cy="259" r="7"/><circle cx="141" cy="288" r="7"/>
+    <circle cx="141" cy="317" r="7"/><circle cx="141" cy="346" r="7"/>
+    <circle cx="141" cy="425" r="10"/>
+  </g>
+  <rect x="112" y="214" width="15" height="248" fill="url(#dotColumn)" opacity="0.9"/>
+  <rect x="155" y="214" width="15" height="248" fill="url(#dotColumn)" opacity="0.9"/>
+  <circle cx="141" cy="2" r="2.8" fill="#ff5040">
+    <animate attributeName="opacity" values="1;0.15;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="74" cy="650" r="9" fill="url(#glowWarmLamp)" opacity="0.7"/>
+
+  <!-- quay lamp line -->
+  <rect x="0" y="700" width="1000" height="10" fill="url(#lampRow)" opacity="0.9"/>
+
+  <!-- water reflections (night) -->
+  <g clip-path="url(#clipWater)" filter="url(#refBlur)">
+    <g opacity="0.55">
+      <animateTransform attributeName="transform" type="translate" dur="5s" repeatCount="indefinite" values="-4 0;4 0;-4 0"/>
+      <rect x="112" y="728" width="58" height="150" fill="url(#refMagenta)"/>
+    </g>
+    <g opacity="0.4">
+      <animateTransform attributeName="transform" type="translate" dur="6.5s" repeatCount="indefinite" values="3 0;-3 0;3 0"/>
+      <rect x="160" y="728" width="52" height="120" fill="url(#refTeal)"/>
+    </g>
+    <g opacity="0.45">
+      <animateTransform attributeName="transform" type="translate" dur="5.5s" repeatCount="indefinite" values="-3 0;4 0;-3 0"/>
+      <rect x="574" y="728" width="58" height="130" fill="url(#refTeal)"/>
+    </g>
+    <g opacity="0.3">
+      <animateTransform attributeName="transform" type="translate" dur="7s" repeatCount="indefinite" values="4 0;-4 0;4 0"/>
+      <rect x="250" y="728" width="290" height="90" fill="url(#refWarm)"/>
+    </g>
+    <g opacity="0.4">
+      <animateTransform attributeName="transform" type="translate" dur="6s" repeatCount="indefinite" values="-4 0;3 0;-4 0"/>
+      <rect x="640" y="728" width="80" height="150" fill="url(#refCool)"/>
+    </g>
+    <g opacity="0.35">
+      <animateTransform attributeName="transform" type="translate" dur="4.8s" repeatCount="indefinite" values="3 0;-4 0;3 0"/>
+      <rect x="664" y="728" width="52" height="120" fill="url(#refWarm)"/>
+    </g>
+    <g opacity="0.3">
+      <animateTransform attributeName="transform" type="translate" dur="7.5s" repeatCount="indefinite" values="-3 0;3 0;-3 0"/>
+      <rect x="300" y="728" width="58" height="100" fill="url(#refCool)"/>
+    </g>
+    <g opacity="0.22">
+      <animateTransform attributeName="transform" type="translate" dur="6.8s" repeatCount="indefinite" values="3 0;-3 0;3 0"/>
+      <rect x="40" y="728" width="120" height="80" fill="url(#refWarm)"/>
+    </g>
+    <g opacity="0.42">
+      <animateTransform attributeName="transform" type="translate" dur="5.2s" repeatCount="indefinite" values="-4 0;4 0;-4 0"/>
+      <rect x="846" y="728" width="76" height="150" fill="url(#refCool)"/>
+      <rect x="870" y="728" width="26" height="110" fill="url(#refWhite)"/>
+    </g>
+    <g opacity="0.25">
+      <animateTransform attributeName="transform" type="translate" dur="6.2s" repeatCount="indefinite" values="4 0;-3 0;4 0"/>
+      <rect x="810" y="728" width="60" height="80" fill="url(#refTeal)"/>
+    </g>
+    <g opacity="0.25">
+      <animateTransform attributeName="transform" type="translate" dur="7.2s" repeatCount="indefinite" values="-3 0;3 0;-3 0"/>
+      <rect x="880" y="728" width="90" height="70" fill="url(#refWarm)"/>
+    </g>
+  </g>
+</g>
+
+<!-- ferry night lights (follows ferry) -->
+<g opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.6;0.7;0.93;0.99;1" values="0;0;1;1;0;0"/>
+  <animateTransform attributeName="transform" type="translate" dur="150s" begin="-120s" repeatCount="indefinite"
+    values="1250 742; -260 742"/>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" additive="sum" dur="6s" repeatCount="indefinite"
+      values="-0.7; 0.7; -0.7"/>
+    <g fill="#ffdf9a">
+      <rect x="12" y="-10" width="5" height="6"/><rect x="22" y="-10" width="5" height="6"/>
+      <rect x="32" y="-10" width="5" height="6"/><rect x="42" y="-10" width="5" height="6"/>
+      <rect x="52" y="-10" width="5" height="6"/><rect x="62" y="-10" width="5" height="6"/>
+      <rect x="72" y="-10" width="5" height="6"/><rect x="82" y="-10" width="5" height="6"/>
+      <rect x="92" y="-10" width="5" height="6"/>
+      <rect x="24" y="-22" width="5" height="5"/><rect x="34" y="-22" width="5" height="5"/>
+      <rect x="44" y="-22" width="5" height="5"/><rect x="54" y="-22" width="5" height="5"/>
+      <rect x="64" y="-22" width="5" height="5"/><rect x="74" y="-22" width="5" height="5"/>
+    </g>
+    <g fill="#fff3c4">
+      <circle cx="0" cy="-1" r="1.5"/><circle cx="24" cy="-1" r="1.5"/><circle cx="48" cy="-1" r="1.5"/>
+      <circle cx="72" cy="-1" r="1.5"/><circle cx="96" cy="-1" r="1.5"/><circle cx="116" cy="-1" r="1.5"/>
+    </g>
+    <circle cx="-12" cy="-3" r="2" fill="#ff4040"/>
+    <circle cx="118" cy="-3" r="2" fill="#40d060"/>
+    <circle cx="87" cy="-44" r="2.2" fill="#fff8e0">
+      <animate attributeName="opacity" values="1;1;0.1;1" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <ellipse cx="54" cy="14" rx="70" ry="4" fill="url(#refWarm)" opacity="0.5"/>
+  </g>
+</g>
+
+<!-- tug night lights (follows tug) -->
+<g opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.6;0.7;0.93;0.99;1" values="0;0;1;1;0;0"/>
+  <animateTransform attributeName="transform" type="translate" dur="110s" begin="-90s" repeatCount="indefinite"
+    values="-190 752; 1190 752"/>
+  <g>
+    <animateTransform attributeName="transform" type="rotate" additive="sum" dur="5s" repeatCount="indefinite"
+      values="0.6; -0.6; 0.6"/>
+    <g fill="#ffdf9a">
+      <rect x="36" y="-21" width="7" height="7"/><rect x="48" y="-21" width="7" height="7"/>
+      <rect x="60" y="-21" width="7" height="7"/>
+    </g>
+    <circle cx="34" cy="-44" r="2.2" fill="#fff8e0">
+      <animate attributeName="opacity" values="1;1;0.1;1" dur="2.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="66" cy="-42" r="1.8" fill="#ff5040"/>
+    <g fill="#ffd9a0" opacity="0.75">
+      <circle cx="20" cy="4" r="1.2"/><circle cx="50" cy="4" r="1.2"/><circle cx="80" cy="4" r="1.2"/>
+      <circle cx="110" cy="4" r="1.2"/><circle cx="140" cy="4" r="1.2"/>
+    </g>
+    <ellipse cx="55" cy="14" rx="80" ry="4" fill="url(#refWarm)" opacity="0.5"/>
+  </g>
+</g>
+
+<!-- buoy flash -->
+<g opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.6;0.7;0.93;0.99;1" values="0;0;1;1;0;0"/>
+  <circle cx="933" cy="693" r="2.2" fill="#ffe8c0">
+    <animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.08;0.16;0.9;1" dur="3s" repeatCount="indefinite"/>
+  </circle>
+</g>
+
+<!-- moon glitter trail (follows moon x) -->
+<g clip-path="url(#clipWater)" opacity="0">
+  <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+    keyTimes="0;0.72;0.78;0.9;0.96;1" values="0;0;0.35;0.35;0;0"/>
+  <g>
+    <animateTransform attributeName="transform" type="translate" dur="24s" repeatCount="indefinite"
+      keyTimes="0;0.68;0.76;0.84;0.92;1"
+      values="200 0; 200 0; 390 0; 580 0; 770 0; 960 0"/>
+    <g filter="url(#refBlur)">
+      <g>
+        <animateTransform attributeName="transform" type="translate" dur="5.5s" repeatCount="indefinite"
+          values="4 0; -4 0; 4 0"/>
+        <path d="M-26 728 L26 728 L48 912 L-48 912 Z" fill="url(#refWhite)"/>
+        <path d="M-12 728 L12 728 L26 912 L-26 912 Z" fill="url(#refWhite)" opacity="0.8"/>
+      </g>
+    </g>
+  </g>
+</g>
+<!-- ===================== HUD (phase label + cycle progress) ===================== -->
+<g font-size="15" letter-spacing="3" text-anchor="middle" fill="#eef4fa">
+  <text x="500" y="884" opacity="1">
+    <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+      keyTimes="0;0.07;0.13;0.93;1" values="1;1;0;0;1"/>
+    拂曉 · Sunrise
+  </text>
+  <text x="500" y="884" opacity="0">
+    <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+      keyTimes="0;0.1;0.17;0.47;0.54;1" values="0;0;1;1;0;0"/>
+    白晝 · Daylight
+  </text>
+  <text x="500" y="884" opacity="0">
+    <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+      keyTimes="0;0.52;0.58;0.66;0.72;1" values="0;0;1;1;0;0"/>
+    黃昏 · Sunset
+  </text>
+  <text x="500" y="884" opacity="0">
+    <animate attributeName="opacity" dur="24s" repeatCount="indefinite"
+      keyTimes="0;0.7;0.76;0.92;0.98;1" values="0;0;1;1;0;0"/>
+    夜 · Night
+  </text>
+</g>
+<rect x="0" y="896" width="0" height="3" fill="#ffffff" opacity="0.25">
+  <animate attributeName="width" values="0;1000" dur="24s" repeatCount="indefinite"/>
+</rect>
+</svg>
+</div>
+<footer>Spec_01 · 以 .spec/spec_01.png 為參考的純 SVG 還原 · 循環週期 24s</footer>
+</body>
+</html>
