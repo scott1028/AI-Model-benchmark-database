@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>Shanghai · Pudong Skyline — Day &amp; Night (spec_01)</title>
+<style>
+  /* ============ master cycle = 40s : day 0-26% | dusk 26-42% | night 46-70% | dawn 70-88% | day ============ */
+  html,body{margin:0;height:100%;background:#05080f;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  svg{height:min(100vh,100vw);width:min(100vh,100vw)}
+
+  @keyframes opDay   {0%,24%{opacity:1} 40%{opacity:0} 76%{opacity:0} 88%{opacity:1} 100%{opacity:1}}
+  @keyframes opWarm  {0%,24%{opacity:0} 38%{opacity:1} 78%{opacity:1} 88%{opacity:0} 100%{opacity:0}}
+  @keyframes opNight {0%,36%{opacity:0} 48%{opacity:1} 68%{opacity:1} 80%{opacity:0} 100%{opacity:0}}
+  @keyframes opTint  {0%,30%{opacity:0} 44%{opacity:.45} 68%{opacity:.45} 78%{opacity:0} 100%{opacity:0}}
+  @keyframes opWarmGlow{0%,26%{opacity:0} 36%,44%{opacity:.6} 52%{opacity:0} 64%{opacity:0} 74%,82%{opacity:.55} 90%{opacity:0} 100%{opacity:0}}
+  @keyframes opStars {0%,38%{opacity:0} 48%{opacity:1} 66%{opacity:1} 76%{opacity:0} 100%{opacity:0}}
+  @keyframes opLights{0%,32%{opacity:0} 42%{opacity:1} 70%{opacity:1} 80%{opacity:0} 100%{opacity:0}}
+  @keyframes opGlow  {0%,34%{opacity:0} 46%{opacity:.9} 68%{opacity:.9} 80%{opacity:0} 100%{opacity:0}}
+  @keyframes opReflNight{0%,34%{opacity:0} 46%{opacity:.5} 68%{opacity:.5} 80%{opacity:0} 100%{opacity:0}}
+  @keyframes opSun   {0%,38%{opacity:1} 43%{opacity:0} 72%{opacity:0} 77%{opacity:1} 100%{opacity:1}}
+  @keyframes opMoon  {0%,43%{opacity:0} 48%{opacity:1} 70%{opacity:1} 75%{opacity:0} 100%{opacity:0}}
+  @keyframes sunMove {
+    0%{transform:translate(80px,330px)}
+    12%{transform:translate(230px,140px)}
+    22%{transform:translate(370px,70px)}
+    34%{transform:translate(540px,190px)}
+    42%{transform:translate(660px,500px)}
+    44%,72%{transform:translate(700px,790px)}
+    74%{transform:translate(-80px,640px)}
+    84%{transform:translate(20px,420px)}
+    100%{transform:translate(80px,330px)}
+  }
+  @keyframes moonMove {
+    0%,44%{transform:translate(780px,790px)}
+    48%{transform:translate(-40px,470px)}
+    56%{transform:translate(200px,180px)}
+    64%{transform:translate(430px,110px)}
+    70%{transform:translate(640px,380px)}
+    74%,100%{transform:translate(780px,790px)}
+  }
+  .skyDay  {animation:opDay   40s linear infinite}
+  .skyWarm {animation:opWarm  40s linear infinite}
+  .skyNight{animation:opNight 40s linear infinite}
+  .waterDay {animation:opDay   40s linear infinite}
+  .waterDusk{animation:opWarm  40s linear infinite}
+  .waterNight{animation:opNight 40s linear infinite}
+  .nightTint{animation:opTint  40s linear infinite}
+  .warmGlow {animation:opWarmGlow 40s linear infinite}
+  .stars    {animation:opStars 40s linear infinite}
+  .lights   {animation:opLights 40s linear infinite}
+  .nightGlow{animation:opGlow  40s linear infinite}
+  .reflNight{animation:opReflNight 40s linear infinite}
+  .sun  {animation:sunMove 40s linear infinite, opSun 40s linear infinite}
+  .moon {animation:moonMove 40s linear infinite, opMoon 40s linear infinite}
+
+  @keyframes tw {0%,100%{opacity:1} 50%{opacity:.25}}
+  .st{animation:tw var(--d,3s) ease-in-out var(--dl,0s) infinite}
+  @keyframes flick {0%,100%{opacity:1} 47%{opacity:1} 50%{opacity:.4} 53%{opacity:1} 78%{opacity:1} 80%{opacity:.6} 82%{opacity:1}}
+  .lightsA{animation:opLights 40s linear infinite, flick 5.3s linear infinite}
+  .lightsB{animation:opLights 40s linear infinite, flick 7.9s linear -2.4s infinite}
+  @keyframes blink{0%,45%{opacity:1} 50%,95%{opacity:.08}}
+  .beacon{animation:blink 1.7s steps(1,end) infinite}
+  @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+  .spin{transform-box:fill-box;transform-origin:center;animation:spin 50s linear infinite}
+  @keyframes rip{0%,100%{transform:translateX(0);opacity:.3} 50%{transform:translateX(16px);opacity:.6}}
+  .rip{fill:none;stroke:#a9cbea;stroke-width:1.6;animation:rip var(--d,6s) ease-in-out var(--dl,0s) infinite}
+  @keyframes shimmer{0%,100%{opacity:.25;transform:scaleX(1)} 50%{opacity:.6;transform:scaleX(1.12)}}
+  .shimmer{transform-box:fill-box;transform-origin:center;animation:shimmer var(--d,7s) ease-in-out var(--dl,0s) infinite}
+  @keyframes drift{0%{transform:translateX(0)} 50%{transform:translateX(70px)} 100%{transform:translateX(0)}}
+  .cloud{animation:drift var(--d,70s) ease-in-out infinite}
+  @keyframes bargeMove{0%{transform:translateX(-34px)} 50%{transform:translateX(120px)} 100%{transform:translateX(-34px)}}
+  .barge{animation:bargeMove 64s linear infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(2.2px)}}
+  .bob{animation:bob var(--d,3.4s) ease-in-out var(--dl,0s) infinite}
+  @keyframes boatDrift{0%{transform:translateX(0)} 50%{transform:translateX(46px)} 100%{transform:translateX(0)}}
+  .boatDrift{animation:boatDrift 72s linear infinite}
+  @keyframes wob{0%,100%{transform:translate(0,1190) scale(1,-1)} 50%{transform:translate(3px,1190) scale(1,-1)}}
+  .wob{animation:wob 7s ease-in-out infinite}
+</style>
+</head>
+<body>
+<svg viewBox="0 0 720 720" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Shanghai Pudong skyline day and night animation">
+  <title>Shanghai Bund — 24h in 40s</title>
+  <defs>
+    <!-- ===== skies ===== -->
+    <linearGradient id="gSkyDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b4fb4"/><stop offset=".55" stop-color="#3f83d6"/><stop offset="1" stop-color="#a9cdef"/>
+    </linearGradient>
+    <linearGradient id="gSkyWarm" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2e3a78"/><stop offset=".45" stop-color="#a05071"/><stop offset=".8" stop-color="#ef9c58"/><stop offset="1" stop-color="#ffd98f"/>
+    </linearGradient>
+    <linearGradient id="gSkyNight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#02050e"/><stop offset=".6" stop-color="#0b1837"/><stop offset="1" stop-color="#1c3160"/>
+    </linearGradient>
+    <!-- ===== water ===== -->
+    <linearGradient id="gWaterDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a5aa8"/><stop offset=".5" stop-color="#2668b8"/><stop offset="1" stop-color="#4f8fd6"/>
+    </linearGradient>
+    <linearGradient id="gWaterDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6e3a50"/><stop offset=".55" stop-color="#9c5a46"/><stop offset="1" stop-color="#c9855a"/>
+    </linearGradient>
+    <linearGradient id="gWaterNight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#04091a"/><stop offset=".6" stop-color="#0a1631"/><stop offset="1" stop-color="#17294e"/>
+    </linearGradient>
+    <!-- ===== materials ===== -->
+    <linearGradient id="gGlassBlue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6fa3dd"/><stop offset="1" stop-color="#2c5793"/>
+    </linearGradient>
+    <linearGradient id="gGlassNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a76b4"/><stop offset="1" stop-color="#1c3d6e"/>
+    </linearGradient>
+    <linearGradient id="gGlassSilver" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c2d8ea"/><stop offset="1" stop-color="#7fa8c8"/>
+    </linearGradient>
+    <linearGradient id="gShTower" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7fa5d0"/><stop offset=".45" stop-color="#d7e8f7"/><stop offset="1" stop-color="#8fb2dc"/>
+    </linearGradient>
+    <linearGradient id="gGlassGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5ccb6e"/><stop offset="1" stop-color="#1f7a3c"/>
+    </linearGradient>
+    <linearGradient id="gStone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8cdae"/><stop offset="1" stop-color="#ab9e7d"/>
+    </linearGradient>
+    <linearGradient id="gBrick" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#bd8e60"/><stop offset="1" stop-color="#87593a"/>
+    </linearGradient>
+    <linearGradient id="gQuay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9c2b2"/><stop offset="1" stop-color="#8f8878"/>
+    </linearGradient>
+    <radialGradient id="gPearl" cx=".38" cy=".32" r=".95">
+      <stop offset="0" stop-color="#f586a4"/><stop offset=".55" stop-color="#c93d63"/><stop offset="1" stop-color="#8c1d40"/>
+    </radialGradient>
+    <radialGradient id="gDome" cx=".4" cy=".33" r=".95">
+      <stop offset="0" stop-color="#bfe3f6"/><stop offset=".5" stop-color="#4f93cd"/><stop offset="1" stop-color="#173a66"/>
+    </radialGradient>
+    <radialGradient id="gMoonHalo" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#f2edda" stop-opacity=".8"/><stop offset=".55" stop-color="#cfd8e8" stop-opacity=".25"/><stop offset="1" stop-color="#cfd8e8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gSunHalo" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#fff6c8" stop-opacity=".9"/><stop offset=".5" stop-color="#ffdf8a" stop-opacity=".3"/><stop offset="1" stop-color="#ffdf8a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gPearlGlow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ff4f8f" stop-opacity=".95"/><stop offset=".6" stop-color="#e0356f" stop-opacity=".4"/><stop offset="1" stop-color="#e0356f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gDomeGlow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#7fd6ff" stop-opacity=".9"/><stop offset=".6" stop-color="#3fa4d8" stop-opacity=".35"/><stop offset="1" stop-color="#3fa4d8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gGlowWarm" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ff9d5c" stop-opacity=".55"/><stop offset="1" stop-color="#ff9d5c" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gGlowBlue" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#5f8fff" stop-opacity=".5"/><stop offset="1" stop-color="#5f8fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gTint" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1230" stop-opacity="0"/><stop offset=".4" stop-color="#0a1230" stop-opacity=".7"/><stop offset="1" stop-color="#0a1230" stop-opacity="1"/>
+    </linearGradient>
+
+    <!-- ===== window patterns ===== -->
+    <pattern id="pWinDay" width="8" height="11" patternUnits="userSpaceOnUse">
+      <rect x="1.5" y="2" width="2.4" height="3.4" fill="#26496f" opacity=".5"/>
+      <rect x="5.6" y="7" width="2.4" height="3.4" fill="#26496f" opacity=".5"/>
+    </pattern>
+    <pattern id="pWinDense" width="6" height="8" patternUnits="userSpaceOnUse">
+      <rect x="1" y="1.5" width="1.8" height="2.6" fill="#33455e" opacity=".55"/>
+      <rect x="3.8" y="5" width="1.8" height="2.6" fill="#33455e" opacity=".55"/>
+    </pattern>
+    <pattern id="pArch" width="10" height="18" patternUnits="userSpaceOnUse">
+      <path d="M2 16 V10 a3 3 0 0 1 6 0 V16 Z" fill="#6b5f49" opacity=".55"/>
+    </pattern>
+    <pattern id="pWinWarm" width="8" height="11" patternUnits="userSpaceOnUse">
+      <rect x="1.5" y="2" width="2.4" height="3.2" fill="#ffcf7a" opacity=".95"/>
+      <rect x="5.6" y="7" width="2.4" height="3.2" fill="#ffb95e" opacity=".6"/>
+    </pattern>
+    <pattern id="pWinCool" width="9" height="12" patternUnits="userSpaceOnUse">
+      <rect x="1.6" y="2.4" width="2.6" height="3.4" fill="#ffe9b8" opacity=".9"/>
+      <rect x="6" y="8" width="2.6" height="3.4" fill="#9fd4ff" opacity=".55"/>
+    </pattern>
+    <pattern id="pWinDenseWarm" width="6" height="8" patternUnits="userSpaceOnUse">
+      <rect x="1" y="1.5" width="1.8" height="2.6" fill="#ffdd94" opacity=".95"/>
+      <rect x="3.8" y="5" width="1.8" height="2.6" fill="#ffc36a" opacity=".6"/>
+    </pattern>
+    <pattern id="pLattice" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M0 0 L10 10 M10 0 L0 10" stroke="#7d1533" stroke-width="1.1" opacity=".45"/>
+    </pattern>
+
+    <!-- ===== filters / clips ===== -->
+    <filter id="fRefl" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <filter id="fReflBlur" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="fSoft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="fSmear" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>
+    <clipPath id="cWater"><rect x="0" y="596" width="720" height="124"/></clipPath>
+    <clipPath id="cPearlUp"><circle cx="112" cy="128" r="44"/></clipPath>
+    <clipPath id="cPearlLo"><circle cx="112" cy="432" r="50"/></clipPath>
+    <clipPath id="cDomeL"><circle cx="163" cy="486" r="54"/></clipPath>
+    <clipPath id="cDomeR"><circle cx="421" cy="492" r="50"/></clipPath>
+    <clipPath id="cJinMao">
+      <path d="M478 566 L542 566 L538 470 L482 470 Z"/>
+      <path d="M484 470 L536 470 L533 395 L487 395 Z"/>
+      <path d="M489 395 L531 395 L528 330 L492 330 Z"/>
+      <path d="M494 330 L526 330 L523 282 L497 282 Z"/>
+      <path d="M499 282 L521 282 L518 252 L502 252 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- ================= SKY ================= -->
+  <rect class="skyDay"   x="0" y="0" width="720" height="600" fill="url(#gSkyDay)"/>
+  <rect class="skyWarm"  x="0" y="0" width="720" height="600" fill="url(#gSkyWarm)"/>
+  <rect class="skyNight" x="0" y="0" width="720" height="600" fill="url(#gSkyNight)"/>
+
+  <g class="stars" fill="#fff"></g>
+
+  <!-- sun -->
+  <g class="sun">
+    <circle r="46" fill="url(#gSunHalo)"/>
+    <g class="spin" stroke="#ffe9a8" stroke-width="2" opacity=".4">
+      <line x1="0" y1="-29" x2="0" y2="-40"/><line x1="0" y1="29" x2="0" y2="40"/>
+      <line x1="-29" y1="0" x2="-40" y2="0"/><line x1="29" y1="0" x2="40" y2="0"/>
+      <line x1="-21" y1="-21" x2="-29" y2="-29"/><line x1="21" y1="21" x2="29" y2="29"/>
+      <line x1="-21" y1="21" x2="-29" y2="29"/><line x1="21" y1="-21" x2="29" y2="-29"/>
+    </g>
+    <circle r="26" fill="#fff8d6"/><circle r="26" fill="#ffdf7a" opacity=".55"/>
+  </g>
+
+  <!-- moon -->
+  <g class="moon">
+    <circle r="38" fill="url(#gMoonHalo)"/>
+    <circle r="20" fill="#f3efdd"/>
+    <circle cx="-6" cy="-5" r="4" fill="#d9d3bd"/><circle cx="7" cy="3" r="3" fill="#d9d3bd"/><circle cx="-1" cy="8" r="2.2" fill="#d9d3bd"/>
+  </g>
+
+  <!-- faint cirrus -->
+  <g class="cloud" style="--d:64s" fill="#fff" opacity=".10">
+    <ellipse cx="500" cy="150" rx="90" ry="6"/><ellipse cx="560" cy="165" rx="60" ry="4"/>
+  </g>
+  <g class="cloud" style="--d:90s" fill="#fff" opacity=".08">
+    <ellipse cx="180" cy="240" rx="75" ry="5"/><ellipse cx="120" cy="252" rx="45" ry="4"/>
+  </g>
+
+  <!-- warm horizon glow (dusk / dawn) -->
+  <g class="warmGlow">
+    <rect x="0" y="380" width="720" height="220" fill="url(#gGlowWarm)"/>
+  </g>
+  <!-- night city haze -->
+  <g class="nightGlow">
+    <ellipse cx="150" cy="510" rx="230" ry="70" fill="url(#gGlowWarm)" filter="url(#fSmear)"/>
+    <ellipse cx="540" cy="470" rx="250" ry="80" fill="url(#gGlowBlue)" filter="url(#fSmear)"/>
+  </g>
+
+  <!-- ================= LAND (reflected later) ================= -->
+  <g id="land">
+    <!-- far-left cluster -->
+    <rect x="0" y="330" width="34" height="236" fill="url(#gGlassBlue)" opacity=".9"/>
+    <rect x="0" y="330" width="34" height="236" fill="url(#pWinDay)"/>
+    <rect class="lightsA" x="0" y="330" width="34" height="236" fill="url(#pWinWarm)"/>
+    <rect x="34" y="420" width="28" height="146" fill="url(#gGlassSilver)" opacity=".9"/>
+    <rect x="34" y="420" width="28" height="146" fill="url(#pWinDense)"/>
+    <rect class="lightsB" x="34" y="420" width="28" height="146" fill="url(#pWinDenseWarm)"/>
+    <!-- mini pearl replica, far left -->
+    <line x1="30" y1="500" x2="30" y2="540" stroke="#cfc8ba" stroke-width="3"/>
+    <circle cx="30" cy="548" r="13" fill="#e3e9ef"/>
+    <circle cx="30" cy="533" r="5" fill="#e3e9ef"/>
+    <rect x="0" y="520" width="90" height="46" fill="#ece7dc"/>
+    <rect x="0" y="520" width="90" height="46" fill="url(#pWinDense)"/>
+    <rect class="lightsA" x="0" y="520" width="90" height="46" fill="url(#pWinDenseWarm)"/>
+
+    <!-- buildings behind pearl -->
+    <rect x="88" y="472" width="46" height="94" fill="#d9d3c7"/>
+    <rect x="88" y="472" width="46" height="94" fill="url(#pWinDense)"/>
+    <rect class="lightsB" x="88" y="472" width="46" height="94" fill="url(#pWinDenseWarm)"/>
+    <rect x="150" y="462" width="34" height="104" fill="#d5cec2"/>
+    <rect x="150" y="462" width="34" height="8" fill="#b8434a" opacity=".8"/>
+    <rect x="150" y="474" width="34" height="92" fill="url(#pWinDense)"/>
+    <rect class="lightsA" x="150" y="474" width="34" height="92" fill="url(#pWinDenseWarm)"/>
+
+    <!-- mirror tower (reflecting the pearl) -->
+    <path d="M212 566 L218 332 L232 318 L262 326 L268 566 Z" fill="url(#gGlassBlue)"/>
+    <path d="M231 566 L233 322 M247 566 L249 328" stroke="#cfe4f7" stroke-width="1.4" opacity=".5"/>
+    <path class="lightsA" d="M212 566 L218 332 L232 318 L262 326 L268 566 Z" fill="url(#pWinCool)"/>
+    <g filter="url(#fSmear)" opacity=".4">
+      <ellipse cx="240" cy="415" rx="7" ry="52" fill="#d8577f"/>
+      <circle cx="240" cy="362" r="7" fill="#d8577f"/><circle cx="240" cy="466" r="8" fill="#d8577f"/>
+      <line x1="240" y1="340" x2="240" y2="356" stroke="#d8577f" stroke-width="2"/>
+    </g>
+    <path d="M222 566 L238 506 L258 510 L268 566 Z" fill="url(#gStone)" opacity=".9"/>
+
+    <!-- center blue high-rise -->
+    <rect x="404" y="262" width="48" height="304" fill="url(#gGlassBlue)"/>
+    <path d="M414 262 V566 M428 262 V566 M442 262 V566" stroke="#e8f1fa" stroke-width="1.2" opacity=".45"/>
+    <rect x="404" y="262" width="48" height="304" fill="url(#pWinDay)"/>
+    <rect class="lightsB" x="404" y="262" width="48" height="304" fill="url(#pWinWarm)"/>
+    <rect x="418" y="250" width="20" height="12" fill="url(#gGlassNavy)"/>
+
+    <!-- SWFC (bottle-opener) -->
+    <path fill-rule="evenodd" fill="url(#gGlassNavy)"
+          d="M466 566 L477 205 L493 185 L517 189 L529 207 L531 566 Z
+             M486 238 L490 208 L508 210 L515 238 Z"/>
+    <path d="M479 566 L485 200 M498 566 L501 195 M517 566 L517 200" stroke="#7ea6d4" stroke-width="1" opacity=".4"/>
+    <path class="lightsA" fill-rule="evenodd" fill="url(#pWinCool)"
+          d="M466 566 L477 205 L493 185 L517 189 L529 207 L531 566 Z
+             M486 238 L490 208 L508 210 L515 238 Z"/>
+
+    <!-- Jin Mao (pagoda tiers) -->
+    <g fill="url(#gGlassSilver)">
+      <path d="M478 566 L542 566 L538 470 L482 470 Z"/>
+      <path d="M484 470 L536 470 L533 395 L487 395 Z"/>
+      <path d="M489 395 L531 395 L528 330 L492 330 Z"/>
+      <path d="M494 330 L526 330 L523 282 L497 282 Z"/>
+      <path d="M499 282 L521 282 L518 252 L502 252 Z"/>
+    </g>
+    <path d="M483 522 H537 M485 470 H536 M488 430 H532 M491 395 H529 M494 356 H525 M496 330 H524 M499 302 H520" stroke="#5d84a8" stroke-width="1.2" opacity=".55"/>
+    <line x1="510" y1="252" x2="510" y2="236" stroke="#9db8cc" stroke-width="2.5"/>
+    <circle class="beacon" cx="510" cy="234" r="2.4" fill="#ff4040"/>
+    <path class="lightsB" clip-path="url(#cJinMao)" fill="url(#pWinCool)" d="M478 566 L542 566 L533 262 L487 262 Z"/>
+
+    <!-- brown stepped tower (in front of Jin Mao) -->
+    <g fill="url(#gBrick)">
+      <path d="M472 566 L506 566 L504 470 L474 470 Z"/>
+      <path d="M476 470 L502 470 L500 430 L478 430 Z"/>
+      <path d="M480 430 L498 430 L496 404 L482 404 Z"/>
+      <path d="M484 404 L494 404 L492 392 L486 392 Z"/>
+    </g>
+    <path class="lightsA" fill="url(#pWinDenseWarm)" d="M472 566 L506 566 L496 392 L482 392 Z"/>
+
+    <!-- Shanghai Tower (twisting, tallest) -->
+    <path id="shTower" d="M610 566 C612 380 620 180 634 64 L652 60 C668 180 674 380 676 566 Z" fill="url(#gShTower)"/>
+    <path d="M612 540 C635 520 655 485 673 440 M614 470 C636 450 657 415 674 368 M617 395 C638 375 658 342 673 296 M620 315 C640 296 657 265 670 225 M624 235 C642 218 656 190 666 152"
+          fill="none" stroke="#eef6ff" stroke-width="3" opacity=".4"/>
+    <path d="M676 566 C674 380 668 180 652 60" fill="none" stroke="#5f86b8" stroke-width="2.5" opacity=".6"/>
+    <ellipse cx="643" cy="58" rx="10" ry="4.5" fill="#5f86b8"/>
+    <circle class="beacon" cx="643" cy="48" r="2.6" fill="#ff4040"/>
+    <path class="lightsB" d="M610 566 C612 380 620 180 634 64 L652 60 C668 180 674 380 676 566 Z" fill="url(#pWinCool)"/>
+
+    <!-- cream striped tower -->
+    <rect x="536" y="262" width="48" height="304" fill="#e0e3dd"/>
+    <path d="M546 262 V566 M560 262 V566 M574 262 V566" stroke="#aab2ad" stroke-width="1.4" opacity=".7"/>
+    <rect x="536" y="420" width="48" height="146" fill="url(#gGlassGreen)" opacity=".35"/>
+    <rect x="536" y="262" width="48" height="304" fill="url(#pWinDay)"/>
+    <rect class="lightsA" x="536" y="262" width="48" height="304" fill="url(#pWinWarm)"/>
+    <path d="M548 250 H572 L568 262 H552 Z" fill="#c9ccc6"/>
+
+    <!-- white slab w/ grid -->
+    <rect x="552" y="418" width="100" height="148" fill="#e8e5db"/>
+    <rect x="552" y="418" width="100" height="148" fill="url(#pWinDense)"/>
+    <rect class="lightsB" x="552" y="418" width="100" height="148" fill="url(#pWinDenseWarm)"/>
+
+    <!-- green towers right -->
+    <rect x="640" y="345" width="30" height="221" fill="url(#gGlassGreen)"/>
+    <path d="M648 345 V566 M662 345 V566" stroke="#bfe8c8" stroke-width="1.4" opacity=".6"/>
+    <rect class="lightsA" x="640" y="345" width="30" height="221" fill="url(#pWinWarm)"/>
+    <rect x="670" y="338" width="50" height="228" fill="url(#gGlassGreen)"/>
+    <path d="M670 338 L720 330 L720 566 L670 566 Z" fill="url(#gGlassGreen)"/>
+    <path d="M680 336 V566 M695 334 V566 M710 332 V566" stroke="#cfe9cf" stroke-width="1.4" opacity=".55"/>
+    <rect class="lightsB" x="670" y="330" width="50" height="236" fill="url(#pWinWarm)"/>
+
+    <!-- ===== Oriental Pearl Tower ===== -->
+    <g id="pearl">
+      <line x1="112" y1="4" x2="112" y2="64" stroke="#b8b0a6" stroke-width="3"/>
+      <path d="M104 20 H120 M105 36 H119 M106 52 H118" stroke="#b8b0a6" stroke-width="2"/>
+      <circle class="beacon" cx="112" cy="3" r="2.4" fill="#ff4040"/>
+      <circle cx="112" cy="74" r="11" fill="url(#gPearl)"/>
+      <!-- upper sphere -->
+      <circle cx="112" cy="128" r="44" fill="url(#gPearl)"/>
+      <rect clip-path="url(#cPearlUp)" x="68" y="84" width="88" height="88" fill="url(#pLattice)"/>
+      <g fill="#d8577f">
+        <circle cx="74" cy="106" r="4"/><circle cx="83" cy="93" r="4"/><circle cx="97" cy="86" r="4"/>
+        <circle cx="112" cy="83" r="4.5"/><circle cx="127" cy="86" r="4"/><circle cx="141" cy="93" r="4"/><circle cx="150" cy="106" r="4"/>
+      </g>
+      <circle class="nightGlow" cx="112" cy="128" r="66" fill="url(#gPearlGlow)" filter="url(#fSoft)"/>
+      <!-- column + pods -->
+      <rect x="103" y="170" width="18" height="212" fill="#c9bfae"/>
+      <line x1="103" y1="170" x2="103" y2="382" stroke="#9d927f" stroke-width="1.5"/>
+      <g fill="#d8577f">
+        <circle cx="121" cy="204" r="5.5"/><circle cx="121" cy="234" r="5.5"/><circle cx="121" cy="262" r="5.5"/><circle cx="121" cy="290" r="5.5"/>
+      </g>
+      <!-- lower sphere -->
+      <circle cx="112" cy="432" r="50" fill="url(#gPearl)"/>
+      <rect clip-path="url(#cPearlLo)" x="62" y="382" width="100" height="100" fill="url(#pLattice)"/>
+      <path d="M66 414 H158 M66 450 H158" stroke="#8c1d40" stroke-width="1.6" opacity=".45"/>
+      <circle class="nightGlow" cx="112" cy="432" r="74" fill="url(#gPearlGlow)" filter="url(#fSoft)"/>
+      <!-- legs -->
+      <rect x="104" y="480" width="16" height="92" fill="#c9bfae"/>
+      <line x1="78"  y1="470" x2="66"  y2="576" stroke="#cfc6b4" stroke-width="11"/>
+      <line x1="146" y1="470" x2="158" y2="576" stroke="#cfc6b4" stroke-width="11"/>
+      <line x1="95"  y1="505" x2="88"  y2="576" stroke="#b8ae9c" stroke-width="4"/>
+      <path d="M80 520 H143 M83 550 H148" stroke="#a89e8c" stroke-width="2"/>
+      <g fill="#d8577f">
+        <circle cx="150" cy="502" r="4"/><circle cx="154" cy="529" r="4"/><circle cx="157" cy="556" r="4"/>
+        <circle cx="74"  cy="502" r="4"/><circle cx="70"  cy="529" r="4"/><circle cx="68"  cy="556" r="4"/>
+      </g>
+      <rect x="60" y="574" width="14" height="6" fill="#a89e8c"/>
+      <rect x="152" y="574" width="14" height="6" fill="#a89e8c"/>
+    </g>
+
+    <!-- ===== classical building w/ arches ===== -->
+    <rect x="185" y="478" width="273" height="92" fill="url(#gStone)"/>
+    <rect x="185" y="478" width="273" height="6" fill="#8f8264"/>
+    <rect x="190" y="486" width="263" height="20" fill="url(#pArch)"/>
+    <rect x="185" y="508" width="273" height="4" fill="#8f8264" opacity=".6"/>
+    <rect x="190" y="516" width="263" height="26" fill="url(#pWinDay)"/>
+    <rect class="lightsA" x="190" y="486" width="263" height="20" fill="url(#pWinWarm)"/>
+    <rect class="lightsB" x="190" y="516" width="263" height="26" fill="url(#pWinCool)"/>
+
+    <!-- small green glass domes on roof -->
+    <path d="M282 478 a14 12 0 0 1 28 0 Z" fill="url(#gDome)"/>
+    <path d="M306 478 a13 11 0 0 1 26 0 Z" fill="url(#gDome)"/>
+    <path d="M330 478 a14 12 0 0 1 28 0 Z" fill="url(#gDome)"/>
+
+    <!-- ===== big glass domes ===== -->
+    <g id="domeL">
+      <circle cx="163" cy="486" r="54" fill="url(#gDome)"/>
+      <g clip-path="url(#cDomeL)" fill="none" stroke="#cfe8f5" stroke-width="1.1" opacity=".55">
+        <ellipse cx="163" cy="486" rx="54" ry="18"/><ellipse cx="163" cy="486" rx="54" ry="36"/>
+        <ellipse cx="163" cy="486" rx="18" ry="54"/><ellipse cx="163" cy="486" rx="36" ry="54"/>
+        <line x1="109" y1="486" x2="217" y2="486"/><line x1="163" y1="432" x2="163" y2="540"/>
+      </g>
+      <g clip-path="url(#cDomeL)" opacity=".35">
+        <circle cx="140" cy="465" r="12" fill="#e76f6f"/><circle cx="178" cy="455" r="10" fill="#e7c96f"/>
+        <circle cx="190" cy="500" r="11" fill="#6fe79a"/><circle cx="150" cy="510" r="9" fill="#7f6fe7"/>
+      </g>
+      <circle class="nightGlow" cx="163" cy="486" r="68" fill="url(#gDomeGlow)" filter="url(#fSoft)"/>
+      <rect x="145" y="534" width="36" height="32" fill="#cfc9bc"/>
+    </g>
+    <g id="domeR">
+      <circle cx="421" cy="492" r="50" fill="url(#gDome)"/>
+      <g clip-path="url(#cDomeR)" fill="none" stroke="#cfe8f5" stroke-width="1.1" opacity=".55">
+        <ellipse cx="421" cy="492" rx="50" ry="17"/><ellipse cx="421" cy="492" rx="50" ry="34"/>
+        <ellipse cx="421" cy="492" rx="17" ry="50"/><ellipse cx="421" cy="492" rx="34" ry="50"/>
+        <line x1="371" y1="492" x2="471" y2="492"/><line x1="421" y1="442" x2="421" y2="542"/>
+      </g>
+      <g clip-path="url(#cDomeR)" opacity=".35">
+        <circle cx="400" cy="472" r="11" fill="#e76f6f"/><circle cx="436" cy="464" r="9" fill="#e7c96f"/>
+        <circle cx="444" cy="505" r="10" fill="#6fe79a"/><circle cx="408" cy="512" r="8" fill="#7f6fe7"/>
+      </g>
+      <circle class="nightGlow" cx="421" cy="492" r="64" fill="url(#gDomeGlow)" filter="url(#fSoft)"/>
+      <rect x="405" y="538" width="32" height="28" fill="#cfc9bc"/>
+    </g>
+
+    <!-- ===== embankment ===== -->
+    <rect x="0" y="566" width="720" height="30" fill="url(#gQuay)"/>
+    <line x1="0" y1="566" x2="720" y2="566" stroke="#6f6a5c" stroke-width="1.5"/>
+    <line x1="0" y1="574" x2="720" y2="574" stroke="#7d7768" stroke-width="1" opacity=".6"/>
+    <!-- trees: green left/center, autumn reds right -->
+    <g>
+      <circle cx="30" cy="560" r="6" fill="#3f7d3a"/><circle cx="46" cy="558" r="7" fill="#4a8a44"/><circle cx="63" cy="561" r="6" fill="#3f7d3a"/><circle cx="80" cy="559" r="6" fill="#57944e"/>
+      <circle cx="200" cy="559" r="7" fill="#4a8a44"/><circle cx="216" cy="561" r="6" fill="#3f7d3a"/><circle cx="232" cy="558" r="7" fill="#57944e"/>
+      <circle cx="250" cy="560" r="7" fill="#4a8a44"/><circle cx="266" cy="559" r="6" fill="#3f7d3a"/><circle cx="284" cy="561" r="7" fill="#4a8a44"/>
+      <circle cx="302" cy="559" r="6" fill="#57944e"/><circle cx="318" cy="560" r="7" fill="#4a8a44"/><circle cx="334" cy="561" r="6" fill="#3f7d3a"/>
+      <circle cx="466" cy="560" r="6" fill="#4a8a44"/><circle cx="482" cy="559" r="7" fill="#c0392b"/>
+      <circle cx="540" cy="559" r="8" fill="#c0392b"/><circle cx="556" cy="561" r="7" fill="#d35400"/><circle cx="572" cy="558" r="8" fill="#a93226"/>
+      <circle cx="588" cy="560" r="7" fill="#c0392b"/><circle cx="604" cy="559" r="8" fill="#d35400"/><circle cx="620" cy="561" r="7" fill="#a93226"/>
+      <circle cx="640" cy="560" r="7" fill="#4a8a44"/><circle cx="656" cy="558" r="6" fill="#3f7d3a"/><circle cx="670" cy="561" r="7" fill="#57944e"/>
+    </g>
+    <!-- pavilion left + red marker right -->
+    <rect x="32" y="548" width="42" height="18" fill="#f0ece2"/>
+    <path d="M30 548 H76" stroke="#8f8878" stroke-width="2.5"/>
+    <rect x="679" y="568" width="5" height="24" fill="#c0392b"/>
+    <circle cx="681.5" cy="566" r="3" fill="#e74c3c"/>
+  </g>
+
+  <!-- ================= WATER ================= -->
+  <rect class="waterDay"   x="0" y="596" width="720" height="124" fill="url(#gWaterDay)"/>
+  <rect class="waterDusk"  x="0" y="596" width="720" height="124" fill="url(#gWaterDusk)"/>
+  <rect class="waterNight" x="0" y="596" width="720" height="124" fill="url(#gWaterNight)"/>
+
+  <!-- skyline reflection (day/dusk) -->
+  <g clip-path="url(#cWater)">
+    <use href="#land" transform="translate(0,1192) scale(1,-1)" opacity=".30" filter="url(#fRefl)"/>
+    <!-- night: wobbling light trails -->
+    <use class="reflNight wob" href="#land" transform="translate(0,1190) scale(1,-1)" opacity=".5" filter="url(#fReflBlur)"/>
+    <!-- day shimmer streaks under the pearl & domes -->
+    <ellipse class="shimmer" style="--d:7s"    cx="116" cy="634" rx="16" ry="36" fill="#e0507f" filter="url(#fSmear)"/>
+    <ellipse class="shimmer" style="--d:9s;--dl:-3s" cx="100" cy="620" rx="10" ry="24" fill="#e0507f" filter="url(#fSmear)"/>
+    <ellipse class="shimmer" style="--d:8s;--dl:-1.5s" cx="166" cy="626" rx="14" ry="24" fill="#7fd0ff" filter="url(#fSmear)"/>
+    <ellipse class="shimmer" style="--d:10s;--dl:-4s" cx="424" cy="626" rx="15" ry="26" fill="#7fd0ff" filter="url(#fSmear)"/>
+    <ellipse class="shimmer" style="--d:8.5s;--dl:-2s" cx="640" cy="620" rx="20" ry="20" fill="#5ccb6e" filter="url(#fSmear)"/>
+  </g>
+
+  <!-- ripples -->
+  <g>
+    <path class="rip" style="--d:5.5s;--dl:-1s"  d="M40 610 q12 -3 24 0 t24 0 t24 0"/>
+    <path class="rip" style="--d:6.5s;--dl:-3s"  d="M300 606 q12 -3 24 0 t24 0 t24 0"/>
+    <path class="rip" style="--d:7s;--dl:-2s"    d="M520 614 q12 -3 24 0 t24 0 t24 0"/>
+    <path class="rip" style="--d:5s;--dl:-4s"    d="M120 640 q14 -3 28 0 t28 0 t28 0"/>
+    <path class="rip" style="--d:6s;--dl:-1.5s"  d="M360 648 q14 -3 28 0 t28 0 t28 0"/>
+    <path class="rip" style="--d:7.5s;--dl:-5s"  d="M560 652 q14 -3 28 0 t28 0 t28 0"/>
+    <path class="rip" style="--d:6.2s;--dl:-2.5s" d="M20 668 q16 -3 32 0 t32 0 t32 0"/>
+    <path class="rip" style="--d:5.8s;--dl:-3.5s" d="M240 680 q16 -3 32 0 t32 0 t32 0"/>
+    <path class="rip" style="--d:7.2s;--dl:-0.5s" d="M440 690 q16 -3 32 0 t32 0 t32 0"/>
+    <path class="rip" style="--d:6.8s;--dl:-4.5s" d="M600 676 q16 -3 32 0 t32 0 t32 0"/>
+    <path class="rip" style="--d:8s;--dl:-2s"    d="M90 700 q18 -3 36 0 t36 0 t36 0"/>
+    <path class="rip" style="--d:7.7s;--dl:-6s"  d="M500 706 q18 -3 36 0 t36 0 t36 0"/>
+  </g>
+  <line x1="0" y1="596" x2="720" y2="596" stroke="#cfe0ee" stroke-width="1.4" opacity=".35"/>
+
+  <!-- ================= BOATS ================= -->
+  <!-- container barge -->
+  <g class="barge">
+    <g class="bob" style="--d:3.6s">
+      <polygon points="505,608 630,608 622,622 513,622" fill="#2b3d55"/>
+      <rect x="512" y="598" width="110" height="10" fill="#1d2c40"/>
+      <g>
+        <rect x="516" y="590" width="14" height="9" fill="#c0392b"/><rect x="532" y="590" width="14" height="9" fill="#2980b9"/>
+        <rect x="548" y="590" width="14" height="9" fill="#27ae60"/><rect x="564" y="590" width="14" height="9" fill="#e67e22"/>
+        <rect x="580" y="590" width="14" height="9" fill="#8e44ad"/><rect x="596" y="590" width="14" height="9" fill="#c0392b"/>
+      </g>
+      <rect x="604" y="582" width="16" height="16" fill="#e8e6df"/>
+      <rect x="606" y="585" width="12" height="5" fill="#5d7a99"/>
+      <line x1="612" y1="582" x2="612" y2="573" stroke="#8a8a80" stroke-width="1.5"/>
+      <g class="lights">
+        <circle cx="612" cy="572" r="2" fill="#fff6c8"/>
+        <circle cx="522" cy="588" r="1.4" fill="#ffdd94"/><circle cx="555" cy="588" r="1.4" fill="#ffdd94"/><circle cx="588" cy="588" r="1.4" fill="#ffdd94"/>
+        <circle cx="620" cy="606" r="1.8" fill="#4dff88"/><circle cx="507" cy="606" r="1.8" fill="#ff4d4d"/>
+      </g>
+      <path d="M505 612 L466 608 L466 617 L505 619 Z" fill="#fff" opacity=".4"/>
+      <path class="rip" style="--d:4s" d="M452 612 q10 -2 20 0 t20 0" stroke-width="1.2"/>
+    </g>
+  </g>
+
+  <!-- passenger boat far left -->
+  <g class="boatDrift">
+    <g class="bob" style="--d:2.8s;--dl:-1s">
+      <path d="M-6 572 L44 572 L38 585 L0 585 Z" fill="#f2f0e9"/>
+      <line x1="-4" y1="578" x2="41" y2="578" stroke="#c0392b" stroke-width="2.5"/>
+      <rect x="8" y="561" width="24" height="11" fill="#f7f5ee"/>
+      <rect x="10" y="564" width="20" height="4" fill="url(#pWinDense)"/>
+      <circle class="lights" cx="34" cy="559" r="1.8" fill="#fff6c8"/>
+      <line x1="38" y1="561" x2="38" y2="552" stroke="#8a8a80" stroke-width="1.2"/>
+      <path d="M44 576 L62 574 L62 581 L44 582 Z" fill="#fff" opacity=".35"/>
+    </g>
+  </g>
+
+  <!-- ================= NIGHT ATMOSPHERE OVERLAYS ================= -->
+  <rect class="nightTint" x="0" y="0" width="720" height="720" fill="url(#gTint)"/>
+  <g class="warmGlow">
+    <rect x="0" y="520" width="720" height="80" fill="url(#gGlowWarm)" opacity=".5"/>
+  </g>
+</svg>
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  var g=document.getElementById('stars')||document.querySelector('.stars');
+  for(var i=0;i<90;i++){
+    var c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',(Math.random()*715+2).toFixed(1));
+    c.setAttribute('cy',(Math.random()*430+6).toFixed(1));
+    c.setAttribute('r',(Math.random()*1.1+0.5).toFixed(2));
+    c.setAttribute('fill','#fff');
+    c.setAttribute('class','st');
+    c.style.setProperty('--d',(Math.random()*2.5+1.8).toFixed(2)+'s');
+    c.style.setProperty('--dl',(-Math.random()*4).toFixed(2)+'s');
+    g.appendChild(c);
+  }
+})();
+</script>
+</body>
+</html>
