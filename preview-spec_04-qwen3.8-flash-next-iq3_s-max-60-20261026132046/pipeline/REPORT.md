@@ -84,6 +84,10 @@ Phase 6–7 的「物理調通」：地面對齊 → 牆碰撞 → 摩擦/驅動
 3. 樹的 Sway 動畫目前遊戲端是程序搖晃，GLB 內 Sway 未使用 → 可改用 AnimationPlayer 播放以求風格一致。
 4. 加領币/勝利的音效與粒子回饋（目前只有硬幣消失）。
 
+## Web 版（發佈入口）
+
+repo 根 `preview-spec_04-...html` redirect → 資料夾 `index.html` = Godot 4.7.2 Web 匯出（`thread_support=false`，靜態主機可直接跑，無需 COOP/COEP）。headless Chrome + swiftshader 經 CDP 實測 30s 後有首幀、HUD `coins 0/3` 正常。WebGL(Compatibility) 路徑下畫面比原生 Forward+ 偏亮，屬渲染路徑差異；原生畫面見 `pipeline/screenshots/`。
+
 ## 執行時間
 
 - 開始：2026-10-26 **13:20:46**（= 資料夾名尾段 `20261026132046`，repo 慣例為開始時間戳）

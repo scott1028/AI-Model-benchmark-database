@@ -2,6 +2,7 @@
 
 ## 設計決策
 
+- 2026-10-26 Web 發佈：repo 慣例是入口 = 匯出的 web build（比照 spec_03）。`godot/export_presets.cfg` Web preset、**thread_support=false**（免 COOP/COEP、靜態主機可跑），輸出到 repo 資料夾根（index.html/js/wasm/pck）。CDP（headless Chrome + swiftshader）實測 30s 後有首幀、HUD 正常；WebGL(Compatibility) 下畫面比原生 Forward+ 亮（泛光/色調映射差異），可接受。root `preview-spec_04-*.html` redirect → folder index.html（即 web build）。
 - 2026-10-26 气氛：等角鏡頭不加 DOF（移軸景深）。理由：自動截圖/測試以畫面判讀為主，DOF 對小地圖收益低、易造成焦點誤判；氣氛改由暖色陽光+filmic+glow+天空漸層承擔。已於 7.5 標注。
 
 - 2026-10-26 成品放在 benchmark repo 的 `preview-spec_04-*` 資料夾（跟 repo 既有命名慣例），不另建 git repo；外層已是 git repo，Phase 1.6 的 `git init` 跳過。使用者要求全部壓成一個 commit，故各 Phase 不再個別 commit，progress.md 照常打勾。
