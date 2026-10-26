@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coin Run 箱庭版 — preview-spec_04</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+  h1 { font-size: 1.5rem; }
+  img { max-width: 100%; border: 1px solid #ddd; border-radius: 6px; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ccc; padding: .4rem .6rem; text-align: left; }
+  .pass { color: #14682a; font-weight: 600; }
+  code { background: #f2f2f2; padding: .1rem .35rem; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>Coin Run 箱庭版（spec_04）</h1>
+<p>依 <code>.spec/PLAYBOOK_v2.1.md</code> 以 Blender × Godot MCP 全自動管線製作：14 個規格驅動資產、layout.json 版面、物理/收集玩法、bot 與物理自動化測試。模型：qwen3.8-flash-next-iq3_s（max）。</p>
+
+<h2>遊戲畫面</h2>
+<img src="pipeline/screenshots/gameplay_1.png" alt="gameplay">
+<img src="pipeline/screenshots/overview_1.png" alt="island overview">
+
+<h2>驗證狀態</h2>
+<table>
+  <tr><th>項目</th><th>結果</th></tr>
+  <tr><td>資產三階段規格檢查（Blender/glb/Godot）</td><td class="pass">14/14 PASS</td></tr>
+  <tr><td>物理測試（specs/physics_tests.json 門檻）</td><td class="pass">7/7 PASS</td></tr>
+  <tr><td>bot 通關測試（--mode bot）</td><td class="pass">3 幣 + VICTORY，exit 0</td></tr>
+  <tr><td>Godot MCP 實際執行</td><td class="pass">0 errors / 0 warnings</td></tr>
+  <tr><td>迴圈演練（金幣縮至 60%）</td><td class="pass">FAIL→修→PASS→重測通過</td></tr>
+</table>
+
+<h2>本機遊玩</h2>
+<pre>godot --path godot            <!-- play -->
+godot --path godot -- --mode bot   # bot 自動通關</pre>
+<p>按鍵：方向鍵移動、A 加速、B 煞車、Space 跳。收集 3 金幣後碰旗勝利。</p>
+
+<h2>文件</h2>
+<ul>
+  <li><a href="pipeline/REPORT.md">pipeline/REPORT.md</a> — 完成報告（DoD、迭代、物理實測）</li>
+  <li><a href="pipeline/progress.md">pipeline/progress.md</a> — Phase 檢查清單</li>
+  <li><a href="pipeline/log.md">pipeline/log.md</a> — 設計決策 / FAIL 迴圈 / MCP 問題</li>
+</ul>
+</body>
+</html>
