@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA RTX PRO 6000 Blackwell Workstation Edition
+
+MAIN mode=phys args=["--mode", "phys"]
+MAIN world built: props=43 coins=3 barrels=4 trees=10 bushes=10
+PHYS_SCENARIO brake
+PHYS brake stop_distance=0.331
+PHYS_SCENARIO push
+PHYS push barrel_speed=2.241
+PHYS friction barrel_slide=3.607
+PHYS_SCENARIO jump
+PHYS jump apex=0.492
+PHYS_SCENARIO sway
+PHYS sway tree_sway=0.377
+PHYS leaves leaf_bursts=1.000
+PHYS_SCENARIO bush
+PHYS bush pass_speed=3.550
+PHYS_RESULT_FILE /home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/pipeline/checks/phys_result.txt

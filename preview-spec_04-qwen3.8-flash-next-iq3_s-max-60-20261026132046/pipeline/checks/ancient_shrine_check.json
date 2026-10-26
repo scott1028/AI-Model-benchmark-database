@@ -1,0 +1,116 @@
+{
+  "asset": "ancient_shrine",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/ancient_shrine.json",
+  "stages": {
+    "blender": {
+      "asset": "ancient_shrine",
+      "found": true,
+      "bbox_min": [
+        15.5,
+        10.0,
+        0.0
+      ],
+      "bbox_max": [
+        20.5,
+        14.0,
+        5.2
+      ],
+      "dims": [
+        5.0,
+        4.0,
+        5.2
+      ],
+      "tris": 224,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        5.0,
+        4.0,
+        5.2
+      ],
+      "bbox_min_yup": [
+        -2.5,
+        0.0,
+        -2.0
+      ],
+      "bbox_max_yup": [
+        2.5,
+        5.2,
+        2.0
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 224,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "Cella",
+        "ColCap_0",
+        "ColCap_1",
+        "ColCap_2",
+        "ColCap_3",
+        "Column_0",
+        "Column_1",
+        "Column_2",
+        "Column_3",
+        "Entablature",
+        "Pediment",
+        "ShrineDoor",
+        "Step_0",
+        "Step_1",
+        "Step_2"
+      ],
+      "animations": [],
+      "node_count": 16
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        2.5,
+        5.19999933242798,
+        2.0
+      ],
+      "bbox_min": [
+        -2.5,
+        0.0,
+        -2.0
+      ],
+      "collision_nodes": [],
+      "dims": [
+        5.0,
+        5.19999933242798,
+        4.0
+      ],
+      "node_names": [
+        "ancient_shrine:Node3D",
+        "AssetRoot_009:Node3D",
+        "Cella:MeshInstance3D",
+        "ColCap_0:MeshInstance3D",
+        "ColCap_1:MeshInstance3D",
+        "ColCap_2:MeshInstance3D",
+        "ColCap_3:MeshInstance3D",
+        "Column_0:MeshInstance3D",
+        "Column_1:MeshInstance3D",
+        "Column_2:MeshInstance3D",
+        "Column_3:MeshInstance3D",
+        "Entablature:MeshInstance3D",
+        "Pediment:MeshInstance3D",
+        "ShrineDoor:MeshInstance3D",
+        "Step_0:MeshInstance3D",
+        "Step_1:MeshInstance3D",
+        "Step_2:MeshInstance3D"
+      ],
+      "path": "res://assets/ancient_shrine.glb",
+      "tris": 224
+    }
+  },
+  "issues": [],
+  "pass": true
+}

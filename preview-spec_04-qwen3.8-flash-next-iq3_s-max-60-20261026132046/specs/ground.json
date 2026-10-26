@@ -1,0 +1,12 @@
+{
+  "name": "ground",
+  "description": "箱庭地塊：44×44 頂面起伏、3.2m 厚土層、側面三層（草緣/岩盤/土層交錯）、平底；草坪雙色、道路、農舍泥地、建築平台整平",
+  "size": [44.0, 44.0, 3.75],
+  "max_tris": 9000,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.3,
+  "collision": { "game": "concave_trimesh_static" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "起伏 ±0.55；道路與平台由 layout.json 決定並整平；heights.json 提供遊戲端摆放高度"
+}

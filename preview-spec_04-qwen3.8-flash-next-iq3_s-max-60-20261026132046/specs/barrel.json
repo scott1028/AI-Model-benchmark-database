@@ -1,0 +1,12 @@
+{
+  "name": "barrel",
+  "description": "木桶：中段微脹的直桶、12瓣木紋面、兩道深色鐵圈、桶蓋淺木色",
+  "size": [0.74, 0.74, 0.92],
+  "max_tris": 500,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.08,
+  "collision": { "game": "cylinder_convex", "glb_convex_node": "col_barrel" },
+  "collision_glb": true,
+  "animations": [],
+  "notes": "可推：遊戲端 RigidBody3D + CylinderShape；glb 需含 col_barrel 凸包節點供碰撞核對"
+}

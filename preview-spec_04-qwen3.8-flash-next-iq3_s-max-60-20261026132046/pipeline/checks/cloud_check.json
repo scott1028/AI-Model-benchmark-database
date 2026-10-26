@@ -1,0 +1,88 @@
+{
+  "asset": "cloud",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/cloud.json",
+  "stages": {
+    "blender": {
+      "asset": "cloud",
+      "found": true,
+      "bbox_min": [
+        -2.0001,
+        16.7001,
+        -0.0003
+      ],
+      "bbox_max": [
+        2.0001,
+        19.2999,
+        1.5
+      ],
+      "dims": [
+        4.0002,
+        2.5998,
+        1.5003
+      ],
+      "tris": 80,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        4.0002,
+        2.5998,
+        1.5003
+      ],
+      "bbox_min_yup": [
+        -2.0001,
+        -0.0,
+        -1.2999
+      ],
+      "bbox_max_yup": [
+        2.0001,
+        1.5003,
+        1.2999
+      ],
+      "up_zmin": -0.0,
+      "center_xy_zup": [
+        -0.0,
+        -0.0
+      ],
+      "tris": 80,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "Cloud"
+      ],
+      "animations": [],
+      "node_count": 2
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        2.00008392333984,
+        1.50032365322113,
+        1.29988241195679
+      ],
+      "bbox_min": [
+        -2.00008416175842,
+        0.0,
+        -1.29988408088684
+      ],
+      "collision_nodes": [],
+      "dims": [
+        4.00016784667969,
+        1.50032365322113,
+        2.59976649284363
+      ],
+      "node_names": [
+        "cloud:Node3D",
+        "AssetRoot_010:Node3D",
+        "Cloud:MeshInstance3D"
+      ],
+      "path": "res://assets/cloud.glb",
+      "tris": 80
+    }
+  },
+  "issues": [],
+  "pass": true
+}

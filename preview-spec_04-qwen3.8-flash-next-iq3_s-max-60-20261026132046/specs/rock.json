@@ -1,0 +1,12 @@
+{
+  "name": "rock",
+  "description": "低模不規則石塊，五邊形切面平塗，灰藍色；底部略平以便落地",
+  "size": [1.2, 1.0, 0.9],
+  "max_tris": 200,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.15,
+  "collision": { "game": "convex_hull_from_visual" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "草地的點綴石；遊戲端用凸包碰撞"
+}

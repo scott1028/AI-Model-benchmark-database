@@ -1,0 +1,106 @@
+{
+  "asset": "tree",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/tree.json",
+  "stages": {
+    "blender": {
+      "asset": "tree",
+      "found": true,
+      "bbox_min": [
+        10.2998,
+        4.3,
+        0.0
+      ],
+      "bbox_max": [
+        13.7002,
+        7.7,
+        4.3005
+      ],
+      "dims": [
+        3.4005,
+        3.4,
+        4.3005
+      ],
+      "tris": 144,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [
+        "Sway_tree"
+      ],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        3.4005,
+        3.4,
+        4.3005
+      ],
+      "bbox_min_yup": [
+        -1.7002,
+        0.0,
+        -1.7
+      ],
+      "bbox_max_yup": [
+        1.7002,
+        4.3005,
+        1.7
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        -0.0,
+        0.0
+      ],
+      "tris": 144,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "Canopy_0",
+        "Canopy_1",
+        "Canopy_2",
+        "Trunk",
+        "Branch_0",
+        "Branch_1"
+      ],
+      "animations": [
+        "Sway"
+      ],
+      "node_count": 8
+    },
+    "godot": {
+      "animations": [
+        "Sway"
+      ],
+      "bbox_max": [
+        1.70022630691528,
+        4.30049657821655,
+        1.70000410079956
+      ],
+      "bbox_min": [
+        -1.70022630691528,
+        0.0,
+        -1.7000036239624
+      ],
+      "collision_nodes": [],
+      "dims": [
+        3.40045261383057,
+        4.30049657821655,
+        3.40000772476196
+      ],
+      "node_names": [
+        "tree:Node3D",
+        "AssetRoot_004:Node3D",
+        "SwayRoot:Node3D",
+        "Canopy_0:MeshInstance3D",
+        "Canopy_1:MeshInstance3D",
+        "Canopy_2:MeshInstance3D",
+        "Trunk:MeshInstance3D",
+        "Branch_0:MeshInstance3D",
+        "Branch_1:MeshInstance3D",
+        "AnimationPlayer:AnimationPlayer"
+      ],
+      "path": "res://assets/tree.glb",
+      "tris": 144
+    }
+  },
+  "issues": [],
+  "pass": true
+}

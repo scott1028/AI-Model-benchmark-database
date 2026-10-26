@@ -1,0 +1,12 @@
+{
+  "name": "flag",
+  "description": "終點旗：木製旗桿、小石基座、暖紅色三角旗（燕尾切角）",
+  "size": [1.1, 0.6, 3.0],
+  "max_tris": 300,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.25,
+  "collision": { "game": "area_cylinder" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "遊戲端 Area3D 觸達終點；旗面不要求動畫"
+}

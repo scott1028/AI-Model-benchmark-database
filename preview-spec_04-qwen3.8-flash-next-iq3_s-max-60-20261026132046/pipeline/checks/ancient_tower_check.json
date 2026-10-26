@@ -1,0 +1,114 @@
+{
+  "asset": "ancient_tower",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/ancient_tower.json",
+  "stages": {
+    "blender": {
+      "asset": "ancient_tower",
+      "found": true,
+      "bbox_min": [
+        10.0,
+        10.0003,
+        0.0
+      ],
+      "bbox_max": [
+        14.0,
+        13.9997,
+        8.2
+      ],
+      "dims": [
+        4.0,
+        3.9995,
+        8.2
+      ],
+      "tris": 260,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        4.0,
+        3.9995,
+        8.2
+      ],
+      "bbox_min_yup": [
+        -2.0,
+        0.0,
+        -1.9997
+      ],
+      "bbox_max_yup": [
+        2.0,
+        8.2,
+        1.9997
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 260,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "Battlement_0",
+        "Battlement_1",
+        "Battlement_3",
+        "Battlement_4",
+        "Battlement_5",
+        "Battlement_8",
+        "Battlement_9",
+        "TowerArch",
+        "TowerBanner",
+        "TowerDoor",
+        "TowerPole",
+        "TowerStage0",
+        "TowerStage1",
+        "TowerStage2"
+      ],
+      "animations": [],
+      "node_count": 15
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        2.00000023841858,
+        8.19999980926514,
+        1.9997478723526
+      ],
+      "bbox_min": [
+        -2.00000023841858,
+        0.0,
+        -1.9997478723526
+      ],
+      "collision_nodes": [],
+      "dims": [
+        4.00000047683716,
+        8.19999980926514,
+        3.9994957447052
+      ],
+      "node_names": [
+        "ancient_tower:Node3D",
+        "AssetRoot_008:Node3D",
+        "Battlement_0:MeshInstance3D",
+        "Battlement_1:MeshInstance3D",
+        "Battlement_3:MeshInstance3D",
+        "Battlement_4:MeshInstance3D",
+        "Battlement_5:MeshInstance3D",
+        "Battlement_8:MeshInstance3D",
+        "Battlement_9:MeshInstance3D",
+        "TowerArch:MeshInstance3D",
+        "TowerBanner:MeshInstance3D",
+        "TowerDoor:MeshInstance3D",
+        "TowerPole:MeshInstance3D",
+        "TowerStage0:MeshInstance3D",
+        "TowerStage1:MeshInstance3D",
+        "TowerStage2:MeshInstance3D"
+      ],
+      "path": "res://assets/ancient_tower.glb",
+      "tris": 260
+    }
+  },
+  "issues": [],
+  "pass": true
+}

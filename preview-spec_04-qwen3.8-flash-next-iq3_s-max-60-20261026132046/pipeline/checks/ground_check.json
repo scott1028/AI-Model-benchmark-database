@@ -1,0 +1,87 @@
+{
+  "asset": "ground",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/ground.json",
+  "stages": {
+    "blender": {
+      "asset": "ground",
+      "found": true,
+      "bbox_min": [
+        14.0,
+        -22.0,
+        -3.2
+      ],
+      "bbox_max": [
+        58.0,
+        22.0,
+        0.5318
+      ],
+      "dims": [
+        44.0,
+        44.0,
+        3.7318
+      ],
+      "tris": 4318,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        44.0,
+        44.0,
+        3.7318
+      ],
+      "bbox_min_yup": [
+        -22.0,
+        0.0,
+        -22.0
+      ],
+      "bbox_max_yup": [
+        22.0,
+        3.7318,
+        22.0
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 4318,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "GroundTop"
+      ],
+      "animations": [],
+      "node_count": 1
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        22.0,
+        3.73180603981018,
+        22.0
+      ],
+      "bbox_min": [
+        -22.0,
+        0.0,
+        -22.0
+      ],
+      "collision_nodes": [],
+      "dims": [
+        44.0,
+        3.73180603981018,
+        44.0
+      ],
+      "node_names": [
+        "ground:Node3D",
+        "GroundTop:MeshInstance3D"
+      ],
+      "path": "res://assets/ground.glb",
+      "tris": 4318
+    }
+  },
+  "issues": [],
+  "pass": true
+}

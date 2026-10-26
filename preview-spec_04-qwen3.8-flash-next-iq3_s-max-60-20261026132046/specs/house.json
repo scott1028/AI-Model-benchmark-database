@@ -1,0 +1,12 @@
+{
+  "name": "house",
+  "description": "小屋：暖白牆體、紅棕斜尖頂、木門、兩扇藍窗、石砌煙囪；箱庭村舍風格",
+  "size": [5.6, 4.6, 4.6],
+  "max_tris": 600,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.3,
+  "collision": { "game": "box" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "擺在農舍區，旁邊放木箱木桶"
+}

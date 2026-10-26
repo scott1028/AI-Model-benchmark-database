@@ -1,0 +1,24 @@
+{
+  "asset": "ground",
+  "found": true,
+  "bbox_min": [
+    14.0,
+    -22.0,
+    -3.2
+  ],
+  "bbox_max": [
+    58.0,
+    22.0,
+    0.5318
+  ],
+  "dims": [
+    44.0,
+    44.0,
+    3.7318
+  ],
+  "tris": 4318,
+  "col_tris": 0,
+  "col_nodes": 0,
+  "animations": [],
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+}

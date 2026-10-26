@@ -1,0 +1,100 @@
+{
+  "asset": "house",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/house.json",
+  "stages": {
+    "blender": {
+      "asset": "house",
+      "found": true,
+      "bbox_min": [
+        3.2,
+        9.7,
+        0.0
+      ],
+      "bbox_max": [
+        8.8,
+        14.3,
+        4.6
+      ],
+      "dims": [
+        5.6,
+        4.6,
+        4.6
+      ],
+      "tris": 80,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        5.6,
+        4.6,
+        4.6
+      ],
+      "bbox_min_yup": [
+        -2.8,
+        0.0,
+        -2.3
+      ],
+      "bbox_max_yup": [
+        2.8,
+        4.6,
+        2.3
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 80,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "Chimney",
+        "Door",
+        "HouseWalls",
+        "Roof",
+        "Window_0",
+        "Window_1",
+        "Window_Side"
+      ],
+      "animations": [],
+      "node_count": 8
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        2.80000019073486,
+        4.59999990463257,
+        2.29999995231628
+      ],
+      "bbox_min": [
+        -2.79999971389771,
+        0.0,
+        -2.29999995231628
+      ],
+      "collision_nodes": [],
+      "dims": [
+        5.59999990463257,
+        4.59999990463257,
+        4.59999990463257
+      ],
+      "node_names": [
+        "house:Node3D",
+        "AssetRoot_007:Node3D",
+        "Chimney:MeshInstance3D",
+        "Door:MeshInstance3D",
+        "HouseWalls:MeshInstance3D",
+        "Roof:MeshInstance3D",
+        "Window_0:MeshInstance3D",
+        "Window_1:MeshInstance3D",
+        "Window_Side:MeshInstance3D"
+      ],
+      "path": "res://assets/house.glb",
+      "tris": 80
+    }
+  },
+  "issues": [],
+  "pass": true
+}

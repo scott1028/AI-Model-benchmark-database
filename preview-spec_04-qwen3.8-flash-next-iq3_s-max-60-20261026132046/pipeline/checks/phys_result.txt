@@ -1,0 +1,7 @@
+PHYS brake stop_distance=0.331
+PHYS push barrel_speed=2.241
+PHYS friction barrel_slide=3.607
+PHYS jump apex=0.492
+PHYS sway tree_sway=0.377
+PHYS leaves leaf_bursts=1.000
+PHYS bush pass_speed=3.550

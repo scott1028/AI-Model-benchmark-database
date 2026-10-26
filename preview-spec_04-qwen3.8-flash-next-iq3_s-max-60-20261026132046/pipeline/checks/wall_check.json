@@ -1,0 +1,146 @@
+{
+  "asset": "wall",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/wall.json",
+  "stages": {
+    "blender": {
+      "asset": "wall",
+      "found": true,
+      "bbox_min": [
+        -2.0,
+        11.725,
+        0.0
+      ],
+      "bbox_max": [
+        2.0,
+        12.275,
+        3.3
+      ],
+      "dims": [
+        4.0,
+        0.55,
+        3.3
+      ],
+      "tris": 376,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        4.0,
+        0.55,
+        3.3
+      ],
+      "bbox_min_yup": [
+        -2.0,
+        0.0,
+        -0.275
+      ],
+      "bbox_max_yup": [
+        2.0,
+        3.3,
+        0.275
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 376,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "Brick_0",
+        "Brick_1",
+        "Brick_2",
+        "Brick_3",
+        "Brick_4",
+        "Brick_5",
+        "Brick_6",
+        "Brick_7",
+        "Brick_8",
+        "Brick_9",
+        "Brick_10",
+        "Brick_11",
+        "Brick_12",
+        "Brick_13",
+        "Brick_14",
+        "Brick_15",
+        "Brick_16",
+        "Brick_17",
+        "Brick_18",
+        "Brick_19",
+        "Brick_20",
+        "Brick_21",
+        "Tile_0",
+        "TileGroove_0",
+        "TileGroove_1",
+        "TileGroove_2",
+        "TileGroove_3",
+        "TileGroove_4",
+        "WallBody",
+        "WallCap"
+      ],
+      "animations": [],
+      "node_count": 31
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        2.0,
+        3.29999971389771,
+        0.274999976158142
+      ],
+      "bbox_min": [
+        -2.0,
+        0.0,
+        -0.274999976158142
+      ],
+      "collision_nodes": [],
+      "dims": [
+        4.0,
+        3.29999971389771,
+        0.549999952316284
+      ],
+      "node_names": [
+        "wall:Node3D",
+        "AssetRoot_006:Node3D",
+        "Brick_0:MeshInstance3D",
+        "Brick_1:MeshInstance3D",
+        "Brick_2:MeshInstance3D",
+        "Brick_3:MeshInstance3D",
+        "Brick_4:MeshInstance3D",
+        "Brick_5:MeshInstance3D",
+        "Brick_6:MeshInstance3D",
+        "Brick_7:MeshInstance3D",
+        "Brick_8:MeshInstance3D",
+        "Brick_9:MeshInstance3D",
+        "Brick_10:MeshInstance3D",
+        "Brick_11:MeshInstance3D",
+        "Brick_12:MeshInstance3D",
+        "Brick_13:MeshInstance3D",
+        "Brick_14:MeshInstance3D",
+        "Brick_15:MeshInstance3D",
+        "Brick_16:MeshInstance3D",
+        "Brick_17:MeshInstance3D",
+        "Brick_18:MeshInstance3D",
+        "Brick_19:MeshInstance3D",
+        "Brick_20:MeshInstance3D",
+        "Brick_21:MeshInstance3D",
+        "Tile_0:MeshInstance3D",
+        "TileGroove_0:MeshInstance3D",
+        "TileGroove_1:MeshInstance3D",
+        "TileGroove_2:MeshInstance3D",
+        "TileGroove_3:MeshInstance3D",
+        "TileGroove_4:MeshInstance3D",
+        "WallBody:MeshInstance3D",
+        "WallCap:MeshInstance3D"
+      ],
+      "path": "res://assets/wall.glb",
+      "tris": 376
+    }
+  },
+  "issues": [],
+  "pass": true
+}

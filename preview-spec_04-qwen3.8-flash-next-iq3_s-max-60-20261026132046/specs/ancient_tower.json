@@ -1,0 +1,12 @@
+{
+  "name": "ancient_tower",
+  "description": "古代奇幻塔：圓形石塔、上窄下寬、頂部城垛缺口（部分崩塌）、拱形門洞、石磚紋浮雕、頂端插一面小旗",
+  "size": [4.0, 4.0, 8.2],
+  "max_tris": 900,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.3,
+  "collision": { "game": "cylinder" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "地圖角落地標，高大但放在角落不擋主路"
+}

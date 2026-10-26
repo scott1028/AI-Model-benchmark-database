@@ -1,0 +1,12 @@
+{
+  "name": "robot",
+  "description": "可愛單輪小機器人：大單輪在中央、圓潤机身在上、正面有臉板與兩顆眼、兩側小手臂、頭頂天線。机身暖白+青色臉板，輪胎深灰、輪轂橙色。正面朝 -Y",
+  "size": [0.8, 0.6, 1.15],
+  "max_tris": 1400,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.1,
+  "collision": { "game": "capsule" },
+  "collision_glb": false,
+  "animations": ["WheelSpin"],
+  "notes": "輪子物件必須命名 Wheel 且為獨立 object（遊戲端依速度 drive AnimationPlayer seek）。天線/手臂不超過外框"
+}

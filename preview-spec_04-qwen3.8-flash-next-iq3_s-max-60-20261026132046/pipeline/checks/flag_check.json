@@ -1,0 +1,94 @@
+{
+  "asset": "flag",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/flag.json",
+  "stages": {
+    "blender": {
+      "asset": "flag",
+      "found": true,
+      "bbox_min": [
+        17.4501,
+        -0.3,
+        0.0
+      ],
+      "bbox_max": [
+        18.5499,
+        0.3,
+        3.0
+      ],
+      "dims": [
+        1.0997,
+        0.6,
+        3.0
+      ],
+      "tris": 136,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        1.0997,
+        0.6,
+        3.0
+      ],
+      "bbox_min_yup": [
+        -0.5499,
+        0.0,
+        -0.3
+      ],
+      "bbox_max_yup": [
+        0.5499,
+        3.0,
+        0.3
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        -0.0
+      ],
+      "tris": 136,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "FlagBase",
+        "FlagCloth",
+        "FlagFinial",
+        "FlagPole"
+      ],
+      "animations": [],
+      "node_count": 5
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        0.549851953983307,
+        3.0,
+        0.29997980594635
+      ],
+      "bbox_min": [
+        -0.549850821495056,
+        0.0,
+        -0.299979776144028
+      ],
+      "collision_nodes": [],
+      "dims": [
+        1.09970283508301,
+        3.0,
+        0.5999596118927
+      ],
+      "node_names": [
+        "flag:Node3D",
+        "AssetRoot_001:Node3D",
+        "FlagBase:MeshInstance3D",
+        "FlagCloth:MeshInstance3D",
+        "FlagFinial:MeshInstance3D",
+        "FlagPole:MeshInstance3D"
+      ],
+      "path": "res://assets/flag.glb",
+      "tris": 136
+    }
+  },
+  "issues": [],
+  "pass": true
+}

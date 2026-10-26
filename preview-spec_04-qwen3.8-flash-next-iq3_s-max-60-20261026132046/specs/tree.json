@@ -1,0 +1,12 @@
+{
+  "name": "tree",
+  "description": "低模樹：直幹+2~3團多面體樹冠（深綠/中綠兩層色），小分枝；遊戲端撞擊播放 Sway 並掉落葉片粒子（葉片由遊戲端生成）",
+  "size": [3.4, 3.4, 4.3],
+  "max_tris": 900,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.3,
+  "collision": { "game": "cylinder_trunk" },
+  "collision_glb": false,
+  "animations": ["Sway"],
+  "notes": "Sway 動畫由樹冠節點旋轉關鍵影格組成；遊戲端風擺動與撞擊搖晃都 drive 這個 action"
+}

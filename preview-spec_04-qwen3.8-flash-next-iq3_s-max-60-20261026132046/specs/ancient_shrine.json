@@ -1,0 +1,12 @@
+{
+  "name": "ancient_shrine",
+  "description": "古代奇幻神廟：階梯基座+四根石柱+三角山牆(pediment)+中央凹門，淺色石材，局部殘缺",
+  "size": [5.0, 4.0, 5.2],
+  "max_tris": 900,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.3,
+  "collision": { "game": "box" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "箱庭地標之一，擺在較開闊區"
+}

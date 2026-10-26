@@ -1,0 +1,12 @@
+{
+  "name": "coin",
+  "description": "低模金幣：扁圓盤+中心凸起浮雕星形，亮金色、邊緣深金",
+  "size": [0.36, 0.36, 0.07],
+  "max_tris": 300,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.06,
+  "collision": { "game": "area_cylinder" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "遊戲端 Area3D 收集；模型平放，遊戲裡可繞 Z 旋轉"
+}

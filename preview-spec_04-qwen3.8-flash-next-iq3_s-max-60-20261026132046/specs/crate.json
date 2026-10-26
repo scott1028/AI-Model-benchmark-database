@@ -1,0 +1,12 @@
+{
+  "name": "crate",
+  "description": "木箱：暖棕色木板箱，邊條加深、正面交叉木板，箱頂稍深色；與村舍farmyard風格搭配",
+  "size": [0.84, 0.84, 0.84],
+  "max_tris": 400,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.06,
+  "collision": { "game": "box" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "裝飾/掩體，遊戲端 box 碰撞固定不動"
+}

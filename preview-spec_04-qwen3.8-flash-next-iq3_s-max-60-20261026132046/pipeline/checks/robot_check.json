@@ -1,0 +1,110 @@
+{
+  "asset": "robot",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/robot.json",
+  "stages": {
+    "blender": {
+      "asset": "robot",
+      "found": true,
+      "bbox_min": [
+        5.6,
+        -0.305,
+        0.0
+      ],
+      "bbox_max": [
+        6.4,
+        0.305,
+        1.15
+      ],
+      "dims": [
+        0.8,
+        0.61,
+        1.15
+      ],
+      "tris": 676,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [
+        "WheelSpin"
+      ],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        0.8,
+        0.61,
+        1.15
+      ],
+      "bbox_min_yup": [
+        -0.4,
+        0.0,
+        -0.305
+      ],
+      "bbox_max_yup": [
+        0.4,
+        1.15,
+        0.305
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 676,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "Antenna",
+        "AntennaTip",
+        "Arm_L",
+        "Arm_R",
+        "Eye_L",
+        "Eye_R",
+        "FacePanel",
+        "RobotBody",
+        "Wheel"
+      ],
+      "animations": [
+        "WheelSpin"
+      ],
+      "node_count": 9
+    },
+    "godot": {
+      "animations": [
+        "WheelSpin"
+      ],
+      "bbox_max": [
+        0.400000005960464,
+        1.14999997615814,
+        0.305000007152557
+      ],
+      "bbox_min": [
+        -0.400000005960464,
+        0.0,
+        -0.305000007152557
+      ],
+      "collision_nodes": [],
+      "dims": [
+        0.800000011920929,
+        1.14999997615814,
+        0.610000014305115
+      ],
+      "node_names": [
+        "robot:Node3D",
+        "Antenna:MeshInstance3D",
+        "AntennaTip:MeshInstance3D",
+        "Arm_L:MeshInstance3D",
+        "Arm_R:MeshInstance3D",
+        "Eye_L:MeshInstance3D",
+        "Eye_R:MeshInstance3D",
+        "FacePanel:MeshInstance3D",
+        "RobotBody:MeshInstance3D",
+        "Wheel:MeshInstance3D",
+        "AnimationPlayer:AnimationPlayer"
+      ],
+      "path": "res://assets/robot.glb",
+      "tris": 676
+    }
+  },
+  "issues": [],
+  "pass": true
+}

@@ -1,0 +1,87 @@
+{
+  "asset": "rock",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/rock.json",
+  "stages": {
+    "blender": {
+      "asset": "rock",
+      "found": true,
+      "bbox_min": [
+        -0.6,
+        -0.5,
+        0.0
+      ],
+      "bbox_max": [
+        0.6,
+        0.5,
+        0.9
+      ],
+      "dims": [
+        1.2,
+        1.0,
+        0.9
+      ],
+      "tris": 80,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        1.2,
+        1.0,
+        0.9
+      ],
+      "bbox_min_yup": [
+        -0.6,
+        0.0,
+        -0.5
+      ],
+      "bbox_max_yup": [
+        0.6,
+        0.9,
+        0.5
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 80,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "Rock"
+      ],
+      "animations": [],
+      "node_count": 1
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        0.600000023841858,
+        0.899999976158142,
+        0.5
+      ],
+      "bbox_min": [
+        -0.600000023841858,
+        0.0,
+        -0.5
+      ],
+      "collision_nodes": [],
+      "dims": [
+        1.20000004768372,
+        0.899999976158142,
+        1.0
+      ],
+      "node_names": [
+        "rock:Node3D",
+        "Rock:MeshInstance3D"
+      ],
+      "path": "res://assets/rock.glb",
+      "tris": 80
+    }
+  },
+  "issues": [],
+  "pass": true
+}

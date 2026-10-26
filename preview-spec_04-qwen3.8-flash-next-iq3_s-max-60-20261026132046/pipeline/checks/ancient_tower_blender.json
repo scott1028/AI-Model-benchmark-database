@@ -1,0 +1,24 @@
+{
+  "asset": "ancient_tower",
+  "found": true,
+  "bbox_min": [
+    10.0,
+    10.0003,
+    0.0
+  ],
+  "bbox_max": [
+    14.0,
+    13.9997,
+    8.2
+  ],
+  "dims": [
+    4.0,
+    3.9995,
+    8.2
+  ],
+  "tris": 260,
+  "col_tris": 0,
+  "col_nodes": 0,
+  "animations": [],
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+}

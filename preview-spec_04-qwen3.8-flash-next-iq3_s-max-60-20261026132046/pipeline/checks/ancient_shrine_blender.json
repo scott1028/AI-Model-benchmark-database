@@ -1,0 +1,24 @@
+{
+  "asset": "ancient_shrine",
+  "found": true,
+  "bbox_min": [
+    15.5,
+    10.0,
+    0.0
+  ],
+  "bbox_max": [
+    20.5,
+    14.0,
+    5.2
+  ],
+  "dims": [
+    5.0,
+    4.0,
+    5.2
+  ],
+  "tris": 224,
+  "col_tris": 0,
+  "col_nodes": 0,
+  "animations": [],
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+}

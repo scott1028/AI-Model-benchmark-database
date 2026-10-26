@@ -1,0 +1,106 @@
+{
+  "asset": "crate",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/crate.json",
+  "stages": {
+    "blender": {
+      "asset": "crate",
+      "found": true,
+      "bbox_min": [
+        -0.4195,
+        5.5805,
+        0.0
+      ],
+      "bbox_max": [
+        0.4195,
+        6.4195,
+        0.84
+      ],
+      "dims": [
+        0.839,
+        0.839,
+        0.84
+      ],
+      "tris": 120,
+      "col_tris": 0,
+      "col_nodes": 0,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        0.839,
+        0.839,
+        0.84
+      ],
+      "bbox_min_yup": [
+        -0.4195,
+        0.0,
+        -0.4195
+      ],
+      "bbox_max_yup": [
+        0.4195,
+        0.84,
+        0.4195
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 120,
+      "col_tris": 0,
+      "col_nodes": [],
+      "visual_nodes": [
+        "CrateBody",
+        "CrateLid",
+        "CrateSlat_0",
+        "CrateSlat_1",
+        "CrateSlat_2",
+        "CrateSlat_3",
+        "CrateX_1_1",
+        "CrateX_1_-1",
+        "CrateX_-1_1",
+        "CrateX_-1_-1"
+      ],
+      "animations": [],
+      "node_count": 11
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        0.419515013694763,
+        0.839999973773956,
+        0.419515013694763
+      ],
+      "bbox_min": [
+        -0.419515013694763,
+        0.0,
+        -0.419515013694763
+      ],
+      "collision_nodes": [],
+      "dims": [
+        0.839030027389526,
+        0.839999973773956,
+        0.839030027389526
+      ],
+      "node_names": [
+        "crate:Node3D",
+        "AssetRoot_002:Node3D",
+        "CrateBody:MeshInstance3D",
+        "CrateLid:MeshInstance3D",
+        "CrateSlat_0:MeshInstance3D",
+        "CrateSlat_1:MeshInstance3D",
+        "CrateSlat_2:MeshInstance3D",
+        "CrateSlat_3:MeshInstance3D",
+        "CrateX_1_1:MeshInstance3D",
+        "CrateX_1_-1:MeshInstance3D",
+        "CrateX_-1_1:MeshInstance3D",
+        "CrateX_-1_-1:MeshInstance3D"
+      ],
+      "path": "res://assets/crate.glb",
+      "tris": 120
+    }
+  },
+  "issues": [],
+  "pass": true
+}

@@ -1,0 +1,95 @@
+{
+  "asset": "barrel",
+  "spec": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/specs/barrel.json",
+  "stages": {
+    "blender": {
+      "asset": "barrel",
+      "found": true,
+      "bbox_min": [
+        5.63,
+        5.63,
+        0.0
+      ],
+      "bbox_max": [
+        6.37,
+        6.37,
+        0.92
+      ],
+      "dims": [
+        0.74,
+        0.74,
+        0.92
+      ],
+      "tris": 332,
+      "col_tris": 44,
+      "col_nodes": 1,
+      "animations": [],
+      "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+    },
+    "glb": {
+      "asset_dims_xyz_zup": [
+        0.74,
+        0.74,
+        0.92
+      ],
+      "bbox_min_yup": [
+        -0.37,
+        0.0,
+        -0.37
+      ],
+      "bbox_max_yup": [
+        0.37,
+        0.92,
+        0.37
+      ],
+      "up_zmin": 0.0,
+      "center_xy_zup": [
+        0.0,
+        0.0
+      ],
+      "tris": 332,
+      "col_tris": 44,
+      "col_nodes": [
+        "col_barrel"
+      ],
+      "visual_nodes": [
+        "BarrelHoop_0.14",
+        "BarrelHoop_0.76",
+        "BarrelStaves"
+      ],
+      "animations": [],
+      "node_count": 5
+    },
+    "godot": {
+      "animations": [],
+      "bbox_max": [
+        0.370000004768372,
+        0.920000016689301,
+        0.370000004768372
+      ],
+      "bbox_min": [
+        -0.370000004768372,
+        0.0,
+        -0.370000004768372
+      ],
+      "collision_nodes": [],
+      "dims": [
+        0.740000009536743,
+        0.920000016689301,
+        0.740000009536743
+      ],
+      "node_names": [
+        "barrel:Node3D",
+        "AssetRoot_003:Node3D",
+        "BarrelHoop_0_14:MeshInstance3D",
+        "BarrelHoop_0_76:MeshInstance3D",
+        "BarrelStaves:MeshInstance3D",
+        "col_barrel:MeshInstance3D"
+      ],
+      "path": "res://assets/barrel.glb",
+      "tris": 376
+    }
+  },
+  "issues": [],
+  "pass": true
+}

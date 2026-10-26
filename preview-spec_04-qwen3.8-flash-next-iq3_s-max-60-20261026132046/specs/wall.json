@@ -1,0 +1,12 @@
+{
+  "name": "wall",
+  "description": "磚瓦牆段：米色磚體、錯縫磚塊浮雕（3層）、頂部深灰屋瓦（半圓瓦壟）+壓頂樑；一段 4m，四面牆由 10 段拼接+转角",
+  "size": [4.0, 0.55, 3.3],
+  "max_tris": 700,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.15,
+  "collision": { "game": "box_per_segment" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "遊戲端每段放 StaticBox 圍住 40x40 可活動區"
+}

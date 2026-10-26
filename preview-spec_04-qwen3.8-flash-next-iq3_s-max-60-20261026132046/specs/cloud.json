@@ -1,0 +1,12 @@
+{
+  "name": "cloud",
+  "description": "低模雲：3~4團扁平多面球疊成、白色偏淺藍灰、底部略平；無碰撞、無動畫（漂移由遊戲端移動）",
+  "size": [4.0, 2.6, 1.5],
+  "max_tris": 300,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.3,
+  "collision": { "game": "none" },
+  "collision_glb": false,
+  "animations": [],
+  "notes": "浮在天空、地面要能看到雲的影子（遊戲端DirectionalLight 讓雲投影）"
+}

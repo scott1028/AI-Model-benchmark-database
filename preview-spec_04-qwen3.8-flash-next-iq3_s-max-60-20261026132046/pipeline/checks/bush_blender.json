@@ -1,0 +1,26 @@
+{
+  "asset": "bush",
+  "found": true,
+  "bbox_min": [
+    17.35,
+    5.3496,
+    -0.0001
+  ],
+  "bbox_max": [
+    18.65,
+    6.6504,
+    0.9996
+  ],
+  "dims": [
+    1.2999,
+    1.3008,
+    0.9997
+  ],
+  "tris": 80,
+  "col_tris": 0,
+  "col_nodes": 0,
+  "animations": [
+    "Sway_bush"
+  ],
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-qwen3.8-flash-next-iq3_s-max-60-20261026132046/blender/coin_run.blend"
+}

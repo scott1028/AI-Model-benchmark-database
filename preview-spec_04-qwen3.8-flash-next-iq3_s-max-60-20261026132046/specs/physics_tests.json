@@ -1,0 +1,19 @@
+{
+  "comment": "Thresholds for PhysRunner scenarios. Rationale also in pipeline/log.md.",
+  "tests": [
+    { "scenario": "brake", "metric": "stop_distance", "min": 0.2, "max": 1.8,
+      "why": "v~3.8 m/s, brake decel = 0.6*A0 + drag ~19 m/s^2 -> ~0.4-1.0 m" },
+    { "scenario": "push", "metric": "barrel_speed", "min": 0.8, "max": 5.0,
+      "why": "robot 15 kg @ ~3 m/s vs barrel 9 kg, e~0.1 -> ~1.5-2.5 m/s" },
+    { "scenario": "friction", "metric": "barrel_slide", "min": 0.1, "max": 4.0,
+      "why": "v0~2.2 m/s, barrel damp 0.6 + low ground friction (robot needs it low) -> ~3-4 m; must come to a stop, not slide forever" },
+    { "scenario": "jump", "metric": "apex", "min": 0.38, "max": 0.80,
+      "why": "v0=4.4, g=18 -> apex 0.54 m; spec target ~0.5 m" },
+    { "scenario": "sway", "metric": "tree_sway", "min": 0.05, "max": 0.80,
+      "why": "hit at ~2.5 m/s gives hit_amp ~0.22 rad; idle wind ~0.04" },
+    { "scenario": "leaves", "metric": "leaf_bursts", "min": 1, "max": 5,
+      "why": "exactly one ram -> at least one leaf burst" },
+    { "scenario": "bush", "metric": "pass_speed", "min": 1.2, "max": 4.5,
+      "why": "bush is passable, robot should barely slow (v~3 m/s at bush)" }
+  ]
+}

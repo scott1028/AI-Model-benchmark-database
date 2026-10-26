@@ -1,0 +1,12 @@
+{
+  "name": "bush",
+  "description": "灌木叢：3~4團低面球體重疊、深淺綠兩色、底部略平；無實體碰撞（可穿越）",
+  "size": [1.3, 1.3, 1.0],
+  "max_tris": 400,
+  "origin": "bottom_center",
+  "origin_xy_tol": 0.2,
+  "collision": { "game": "area_trigger_only" },
+  "collision_glb": false,
+  "animations": ["Sway"],
+  "notes": "遊戲端 Area3D 觸發晃動；Sway action 存在資產內"
+}
