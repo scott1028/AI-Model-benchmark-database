@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__godot",
+      "Bash(node tools/check_env.mjs:*)",
+      "Bash(node tools/import.mjs:*)",
+      "Bash(node tools/check_assets.mjs:*)",
+      "Bash(node tools/bot_test.mjs:*)",
+      "Bash(node tools/physics_test.mjs:*)",
+      "Bash(node tools/build_world.mjs:*)"
+    ]
+  }
+}

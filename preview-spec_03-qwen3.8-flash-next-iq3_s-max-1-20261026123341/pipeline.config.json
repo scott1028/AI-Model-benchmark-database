@@ -1,0 +1,7 @@
+{
+  "projectRoot": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_03-qwen3.8-flash-next-iq3_s-max-1-20261026123341",
+  "godotPath": "/home/scott/tools/bin/godot",
+  "blenderPort": 9876,
+  "maxIterations": 3,
+  "sizeTolerance": { "relative": 0.10, "absoluteMin": 0.02 }
+}

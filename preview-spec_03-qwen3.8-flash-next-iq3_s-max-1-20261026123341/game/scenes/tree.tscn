@@ -1,0 +1,56 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/tree.glb" id="1"]
+[ext_resource type="Script" path="res://scripts/tree.gd" id="2"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_1"]
+size = Vector2(0.22, 0.16)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+billboard_keep_scale = true
+
+[sub_resource type="Curve" id="Curve_1"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_1"]
+color_stops = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.1, 0.4, 0.05, 1, 0.45, 0.55, 0.1, 1, 0.75, 0.42, 0.05, 1)
+
+[node name="Tree" type="Node3D"]
+script = ExtResource("2")
+push_gain = 0.25
+wind_amplitude = 0.025
+wind_frequency = 0.35
+
+[node name="Model" parent="." instance=ExtResource("1")]
+
+[node name="Leaves" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+emitting = false
+amount = 32
+lifetime = 3.0
+one_shot = true
+explosiveness = 0.85
+randomness = 0.5
+visibility_aabb = AABB(-4, -4, -4, 8, 8, 8)
+direction = Vector3(0, 1, 0)
+spread = 3.141593
+gravity = Vector3(0, -1.5, 0)
+initial_velocity_min = 0.4
+initial_velocity_max = 1.4
+angular_velocity_min = -180.0
+angular_velocity_max = 180.0
+damping_min = 0.6
+damping_max = 1.2
+scale_min = 0.7
+scale_max = 1.3
+scale_curve = SubResource("Curve_1")
+color_initial_ramp = SubResource("Gradient_1")
+emission_shape = 1
+emission_box_extents = Vector3(0.8, 0.4, 0.8)
+mesh = SubResource("QuadMesh_1")
+material = SubResource("StandardMaterial3D_1")

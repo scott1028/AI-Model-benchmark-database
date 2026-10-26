@@ -1,0 +1,116 @@
+{
+  "assets": {
+    "player": {
+      "desc": "單輪小機器人：方頭配深色面罩和兩個發光色眼睛、天線、圓柱身體、兩隻短手臂、輪叉加一顆輪子；輪子是獨立物件 robot_tire（不可用 _wheel 結尾），原點在輪心，wheel_spin 動畫 1 秒轉一圈；平塗顏色，正面朝 Blender -Y",
+      "size_m": [0.7, 1.2, 0.5],
+      "origin": "bottom_center",
+      "max_tris": 3000,
+      "collision": "none",
+      "anims": ["wheel_spin"]
+    },
+    "coin": {
+      "desc": "金色扁圓柱，直立，圓面朝 Blender ±Y",
+      "size_m": [0.3, 0.3, 0.06],
+      "origin": "bottom_center",
+      "max_tris": 500,
+      "collision": "none",
+      "anims": []
+    },
+    "crate": {
+      "desc": "中世紀木板箱：橫向木板帶板縫、四面斜撐、深色鐵角片，木色與木桶 / 房子一致，平塗顏色",
+      "size_m": [0.8, 0.8, 0.8],
+      "origin": "bottom_center",
+      "max_tris": 1000,
+      "collision": "col",
+      "anims": []
+    },
+    "goal_flag": {
+      "desc": "灰色旗桿加紅色三角旗",
+      "size_m": [0.8, 2.0, 0.1],
+      "origin": "bottom_center",
+      "max_tris": 800,
+      "collision": "none",
+      "anims": []
+    },
+    "tree": {
+      "desc": "低模樹：褐色樹幹加 2–3 團深淺綠低面數樹冠；只有樹幹 mesh 名稱加 -col",
+      "size_m": [2.0, 3.5, 2.0],
+      "origin": "bottom_center",
+      "max_tris": 1000,
+      "collision": "col",
+      "anims": []
+    },
+    "bush": {
+      "desc": "草叢：3–5 個深淺綠低面數扁球擠在一起",
+      "size_m": [1.2, 0.7, 1.0],
+      "origin": "bottom_center",
+      "max_tris": 600,
+      "collision": "none",
+      "anims": []
+    },
+    "rock": {
+      "desc": "2–3 塊不規則灰色低模石頭組合（固定亂數種子）",
+      "size_m": [1.4, 0.9, 1.2],
+      "origin": "bottom_center",
+      "max_tris": 400,
+      "collision": "col",
+      "anims": []
+    },
+    "wall_brick": {
+      "desc": "磚瓦牆一段：灰色灰縫底牆、表面交錯排列的紅褐磚塊、頂部深色瓦片壓頂；長邊沿 Blender X",
+      "size_m": [4.0, 1.6, 0.5],
+      "origin": "bottom_center",
+      "max_tris": 2500,
+      "collision": "col",
+      "anims": []
+    },
+    "house": {
+      "desc": "小屋：米白灰泥牆加深色木框、紅褐瓦片斜屋頂、木門、兩扇窗、石砌煙囪；門朝 Blender -Y",
+      "size_m": [4.0, 4.0, 3.5],
+      "origin": "bottom_center",
+      "max_tris": 2500,
+      "collision": "col",
+      "anims": []
+    },
+    "mage_tower": {
+      "desc": "古代奇幻法師塔：石砌圓塔身、石基座、拱窗、外凸平台、紫色錐形尖頂加金色尖端",
+      "size_m": [3.2, 8.0, 3.2],
+      "origin": "bottom_center",
+      "max_tris": 3000,
+      "collision": "col",
+      "anims": []
+    },
+    "temple_ruins": {
+      "desc": "古代神殿遺跡：三層石階基座、6 根石柱（其中 1–2 根斷裂）、殘存一段門楣、地上碎石；正面朝 Blender -Y",
+      "size_m": [6.0, 4.0, 4.0],
+      "origin": "bottom_center",
+      "max_tris": 3000,
+      "collision": "col",
+      "anims": []
+    },
+    "barrel": {
+      "desc": "木桶：木色桶身中間略鼓，上下兩圈深色鐵箍",
+      "size_m": [0.6, 0.8, 0.6],
+      "origin": "bottom_center",
+      "max_tris": 400,
+      "collision": "none",
+      "anims": []
+    },
+    "terrain": {
+      "desc": "箱庭地塊 41×41 m：底部 1.5 m 厚的土層側面（分層色），頂面 0.5 m 格網低模起伏（地面最高 0.9 m，含草叢約 1.15 m），草地深淺色塊、泥土路、石板路與石板廣場、草叢花朵與小石子；建築 / 圍牆 / 金幣 / 終點底下壓平；只有地面網格加 -col",
+      "size_m": [41.0, 2.6, 41.0],
+      "origin": "bottom_center",
+      "max_tris": 40000,
+      "collision": "col",
+      "anims": []
+    },
+    "cloud": {
+      "desc": "低模雲朵：4–6 個白色扁球堆疊，底部較平、帶淡藍灰陰影色",
+      "size_m": [5.0, 1.6, 3.0],
+      "origin": "bottom_center",
+      "max_tris": 800,
+      "collision": "none",
+      "anims": []
+    }
+  }
+}
