@@ -80,7 +80,7 @@ Phase 8 bot_test 玩家「vel=(0,0,0) 原地不動」：先修了 3 條 parse er
 
 - `game/export_presets.cfg`（Web preset、thread_support=false → 不需 COOP/COEP headers）
 - 匯出產物在 preview 目錄根：`index.html` / `index.js` / `index.pck`（1.3 MB）/ `index.wasm`（39.5 MB）+ 圖示/works + `README.txt`（本地 `python3 -m http.server 8061` 遊玩說明）
-- repo 根 `preview-spec_03-qwen3.8-flash-next-iq3_s-max-1-20261026123341.html` → redirect 至該 index.html
+- repo 根 `preview-spec_03-qwen3.8-flash-next-iq3_s-max-25-20261026123341.html` → redirect 至該 index.html
 
 ## 9. Git 軌跡（外層 benchmark repo，preview 目錄範圍）
 
@@ -91,9 +91,9 @@ Phase 8 bot_test 玩家「vel=(0,0,0) 原地不動」：先修了 3 條 parse er
 preview 目錄根已附 Web 版（`index.html`）。因瀏覽器限制需走 HTTP：
 
 ```bash
-cd preview-spec_03-qwen3.8-flash-next-iq3_s-max-1-20261026123341
+cd preview-spec_03-qwen3.8-flash-next-iq3_s-max-25-20261026123341
 python3 -m http.server 8061
 # 開 http://127.0.0.1:8061/
 ```
 
-repo 根的 `preview-spec_03-qwen3.8-flash-next-iq3_s-max-1-20261026123341.html` 會自動 redirect 過去。
+repo 根的 `preview-spec_03-qwen3.8-flash-next-iq3_s-max-25-20261026123341.html` 會自動 redirect 過去。

@@ -1,7 +1,7 @@
 # Coin Run pipeline 進度（PLAYBOOK_v2）
 
 > 標記：`[v]` 已處理且通過、`[x]` 做了沒過、`[ ]` 未做。重啟後從未完成的步驟續跑。
-> 本專案根目錄：preview-spec_03-qwen3.8-flash-next-iq3_s-max-1-20261026123341/
+> 本專案根目錄：preview-spec_03-qwen3.8-flash-next-iq3_s-max-25-20261026123341/
 > 本環境 MCP 由 agent-switch 掛載（見 .spec/PLAYBOOK_MCP_SETUP.md），MCP 已連線。
 
 ## Phase 0 環境檢查
@@ -112,4 +112,4 @@
 
 ## 加碼（使用者指定）：Web 匯出
 - [v] W.1 Web 匯出到 preview 目錄根（index.html/.pck/.wasm + README.txt；threads off）
-- [v] W.2 repo 根放 redirect html（preview-spec_03-qwen3.8-flash-next-iq3_s-max-1-20261026123341.html）
+- [v] W.2 repo 根放 redirect html（preview-spec_03-qwen3.8-flash-next-iq3_s-max-25-20261026123341.html）
