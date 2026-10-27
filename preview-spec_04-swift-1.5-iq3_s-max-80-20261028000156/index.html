@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>Coin Run</title>
+</head>
+<body style="font: 16px/1.6 system-ui, sans-serif; margin: 2rem">
+<h1>Coin Run</h1>
+<p id="go">正在進入 <a id="golink" href="web/index.html">WebGL 版</a>…</p>
+<p id="hint" hidden></p>
+<ul id="cands"></ul>
+<noscript><p>JavaScript 關閉時請手動開 <a href="web/index.html">web/index.html</a>（要先有 HTTP 服務，例 <code>make serve</code>）。</p></noscript>
+
+<script>
+// 導向 web/index.html，但網址要自己算，不能直接用相對網址：
+// 站點可能掛在子路徑，而伺服器不保證補尾端斜線。少了斜線時 web/index.html 會指到上一層 → 404。
+// 所以把「目前路徑當目錄」與「當檔案」兩種解法都列出來，probe 哪個真的存在再用（meta refresh 會先跑，故不用）。
+(function () {
+  var hint = document.getElementById("hint");
+  var go = document.getElementById("go");
+
+  function ask(msg, urls) {
+    go.hidden = true;
+    hint.hidden = false;
+    hint.textContent = msg;
+    var ul = document.getElementById("cands");
+    urls.forEach(function (u) {
+      var a = document.createElement("a");
+      a.href = u;
+      a.textContent = u;
+      var li = document.createElement("li");
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+  }
+
+  if (location.protocol === "file:") {
+    ask("這個頁面是用 file:// 開的，Godot Web 版需要 HTTP（wasm 不能用 file:// 載入）。" +
+        "在專案根目錄跑 make serve，再開 http://localhost:8000/。", []);
+    return;
+  }
+
+  var p = location.pathname;
+  var cands = [];
+  if (/\/$/.test(p)) {
+    cands.push(p + "web/index.html");
+  } else if (/\/index\.html$/.test(p)) {
+    cands.push(p.replace(/index\.html$/, "") + "web/index.html");
+  } else {
+    cands.push(p + "/web/index.html");            // 伺服器把這一路徑當目錄（沒補斜線）
+    cands.push(p.replace(/[^/]*$/, "") + "web/index.html"); // 這一路徑是檔案
+  }
+
+  var i = 0;
+  (function next() {
+    if (i >= cands.length) {
+      ask("找不到 web/index.html。這代表 web/ 不在這個位址下面，請手動選：", cands);
+      return;
+    }
+    var url = cands[i++];
+    document.getElementById("golink").href = url;
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (t) {
+        if (t.indexOf("index.js") >= 0) location.replace(url); // Godot 殼層特徵
+        else next();
+      })
+      .catch(next);
+  })();
+})();
+</script>
+</body>
+</html>
