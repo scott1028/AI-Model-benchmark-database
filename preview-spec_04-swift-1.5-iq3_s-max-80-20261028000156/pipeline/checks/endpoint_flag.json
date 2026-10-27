@@ -1,0 +1,216 @@
+{
+  "id": "endpoint_flag",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:36",
+  "spec": "specs/endpoint_flag.json",
+  "measurements": [
+    {
+      "target": 1.1,
+      "measured": 1.191,
+      "delta": 0.091,
+      "delta_pct": 8.27,
+      "tol_m": 0.11,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.46,
+      "measured": 0.44,
+      "delta": -0.02,
+      "delta_pct": -4.35,
+      "tol_m": 0.046,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 3.6,
+      "measured": 3.6,
+      "delta": -0.0,
+      "delta_pct": -0.0,
+      "tol_m": 0.36,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.055,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 260,
+      "measured": 124,
+      "ok": true
+    },
+    {
+      "name": "material:flag_pole",
+      "side": "blender",
+      "target": "flag_pole",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:flag_pole",
+      "side": "blender",
+      "target": "#6E5138",
+      "measured": "#6E5138",
+      "ok": true
+    },
+    {
+      "name": "material:flag_cloth",
+      "side": "blender",
+      "target": "flag_cloth",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:flag_cloth",
+      "side": "blender",
+      "target": "#C0392B",
+      "measured": "#C0392B",
+      "ok": true
+    },
+    {
+      "name": "material:flag_trim",
+      "side": "blender",
+      "target": "flag_trim",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:flag_trim",
+      "side": "blender",
+      "target": "#E8B92C",
+      "measured": "#E8B92C",
+      "ok": true
+    },
+    {
+      "target": 1.1,
+      "measured": 1.191,
+      "delta": 0.091,
+      "delta_pct": 8.27,
+      "tol_m": 0.11,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.46,
+      "measured": 0.44,
+      "delta": -0.02,
+      "delta_pct": -4.35,
+      "tol_m": 0.046,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 3.6,
+      "measured": 3.6,
+      "delta": -0.0,
+      "delta_pct": -0.0,
+      "tol_m": 0.36,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.055,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 260,
+      "measured": 124,
+      "ok": true
+    },
+    {
+      "name": "material:flag_pole",
+      "side": "godot",
+      "target": "flag_pole",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:flag_pole",
+      "side": "godot",
+      "target": "#6E5138",
+      "measured": "#6E5138",
+      "ok": true
+    },
+    {
+      "name": "material:flag_cloth",
+      "side": "godot",
+      "target": "flag_cloth",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:flag_cloth",
+      "side": "godot",
+      "target": "#C0392B",
+      "measured": "#C0392B",
+      "ok": true
+    },
+    {
+      "name": "material:flag_trim",
+      "side": "godot",
+      "target": "flag_trim",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:flag_trim",
+      "side": "godot",
+      "target": "#E8B92C",
+      "measured": "#E8B92C",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "cylinder",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

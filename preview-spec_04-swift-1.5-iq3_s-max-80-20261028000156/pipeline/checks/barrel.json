@@ -1,0 +1,188 @@
+{
+  "id": "barrel",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:34",
+  "spec": "specs/barrel.json",
+  "measurements": [
+    {
+      "target": 0.72,
+      "measured": 0.6943,
+      "delta": -0.0257,
+      "delta_pct": -3.57,
+      "tol_m": 0.072,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.72,
+      "measured": 0.73,
+      "delta": 0.01,
+      "delta_pct": 1.39,
+      "tol_m": 0.072,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.9,
+      "measured": 0.87,
+      "delta": -0.03,
+      "delta_pct": -3.33,
+      "tol_m": 0.09,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.036,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 180,
+      "measured": 144,
+      "ok": true
+    },
+    {
+      "name": "material:barrel_stave",
+      "side": "blender",
+      "target": "barrel_stave",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:barrel_stave",
+      "side": "blender",
+      "target": "#8A5A33",
+      "measured": "#8A5A33",
+      "ok": true
+    },
+    {
+      "name": "material:barrel_band",
+      "side": "blender",
+      "target": "barrel_band",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:barrel_band",
+      "side": "blender",
+      "target": "#4A4A52",
+      "measured": "#4A4A52",
+      "ok": true
+    },
+    {
+      "target": 0.72,
+      "measured": 0.6943,
+      "delta": -0.0257,
+      "delta_pct": -3.57,
+      "tol_m": 0.072,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.72,
+      "measured": 0.73,
+      "delta": 0.01,
+      "delta_pct": 1.39,
+      "tol_m": 0.072,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.9,
+      "measured": 0.87,
+      "delta": -0.03,
+      "delta_pct": -3.33,
+      "tol_m": 0.09,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.036,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 180,
+      "measured": 144,
+      "ok": true
+    },
+    {
+      "name": "material:barrel_stave",
+      "side": "godot",
+      "target": "barrel_stave",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:barrel_stave",
+      "side": "godot",
+      "target": "#8A5A33",
+      "measured": "#8A5A33",
+      "ok": true
+    },
+    {
+      "name": "material:barrel_band",
+      "side": "godot",
+      "target": "barrel_band",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:barrel_band",
+      "side": "godot",
+      "target": "#4A4A52",
+      "measured": "#4A4A52",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "cylinder",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

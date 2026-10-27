@@ -1,0 +1,97 @@
+{
+	"animations": [],
+	"collision_flags": [
+		true
+	],
+	"collision_meta_keys": [
+		"extras"
+	],
+	"collision_meta_ok": true,
+	"collision_nodes": [
+		"rock_collision"
+	],
+	"dims_blender_equivalent": {
+		"x": 0.962388515472412,
+		"y": 0.851418256759644,
+		"z": 0.695533990859985
+	},
+	"dims_godot": {
+		"x": 0.962388515472412,
+		"y": 0.695533990859985,
+		"z": 0.851418256759644
+	},
+	"id": "rock",
+	"loaded": true,
+	"materials": [
+		{
+			"color": "#8C8C86",
+			"name": "rock_gray"
+		},
+		{
+			"color": "#7FB069",
+			"name": "rock_moss"
+		}
+	],
+	"node_count": 6,
+	"node_names": [
+		"rock2",
+		"rock",
+		"rock_side",
+		"rock_moss_top",
+		"rock_collision",
+		"rock_body"
+	],
+	"nodes_detail": [
+		{
+			"dims_godot": {
+				"x": 0.33414500951767,
+				"y": 0.385346859693527,
+				"z": 0.376860529184341
+			},
+			"name": "rock_side",
+			"pos": [
+				-0.481194257736206,
+				0.0,
+				-0.251188278198242
+			]
+		},
+		{
+			"dims_godot": {
+				"x": 0.722664356231689,
+				"y": 0.250463843345642,
+				"z": 0.633268356323242
+			},
+			"name": "rock_moss_top",
+			"pos": [
+				-0.241470098495483,
+				0.445070147514343,
+				-0.331269800662994
+			]
+		},
+		{
+			"dims_godot": {
+				"x": 0.748700618743896,
+				"y": 0.626216769218445,
+				"z": 0.851418256759644
+			},
+			"name": "rock_body",
+			"pos": [
+				-0.318641483783722,
+				0.00396361947059631,
+				-0.425709128379822
+			]
+		}
+	],
+	"origin": {
+		"min_y": 0.0,
+		"xy_center_offset": [
+			0.0,
+			0.0
+		]
+	},
+	"path": "res://assets/rock/rock.glb",
+	"tris": 60,
+	"tris_col": 20,
+	"visual_mesh_count": 3,
+	"warnings": []
+}

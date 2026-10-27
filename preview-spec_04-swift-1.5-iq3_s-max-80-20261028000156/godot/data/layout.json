@@ -1,0 +1,2385 @@
+{
+ "version": 1,
+ "seed": 20261028,
+ "units": "metres, Godot axes (x right, z toward camera, y up)",
+ "world": {
+  "play_half": 20.5,
+  "wall_half": 20.9,
+  "terrain_half": 22.0
+ },
+ "heightmap": "res://data/heightmap.json",
+ "player": {
+  "asset": "robot",
+  "speed_mps": 4.0,
+  "spawn": {
+   "x": 10.0,
+   "z": 13.0,
+   "facing_deg": 135
+  }
+ },
+ "coins": [
+  {
+   "index": 0,
+   "x": -9.0,
+   "z": 15.0,
+   "y_offset": 0.15,
+   "asset": "coin"
+  },
+  {
+   "index": 1,
+   "x": -14.0,
+   "z": -11.0,
+   "y_offset": 0.15,
+   "asset": "coin"
+  },
+  {
+   "index": 2,
+   "x": 10.5,
+   "z": -9.5,
+   "y_offset": 0.15,
+   "asset": "coin"
+  }
+ ],
+ "endpoint": {
+  "x": 0.0,
+  "z": -2.0,
+  "asset": "endpoint_flag"
+ },
+ "spawn": {
+  "x": 10.0,
+  "z": 13.0,
+  "facing_deg": 135
+ },
+ "pads": [
+  {
+   "id": "plaza_start",
+   "center": [
+    10.0,
+    13.0
+   ],
+   "size": [
+    7.0,
+    7.0
+   ],
+   "kind": "plaza"
+  },
+  {
+   "id": "pad_house_a",
+   "center": [
+    -12.0,
+    14.0
+   ],
+   "size": [
+    7.0,
+    7.0
+   ],
+   "kind": "building"
+  },
+  {
+   "id": "pad_house_b",
+   "center": [
+    -17.5,
+    6.0
+   ],
+   "size": [
+    7.0,
+    7.0
+   ],
+   "kind": "building"
+  },
+  {
+   "id": "pad_shrine",
+   "center": [
+    14.0,
+    -13.0
+   ],
+   "size": [
+    8.0,
+    8.0
+   ],
+   "kind": "building"
+  },
+  {
+   "id": "pad_arch",
+   "center": [
+    0.0,
+    -17.0
+   ],
+   "size": [
+    7.6,
+    3.4
+   ],
+   "kind": "building"
+  },
+  {
+   "id": "pad_endpoint",
+   "center": [
+    0.0,
+    -2.0
+   ],
+   "size": [
+    3.4,
+    3.4
+   ],
+   "kind": "plaza"
+  },
+  {
+   "id": "pad_coin_0",
+   "center": [
+    -9.0,
+    15.0
+   ],
+   "size": [
+    3.2,
+    3.2
+   ],
+   "kind": "coin"
+  },
+  {
+   "id": "pad_coin_1",
+   "center": [
+    -14.0,
+    -11.0
+   ],
+   "size": [
+    3.2,
+    3.2
+   ],
+   "kind": "coin"
+  },
+  {
+   "id": "pad_coin_2",
+   "center": [
+    10.5,
+    -9.5
+   ],
+   "size": [
+    3.2,
+    3.2
+   ],
+   "kind": "coin"
+  },
+  {
+   "id": "ring_north",
+   "center": [
+    0,
+    20.9
+   ],
+   "size": [
+    44.0,
+    3.6
+   ],
+   "kind": "wall"
+  },
+  {
+   "id": "ring_south",
+   "center": [
+    0,
+    -20.9
+   ],
+   "size": [
+    44.0,
+    3.6
+   ],
+   "kind": "wall"
+  },
+  {
+   "id": "ring_east",
+   "center": [
+    20.9,
+    0
+   ],
+   "size": [
+    3.6,
+    44.0
+   ],
+   "kind": "wall"
+  },
+  {
+   "id": "ring_west",
+   "center": [
+    -20.9,
+    0
+   ],
+   "size": [
+    3.6,
+    44.0
+   ],
+   "kind": "wall"
+  }
+ ],
+ "roads": [
+  [
+   [
+    10,
+    13
+   ],
+   [
+    2,
+    10
+   ],
+   [
+    -6,
+    8
+   ],
+   [
+    -12,
+    4
+   ],
+   [
+    -14,
+    -3
+   ],
+   [
+    -14,
+    -11
+   ],
+   [
+    -6,
+    -11
+   ],
+   [
+    4,
+    -10
+   ],
+   [
+    10.5,
+    -9.5
+   ],
+   [
+    11.5,
+    -10.5
+   ]
+  ],
+  [
+   [
+    -6,
+    8
+   ],
+   [
+    -9,
+    15
+   ]
+  ],
+  [
+   [
+    -2,
+    2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    2,
+    -6
+   ],
+   [
+    4,
+    -10
+   ]
+  ],
+  [
+   [
+    -14,
+    -3
+   ],
+   [
+    -15.5,
+    3.0
+   ]
+  ],
+  [
+   [
+    2,
+    10
+   ],
+   [
+    -7,
+    10
+   ]
+  ],
+  [
+   [
+    4,
+    -10
+   ],
+   [
+    0,
+    -17
+   ]
+  ]
+ ],
+ "routes": {
+  "bot": [
+   [
+    10,
+    13
+   ],
+   [
+    2,
+    10
+   ],
+   [
+    -6,
+    8
+   ],
+   [
+    -9,
+    15
+   ],
+   [
+    -6,
+    8
+   ],
+   [
+    -12,
+    4
+   ],
+   [
+    -14,
+    -3
+   ],
+   [
+    -14,
+    -11
+   ],
+   [
+    -6,
+    -11
+   ],
+   [
+    4,
+    -10
+   ],
+   [
+    10.5,
+    -9.5
+   ],
+   [
+    4,
+    -10
+   ],
+   [
+    2,
+    -6
+   ],
+   [
+    0,
+    -2
+   ]
+  ]
+ },
+ "fx": {
+  "sway_assets": [
+   "tree",
+   "bush"
+  ],
+  "sensor_assets": [
+   "bush"
+  ],
+  "wind": {
+   "tree": {
+    "strength_m": 0.07,
+    "ref_height_m": 3.0
+   },
+   "bush": {
+    "strength_m": 0.05,
+    "ref_height_m": 0.9
+   }
+  },
+  "coin_spin": true,
+  "cloud_drift": true,
+  "leaf_fall_mps": 1.2
+ },
+ "walls": [
+  {
+   "asset": "brick_wall",
+   "x": -19.5,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": -19.5,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -19.5,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": -19.5,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -15.6,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": -15.6,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -15.6,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": -15.6,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -11.7,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": -11.7,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -11.7,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": -11.7,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -7.800000000000001,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": -7.800000000000001,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -7.800000000000001,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": -7.800000000000001,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -3.9000000000000004,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": -3.9000000000000004,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -3.9000000000000004,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": -3.9000000000000004,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 0.0,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": 0.0,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 0.0,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": 0.0,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 3.8999999999999986,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": 3.8999999999999986,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 3.8999999999999986,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": 3.8999999999999986,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 7.800000000000001,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": 7.800000000000001,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 7.800000000000001,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": 7.800000000000001,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 11.7,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": 11.7,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 11.7,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": 11.7,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 15.600000000000001,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": 15.600000000000001,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 15.600000000000001,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": 15.600000000000001,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 19.5,
+   "z": -20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": -20.9,
+   "z": 19.5,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 19.5,
+   "z": 20.9,
+   "rot_deg": 0.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  },
+  {
+   "asset": "brick_wall",
+   "x": 20.9,
+   "z": 19.5,
+   "rot_deg": 90.0,
+   "radius": 2.0,
+   "col_r": 2.0,
+   "height": 3.2,
+   "mode": "body"
+  }
+ ],
+ "clouds": [
+  {
+   "x": -12.0,
+   "z": -16.0,
+   "y": 17.0,
+   "scale": 1.0,
+   "asset": "cloud",
+   "drift_mps": 0.35
+  },
+  {
+   "x": 6.0,
+   "z": 4.0,
+   "y": 18.5,
+   "scale": 0.8,
+   "asset": "cloud",
+   "drift_mps": 0.35
+  },
+  {
+   "x": 16.0,
+   "z": 12.0,
+   "y": 16.5,
+   "scale": 0.7,
+   "asset": "cloud",
+   "drift_mps": 0.35
+  },
+  {
+   "x": -18.0,
+   "z": 8.0,
+   "y": 17.5,
+   "scale": 0.9,
+   "asset": "cloud",
+   "drift_mps": 0.35
+  },
+  {
+   "x": 2.0,
+   "z": -20.0,
+   "y": 19.0,
+   "scale": 1.1,
+   "asset": "cloud",
+   "drift_mps": 0.35
+  },
+  {
+   "x": -4.0,
+   "z": 19.0,
+   "y": 17.0,
+   "scale": 0.75,
+   "asset": "cloud",
+   "drift_mps": 0.35
+  }
+ ],
+ "props": [
+  {
+   "id": "house",
+   "n": 1,
+   "x": -12.0,
+   "z": 14.0,
+   "rot_deg": 0.0,
+   "asset": "house",
+   "radius": 2.3,
+   "col_r": 2.3,
+   "height": 4.3,
+   "mode": "body"
+  },
+  {
+   "id": "house",
+   "n": 2,
+   "x": -17.5,
+   "z": 6.0,
+   "rot_deg": 90.0,
+   "asset": "house",
+   "radius": 2.3,
+   "col_r": 2.3,
+   "height": 4.3,
+   "mode": "body"
+  },
+  {
+   "id": "fantasy_shrine",
+   "n": 1,
+   "x": 14.0,
+   "z": -13.0,
+   "rot_deg": 0.0,
+   "asset": "fantasy_shrine",
+   "radius": 2.5,
+   "col_r": 2.5,
+   "height": 5.5,
+   "mode": "body"
+  },
+  {
+   "id": "fantasy_arch",
+   "n": 1,
+   "x": 0.0,
+   "z": -17.0,
+   "rot_deg": 0.0,
+   "gate": true,
+   "gap_half_m": 1.35,
+   "asset": "fantasy_arch",
+   "radius": 2.75,
+   "col_r": 2.717,
+   "height": 6.0,
+   "mode": "body"
+  },
+  {
+   "x": 7.0,
+   "z": 15.8,
+   "rot_deg": 12,
+   "id": "wooden_crate",
+   "n": 1,
+   "asset": "wooden_crate",
+   "radius": 0.4,
+   "col_r": 0.4,
+   "height": 0.8,
+   "mode": "body"
+  },
+  {
+   "x": 8.0,
+   "z": 15.8,
+   "rot_deg": -6,
+   "id": "wooden_crate",
+   "n": 2,
+   "asset": "wooden_crate",
+   "radius": 0.4,
+   "col_r": 0.4,
+   "height": 0.8,
+   "mode": "body"
+  },
+  {
+   "x": 7.5,
+   "z": 15.2,
+   "rot_deg": 24,
+   "y_offset": 0.8,
+   "id": "wooden_crate",
+   "n": 3,
+   "asset": "wooden_crate",
+   "radius": 0.4,
+   "col_r": 0.4,
+   "height": 0.8,
+   "mode": "body"
+  },
+  {
+   "x": -15.0,
+   "z": 11.0,
+   "rot_deg": 90,
+   "id": "wooden_crate",
+   "n": 4,
+   "asset": "wooden_crate",
+   "radius": 0.4,
+   "col_r": 0.4,
+   "height": 0.8,
+   "mode": "body"
+  },
+  {
+   "x": -15.0,
+   "z": 11.9,
+   "rot_deg": 96,
+   "y_offset": 0.8,
+   "id": "wooden_crate",
+   "n": 5,
+   "asset": "wooden_crate",
+   "radius": 0.4,
+   "col_r": 0.4,
+   "height": 0.8,
+   "mode": "body"
+  },
+  {
+   "x": -19.0,
+   "z": 9.0,
+   "rot_deg": 20,
+   "id": "wooden_crate",
+   "n": 6,
+   "asset": "wooden_crate",
+   "radius": 0.4,
+   "col_r": 0.4,
+   "height": 0.8,
+   "mode": "body"
+  },
+  {
+   "x": 11.0,
+   "z": -11.4,
+   "rot_deg": 45,
+   "id": "wooden_crate",
+   "n": 7,
+   "asset": "wooden_crate",
+   "radius": 0.4,
+   "col_r": 0.4,
+   "height": 0.8,
+   "mode": "body"
+  },
+  {
+   "x": -1.2,
+   "z": -3.3,
+   "rot_deg": 8,
+   "id": "wooden_crate",
+   "n": 8,
+   "asset": "wooden_crate",
+   "radius": 0.4,
+   "col_r": 0.4,
+   "height": 0.8,
+   "mode": "body"
+  },
+  {
+   "x": 12.6,
+   "z": 15.0,
+   "id": "barrel",
+   "n": 1,
+   "asset": "barrel",
+   "radius": 0.36,
+   "col_r": 0.36,
+   "height": 0.9,
+   "mode": "rigid"
+  },
+  {
+   "x": 13.0,
+   "z": 10.2,
+   "id": "barrel",
+   "n": 2,
+   "asset": "barrel",
+   "radius": 0.36,
+   "col_r": 0.36,
+   "height": 0.9,
+   "mode": "rigid"
+  },
+  {
+   "x": -15.2,
+   "z": 17.0,
+   "id": "barrel",
+   "n": 3,
+   "asset": "barrel",
+   "radius": 0.36,
+   "col_r": 0.36,
+   "height": 0.9,
+   "mode": "rigid"
+  },
+  {
+   "x": 10.6,
+   "z": -15.8,
+   "id": "barrel",
+   "n": 4,
+   "asset": "barrel",
+   "radius": 0.36,
+   "col_r": 0.36,
+   "height": 0.9,
+   "mode": "rigid"
+  },
+  {
+   "x": 1.4,
+   "z": -1.0,
+   "id": "barrel",
+   "n": 5,
+   "asset": "barrel",
+   "radius": 0.36,
+   "col_r": 0.36,
+   "height": 0.9,
+   "mode": "rigid"
+  },
+  {
+   "x": 9.0,
+   "z": -8.4,
+   "id": "barrel",
+   "n": 6,
+   "asset": "barrel",
+   "radius": 0.36,
+   "col_r": 0.36,
+   "height": 0.9,
+   "mode": "rigid"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 1,
+   "x": -9.06,
+   "z": -1.55,
+   "rot_deg": 84.0,
+   "label": "tree1",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 2,
+   "x": 12.51,
+   "z": 3.24,
+   "rot_deg": 279.6,
+   "label": "tree2",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 3,
+   "x": 4.18,
+   "z": 14.97,
+   "rot_deg": 333.4,
+   "label": "tree3",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 4,
+   "x": 12.42,
+   "z": 6.94,
+   "rot_deg": 70.6,
+   "label": "tree4",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 5,
+   "x": -16.94,
+   "z": 16.33,
+   "rot_deg": 124.8,
+   "label": "tree5",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 6,
+   "x": 9.07,
+   "z": 8.06,
+   "rot_deg": 291.0,
+   "label": "tree6",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 7,
+   "x": -4.37,
+   "z": -3.15,
+   "rot_deg": 248.3,
+   "label": "tree7",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 8,
+   "x": 15.17,
+   "z": 15.36,
+   "rot_deg": 342.6,
+   "label": "tree8",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 9,
+   "x": -17.05,
+   "z": 10.91,
+   "rot_deg": 290.1,
+   "label": "tree9",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 10,
+   "x": 6.4,
+   "z": 1.75,
+   "rot_deg": 299.7,
+   "label": "tree10",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 11,
+   "x": 15.79,
+   "z": -4.54,
+   "rot_deg": 309.6,
+   "label": "tree11",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 12,
+   "x": 12.15,
+   "z": -4.24,
+   "rot_deg": 77.7,
+   "label": "tree12",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 13,
+   "x": 15.31,
+   "z": 11.69,
+   "rot_deg": 191.1,
+   "label": "tree13",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 14,
+   "x": 7.08,
+   "z": -2.09,
+   "rot_deg": 72.5,
+   "label": "tree14",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 15,
+   "x": -7.13,
+   "z": -17.27,
+   "rot_deg": 170.5,
+   "label": "tree15",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 16,
+   "x": 8.6,
+   "z": 4.35,
+   "rot_deg": 184.8,
+   "label": "tree16",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 17,
+   "x": -7.66,
+   "z": 3.17,
+   "rot_deg": 80.3,
+   "label": "tree17",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 18,
+   "x": -2.48,
+   "z": -6.64,
+   "rot_deg": 59.0,
+   "label": "tree18",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 19,
+   "x": 5.74,
+   "z": -14.18,
+   "rot_deg": 127.6,
+   "label": "tree19",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 20,
+   "x": -5.23,
+   "z": -6.13,
+   "rot_deg": 286.8,
+   "label": "tree20",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 21,
+   "x": 8.22,
+   "z": -14.02,
+   "rot_deg": 57.8,
+   "label": "tree21",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "tree",
+   "asset": "tree",
+   "n": 22,
+   "x": -8.81,
+   "z": 0.78,
+   "rot_deg": 317.2,
+   "label": "tree22",
+   "occ": 0.32,
+   "height": 4.2,
+   "radius": 1.6,
+   "col_r": 0.32,
+   "mode": "body"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 1,
+   "x": 1.22,
+   "z": 11.46,
+   "rot_deg": 155.6,
+   "label": "bush1",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 2,
+   "x": 2.24,
+   "z": 17.7,
+   "rot_deg": 255.3,
+   "label": "bush2",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 3,
+   "x": 14.52,
+   "z": 9.84,
+   "rot_deg": 123.6,
+   "label": "bush3",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 4,
+   "x": -7.37,
+   "z": -4.32,
+   "rot_deg": 111.3,
+   "label": "bush4",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 5,
+   "x": -0.39,
+   "z": -5.49,
+   "rot_deg": 209.2,
+   "label": "bush5",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 6,
+   "x": -16.58,
+   "z": 13.58,
+   "rot_deg": 283.5,
+   "label": "bush6",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 7,
+   "x": -12.36,
+   "z": -8.46,
+   "rot_deg": 200.8,
+   "label": "bush7",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 8,
+   "x": -4.79,
+   "z": -12.22,
+   "rot_deg": 221.7,
+   "label": "bush8",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 9,
+   "x": 2.63,
+   "z": 1.33,
+   "rot_deg": 274.9,
+   "label": "bush9",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 10,
+   "x": 11.35,
+   "z": 0.1,
+   "rot_deg": 23.5,
+   "label": "bush10",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 11,
+   "x": -6.58,
+   "z": 1.31,
+   "rot_deg": 319.3,
+   "label": "bush11",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 12,
+   "x": 15.06,
+   "z": -2.03,
+   "rot_deg": 223.9,
+   "label": "bush12",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 13,
+   "x": 18.23,
+   "z": 7.61,
+   "rot_deg": 260.7,
+   "label": "bush13",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 14,
+   "x": 10.55,
+   "z": 18.23,
+   "rot_deg": 6.1,
+   "label": "bush14",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 15,
+   "x": 17.81,
+   "z": 5.32,
+   "rot_deg": 273.2,
+   "label": "bush15",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 16,
+   "x": -5.36,
+   "z": 0.15,
+   "rot_deg": 181.0,
+   "label": "bush16",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 17,
+   "x": -1.36,
+   "z": 8.03,
+   "rot_deg": 50.8,
+   "label": "bush17",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 18,
+   "x": 17.27,
+   "z": 2.53,
+   "rot_deg": 214.3,
+   "label": "bush18",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 19,
+   "x": 6.06,
+   "z": 6.94,
+   "rot_deg": 21.3,
+   "label": "bush19",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 20,
+   "x": 1.13,
+   "z": -12.49,
+   "rot_deg": 56.5,
+   "label": "bush20",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 21,
+   "x": -15.6,
+   "z": -4.45,
+   "rot_deg": 327.2,
+   "label": "bush21",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 22,
+   "x": 5.31,
+   "z": -11.92,
+   "rot_deg": 255.3,
+   "label": "bush22",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 23,
+   "x": -9.6,
+   "z": -6.14,
+   "rot_deg": 85.2,
+   "label": "bush23",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 24,
+   "x": 5.13,
+   "z": 8.58,
+   "rot_deg": 22.8,
+   "label": "bush24",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 25,
+   "x": 7.2,
+   "z": -15.7,
+   "rot_deg": 217.0,
+   "label": "bush25",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 26,
+   "x": -8.81,
+   "z": -16.13,
+   "rot_deg": 42.9,
+   "label": "bush26",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 27,
+   "x": 4.43,
+   "z": 2.81,
+   "rot_deg": 138.1,
+   "label": "bush27",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 28,
+   "x": -2.34,
+   "z": 5.54,
+   "rot_deg": 291.0,
+   "label": "bush28",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 29,
+   "x": 5.48,
+   "z": -6.8,
+   "rot_deg": 54.3,
+   "label": "bush29",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 30,
+   "x": 13.61,
+   "z": -3.05,
+   "rot_deg": 229.2,
+   "label": "bush30",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 31,
+   "x": 4.53,
+   "z": -7.87,
+   "rot_deg": 96.1,
+   "label": "bush31",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 32,
+   "x": -4.72,
+   "z": 12.47,
+   "rot_deg": 169.0,
+   "label": "bush32",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 33,
+   "x": -2.36,
+   "z": 14.47,
+   "rot_deg": 247.8,
+   "label": "bush33",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "bush",
+   "asset": "bush",
+   "n": 34,
+   "x": -8.79,
+   "z": 8.97,
+   "rot_deg": 227.6,
+   "label": "bush34",
+   "occ": 0.675,
+   "height": 1.05,
+   "radius": 0.675,
+   "col_r": 0.675,
+   "mode": "none"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 1,
+   "x": -1.53,
+   "z": 16.63,
+   "rot_deg": 249.9,
+   "label": "rock1",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 2,
+   "x": 0.8,
+   "z": 6.46,
+   "rot_deg": 284.3,
+   "label": "rock2",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 3,
+   "x": 16.1,
+   "z": 5.71,
+   "rot_deg": 74.8,
+   "label": "rock3",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 4,
+   "x": 16.75,
+   "z": -0.97,
+   "rot_deg": 161.8,
+   "label": "rock4",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 5,
+   "x": 7.07,
+   "z": -5.46,
+   "rot_deg": 287.0,
+   "label": "rock5",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 6,
+   "x": 10.21,
+   "z": 5.62,
+   "rot_deg": 242.5,
+   "label": "rock6",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 7,
+   "x": -4.29,
+   "z": 4.29,
+   "rot_deg": 277.1,
+   "label": "rock7",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 8,
+   "x": 8.6,
+   "z": 0.17,
+   "rot_deg": 310.0,
+   "label": "rock8",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 9,
+   "x": -11.61,
+   "z": -16.52,
+   "rot_deg": 56.6,
+   "label": "rock9",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 10,
+   "x": 0.46,
+   "z": 4.6,
+   "rot_deg": 67.6,
+   "label": "rock10",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 11,
+   "x": -12.57,
+   "z": -14.04,
+   "rot_deg": 344.0,
+   "label": "rock11",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 12,
+   "x": -17.8,
+   "z": 17.72,
+   "rot_deg": 103.0,
+   "label": "rock12",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 13,
+   "x": -17.03,
+   "z": -6.47,
+   "rot_deg": 111.6,
+   "label": "rock13",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 14,
+   "x": 12.86,
+   "z": 1.54,
+   "rot_deg": 270.6,
+   "label": "rock14",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 15,
+   "x": -15.46,
+   "z": -14.3,
+   "rot_deg": 10.8,
+   "label": "rock15",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  },
+  {
+   "id": "rock",
+   "asset": "rock",
+   "n": 16,
+   "x": -9.92,
+   "z": -4.29,
+   "rot_deg": 307.4,
+   "label": "rock16",
+   "occ": 0.475,
+   "height": 0.7,
+   "radius": 0.475,
+   "col_r": 0.475,
+   "mode": "body"
+  }
+ ],
+ "assets": {
+  "probe_box": {
+   "collision": {
+    "mode": "body",
+    "shape": "mesh",
+    "note": "測試 mesh 碰撞可用（Phase 1.6 已驗證 extras 送達）"
+   },
+   "dims_m": {
+    "x": 0.6,
+    "y": 0.6,
+    "z": 0.6
+   },
+   "animations": []
+  },
+  "coin": {
+   "collision": {
+    "mode": "sensor",
+    "shape": "box",
+    "size_m": [
+     0.5,
+     0.2,
+     0.5
+    ],
+    "note": "收集判定體"
+   },
+   "dims_m": {
+    "x": 0.42,
+    "y": 0.07,
+    "z": 0.42
+   },
+   "animations": []
+  },
+  "bush": {
+   "collision": {
+    "mode": "none",
+    "note": "必須可穿過；Godot 端用 Area3D 觸發搖晃"
+   },
+   "dims_m": {
+    "x": 1.35,
+    "y": 1.3,
+    "z": 1.05
+   },
+   "animations": []
+  },
+  "house": {
+   "collision": {
+    "mode": "body",
+    "shape": "box",
+    "size_m": [
+     4.6,
+     4.6,
+     4.3
+    ],
+    "note": "整棟方盒阻擋"
+   },
+   "dims_m": {
+    "x": 4.6,
+    "y": 4.6,
+    "z": 4.3
+   },
+   "animations": []
+  },
+  "cloud": {
+   "collision": {
+    "mode": "none",
+    "note": "不參與物理"
+   },
+   "dims_m": {
+    "x": 6.3,
+    "y": 3.95,
+    "z": 1.88
+   },
+   "animations": []
+  },
+  "terrain": {
+   "collision": {
+    "mode": "body",
+    "shape": "heightfield",
+    "step_m": 1.0,
+    "size_m": [
+     44.0,
+     44.0
+    ],
+    "heightmap": "res://data/heightmap.json",
+    "thickness_m": 0.4,
+    "note": "地表是高度場：Godot 端由 WorldBuilder 用 heightmap.json 建 HeightMapShape3D（坡面平緩，機器人爬得上去）"
+   },
+   "dims_m": {
+    "x": 44.0,
+    "y": 44.0,
+    "z": 3.62
+   },
+   "animations": []
+  },
+  "wooden_crate": {
+   "collision": {
+    "mode": "body",
+    "shape": "box",
+    "size_m": [
+     0.8,
+     0.8,
+     0.8
+    ],
+    "note": "固定障礙，可堆疊"
+   },
+   "dims_m": {
+    "x": 0.8,
+    "y": 0.8,
+    "z": 0.8
+   },
+   "animations": []
+  },
+  "endpoint_flag": {
+   "collision": {
+    "mode": "sensor",
+    "shape": "cylinder",
+    "radius_m": 0.8,
+    "height_m": 3.6,
+    "note": "觸碰範圍以旗桿為軸"
+   },
+   "dims_m": {
+    "x": 1.1,
+    "y": 0.46,
+    "z": 3.6
+   },
+   "animations": []
+  },
+  "rock": {
+   "collision": {
+    "mode": "body",
+    "shape": "mesh",
+    "note": "不規則外形 → Blender 建 <id>_collision（icosphere 凸包）"
+   },
+   "dims_m": {
+    "x": 0.95,
+    "y": 0.85,
+    "z": 0.7
+   },
+   "animations": []
+  },
+  "barrel": {
+   "collision": {
+    "mode": "rigid",
+    "shape": "cylinder",
+    "radius_m": 0.36,
+    "height_m": 0.9,
+    "note": "Godot RigidBody3D，可被推"
+   },
+   "dims_m": {
+    "x": 0.72,
+    "y": 0.72,
+    "z": 0.9
+   },
+   "animations": []
+  },
+  "brick_wall": {
+   "collision": {
+    "mode": "body",
+    "shape": "box",
+    "size_m": [
+     4.0,
+     0.75,
+     3.2
+    ],
+    "note": "角色走不出去"
+   },
+   "dims_m": {
+    "x": 4.0,
+    "y": 0.75,
+    "z": 3.2
+   },
+   "animations": []
+  },
+  "fantasy_arch": {
+   "collision": {
+    "mode": "body",
+    "shape": "box_pair",
+    "boxes": [
+     {
+      "size_m": [
+       1.2,
+       1.2,
+       4.6
+      ],
+      "offset_m": [
+       -2.05,
+       0,
+       2.3
+      ]
+     },
+     {
+      "size_m": [
+       1.2,
+       1.2,
+       4.6
+      ],
+      "offset_m": [
+       2.05,
+       0,
+       2.3
+      ]
+     }
+    ],
+    "note": "兩側柱阻擋，中央 3 m 可通行"
+   },
+   "dims_m": {
+    "x": 5.5,
+    "y": 1.3,
+    "z": 6.0
+   },
+   "animations": []
+  },
+  "tree": {
+   "collision": {
+    "mode": "body",
+    "shape": "cylinder",
+    "radius_m": 0.32,
+    "height_m": 1.7,
+    "offset_m": [
+     0,
+     0,
+     0.85
+    ],
+    "note": "只有樹幹擋人"
+   },
+   "dims_m": {
+    "x": 3.2,
+    "y": 3.2,
+    "z": 4.2
+   },
+   "animations": []
+  },
+  "robot": {
+   "collision": {
+    "mode": "body",
+    "shape": "capsule",
+    "radius_m": 0.31,
+    "height_m": 1.05,
+    "note": "CharacterBody3D 膠囊"
+   },
+   "dims_m": {
+    "x": 0.62,
+    "y": 0.62,
+    "z": 1.05
+   },
+   "animations": [
+    {
+     "name": "wheel_roll",
+     "fps": 30,
+     "frames": 24,
+     "target": "robot_wheel",
+     "note": "輪子繞自身 X 軸轉 360 度；Godot 端由速度驅動播放速度"
+    }
+   ]
+  },
+  "fantasy_shrine": {
+   "collision": {
+    "mode": "body",
+    "shape": "box",
+    "size_m": [
+     5.0,
+     5.0,
+     5.5
+    ],
+    "note": "台基與主體阻擋"
+   },
+   "dims_m": {
+    "x": 5.0,
+    "y": 5.0,
+    "z": 5.5
+   },
+   "animations": []
+  }
+ }
+}

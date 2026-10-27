@@ -1,0 +1,29 @@
+{
+  "id": "probe_box",
+  "title": "管線探測箱",
+  "intent": "只用於驗證 規格→建模→匯出→匯入→檢查 迴圈，不屬於遊戲資產",
+  "pipeline_probe": true,
+  "dims_m": {
+    "x": 0.6,
+    "y": 0.6,
+    "z": 0.6
+  },
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "tris_max": 40,
+  "origin": "bottom_center",
+  "collision": {
+    "mode": "body",
+    "shape": "mesh",
+    "note": "測試 mesh 碰撞可用（Phase 1.6 已驗證 extras 送達）"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "probe_box_wood",
+      "color": "#8A5A33",
+      "flat": true
+    }
+  ],
+  "notes": "12 面立方體，倒角可省略；用於 Phase 1.6 首次 Godot 匯入"
+}

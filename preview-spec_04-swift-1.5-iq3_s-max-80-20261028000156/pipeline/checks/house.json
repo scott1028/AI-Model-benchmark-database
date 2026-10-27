@@ -1,0 +1,216 @@
+{
+  "id": "house",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:28",
+  "spec": "specs/house.json",
+  "measurements": [
+    {
+      "target": 4.6,
+      "measured": 4.7,
+      "delta": 0.1,
+      "delta_pct": 2.17,
+      "tol_m": 0.46,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 4.6,
+      "measured": 4.7,
+      "delta": 0.1,
+      "delta_pct": 2.17,
+      "tol_m": 0.46,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 4.3,
+      "measured": 4.345,
+      "delta": 0.045,
+      "delta_pct": 1.05,
+      "tol_m": 0.43,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.23,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 360,
+      "measured": 174,
+      "ok": true
+    },
+    {
+      "name": "material:house_wall",
+      "side": "blender",
+      "target": "house_wall",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:house_wall",
+      "side": "blender",
+      "target": "#E8DCC4",
+      "measured": "#E8DCC4",
+      "ok": true
+    },
+    {
+      "name": "material:house_roof",
+      "side": "blender",
+      "target": "house_roof",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:house_roof",
+      "side": "blender",
+      "target": "#B5563C",
+      "measured": "#B5563C",
+      "ok": true
+    },
+    {
+      "name": "material:house_wood",
+      "side": "blender",
+      "target": "house_wood",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:house_wood",
+      "side": "blender",
+      "target": "#5B4632",
+      "measured": "#5B4632",
+      "ok": true
+    },
+    {
+      "target": 4.6,
+      "measured": 4.7,
+      "delta": 0.1,
+      "delta_pct": 2.17,
+      "tol_m": 0.46,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 4.6,
+      "measured": 4.7,
+      "delta": 0.1,
+      "delta_pct": 2.17,
+      "tol_m": 0.46,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 4.3,
+      "measured": 4.345,
+      "delta": 0.045,
+      "delta_pct": 1.05,
+      "tol_m": 0.43,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.23,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 360,
+      "measured": 174,
+      "ok": true
+    },
+    {
+      "name": "material:house_wall",
+      "side": "godot",
+      "target": "house_wall",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:house_wall",
+      "side": "godot",
+      "target": "#E8DCC4",
+      "measured": "#E8DCC4",
+      "ok": true
+    },
+    {
+      "name": "material:house_roof",
+      "side": "godot",
+      "target": "house_roof",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:house_roof",
+      "side": "godot",
+      "target": "#B5563C",
+      "measured": "#B5563C",
+      "ok": true
+    },
+    {
+      "name": "material:house_wood",
+      "side": "godot",
+      "target": "house_wood",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:house_wood",
+      "side": "godot",
+      "target": "#5B4632",
+      "measured": "#5B4632",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "box",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

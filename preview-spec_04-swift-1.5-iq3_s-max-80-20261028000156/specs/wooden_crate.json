@@ -1,0 +1,43 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "wooden_crate",
+  "title": "木箱",
+  "intent": "與箱庭風格搭配的木箱",
+  "dims_m": {
+    "x": 0.8,
+    "y": 0.8,
+    "z": 0.8
+  },
+  "tris_max": 160,
+  "collision": {
+    "mode": "body",
+    "shape": "box",
+    "size_m": [
+      0.8,
+      0.8,
+      0.8
+    ],
+    "note": "固定障礙，可堆疊"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "crate_board",
+      "color": "#8A5A33",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "crate_frame",
+      "color": "#5B4632",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": true
+  },
+  "notes": "板條加框角，風格與房子木材一致"
+}

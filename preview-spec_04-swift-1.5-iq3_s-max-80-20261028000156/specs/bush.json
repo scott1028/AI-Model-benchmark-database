@@ -1,0 +1,39 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "bush",
+  "title": "草叢",
+  "intent": "一叢灌木，機器人可穿過",
+  "dims_m": {
+    "x": 1.35,
+    "y": 1.3,
+    "z": 1.05
+  },
+  "tris_max": 260,
+  "collision": {
+    "mode": "none",
+    "note": "必須可穿過；Godot 端用 Area3D 觸發搖晃"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "bush_leaf",
+      "color": "#4E8C3A",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "bush_leaf_light",
+      "color": "#6FAE4C",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": false,
+    "wind_sway": true,
+    "sway_on_pass": true
+  },
+  "notes": "4~5 顆低模球聚成叢，底部不留空洞"
+}

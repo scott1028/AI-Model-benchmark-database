@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/world_builder.gd" id="2_world"]
+[ext_resource type="Script" path="res://scripts/atmosphere.gd" id="3_atmo"]
+[ext_resource type="Script" path="res://scripts/cam_rig.gd" id="4_cam"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="5_player"]
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="World" type="Node3D" parent="."]
+script = ExtResource("2_world")
+
+[node name="Atmosphere" type="Node3D" parent="."]
+script = ExtResource("3_atmo")
+
+[node name="Camera" type="Camera3D" parent="."]
+script = ExtResource("4_cam")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+script = ExtResource("5_player")

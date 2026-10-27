@@ -1,0 +1,104 @@
+{
+  "id": "terrain",
+  "title": "箱庭地塊",
+  "intent": "整個關卡的浮空地塊：起伏地表 + 道路/廣場 + 三層土層側裙",
+  "dims_m": {
+    "x": 44.0,
+    "y": 44.0,
+    "z": 3.62
+  },
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 5,
+  "tris_max": 6000,
+  "origin": "bottom_center",
+  "collision": {
+    "mode": "body",
+    "shape": "heightfield",
+    "step_m": 1.0,
+    "size_m": [
+      44.0,
+      44.0
+    ],
+    "heightmap": "res://data/heightmap.json",
+    "thickness_m": 0.4,
+    "note": "地表是高度場：Godot 端由 WorldBuilder 用 heightmap.json 建 HeightMapShape3D（坡面平緩，機器人爬得上去）"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "terrain_grass_light",
+      "color": "#6FAE4C",
+      "flat": true
+    },
+    {
+      "name": "terrain_grass_mid",
+      "color": "#4E8C3A",
+      "flat": true
+    },
+    {
+      "name": "terrain_grass_dark",
+      "color": "#3E7330",
+      "flat": true
+    },
+    {
+      "name": "terrain_road",
+      "color": "#C8A97E",
+      "flat": true
+    },
+    {
+      "name": "terrain_plaza",
+      "color": "#DCCFAF",
+      "flat": true
+    },
+    {
+      "name": "terrain_soil_top",
+      "color": "#7A5B3A",
+      "flat": true
+    },
+    {
+      "name": "terrain_soil_mid",
+      "color": "#6A4A2E",
+      "flat": true
+    },
+    {
+      "name": "terrain_rock",
+      "color": "#8C8C86",
+      "flat": true
+    }
+  ],
+  "gameplay": {
+    "walkable": true,
+    "player_cannot_leave": true
+  },
+  "build": {
+    "half_m": 22.0,
+    "step_m": 1.0,
+    "skirt_m": 3.2,
+    "bands": [
+      [
+        0.35,
+        0.95
+      ],
+      [
+        0.85,
+        2.05
+      ],
+      [
+        1.3,
+        3.2
+      ]
+    ],
+    "colors": {
+      "grass_light": "#6FAE4C",
+      "grass_mid": "#4E8C3A",
+      "grass_dark": "#3E7330",
+      "road": "#C8A97E",
+      "plaza": "#DCCFAF",
+      "soil_top": "#7A5B3A",
+      "soil_mid": "#6A4A2E",
+      "rock_side": "#8C8C86"
+    },
+    "note": "由 tools/blender_terrain.py 依 godot/data/layout.json 的高度場生成；改版面 → 重跑此腳本即可重現"
+  },
+  "notes": "44×44 m 地塊（可活動區 40×40 在內），1 m 網格起伏、四周被牆環壓平在 y=0；側裙三層土層（表土/黏土/岩）做出桌上模型感；底面平整。z = 側裙 3.2 + 地表最高點 0.42（地塊邊緣因牆環压平在 0，所以 z 由側裙深度加地表隆起）"
+}

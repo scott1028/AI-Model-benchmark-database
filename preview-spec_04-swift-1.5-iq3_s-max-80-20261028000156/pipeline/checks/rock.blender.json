@@ -1,0 +1,113 @@
+{
+  "id": "rock",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/rock.blend",
+  "top_level_objects": [
+    "rock"
+  ],
+  "visual_objects": [
+    "rock_body",
+    "rock_moss_top",
+    "rock_side"
+  ],
+  "parts_detail": [
+    {
+      "name": "rock_body",
+      "dims": {
+        "x": 0.7487,
+        "y": 0.8514,
+        "z": 0.6262
+      },
+      "min": [
+        -0.3186,
+        -0.4257,
+        0.004
+      ],
+      "max": [
+        0.4301,
+        0.4257,
+        0.6302
+      ]
+    },
+    {
+      "name": "rock_moss_top",
+      "dims": {
+        "x": 0.7227,
+        "y": 0.6333,
+        "z": 0.2505
+      },
+      "min": [
+        -0.2415,
+        -0.302,
+        0.4451
+      ],
+      "max": [
+        0.4812,
+        0.3313,
+        0.6955
+      ]
+    },
+    {
+      "name": "rock_side",
+      "dims": {
+        "x": 0.3341,
+        "y": 0.3769,
+        "z": 0.3853
+      },
+      "min": [
+        -0.4812,
+        -0.1257,
+        0.0
+      ],
+      "max": [
+        -0.147,
+        0.2512,
+        0.3853
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 0.9623885154724121,
+    "y": 0.8514182567596436,
+    "z": 0.6955339908599854
+  },
+  "bbox_min": [
+    -0.48119425773620605,
+    -0.4257091283798218,
+    0.0
+  ],
+  "bbox_max": [
+    0.48119425773620605,
+    0.4257091283798218,
+    0.6955339908599854
+  ],
+  "tris_visual": 60,
+  "tris_col": 20,
+  "origin": {
+    "min_z": 0.0,
+    "xy_center_offset": [
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "rock_gray",
+      "color": "#8C8C86"
+    },
+    {
+      "name": "rock_moss",
+      "color": "#7FB069"
+    }
+  ],
+  "collision": {
+    "present": true,
+    "names": [
+      "rock_collision"
+    ],
+    "flag_ok": true,
+    "hide_render": true
+  },
+  "animations": [],
+  "scene_fps": 30
+}

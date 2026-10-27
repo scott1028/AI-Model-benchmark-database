@@ -1,0 +1,188 @@
+{
+  "id": "bush",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:33",
+  "spec": "specs/bush.json",
+  "measurements": [
+    {
+      "target": 1.35,
+      "measured": 1.4779,
+      "delta": 0.1279,
+      "delta_pct": 9.47,
+      "tol_m": 0.135,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 1.3,
+      "measured": 1.2051,
+      "delta": -0.0949,
+      "delta_pct": -7.3,
+      "tol_m": 0.13,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 1.05,
+      "measured": 1.0803,
+      "delta": 0.0303,
+      "delta_pct": 2.89,
+      "tol_m": 0.105,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.0675,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 260,
+      "measured": 100,
+      "ok": true
+    },
+    {
+      "name": "material:bush_leaf",
+      "side": "blender",
+      "target": "bush_leaf",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:bush_leaf",
+      "side": "blender",
+      "target": "#4E8C3A",
+      "measured": "#4E8C3A",
+      "ok": true
+    },
+    {
+      "name": "material:bush_leaf_light",
+      "side": "blender",
+      "target": "bush_leaf_light",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:bush_leaf_light",
+      "side": "blender",
+      "target": "#6FAE4C",
+      "measured": "#6FAE4C",
+      "ok": true
+    },
+    {
+      "target": 1.35,
+      "measured": 1.4779,
+      "delta": 0.1279,
+      "delta_pct": 9.47,
+      "tol_m": 0.135,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 1.3,
+      "measured": 1.2051,
+      "delta": -0.0949,
+      "delta_pct": -7.3,
+      "tol_m": 0.13,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 1.05,
+      "measured": 1.0803,
+      "delta": 0.0303,
+      "delta_pct": 2.89,
+      "tol_m": 0.105,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.0675,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 260,
+      "measured": 100,
+      "ok": true
+    },
+    {
+      "name": "material:bush_leaf",
+      "side": "godot",
+      "target": "bush_leaf",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:bush_leaf",
+      "side": "godot",
+      "target": "#4E8C3A",
+      "measured": "#4E8C3A",
+      "ok": true
+    },
+    {
+      "name": "material:bush_leaf_light",
+      "side": "godot",
+      "target": "bush_leaf_light",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:bush_leaf_light",
+      "side": "godot",
+      "target": "#6FAE4C",
+      "measured": "#6FAE4C",
+      "ok": true
+    },
+    {
+      "name": "collision",
+      "side": "spec",
+      "target": "none",
+      "measured": "no collider required",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

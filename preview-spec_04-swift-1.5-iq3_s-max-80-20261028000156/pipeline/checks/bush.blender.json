@@ -1,0 +1,149 @@
+{
+  "id": "bush",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/bush.blend",
+  "top_level_objects": [
+    "bush"
+  ],
+  "visual_objects": [
+    "bush_front",
+    "bush_left",
+    "bush_main",
+    "bush_right",
+    "bush_top"
+  ],
+  "parts_detail": [
+    {
+      "name": "bush_main",
+      "dims": {
+        "x": 1.1123,
+        "y": 0.9812,
+        "z": 0.9126
+      },
+      "min": [
+        -0.5104,
+        -0.6025,
+        0.0102
+      ],
+      "max": [
+        0.6019,
+        0.3787,
+        0.9228
+      ]
+    },
+    {
+      "name": "bush_left",
+      "dims": {
+        "x": 0.6553,
+        "y": 0.6436,
+        "z": 0.6977
+      },
+      "min": [
+        -0.739,
+        -0.3498,
+        0.0
+      ],
+      "max": [
+        -0.0837,
+        0.2939,
+        0.6977
+      ]
+    },
+    {
+      "name": "bush_right",
+      "dims": {
+        "x": 0.6016,
+        "y": 0.6135,
+        "z": 0.6674
+      },
+      "min": [
+        0.1374,
+        -0.5459,
+        0.0211
+      ],
+      "max": [
+        0.739,
+        0.0676,
+        0.6885
+      ]
+    },
+    {
+      "name": "bush_front",
+      "dims": {
+        "x": 0.5152,
+        "y": 0.5286,
+        "z": 0.6109
+      },
+      "min": [
+        -0.1451,
+        0.0739,
+        0.0202
+      ],
+      "max": [
+        0.3702,
+        0.6025,
+        0.631
+      ]
+    },
+    {
+      "name": "bush_top",
+      "dims": {
+        "x": 0.5668,
+        "y": 0.5187,
+        "z": 0.4707
+      },
+      "min": [
+        -0.18,
+        -0.4209,
+        0.6096
+      ],
+      "max": [
+        0.3868,
+        0.0978,
+        1.0803
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 1.4779021739959717,
+    "y": 1.2050590515136719,
+    "z": 1.0803377628326416
+  },
+  "bbox_min": [
+    -0.7389510869979858,
+    -0.6025295257568359,
+    0.0
+  ],
+  "bbox_max": [
+    0.7389510869979858,
+    0.6025295257568359,
+    1.0803377628326416
+  ],
+  "tris_visual": 100,
+  "tris_col": 0,
+  "origin": {
+    "min_z": 0.0,
+    "xy_center_offset": [
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "bush_leaf",
+      "color": "#4E8C3A"
+    },
+    {
+      "name": "bush_leaf_light",
+      "color": "#6FAE4C"
+    }
+  ],
+  "collision": {
+    "present": false,
+    "names": [],
+    "flag_ok": false,
+    "hide_render": false
+  },
+  "animations": [],
+  "scene_fps": 30
+}

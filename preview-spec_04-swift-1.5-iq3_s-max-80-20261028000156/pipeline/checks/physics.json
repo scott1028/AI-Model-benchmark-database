@@ -1,0 +1,319 @@
+{
+  "test": "physics",
+  "pass": true,
+  "ts": "2026-10-28T01:10:59",
+  "results": [
+    {
+      "id": "top_speed",
+      "ok": true,
+      "measured": 3.99,
+      "threshold": {
+        "id": "top_speed",
+        "op": "range",
+        "value": 3.6,
+        "value_max": 4.5,
+        "why": "需求表：時速 4 m/s；上下留 10% 給坡度與重力貼地"
+      },
+      "note": "measured with the real terrain + wall ring"
+    },
+    {
+      "id": "accel_time_s",
+      "ok": true,
+      "measured": 0.667,
+      "threshold": {
+        "id": "accel_time_s",
+        "op": "max",
+        "value": 1.2,
+        "why": "accel 6.5 m/s² → 0→4 m/s 理論 0.62 s；上限 1.2 s 代表起步不拖泥帶水，同時保留慣性（不可瞬時到速）"
+      },
+      "note": "0 -> 95% of 4.0 m/s"
+    },
+    {
+      "id": "boost_speed",
+      "ok": true,
+      "measured": 6.384,
+      "threshold": {
+        "id": "boost_speed",
+        "op": "range",
+        "value": 5.8,
+        "value_max": 7.4,
+        "why": "boost 倍率 1.6 × 4 = 6.4 m/s"
+      },
+      "note": "boost multiplier 1.6 x top speed"
+    },
+    {
+      "id": "wheel_rps",
+      "ok": true,
+      "measured": 2.54,
+      "threshold": {
+        "id": "wheel_rps",
+        "op": "range",
+        "value": 2.2,
+        "value_max": 2.9,
+        "why": "輪半徑 0.25 m，周長 1.571 m → 4 m/s 應轉 2.55 rev/s（輪子不打滑＝動畫與速度綁定）"
+      },
+      "note": "expected 2.55 rev/s at 4.0 m/s (wheel radius 0.25 m)"
+    },
+    {
+      "id": "brake_stop_m",
+      "ok": true,
+      "measured": 0.625,
+      "threshold": {
+        "id": "brake_stop_m",
+        "op": "max",
+        "value": 1.5,
+        "why": "brake 減速 12 m/s² → 4 m/s 煞停理論 0.67 m；1.5 m 是「煞得下來但不會瞬间定住（保留慣性）」的上限"
+      },
+      "note": "full speed -> standstill while braking"
+    },
+    {
+      "id": "inertia_slide_m",
+      "ok": true,
+      "measured": 1.937,
+      "threshold": {
+        "id": "inertia_slide_m",
+        "op": "range",
+        "value": 1.0,
+        "value_max": 3.5,
+        "why": "放開方向鍵後靠摩擦力（4 m/s²）滑行，理論 2.0 m；下限證明有慣性，上限證明不會溜太遠"
+      },
+      "note": "distance coasted after releasing the controls at full speed"
+    },
+    {
+      "id": "jump_height_m",
+      "ok": true,
+      "measured": 0.907,
+      "threshold": {
+        "id": "jump_height_m",
+        "op": "range",
+        "value": 0.6,
+        "value_max": 1.6,
+        "why": "jump 5.2 m/s、重力 9.8×1.6=15.68 → 0.86 m；要跳得過草叢（1.05 m 高）附近的起伏，又不能飛太高破壞箱庭感"
+      },
+      "note": "apex above the launch height"
+    },
+    {
+      "id": "lean_rad",
+      "ok": true,
+      "measured": 0.302,
+      "threshold": {
+        "id": "lean_rad",
+        "op": "range",
+        "value": 0.15,
+        "value_max": 0.55,
+        "why": "需求表：加速時身傾斜。設計值 0.16 + boost 0.11 = 0.27 rad（約 15°）"
+      },
+      "note": "body lean while boosting at speed"
+    },
+    {
+      "id": "barrel_push_m",
+      "ok": true,
+      "measured": 2.947,
+      "threshold": {
+        "id": "barrel_push_m",
+        "op": "min",
+        "value": 0.8,
+        "why": "需求表：木桶可被推。推 3 秒要明顯位移（≥0.8 m），但不能一碰就飛走"
+      },
+      "note": "barrel barrel1_body slid after being pushed"
+    },
+    {
+      "id": "tree_sway_m",
+      "ok": true,
+      "measured": 0.296,
+      "threshold": {
+        "id": "tree_sway_m",
+        "op": "min",
+        "value": 0.25,
+        "why": "需求表：撞樹會搖晃。撞擊 gust 設計 0.30 m 擺幅，衰減 0.55/s"
+      },
+      "note": "wind gust amplitude added to tree1 by the hit"
+    },
+    {
+      "id": "leaf_bursts",
+      "ok": true,
+      "measured": 3.0,
+      "threshold": {
+        "id": "leaf_bursts",
+        "op": "min",
+        "value": 1,
+        "why": "需求表：撞樹掉葉。至少一次落葉爆發"
+      },
+      "note": "leaf bursts from tree1 after the hit"
+    },
+    {
+      "id": "bush_sway_m",
+      "ok": true,
+      "measured": 0.256,
+      "threshold": {
+        "id": "bush_sway_m",
+        "op": "min",
+        "value": 0.2,
+        "why": "需求表：草叢要可穿過且穿過時會晃（brush gust 0.26 m）"
+      },
+      "note": "gust amplitude on bush1 after the robot pushed through (bush is passable)"
+    },
+    {
+      "id": "climb_slope",
+      "ok": true,
+      "measured": 0.218,
+      "threshold": {
+        "id": "climb_slope",
+        "op": "min",
+        "value": 0.18,
+        "why": "地形 1 m 網格最大坡度實測 0.218 m/m（12.3°）；機器人要爬得上全圖最陡處"
+      },
+      "note": "steepest 1 m terrain gradient the robot climbed"
+    },
+    {
+      "id": "climb_progress_m",
+      "ok": true,
+      "measured": 11.714,
+      "threshold": {
+        "id": "climb_progress_m",
+        "op": "min",
+        "value": 2.5,
+        "why": "爬坡測試要真的前進（不是頂在坡上），至少 2.5 m"
+      },
+      "note": "distance covered climbing that slope"
+    },
+    {
+      "id": "wall_overflow_m",
+      "ok": true,
+      "measured": 0.0,
+      "threshold": {
+        "id": "wall_overflow_m",
+        "op": "max",
+        "value": 0.0,
+        "why": "需求表：角色走不出去。boost 全速撞牆後，最遠位置不可超過 40×40 可活動範圍"
+      },
+      "note": "how far the robot got past the 40x40 m play area (0 = contained)"
+    }
+  ],
+  "unexpected_ids": [],
+  "errors": [],
+  "raw_rows": [
+    {
+      "id": "top_speed",
+      "measured": 3.99,
+      "note": "measured with the real terrain + wall ring",
+      "unit": "m/s"
+    },
+    {
+      "id": "accel_time_s",
+      "measured": 0.667,
+      "note": "0 -> 95% of 4.0 m/s",
+      "unit": "s"
+    },
+    {
+      "id": "boost_speed",
+      "measured": 6.384,
+      "note": "boost multiplier 1.6 x top speed",
+      "unit": "m/s"
+    },
+    {
+      "id": "lean_rad",
+      "measured": 0.302,
+      "note": "body lean while boosting at speed",
+      "unit": "rad"
+    },
+    {
+      "id": "wheel_rps",
+      "measured": 2.54,
+      "note": "expected 2.55 rev/s at 4.0 m/s (wheel radius 0.25 m)",
+      "unit": "rev/s"
+    },
+    {
+      "id": "brake_stop_m",
+      "measured": 0.625,
+      "note": "full speed -> standstill while braking",
+      "unit": "m"
+    },
+    {
+      "id": "inertia_slide_m",
+      "measured": 1.937,
+      "note": "distance coasted after releasing the controls at full speed",
+      "unit": "m"
+    },
+    {
+      "id": "jump_height_m",
+      "measured": 0.907,
+      "note": "apex above the launch height",
+      "unit": "m"
+    },
+    {
+      "id": "barrel_push_m",
+      "measured": 2.947,
+      "note": "barrel barrel1_body slid after being pushed",
+      "unit": "m"
+    },
+    {
+      "id": "tree_sway_m",
+      "measured": 0.296,
+      "note": "wind gust amplitude added to tree1 by the hit",
+      "unit": "m"
+    },
+    {
+      "id": "leaf_bursts",
+      "measured": 3.0,
+      "note": "leaf bursts from tree1 after the hit",
+      "unit": "count"
+    },
+    {
+      "id": "bush_sway_m",
+      "measured": 0.256,
+      "note": "gust amplitude on bush1 after the robot pushed through (bush is passable)",
+      "unit": "m"
+    },
+    {
+      "id": "climb_slope",
+      "measured": 0.218,
+      "note": "steepest 1 m terrain gradient the robot climbed",
+      "unit": "m/m"
+    },
+    {
+      "id": "climb_progress_m",
+      "measured": 11.714,
+      "note": "distance covered climbing that slope",
+      "unit": "m"
+    },
+    {
+      "id": "wall_overflow_m",
+      "measured": 0.0,
+      "note": "how far the robot got past the 40x40 m play area (0 = contained)",
+      "unit": "m"
+    }
+  ],
+  "raw_tail": [
+    "PHYS_STEP boost_run",
+    "PHYS_TEST {\"id\":\"boost_speed\",\"measured\":6.384,\"note\":\"boost multiplier 1.6 x top speed\",\"unit\":\"m/s\"}",
+    "PHYS_TEST {\"id\":\"lean_rad\",\"measured\":0.302,\"note\":\"body lean while boosting at speed\",\"unit\":\"rad\"}",
+    "PHYS_STEP wheel_roll",
+    "PHYS_TEST {\"id\":\"wheel_rps\",\"measured\":2.54,\"note\":\"expected 2.55 rev/s at 4.0 m/s (wheel radius 0.25 m)\",\"unit\":\"rev/s\"}",
+    "PHYS_STEP brake",
+    "PHYS_TEST {\"id\":\"brake_stop_m\",\"measured\":0.625,\"note\":\"full speed -> standstill while braking\",\"unit\":\"m\"}",
+    "PHYS_STEP coast",
+    "PHYS_TEST {\"id\":\"inertia_slide_m\",\"measured\":1.937,\"note\":\"distance coasted after releasing the controls at full speed\",\"unit\":\"m\"}",
+    "PHYS_STEP jump",
+    "PHYS_TEST {\"id\":\"jump_height_m\",\"measured\":0.907,\"note\":\"apex above the launch height\",\"unit\":\"m\"}",
+    "PHYS_NOTE barrel body=barrel1_body at (12.60039, -0.010289, 14.99793), player at (11.89281, 0.06, 14.15571), push dir (0.643256, 0.0, 0.765651)",
+    "PHYS_STEP barrel",
+    "PHYS_NOTE barrel end at (14.24092, 0.078344, 17.44584) (from (12.60039, -0.010289, 14.99793)), player at (13.87, 0.030633, 16.80799)",
+    "PHYS_TEST {\"id\":\"barrel_push_m\",\"measured\":2.947,\"note\":\"barrel barrel1_body slid after being pushed\",\"unit\":\"m\"}",
+    "PHYS_NOTE tree1 at (-9.06, -0.107755, -1.55), player at (-5.117284, 0.025161, -0.875473), dir (-0.985679, 0.0, -0.168632)",
+    "PHYS_STEP tree",
+    "PHYS_NOTE tree end player=(-8.439729, -0.08636, -1.434207) sway gust=0.0 shake=0.2962072 bursts=3",
+    "PHYS_TEST {\"id\":\"tree_sway_m\",\"measured\":0.296,\"note\":\"wind gust amplitude added to tree1 by the hit\",\"unit\":\"m\"}",
+    "PHYS_TEST {\"id\":\"leaf_bursts\",\"measured\":3.0,\"note\":\"leaf bursts from tree1 after the hit\",\"unit\":\"count\"}",
+    "PHYS_NOTE bush1 at (1.22, -0.277021, 11.46), player at (0.796564, 0.263859, 7.482475), dir (0.105859, 0.0, 0.994381)",
+    "PHYS_STEP bush",
+    "PHYS_TEST {\"id\":\"bush_sway_m\",\"measured\":0.256,\"note\":\"gust amplitude on bush1 after the robot pushed through (bush is passable)\",\"unit\":\"m\"}",
+    "PHYS_STEP slope",
+    "PHYS_TEST {\"id\":\"climb_slope\",\"measured\":0.218,\"note\":\"steepest 1 m terrain gradient the robot climbed\",\"unit\":\"m/m\"}",
+    "PHYS_TEST {\"id\":\"climb_progress_m\",\"measured\":11.714,\"note\":\"distance covered climbing that slope\",\"unit\":\"m\"}",
+    "PHYS_STEP wall",
+    "PHYS_TEST {\"id\":\"wall_overflow_m\",\"measured\":0.0,\"note\":\"how far the robot got past the 40x40 m play area (0 = contained)\",\"unit\":\"m\"}",
+    "PHYSICS_PROBE finished 11 steps in 51.2 s",
+    ""
+  ]
+}

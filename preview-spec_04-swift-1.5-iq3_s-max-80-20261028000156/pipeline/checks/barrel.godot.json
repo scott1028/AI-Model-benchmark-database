@@ -1,0 +1,104 @@
+{
+	"animations": [],
+	"collision_flags": [],
+	"collision_meta_keys": [],
+	"collision_meta_ok": false,
+	"collision_nodes": [],
+	"dims_blender_equivalent": {
+		"x": 0.694271266460419,
+		"y": 0.730000019073486,
+		"z": 0.870000004768372
+	},
+	"dims_godot": {
+		"x": 0.694271266460419,
+		"y": 0.870000004768372,
+		"z": 0.730000019073486
+	},
+	"id": "barrel",
+	"loaded": true,
+	"materials": [
+		{
+			"color": "#4A4A52",
+			"name": "barrel_band"
+		},
+		{
+			"color": "#8A5A33",
+			"name": "barrel_stave"
+		}
+	],
+	"node_count": 6,
+	"node_names": [
+		"barrel2",
+		"barrel",
+		"barrel_lid",
+		"barrel_body",
+		"barrel_band_low",
+		"barrel_band_high"
+	],
+	"nodes_detail": [
+		{
+			"dims_godot": {
+				"x": 0.551612794399261,
+				"y": 0.0299999713897705,
+				"z": 0.579999983310699
+			},
+			"name": "barrel_lid",
+			"pos": [
+				-0.275806397199631,
+				0.840000033378601,
+				-0.28999999165535
+			]
+		},
+		{
+			"dims_godot": {
+				"x": 0.66573965549469,
+				"y": 0.839999973773956,
+				"z": 0.699999988079071
+			},
+			"name": "barrel_body",
+			"pos": [
+				-0.332869797945023,
+				0.0,
+				-0.349999994039536
+			]
+		},
+		{
+			"dims_godot": {
+				"x": 0.694271266460419,
+				"y": 0.0900000035762787,
+				"z": 0.730000019073486
+			},
+			"name": "barrel_band_low",
+			"pos": [
+				-0.347135633230209,
+				0.0849999934434891,
+				-0.365000009536743
+			]
+		},
+		{
+			"dims_godot": {
+				"x": 0.694271266460419,
+				"y": 0.0900000333786011,
+				"z": 0.730000019073486
+			},
+			"name": "barrel_band_high",
+			"pos": [
+				-0.347135633230209,
+				0.665000021457672,
+				-0.365000009536743
+			]
+		}
+	],
+	"origin": {
+		"min_y": 0.0,
+		"xy_center_offset": [
+			0.0,
+			0.0
+		]
+	},
+	"path": "res://assets/barrel/barrel.glb",
+	"tris": 144,
+	"tris_col": 0,
+	"visual_mesh_count": 4,
+	"warnings": []
+}

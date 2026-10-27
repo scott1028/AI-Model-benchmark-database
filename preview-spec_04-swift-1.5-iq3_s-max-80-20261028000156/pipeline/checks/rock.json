@@ -1,0 +1,195 @@
+{
+  "id": "rock",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:30",
+  "spec": "specs/rock.json",
+  "measurements": [
+    {
+      "target": 0.95,
+      "measured": 0.9624,
+      "delta": 0.0124,
+      "delta_pct": 1.3,
+      "tol_m": 0.095,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.85,
+      "measured": 0.8514,
+      "delta": 0.0014,
+      "delta_pct": 0.17,
+      "tol_m": 0.085,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.7,
+      "measured": 0.6955,
+      "delta": -0.0045,
+      "delta_pct": -0.64,
+      "tol_m": 0.07,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.0475,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 160,
+      "measured": 60,
+      "ok": true
+    },
+    {
+      "name": "material:rock_gray",
+      "side": "blender",
+      "target": "rock_gray",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:rock_gray",
+      "side": "blender",
+      "target": "#8C8C86",
+      "measured": "#8C8C86",
+      "ok": true
+    },
+    {
+      "name": "material:rock_moss",
+      "side": "blender",
+      "target": "rock_moss",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:rock_moss",
+      "side": "blender",
+      "target": "#7FB069",
+      "measured": "#7FB069",
+      "ok": true
+    },
+    {
+      "target": 0.95,
+      "measured": 0.9624,
+      "delta": 0.0124,
+      "delta_pct": 1.3,
+      "tol_m": 0.095,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.85,
+      "measured": 0.8514,
+      "delta": 0.0014,
+      "delta_pct": 0.17,
+      "tol_m": 0.085,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.7,
+      "measured": 0.6955,
+      "delta": -0.0045,
+      "delta_pct": -0.64,
+      "tol_m": 0.07,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.0475,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 160,
+      "measured": 60,
+      "ok": true
+    },
+    {
+      "name": "material:rock_gray",
+      "side": "godot",
+      "target": "rock_gray",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:rock_gray",
+      "side": "godot",
+      "target": "#8C8C86",
+      "measured": "#8C8C86",
+      "ok": true
+    },
+    {
+      "name": "material:rock_moss",
+      "side": "godot",
+      "target": "rock_moss",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:rock_moss",
+      "side": "godot",
+      "target": "#7FB069",
+      "measured": "#7FB069",
+      "ok": true
+    },
+    {
+      "name": "collision_mesh",
+      "side": "blender",
+      "target": "body",
+      "measured": "{\"present\": true, \"names\": [\"rock_collision\"], \"flag_ok\": true, \"hide_render\": true}",
+      "ok": true
+    },
+    {
+      "name": "collision_mesh",
+      "side": "godot",
+      "target": "body",
+      "measured": "{\"nodes\": [\"rock_collision\"], \"meta_ok\": true}",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

@@ -1,0 +1,49 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "brick_wall",
+  "title": "磚瓦牆",
+  "intent": "圍住地圖的磚牆段（含瓦頂）",
+  "dims_m": {
+    "x": 4.0,
+    "y": 0.75,
+    "z": 3.2
+  },
+  "tris_max": 300,
+  "collision": {
+    "mode": "body",
+    "shape": "box",
+    "size_m": [
+      4.0,
+      0.75,
+      3.2
+    ],
+    "note": "角色走不出去"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "wall_brick",
+      "color": "#B5563C",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "wall_tile",
+      "color": "#8C4432",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "wall_base",
+      "color": "#9A8574",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": true
+  },
+  "notes": "一段 4 m，端對端可拼接；頂部瓦片壓頂，底部石基"
+}

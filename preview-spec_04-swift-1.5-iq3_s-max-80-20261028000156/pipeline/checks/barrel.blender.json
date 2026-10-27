@@ -1,0 +1,130 @@
+{
+  "id": "barrel",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/barrel.blend",
+  "top_level_objects": [
+    "barrel"
+  ],
+  "visual_objects": [
+    "barrel_band_high",
+    "barrel_band_low",
+    "barrel_body",
+    "barrel_lid"
+  ],
+  "parts_detail": [
+    {
+      "name": "barrel_body",
+      "dims": {
+        "x": 0.6657,
+        "y": 0.7,
+        "z": 0.84
+      },
+      "min": [
+        -0.3329,
+        -0.35,
+        0.0
+      ],
+      "max": [
+        0.3329,
+        0.35,
+        0.84
+      ]
+    },
+    {
+      "name": "barrel_band_low",
+      "dims": {
+        "x": 0.6943,
+        "y": 0.73,
+        "z": 0.09
+      },
+      "min": [
+        -0.3471,
+        -0.365,
+        0.085
+      ],
+      "max": [
+        0.3471,
+        0.365,
+        0.175
+      ]
+    },
+    {
+      "name": "barrel_band_high",
+      "dims": {
+        "x": 0.6943,
+        "y": 0.73,
+        "z": 0.09
+      },
+      "min": [
+        -0.3471,
+        -0.365,
+        0.665
+      ],
+      "max": [
+        0.3471,
+        0.365,
+        0.755
+      ]
+    },
+    {
+      "name": "barrel_lid",
+      "dims": {
+        "x": 0.5516,
+        "y": 0.58,
+        "z": 0.03
+      },
+      "min": [
+        -0.2758,
+        -0.29,
+        0.84
+      ],
+      "max": [
+        0.2758,
+        0.29,
+        0.87
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 0.6942712664604187,
+    "y": 0.7300000190734863,
+    "z": 0.8700000047683716
+  },
+  "bbox_min": [
+    -0.34713563323020935,
+    -0.36500000953674316,
+    0.0
+  ],
+  "bbox_max": [
+    0.34713563323020935,
+    0.36500000953674316,
+    0.8700000047683716
+  ],
+  "tris_visual": 144,
+  "tris_col": 0,
+  "origin": {
+    "min_z": 0.0,
+    "xy_center_offset": [
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "barrel_band",
+      "color": "#4A4A52"
+    },
+    {
+      "name": "barrel_stave",
+      "color": "#8A5A33"
+    }
+  ],
+  "collision": {
+    "present": false,
+    "names": [],
+    "flag_ok": false,
+    "hide_render": false
+  },
+  "animations": [],
+  "scene_fps": 30
+}

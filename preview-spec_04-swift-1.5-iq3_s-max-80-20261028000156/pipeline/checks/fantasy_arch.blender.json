@@ -1,0 +1,381 @@
+{
+  "id": "fantasy_arch",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/fantasy_arch.blend",
+  "top_level_objects": [
+    "fantasy_arch"
+  ],
+  "visual_objects": [
+    "arch_col_0",
+    "arch_col_1",
+    "arch_col_base_0",
+    "arch_col_base_1",
+    "arch_col_cap_0",
+    "arch_col_cap_1",
+    "arch_crystal_0",
+    "arch_crystal_1",
+    "arch_key",
+    "arch_lintel",
+    "arch_top",
+    "arch_voussoir_0",
+    "arch_voussoir_1",
+    "arch_voussoir_2",
+    "arch_voussoir_3",
+    "arch_voussoir_4",
+    "arch_voussoir_5"
+  ],
+  "parts_detail": [
+    {
+      "name": "arch_col_0",
+      "dims": {
+        "x": 1.1,
+        "y": 1.1,
+        "z": 4.0
+      },
+      "min": [
+        -2.6,
+        -0.55,
+        0.0
+      ],
+      "max": [
+        -1.5,
+        0.55,
+        4.0
+      ]
+    },
+    {
+      "name": "arch_col_base_0",
+      "dims": {
+        "x": 1.4,
+        "y": 1.4,
+        "z": 0.3
+      },
+      "min": [
+        -2.75,
+        -0.7,
+        0.0
+      ],
+      "max": [
+        -1.35,
+        0.7,
+        0.3
+      ]
+    },
+    {
+      "name": "arch_col_cap_0",
+      "dims": {
+        "x": 1.35,
+        "y": 1.35,
+        "z": 0.28
+      },
+      "min": [
+        -2.725,
+        -0.675,
+        4.0
+      ],
+      "max": [
+        -1.375,
+        0.675,
+        4.28
+      ]
+    },
+    {
+      "name": "arch_crystal_0",
+      "dims": {
+        "x": 0.56,
+        "y": 0.56,
+        "z": 0.55
+      },
+      "min": [
+        -2.33,
+        -0.28,
+        4.685
+      ],
+      "max": [
+        -1.77,
+        0.28,
+        5.235
+      ]
+    },
+    {
+      "name": "arch_col_1",
+      "dims": {
+        "x": 1.1,
+        "y": 1.1,
+        "z": 4.0
+      },
+      "min": [
+        1.5,
+        -0.55,
+        0.0
+      ],
+      "max": [
+        2.6,
+        0.55,
+        4.0
+      ]
+    },
+    {
+      "name": "arch_col_base_1",
+      "dims": {
+        "x": 1.4,
+        "y": 1.4,
+        "z": 0.3
+      },
+      "min": [
+        1.35,
+        -0.7,
+        0.0
+      ],
+      "max": [
+        2.75,
+        0.7,
+        0.3
+      ]
+    },
+    {
+      "name": "arch_col_cap_1",
+      "dims": {
+        "x": 1.35,
+        "y": 1.35,
+        "z": 0.28
+      },
+      "min": [
+        1.375,
+        -0.675,
+        4.0
+      ],
+      "max": [
+        2.725,
+        0.675,
+        4.28
+      ]
+    },
+    {
+      "name": "arch_crystal_1",
+      "dims": {
+        "x": 0.56,
+        "y": 0.56,
+        "z": 0.55
+      },
+      "min": [
+        1.77,
+        -0.28,
+        4.685
+      ],
+      "max": [
+        2.33,
+        0.28,
+        5.235
+      ]
+    },
+    {
+      "name": "arch_voussoir_0",
+      "dims": {
+        "x": 1.1599,
+        "y": 0.9664,
+        "z": 0.28
+      },
+      "min": [
+        -1.9847,
+        -0.4832,
+        4.7951
+      ],
+      "max": [
+        -0.8248,
+        0.4832,
+        5.0751
+      ]
+    },
+    {
+      "name": "arch_voussoir_1",
+      "dims": {
+        "x": 1.1024,
+        "y": 1.1517,
+        "z": 0.28
+      },
+      "min": [
+        -1.5475,
+        -0.5759,
+        5.3274
+      ],
+      "max": [
+        -0.4451,
+        0.5759,
+        5.6074
+      ]
+    },
+    {
+      "name": "arch_voussoir_2",
+      "dims": {
+        "x": 0.8384,
+        "y": 1.1212,
+        "z": 0.28
+      },
+      "min": [
+        -0.8204,
+        -0.5606,
+        5.6372
+      ],
+      "max": [
+        0.018,
+        0.5606,
+        5.9172
+      ]
+    },
+    {
+      "name": "arch_voussoir_3",
+      "dims": {
+        "x": 0.7645,
+        "y": 1.089,
+        "z": 0.28
+      },
+      "min": [
+        -0.1131,
+        -0.5445,
+        5.6665
+      ],
+      "max": [
+        0.6514,
+        0.5445,
+        5.9465
+      ]
+    },
+    {
+      "name": "arch_voussoir_4",
+      "dims": {
+        "x": 1.0651,
+        "y": 1.1633,
+        "z": 0.28
+      },
+      "min": [
+        0.3565,
+        -0.5816,
+        5.4097
+      ],
+      "max": [
+        1.4216,
+        0.5816,
+        5.6897
+      ]
+    },
+    {
+      "name": "arch_voussoir_5",
+      "dims": {
+        "x": 1.166,
+        "y": 1.0196,
+        "z": 0.28
+      },
+      "min": [
+        0.7593,
+        -0.5098,
+        4.915
+      ],
+      "max": [
+        1.9254,
+        0.5098,
+        5.195
+      ]
+    },
+    {
+      "name": "arch_lintel",
+      "dims": {
+        "x": 5.5,
+        "y": 1.15,
+        "z": 0.45
+      },
+      "min": [
+        -2.75,
+        -0.575,
+        5.725
+      ],
+      "max": [
+        2.75,
+        0.575,
+        6.175
+      ]
+    },
+    {
+      "name": "arch_top",
+      "dims": {
+        "x": 1.6,
+        "y": 0.9,
+        "z": 0.55
+      },
+      "min": [
+        -0.8,
+        -0.45,
+        6.025
+      ],
+      "max": [
+        0.8,
+        0.45,
+        6.575
+      ]
+    },
+    {
+      "name": "arch_key",
+      "dims": {
+        "x": 0.5,
+        "y": 1.05,
+        "z": 0.5
+      },
+      "min": [
+        -0.25,
+        -0.525,
+        5.65
+      ],
+      "max": [
+        0.25,
+        0.525,
+        6.15
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 5.5,
+    "y": 1.399999976158142,
+    "z": 6.575000286102295
+  },
+  "bbox_min": [
+    -2.75,
+    -0.699999988079071,
+    0.0
+  ],
+  "bbox_max": [
+    2.75,
+    0.699999988079071,
+    6.575000286102295
+  ],
+  "tris_visual": 192,
+  "tris_col": 0,
+  "origin": {
+    "min_z": 0.0,
+    "xy_center_offset": [
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "arch_crystal",
+      "color": "#59C2E0"
+    },
+    {
+      "name": "arch_marble",
+      "color": "#E6E2D8"
+    },
+    {
+      "name": "arch_stone",
+      "color": "#C4BFB2"
+    }
+  ],
+  "collision": {
+    "present": false,
+    "names": [],
+    "flag_ok": false,
+    "hide_render": false
+  },
+  "animations": [],
+  "scene_fps": 30
+}

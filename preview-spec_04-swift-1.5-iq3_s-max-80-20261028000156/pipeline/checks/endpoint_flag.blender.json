@@ -1,0 +1,191 @@
+{
+  "id": "endpoint_flag",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/endpoint_flag.blend",
+  "top_level_objects": [
+    "endpoint_flag"
+  ],
+  "visual_objects": [
+    "flag_ball",
+    "flag_base",
+    "flag_cloth_0",
+    "flag_cloth_1",
+    "flag_cloth_2",
+    "flag_pole",
+    "flag_trim_strip"
+  ],
+  "parts_detail": [
+    {
+      "name": "flag_base",
+      "dims": {
+        "x": 0.44,
+        "y": 0.44,
+        "z": 0.14
+      },
+      "min": [
+        -0.5955,
+        -0.22,
+        0.0
+      ],
+      "max": [
+        -0.1555,
+        0.22,
+        0.14
+      ]
+    },
+    {
+      "name": "flag_pole",
+      "dims": {
+        "x": 0.11,
+        "y": 0.11,
+        "z": 3.4
+      },
+      "min": [
+        -0.4305,
+        -0.055,
+        0.1
+      ],
+      "max": [
+        -0.3205,
+        0.055,
+        3.5
+      ]
+    },
+    {
+      "name": "flag_ball",
+      "dims": {
+        "x": 0.1789,
+        "y": 0.1701,
+        "z": 0.2
+      },
+      "min": [
+        -0.4649,
+        -0.0851,
+        3.4
+      ],
+      "max": [
+        -0.286,
+        0.0851,
+        3.6
+      ]
+    },
+    {
+      "name": "flag_cloth_0",
+      "dims": {
+        "x": 0.4015,
+        "y": 0.0766,
+        "z": 0.6
+      },
+      "min": [
+        -0.3362,
+        -0.0183,
+        2.65
+      ],
+      "max": [
+        0.0653,
+        0.0583,
+        3.25
+      ]
+    },
+    {
+      "name": "flag_cloth_1",
+      "dims": {
+        "x": 0.361,
+        "y": 0.0909,
+        "z": 0.54
+      },
+      "min": [
+        0.004,
+        0.0246,
+        2.71
+      ],
+      "max": [
+        0.365,
+        0.1154,
+        3.25
+      ]
+    },
+    {
+      "name": "flag_cloth_2",
+      "dims": {
+        "x": 0.3019,
+        "y": 0.061,
+        "z": 0.44
+      },
+      "min": [
+        0.2936,
+        -0.0105,
+        2.78
+      ],
+      "max": [
+        0.5955,
+        0.0505,
+        3.22
+      ]
+    },
+    {
+      "name": "flag_trim_strip",
+      "dims": {
+        "x": 0.4025,
+        "y": 0.0866,
+        "z": 0.09
+      },
+      "min": [
+        -0.3267,
+        -0.0233,
+        3.235
+      ],
+      "max": [
+        0.0758,
+        0.0633,
+        3.325
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 1.1909544467926025,
+    "y": 0.4399999976158142,
+    "z": 3.5999999046325684
+  },
+  "bbox_min": [
+    -0.5954772233963013,
+    -0.2199999988079071,
+    0.0
+  ],
+  "bbox_max": [
+    0.5954772233963013,
+    0.2199999988079071,
+    3.5999999046325684
+  ],
+  "tris_visual": 124,
+  "tris_col": 0,
+  "origin": {
+    "min_z": 0.0,
+    "xy_center_offset": [
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "flag_cloth",
+      "color": "#C0392B"
+    },
+    {
+      "name": "flag_pole",
+      "color": "#6E5138"
+    },
+    {
+      "name": "flag_trim",
+      "color": "#E8B92C"
+    }
+  ],
+  "collision": {
+    "present": false,
+    "names": [],
+    "flag_ok": false,
+    "hide_render": false
+  },
+  "animations": [],
+  "scene_fps": 30
+}

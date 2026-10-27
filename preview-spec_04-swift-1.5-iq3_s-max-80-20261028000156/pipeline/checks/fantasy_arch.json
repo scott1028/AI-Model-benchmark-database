@@ -1,0 +1,216 @@
+{
+  "id": "fantasy_arch",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:38",
+  "spec": "specs/fantasy_arch.json",
+  "measurements": [
+    {
+      "target": 5.5,
+      "measured": 5.5,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.55,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 1.3,
+      "measured": 1.4,
+      "delta": 0.1,
+      "delta_pct": 7.69,
+      "tol_m": 0.13,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 6.0,
+      "measured": 6.575,
+      "delta": 0.575,
+      "delta_pct": 9.58,
+      "tol_m": 0.6,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.275,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 500,
+      "measured": 192,
+      "ok": true
+    },
+    {
+      "name": "material:arch_marble",
+      "side": "blender",
+      "target": "arch_marble",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:arch_marble",
+      "side": "blender",
+      "target": "#E6E2D8",
+      "measured": "#E6E2D8",
+      "ok": true
+    },
+    {
+      "name": "material:arch_stone",
+      "side": "blender",
+      "target": "arch_stone",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:arch_stone",
+      "side": "blender",
+      "target": "#C4BFB2",
+      "measured": "#C4BFB2",
+      "ok": true
+    },
+    {
+      "name": "material:arch_crystal",
+      "side": "blender",
+      "target": "arch_crystal",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:arch_crystal",
+      "side": "blender",
+      "target": "#59C2E0",
+      "measured": "#59C2E0",
+      "ok": true
+    },
+    {
+      "target": 5.5,
+      "measured": 5.5,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.55,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 1.3,
+      "measured": 1.4,
+      "delta": 0.1,
+      "delta_pct": 7.69,
+      "tol_m": 0.13,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 6.0,
+      "measured": 6.575,
+      "delta": 0.575,
+      "delta_pct": 9.58,
+      "tol_m": 0.6,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.275,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 500,
+      "measured": 192,
+      "ok": true
+    },
+    {
+      "name": "material:arch_marble",
+      "side": "godot",
+      "target": "arch_marble",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:arch_marble",
+      "side": "godot",
+      "target": "#E6E2D8",
+      "measured": "#E6E2D8",
+      "ok": true
+    },
+    {
+      "name": "material:arch_stone",
+      "side": "godot",
+      "target": "arch_stone",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:arch_stone",
+      "side": "godot",
+      "target": "#C4BFB2",
+      "measured": "#C4BFB2",
+      "ok": true
+    },
+    {
+      "name": "material:arch_crystal",
+      "side": "godot",
+      "target": "arch_crystal",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:arch_crystal",
+      "side": "godot",
+      "target": "#59C2E0",
+      "measured": "#59C2E0",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "box_pair",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

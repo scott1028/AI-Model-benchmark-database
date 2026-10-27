@@ -1,0 +1,188 @@
+{
+  "id": "wooden_crate",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:35",
+  "spec": "specs/wooden_crate.json",
+  "measurements": [
+    {
+      "target": 0.8,
+      "measured": 0.78,
+      "delta": -0.02,
+      "delta_pct": -2.5,
+      "tol_m": 0.08,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.8,
+      "measured": 0.78,
+      "delta": -0.02,
+      "delta_pct": -2.5,
+      "tol_m": 0.08,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.8,
+      "measured": 0.78,
+      "delta": -0.02,
+      "delta_pct": -2.5,
+      "tol_m": 0.08,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.04,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 160,
+      "measured": 132,
+      "ok": true
+    },
+    {
+      "name": "material:crate_board",
+      "side": "blender",
+      "target": "crate_board",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:crate_board",
+      "side": "blender",
+      "target": "#8A5A33",
+      "measured": "#8A5A33",
+      "ok": true
+    },
+    {
+      "name": "material:crate_frame",
+      "side": "blender",
+      "target": "crate_frame",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:crate_frame",
+      "side": "blender",
+      "target": "#5B4632",
+      "measured": "#5B4632",
+      "ok": true
+    },
+    {
+      "target": 0.8,
+      "measured": 0.78,
+      "delta": -0.02,
+      "delta_pct": -2.5,
+      "tol_m": 0.08,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.8,
+      "measured": 0.78,
+      "delta": -0.02,
+      "delta_pct": -2.5,
+      "tol_m": 0.08,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.8,
+      "measured": 0.78,
+      "delta": -0.02,
+      "delta_pct": -2.5,
+      "tol_m": 0.08,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.04,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 160,
+      "measured": 132,
+      "ok": true
+    },
+    {
+      "name": "material:crate_board",
+      "side": "godot",
+      "target": "crate_board",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:crate_board",
+      "side": "godot",
+      "target": "#8A5A33",
+      "measured": "#8A5A33",
+      "ok": true
+    },
+    {
+      "name": "material:crate_frame",
+      "side": "godot",
+      "target": "crate_frame",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:crate_frame",
+      "side": "godot",
+      "target": "#5B4632",
+      "measured": "#5B4632",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "box",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

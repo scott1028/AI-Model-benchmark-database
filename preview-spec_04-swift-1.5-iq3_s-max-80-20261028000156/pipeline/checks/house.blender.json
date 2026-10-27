@@ -1,0 +1,343 @@
+{
+  "id": "house",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/house.blend",
+  "top_level_objects": [
+    "house"
+  ],
+  "visual_objects": [
+    "house_chimney",
+    "house_chimney_cap",
+    "house_door",
+    "house_eave",
+    "house_pilaster_0",
+    "house_pilaster_1",
+    "house_pilaster_2",
+    "house_pilaster_3",
+    "house_plinth",
+    "house_roof",
+    "house_walls",
+    "house_window_b",
+    "house_window_f",
+    "house_window_l",
+    "house_window_r"
+  ],
+  "parts_detail": [
+    {
+      "name": "house_plinth",
+      "dims": {
+        "x": 4.5,
+        "y": 4.5,
+        "z": 0.3
+      },
+      "min": [
+        -2.25,
+        -2.25,
+        0.0
+      ],
+      "max": [
+        2.25,
+        2.25,
+        0.3
+      ]
+    },
+    {
+      "name": "house_walls",
+      "dims": {
+        "x": 4.2,
+        "y": 4.2,
+        "z": 2.5
+      },
+      "min": [
+        -2.1,
+        -2.1,
+        0.3
+      ],
+      "max": [
+        2.1,
+        2.1,
+        2.8
+      ]
+    },
+    {
+      "name": "house_pilaster_0",
+      "dims": {
+        "x": 0.34,
+        "y": 0.34,
+        "z": 2.55
+      },
+      "min": [
+        -2.12,
+        -2.12,
+        0.305
+      ],
+      "max": [
+        -1.78,
+        -1.78,
+        2.855
+      ]
+    },
+    {
+      "name": "house_pilaster_1",
+      "dims": {
+        "x": 0.34,
+        "y": 0.34,
+        "z": 2.55
+      },
+      "min": [
+        1.78,
+        -2.12,
+        0.305
+      ],
+      "max": [
+        2.12,
+        -1.78,
+        2.855
+      ]
+    },
+    {
+      "name": "house_pilaster_2",
+      "dims": {
+        "x": 0.34,
+        "y": 0.34,
+        "z": 2.55
+      },
+      "min": [
+        -2.12,
+        1.78,
+        0.305
+      ],
+      "max": [
+        -1.78,
+        2.12,
+        2.855
+      ]
+    },
+    {
+      "name": "house_pilaster_3",
+      "dims": {
+        "x": 0.34,
+        "y": 0.34,
+        "z": 2.55
+      },
+      "min": [
+        1.78,
+        1.78,
+        0.305
+      ],
+      "max": [
+        2.12,
+        2.12,
+        2.855
+      ]
+    },
+    {
+      "name": "house_eave",
+      "dims": {
+        "x": 4.7,
+        "y": 4.7,
+        "z": 0.14
+      },
+      "min": [
+        -2.35,
+        -2.35,
+        2.79
+      ],
+      "max": [
+        2.35,
+        2.35,
+        2.93
+      ]
+    },
+    {
+      "name": "house_roof",
+      "dims": {
+        "x": 4.5962,
+        "y": 4.5962,
+        "z": 1.45
+      },
+      "min": [
+        -2.2981,
+        -2.2981,
+        2.895
+      ],
+      "max": [
+        2.2981,
+        2.2981,
+        4.345
+      ]
+    },
+    {
+      "name": "house_chimney",
+      "dims": {
+        "x": 0.5,
+        "y": 0.5,
+        "z": 1.1
+      },
+      "min": [
+        0.95,
+        -1.25,
+        3.0
+      ],
+      "max": [
+        1.45,
+        -0.75,
+        4.1
+      ]
+    },
+    {
+      "name": "house_chimney_cap",
+      "dims": {
+        "x": 0.64,
+        "y": 0.64,
+        "z": 0.12
+      },
+      "min": [
+        0.88,
+        -1.32,
+        4.1
+      ],
+      "max": [
+        1.52,
+        -0.68,
+        4.22
+      ]
+    },
+    {
+      "name": "house_door",
+      "dims": {
+        "x": 0.9,
+        "y": 0.1,
+        "z": 1.7
+      },
+      "min": [
+        -0.45,
+        2.09,
+        0.3
+      ],
+      "max": [
+        0.45,
+        2.19,
+        2.0
+      ]
+    },
+    {
+      "name": "house_window_f",
+      "dims": {
+        "x": 0.75,
+        "y": 0.1,
+        "z": 0.75
+      },
+      "min": [
+        -1.675,
+        2.09,
+        1.475
+      ],
+      "max": [
+        -0.925,
+        2.19,
+        2.225
+      ]
+    },
+    {
+      "name": "house_window_b",
+      "dims": {
+        "x": 0.75,
+        "y": 0.1,
+        "z": 0.75
+      },
+      "min": [
+        0.925,
+        -2.19,
+        1.475
+      ],
+      "max": [
+        1.675,
+        -2.09,
+        2.225
+      ]
+    },
+    {
+      "name": "house_window_l",
+      "dims": {
+        "x": 0.1,
+        "y": 0.75,
+        "z": 0.75
+      },
+      "min": [
+        -2.19,
+        0.225,
+        1.475
+      ],
+      "max": [
+        -2.09,
+        0.975,
+        2.225
+      ]
+    },
+    {
+      "name": "house_window_r",
+      "dims": {
+        "x": 0.1,
+        "y": 0.75,
+        "z": 0.75
+      },
+      "min": [
+        2.09,
+        0.225,
+        1.475
+      ],
+      "max": [
+        2.19,
+        0.975,
+        2.225
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 4.699999809265137,
+    "y": 4.699999809265137,
+    "z": 4.34499979019165
+  },
+  "bbox_min": [
+    -2.3499999046325684,
+    -2.3499999046325684,
+    0.0
+  ],
+  "bbox_max": [
+    2.3499999046325684,
+    2.3499999046325684,
+    4.34499979019165
+  ],
+  "tris_visual": 174,
+  "tris_col": 0,
+  "origin": {
+    "min_z": 0.0,
+    "xy_center_offset": [
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "house_roof",
+      "color": "#B5563C"
+    },
+    {
+      "name": "house_wall",
+      "color": "#E8DCC4"
+    },
+    {
+      "name": "house_wood",
+      "color": "#5B4632"
+    }
+  ],
+  "collision": {
+    "present": false,
+    "names": [],
+    "flag_ok": false,
+    "hide_render": false
+  },
+  "animations": [],
+  "scene_fps": 30
+}

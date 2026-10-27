@@ -1,0 +1,314 @@
+{
+  "test": "bot",
+  "pass": true,
+  "ts": "2026-10-28T04:57:24",
+  "checks": {
+    "engine_errors": [],
+    "bot_events": 21,
+    "coins_collected": 3,
+    "coins_in_order": [
+      0,
+      1,
+      2
+    ],
+    "progress_lines": 19,
+    "win": true,
+    "win_message": "All 3 coins collected and the flag reached",
+    "exit_code": 0,
+    "elapsed_s": 24.68
+  },
+  "errors": [],
+  "events": [
+    {
+      "coins": 3,
+      "event": "start",
+      "route_points": 14,
+      "spawn": [
+        10.0,
+        13.0
+      ],
+      "targets": [
+        [
+          -9.0,
+          15.0
+        ],
+        [
+          -14.0,
+          -11.0
+        ],
+        [
+          10.5,
+          -9.5
+        ],
+        [
+          0.0,
+          -2.0
+        ]
+      ],
+      "wp": 1
+    },
+    {
+      "bot": true,
+      "coins": 3,
+      "event": "ready",
+      "props": 90,
+      "walls": 44
+    },
+    {
+      "coins": 0,
+      "event": "progress",
+      "goal": [
+        -9.0,
+        15.0
+      ],
+      "speed": 4.0,
+      "stage": 0,
+      "t": 2.0,
+      "wp": 2,
+      "x": 3.8,
+      "z": 10.8
+    },
+    {
+      "coins": 0,
+      "event": "progress",
+      "goal": [
+        -9.0,
+        15.0
+      ],
+      "speed": 3.45,
+      "stage": 0,
+      "t": 4.0,
+      "wp": 3,
+      "x": -3.9,
+      "z": 8.7
+    },
+    {
+      "coins": 0,
+      "event": "progress",
+      "goal": [
+        -9.0,
+        15.0
+      ],
+      "speed": 4.0,
+      "stage": 0,
+      "t": 6.0,
+      "wp": 3,
+      "x": -8.8,
+      "z": 14.7
+    },
+    {
+      "coins": 1,
+      "event": "coin",
+      "index": 0,
+      "t": 6.05,
+      "x": -8.8,
+      "z": 14.7
+    },
+    {
+      "event": "reach",
+      "speed": 4.0,
+      "stage": 0,
+      "t": 6.07,
+      "target": [
+        -9.0,
+        15.0
+      ]
+    },
+    {
+      "coins": 1,
+      "event": "progress",
+      "goal": [
+        -14.0,
+        -11.0
+      ],
+      "speed": 3.91,
+      "stage": 1,
+      "t": 8.1,
+      "wp": 6,
+      "x": -9.5,
+      "z": 11.1
+    },
+    {
+      "coins": 1,
+      "event": "progress",
+      "goal": [
+        -14.0,
+        -11.0
+      ],
+      "speed": 4.0,
+      "stage": 1,
+      "t": 10.1,
+      "wp": 6,
+      "x": -11.9,
+      "z": 3.5
+    },
+    {
+      "coins": 1,
+      "event": "progress",
+      "goal": [
+        -14.0,
+        -11.0
+      ],
+      "speed": 4.0,
+      "stage": 1,
+      "t": 12.1,
+      "wp": 7,
+      "x": -13.5,
+      "z": -4.4
+    },
+    {
+      "coins": 2,
+      "event": "coin",
+      "index": 1,
+      "t": 13.7,
+      "x": -14.0,
+      "z": -10.7
+    },
+    {
+      "event": "reach",
+      "speed": 4.0,
+      "stage": 1,
+      "t": 13.72,
+      "target": [
+        -14.0,
+        -11.0
+      ]
+    },
+    {
+      "coins": 2,
+      "event": "progress",
+      "goal": [
+        10.5,
+        -9.5
+      ],
+      "speed": 2.63,
+      "stage": 2,
+      "t": 14.1,
+      "wp": 9,
+      "x": -13.7,
+      "z": -12.0
+    },
+    {
+      "coins": 2,
+      "event": "progress",
+      "goal": [
+        10.5,
+        -9.5
+      ],
+      "speed": 4.0,
+      "stage": 2,
+      "t": 16.1,
+      "wp": 9,
+      "x": -6.5,
+      "z": -11.6
+    },
+    {
+      "coins": 2,
+      "event": "progress",
+      "goal": [
+        10.5,
+        -9.5
+      ],
+      "speed": 4.0,
+      "stage": 2,
+      "t": 18.2,
+      "wp": 10,
+      "x": 1.6,
+      "z": -10.4
+    },
+    {
+      "coins": 2,
+      "event": "progress",
+      "goal": [
+        10.5,
+        -9.5
+      ],
+      "speed": 4.0,
+      "stage": 2,
+      "t": 20.2,
+      "wp": 10,
+      "x": 9.5,
+      "z": -9.6
+    },
+    {
+      "coins": 3,
+      "event": "coin",
+      "index": 2,
+      "t": 20.3,
+      "x": 10.1,
+      "z": -9.5
+    },
+    {
+      "event": "reach",
+      "speed": 4.0,
+      "stage": 2,
+      "t": 20.32,
+      "target": [
+        10.5,
+        -9.5
+      ]
+    },
+    {
+      "coins": 3,
+      "event": "progress",
+      "goal": [
+        0.0,
+        -2.0
+      ],
+      "speed": 3.15,
+      "stage": 3,
+      "t": 22.2,
+      "wp": 12,
+      "x": 8.9,
+      "z": -7.6
+    },
+    {
+      "coins": 3,
+      "event": "progress",
+      "goal": [
+        0.0,
+        -2.0
+      ],
+      "speed": 4.0,
+      "stage": 3,
+      "t": 24.2,
+      "wp": 13,
+      "x": 2.1,
+      "z": -4.1
+    },
+    {
+      "coins": 3,
+      "elapsed": 24.68,
+      "event": "win",
+      "message": "All 3 coins collected and the flag reached",
+      "x": 0.7,
+      "z": -2.7
+    }
+  ],
+  "raw_tail": [
+    "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org",
+    "",
+    "COINRUN_BOT {\"coins\":3,\"event\":\"start\",\"route_points\":14,\"spawn\":[10.0,13.0],\"targets\":[[-9.0,15.0],[-14.0,-11.0],[10.5,-9.5],[0.0,-2.0]],\"wp\":1}",
+    "COINRUN_BOT {\"bot\":true,\"coins\":3,\"event\":\"ready\",\"props\":90,\"walls\":44}",
+    "COINRUN_BOT {\"coins\":0,\"event\":\"progress\",\"goal\":[-9.0,15.0],\"speed\":4.0,\"stage\":0,\"t\":2.0,\"wp\":2,\"x\":3.8,\"z\":10.8}",
+    "COINRUN_BOT {\"coins\":0,\"event\":\"progress\",\"goal\":[-9.0,15.0],\"speed\":3.45,\"stage\":0,\"t\":4.0,\"wp\":3,\"x\":-3.9,\"z\":8.7}",
+    "COINRUN_BOT {\"coins\":0,\"event\":\"progress\",\"goal\":[-9.0,15.0],\"speed\":4.0,\"stage\":0,\"t\":6.0,\"wp\":3,\"x\":-8.8,\"z\":14.7}",
+    "COINRUN_BOT {\"coins\":1,\"event\":\"coin\",\"index\":0,\"t\":6.05,\"x\":-8.8,\"z\":14.7}",
+    "COINRUN_BOT {\"event\":\"reach\",\"speed\":4.0,\"stage\":0,\"t\":6.07,\"target\":[-9.0,15.0]}",
+    "COINRUN_BOT {\"coins\":1,\"event\":\"progress\",\"goal\":[-14.0,-11.0],\"speed\":3.91,\"stage\":1,\"t\":8.1,\"wp\":6,\"x\":-9.5,\"z\":11.1}",
+    "COINRUN_BOT {\"coins\":1,\"event\":\"progress\",\"goal\":[-14.0,-11.0],\"speed\":4.0,\"stage\":1,\"t\":10.1,\"wp\":6,\"x\":-11.9,\"z\":3.5}",
+    "COINRUN_BOT {\"coins\":1,\"event\":\"progress\",\"goal\":[-14.0,-11.0],\"speed\":4.0,\"stage\":1,\"t\":12.1,\"wp\":7,\"x\":-13.5,\"z\":-4.4}",
+    "COINRUN_BOT {\"coins\":2,\"event\":\"coin\",\"index\":1,\"t\":13.7,\"x\":-14.0,\"z\":-10.7}",
+    "COINRUN_BOT {\"event\":\"reach\",\"speed\":4.0,\"stage\":1,\"t\":13.72,\"target\":[-14.0,-11.0]}",
+    "COINRUN_BOT {\"coins\":2,\"event\":\"progress\",\"goal\":[10.5,-9.5],\"speed\":2.63,\"stage\":2,\"t\":14.1,\"wp\":9,\"x\":-13.7,\"z\":-12.0}",
+    "COINRUN_BOT {\"coins\":2,\"event\":\"progress\",\"goal\":[10.5,-9.5],\"speed\":4.0,\"stage\":2,\"t\":16.1,\"wp\":9,\"x\":-6.5,\"z\":-11.6}",
+    "COINRUN_BOT {\"coins\":2,\"event\":\"progress\",\"goal\":[10.5,-9.5],\"speed\":4.0,\"stage\":2,\"t\":18.2,\"wp\":10,\"x\":1.6,\"z\":-10.4}",
+    "COINRUN_BOT {\"coins\":2,\"event\":\"progress\",\"goal\":[10.5,-9.5],\"speed\":4.0,\"stage\":2,\"t\":20.2,\"wp\":10,\"x\":9.5,\"z\":-9.6}",
+    "COINRUN_BOT {\"coins\":3,\"event\":\"coin\",\"index\":2,\"t\":20.3,\"x\":10.1,\"z\":-9.5}",
+    "COINRUN_BOT {\"event\":\"reach\",\"speed\":4.0,\"stage\":2,\"t\":20.32,\"target\":[10.5,-9.5]}",
+    "COINRUN_BOT {\"coins\":3,\"event\":\"progress\",\"goal\":[0.0,-2.0],\"speed\":3.15,\"stage\":3,\"t\":22.2,\"wp\":12,\"x\":8.9,\"z\":-7.6}",
+    "COINRUN_BOT {\"coins\":3,\"event\":\"progress\",\"goal\":[0.0,-2.0],\"speed\":4.0,\"stage\":3,\"t\":24.2,\"wp\":13,\"x\":2.1,\"z\":-4.1}",
+    "COINRUN_BOT {\"coins\":3,\"elapsed\":24.68,\"event\":\"win\",\"message\":\"All 3 coins collected and the flag reached\",\"x\":0.7,\"z\":-2.7}",
+    ""
+  ]
+}

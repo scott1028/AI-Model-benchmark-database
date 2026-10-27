@@ -1,0 +1,55 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "fantasy_shrine",
+  "title": "古代奇幻神龕",
+  "intent": "古代奇幻風格建築（主件）",
+  "dims_m": {
+    "x": 5.0,
+    "y": 5.0,
+    "z": 5.5
+  },
+  "tris_max": 700,
+  "collision": {
+    "mode": "body",
+    "shape": "box",
+    "size_m": [
+      5.0,
+      5.0,
+      5.5
+    ],
+    "note": "台基與主體阻擋"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "shrine_marble",
+      "color": "#E6E2D8",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "shrine_stone",
+      "color": "#C4BFB2",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "shrine_crystal",
+      "color": "#59C2E0",
+      "flat": true,
+      "note": "發光水晶"
+    },
+    {
+      "name": "shrine_trim",
+      "color": "#C8952C",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": true
+  },
+  "notes": "三層台基 + 4 柱 + 頂冠 + 中央懸浮水晶"
+}

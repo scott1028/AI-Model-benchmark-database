@@ -1,0 +1,49 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "house",
+  "title": "房子",
+  "intent": "小屋（牆 + 斜屋頂 + 門窗）",
+  "dims_m": {
+    "x": 4.6,
+    "y": 4.6,
+    "z": 4.3
+  },
+  "tris_max": 360,
+  "collision": {
+    "mode": "body",
+    "shape": "box",
+    "size_m": [
+      4.6,
+      4.6,
+      4.3
+    ],
+    "note": "整棟方盒阻擋"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "house_wall",
+      "color": "#E8DCC4",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "house_roof",
+      "color": "#B5563C",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "house_wood",
+      "color": "#5B4632",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": true
+  },
+  "notes": "牆面微倒角，屋頂四斜坡，煙囪，窗框用深木色"
+}

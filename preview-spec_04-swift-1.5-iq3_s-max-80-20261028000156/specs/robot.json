@@ -1,0 +1,67 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "robot",
+  "title": "單輪機器人",
+  "intent": "可愛單輪小機器人，輪子會轉",
+  "dims_m": {
+    "x": 0.62,
+    "y": 0.62,
+    "z": 1.05
+  },
+  "tris_max": 950,
+  "collision": {
+    "mode": "body",
+    "shape": "capsule",
+    "radius_m": 0.31,
+    "height_m": 1.05,
+    "note": "CharacterBody3D 膠囊"
+  },
+  "animations": [
+    {
+      "name": "wheel_roll",
+      "fps": 30,
+      "frames": 24,
+      "target": "robot_wheel",
+      "note": "輪子繞自身 X 軸轉 360 度；Godot 端由速度驅動播放速度"
+    }
+  ],
+  "materials": [
+    {
+      "name": "robot_shell",
+      "color": "#E8E8EA",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "robot_panel",
+      "color": "#4A5568",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "robot_wheel",
+      "color": "#23232A",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "robot_hub",
+      "color": "#C8952C",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "robot_eye",
+      "color": "#59C2E0",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "player": true,
+    "tilts_on_accel": true
+  },
+  "notes": "正面 = Blender +Y（Godot -Z）；單輪在下方，輪輻要看得清楚，上半圓殼 + 側臂夾住輪子"
+}

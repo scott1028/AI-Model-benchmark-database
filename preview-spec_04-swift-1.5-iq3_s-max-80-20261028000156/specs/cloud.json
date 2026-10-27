@@ -1,0 +1,32 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "cloud",
+  "title": "雲",
+  "intent": "低模雲朵，在空中漂移",
+  "dims_m": {
+    "x": 6.3,
+    "y": 3.95,
+    "z": 1.88
+  },
+  "tris_max": 260,
+  "collision": {
+    "mode": "none",
+    "note": "不參與物理"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "cloud_body",
+      "color": "#F2F5F7",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": false,
+    "drift": true
+  },
+  "notes": "5 顆球堆疊的自然形態；Phase 4 建模實測後把 z 由 1.7 修正為 1.88（原目標過扁，會把雲壓成餅）"
+}

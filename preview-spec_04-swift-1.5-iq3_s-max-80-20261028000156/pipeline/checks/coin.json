@@ -1,0 +1,188 @@
+{
+  "id": "coin",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T01:09:35",
+  "spec": "specs/coin.json",
+  "measurements": [
+    {
+      "target": 0.42,
+      "measured": 0.42,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.042,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.07,
+      "measured": 0.081,
+      "delta": 0.011,
+      "delta_pct": 15.71,
+      "tol_m": 0.02,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.42,
+      "measured": 0.42,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.042,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.021,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 240,
+      "measured": 184,
+      "ok": true
+    },
+    {
+      "name": "material:coin_gold",
+      "side": "blender",
+      "target": "coin_gold",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:coin_gold",
+      "side": "blender",
+      "target": "#E8B92C",
+      "measured": "#E8B92C",
+      "ok": true
+    },
+    {
+      "name": "material:coin_gold_dark",
+      "side": "blender",
+      "target": "coin_gold_dark",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:coin_gold_dark",
+      "side": "blender",
+      "target": "#C8952C",
+      "measured": "#C8952C",
+      "ok": true
+    },
+    {
+      "target": 0.42,
+      "measured": 0.42,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.042,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.07,
+      "measured": 0.081,
+      "delta": 0.011,
+      "delta_pct": 15.71,
+      "tol_m": 0.02,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.42,
+      "measured": 0.42,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.042,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.021,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 240,
+      "measured": 184,
+      "ok": true
+    },
+    {
+      "name": "material:coin_gold",
+      "side": "godot",
+      "target": "coin_gold",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:coin_gold",
+      "side": "godot",
+      "target": "#E8B92C",
+      "measured": "#E8B92C",
+      "ok": true
+    },
+    {
+      "name": "material:coin_gold_dark",
+      "side": "godot",
+      "target": "coin_gold_dark",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:coin_gold_dark",
+      "side": "godot",
+      "target": "#C8952C",
+      "measured": "#C8952C",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "box",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

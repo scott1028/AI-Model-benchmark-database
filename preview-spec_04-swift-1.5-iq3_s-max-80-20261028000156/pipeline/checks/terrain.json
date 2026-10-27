@@ -1,0 +1,363 @@
+{
+  "id": "terrain",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:26:18",
+  "spec": "specs/terrain.json",
+  "measurements": [
+    {
+      "target": 44.0,
+      "measured": 44.0,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 4.4,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 44.0,
+      "measured": 44.0,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 4.4,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 3.62,
+      "measured": 3.6172,
+      "delta": -0.0028,
+      "delta_pct": -0.08,
+      "tol_m": 0.362,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.05,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 2.2,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 6000,
+      "measured": 5102,
+      "ok": true
+    },
+    {
+      "name": "material:terrain_grass_light",
+      "side": "blender",
+      "target": "terrain_grass_light",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_grass_light",
+      "side": "blender",
+      "target": "#6FAE4C",
+      "measured": "#6FAE4C",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_grass_mid",
+      "side": "blender",
+      "target": "terrain_grass_mid",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_grass_mid",
+      "side": "blender",
+      "target": "#4E8C3A",
+      "measured": "#4E8C3A",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_grass_dark",
+      "side": "blender",
+      "target": "terrain_grass_dark",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_grass_dark",
+      "side": "blender",
+      "target": "#3E7330",
+      "measured": "#3E7330",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_road",
+      "side": "blender",
+      "target": "terrain_road",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_road",
+      "side": "blender",
+      "target": "#C8A97E",
+      "measured": "#C8A97E",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_plaza",
+      "side": "blender",
+      "target": "terrain_plaza",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_plaza",
+      "side": "blender",
+      "target": "#DCCFAF",
+      "measured": "#DCCFAF",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_soil_top",
+      "side": "blender",
+      "target": "terrain_soil_top",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_soil_top",
+      "side": "blender",
+      "target": "#7A5B3A",
+      "measured": "#7A5B3A",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_soil_mid",
+      "side": "blender",
+      "target": "terrain_soil_mid",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_soil_mid",
+      "side": "blender",
+      "target": "#6A4A2E",
+      "measured": "#6A4A2E",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_rock",
+      "side": "blender",
+      "target": "terrain_rock",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_rock",
+      "side": "blender",
+      "target": "#8C8C86",
+      "measured": "#8C8C86",
+      "ok": true
+    },
+    {
+      "target": 44.0,
+      "measured": 44.0,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 4.4,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 44.0,
+      "measured": 44.0,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 4.4,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 3.62,
+      "measured": 3.6172,
+      "delta": -0.0028,
+      "delta_pct": -0.08,
+      "tol_m": 0.362,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.05,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 2.2,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 6000,
+      "measured": 5102,
+      "ok": true
+    },
+    {
+      "name": "material:terrain_grass_light",
+      "side": "godot",
+      "target": "terrain_grass_light",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_grass_light",
+      "side": "godot",
+      "target": "#6FAE4C",
+      "measured": "#6FAE4C",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_grass_mid",
+      "side": "godot",
+      "target": "terrain_grass_mid",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_grass_mid",
+      "side": "godot",
+      "target": "#4E8C3A",
+      "measured": "#4E8C3A",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_grass_dark",
+      "side": "godot",
+      "target": "terrain_grass_dark",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_grass_dark",
+      "side": "godot",
+      "target": "#3E7330",
+      "measured": "#3E7330",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_road",
+      "side": "godot",
+      "target": "terrain_road",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_road",
+      "side": "godot",
+      "target": "#C8A97E",
+      "measured": "#C8A97E",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_plaza",
+      "side": "godot",
+      "target": "terrain_plaza",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_plaza",
+      "side": "godot",
+      "target": "#DCCFAF",
+      "measured": "#DCCFAF",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_soil_top",
+      "side": "godot",
+      "target": "terrain_soil_top",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_soil_top",
+      "side": "godot",
+      "target": "#7A5B3A",
+      "measured": "#7A5B3A",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_soil_mid",
+      "side": "godot",
+      "target": "terrain_soil_mid",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_soil_mid",
+      "side": "godot",
+      "target": "#6A4A2E",
+      "measured": "#6A4A2E",
+      "ok": true
+    },
+    {
+      "name": "material:terrain_rock",
+      "side": "godot",
+      "target": "terrain_rock",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:terrain_rock",
+      "side": "godot",
+      "target": "#8C8C86",
+      "measured": "#8C8C86",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "heightfield",
+      "measured": "declared",
+      "ok": true
+    },
+    {
+      "name": "collision_heightfield",
+      "side": "godot",
+      "target": "45x45 grid, step 1.00 m",
+      "measured": "45x45, 2025 heights, node_y=-3.2, range -0.50..0.42",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

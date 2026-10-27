@@ -1,0 +1,43 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "coin",
+  "title": "金幣",
+  "intent": "直立圓形硬幣，可被收集",
+  "dims_m": {
+    "x": 0.42,
+    "y": 0.07,
+    "z": 0.42
+  },
+  "tris_max": 240,
+  "collision": {
+    "mode": "sensor",
+    "shape": "box",
+    "size_m": [
+      0.5,
+      0.2,
+      0.5
+    ],
+    "note": "收集判定體"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "coin_gold",
+      "color": "#E8B92C",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "coin_gold_dark",
+      "color": "#C8952C",
+      "flat": true,
+      "note": "齒紋與圖騰"
+    }
+  ],
+  "gameplay": {
+    "collectible": true
+  },
+  "notes": "16 邊圓柱，邊緣齒紋，正面凸圖騰；直立，薄面朝 Blender Y（Godot Z）｜2026-10-28 附錄 E 回饋：0.70 m 直立圓盤在等角鏡頭擋視線、箱庭比例過大，等比縮至 60%（0.42 m），收集盒同步縮到 0.5×0.2×0.5"
+}

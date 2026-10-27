@@ -1,0 +1,41 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "barrel",
+  "title": "木桶",
+  "intent": "可被機器人推動的木桶",
+  "dims_m": {
+    "x": 0.72,
+    "y": 0.72,
+    "z": 0.9
+  },
+  "tris_max": 180,
+  "collision": {
+    "mode": "rigid",
+    "shape": "cylinder",
+    "radius_m": 0.36,
+    "height_m": 0.9,
+    "note": "Godot RigidBody3D，可被推"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "barrel_stave",
+      "color": "#8A5A33",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "barrel_band",
+      "color": "#4A4A52",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": true,
+    "pushable": true
+  },
+  "notes": "桶身中段微鼓 + 兩道鐵圈"
+}

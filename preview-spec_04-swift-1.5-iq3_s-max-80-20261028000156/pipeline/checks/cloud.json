@@ -1,0 +1,160 @@
+{
+  "id": "cloud",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:38",
+  "spec": "specs/cloud.json",
+  "measurements": [
+    {
+      "target": 6.3,
+      "measured": 6.3204,
+      "delta": 0.0204,
+      "delta_pct": 0.32,
+      "tol_m": 0.63,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 3.95,
+      "measured": 3.958,
+      "delta": 0.008,
+      "delta_pct": 0.2,
+      "tol_m": 0.395,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 1.88,
+      "measured": 1.8806,
+      "delta": 0.0006,
+      "delta_pct": 0.03,
+      "tol_m": 0.188,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.315,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 260,
+      "measured": 220,
+      "ok": true
+    },
+    {
+      "name": "material:cloud_body",
+      "side": "blender",
+      "target": "cloud_body",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:cloud_body",
+      "side": "blender",
+      "target": "#F2F5F7",
+      "measured": "#F2F5F7",
+      "ok": true
+    },
+    {
+      "target": 6.3,
+      "measured": 6.3204,
+      "delta": 0.0204,
+      "delta_pct": 0.32,
+      "tol_m": 0.63,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 3.95,
+      "measured": 3.958,
+      "delta": 0.008,
+      "delta_pct": 0.2,
+      "tol_m": 0.395,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 1.88,
+      "measured": 1.8806,
+      "delta": 0.0006,
+      "delta_pct": 0.03,
+      "tol_m": 0.188,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.315,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 260,
+      "measured": 220,
+      "ok": true
+    },
+    {
+      "name": "material:cloud_body",
+      "side": "godot",
+      "target": "cloud_body",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:cloud_body",
+      "side": "godot",
+      "target": "#F2F5F7",
+      "measured": "#F2F5F7",
+      "ok": true
+    },
+    {
+      "name": "collision",
+      "side": "spec",
+      "target": "none",
+      "measured": "no collider required",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

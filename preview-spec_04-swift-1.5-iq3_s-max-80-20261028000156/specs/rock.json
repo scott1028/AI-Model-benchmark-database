@@ -1,0 +1,38 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "rock",
+  "title": "石頭",
+  "intent": "低模多面體石頭，可当障礙",
+  "dims_m": {
+    "x": 0.95,
+    "y": 0.85,
+    "z": 0.7
+  },
+  "tris_max": 160,
+  "collision": {
+    "mode": "body",
+    "shape": "mesh",
+    "note": "不規則外形 → Blender 建 <id>_collision（icosphere 凸包）"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "rock_gray",
+      "color": "#8C8C86",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "rock_moss",
+      "color": "#7FB069",
+      "flat": true,
+      "note": "頂部苔癬"
+    }
+  ],
+  "gameplay": {
+    "blocks": true
+  },
+  "notes": "icosphere 位移 + 頂部苔癬斑塊；不要圓滑"
+}

@@ -1,0 +1,286 @@
+{
+  "id": "robot",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:27",
+  "spec": "specs/robot.json",
+  "measurements": [
+    {
+      "target": 0.62,
+      "measured": 0.655,
+      "delta": 0.035,
+      "delta_pct": 5.65,
+      "tol_m": 0.062,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.62,
+      "measured": 0.6768,
+      "delta": 0.0568,
+      "delta_pct": 9.16,
+      "tol_m": 0.062,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 1.05,
+      "measured": 1.0745,
+      "delta": 0.0245,
+      "delta_pct": 2.33,
+      "tol_m": 0.105,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": -0.0,
+      "delta": -0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0035,
+      "tol_m": 0.031,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 950,
+      "measured": 540,
+      "ok": true
+    },
+    {
+      "name": "material:robot_shell",
+      "side": "blender",
+      "target": "robot_shell",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_shell",
+      "side": "blender",
+      "target": "#E8E8EA",
+      "measured": "#E8E8EA",
+      "ok": true
+    },
+    {
+      "name": "material:robot_panel",
+      "side": "blender",
+      "target": "robot_panel",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_panel",
+      "side": "blender",
+      "target": "#4A5568",
+      "measured": "#4A5568",
+      "ok": true
+    },
+    {
+      "name": "material:robot_wheel",
+      "side": "blender",
+      "target": "robot_wheel",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_wheel",
+      "side": "blender",
+      "target": "#23232A",
+      "measured": "#23232A",
+      "ok": true
+    },
+    {
+      "name": "material:robot_hub",
+      "side": "blender",
+      "target": "robot_hub",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_hub",
+      "side": "blender",
+      "target": "#C8952C",
+      "measured": "#C8952C",
+      "ok": true
+    },
+    {
+      "name": "material:robot_eye",
+      "side": "blender",
+      "target": "robot_eye",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_eye",
+      "side": "blender",
+      "target": "#59C2E0",
+      "measured": "#59C2E0",
+      "ok": true
+    },
+    {
+      "target": 0.62,
+      "measured": 0.655,
+      "delta": 0.035,
+      "delta_pct": 5.65,
+      "tol_m": 0.062,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.62,
+      "measured": 0.6768,
+      "delta": 0.0568,
+      "delta_pct": 9.16,
+      "tol_m": 0.062,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 1.05,
+      "measured": 1.0745,
+      "delta": 0.0245,
+      "delta_pct": 2.33,
+      "tol_m": 0.105,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": -0.0,
+      "delta": -0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0035,
+      "tol_m": 0.031,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 950,
+      "measured": 540,
+      "ok": true
+    },
+    {
+      "name": "material:robot_shell",
+      "side": "godot",
+      "target": "robot_shell",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_shell",
+      "side": "godot",
+      "target": "#E8E8EA",
+      "measured": "#E8E8EA",
+      "ok": true
+    },
+    {
+      "name": "material:robot_panel",
+      "side": "godot",
+      "target": "robot_panel",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_panel",
+      "side": "godot",
+      "target": "#4A5568",
+      "measured": "#4A5568",
+      "ok": true
+    },
+    {
+      "name": "material:robot_wheel",
+      "side": "godot",
+      "target": "robot_wheel",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_wheel",
+      "side": "godot",
+      "target": "#23232A",
+      "measured": "#23232A",
+      "ok": true
+    },
+    {
+      "name": "material:robot_hub",
+      "side": "godot",
+      "target": "robot_hub",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_hub",
+      "side": "godot",
+      "target": "#C8952C",
+      "measured": "#C8952C",
+      "ok": true
+    },
+    {
+      "name": "material:robot_eye",
+      "side": "godot",
+      "target": "robot_eye",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:robot_eye",
+      "side": "godot",
+      "target": "#59C2E0",
+      "measured": "#59C2E0",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "capsule",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    },
+    {
+      "name": "anim(blender):wheel_roll",
+      "side": "blender",
+      "target": "wheel_roll",
+      "measured": "wheel_roll",
+      "ok": true
+    },
+    {
+      "name": "anim(godot):wheel_roll",
+      "side": "godot",
+      "target": "wheel_roll",
+      "measured": "wheel_roll",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

@@ -1,0 +1,64 @@
+{
+	"animations": [],
+	"collision_flags": [
+		true
+	],
+	"collision_meta_keys": [
+		"extras"
+	],
+	"collision_meta_ok": true,
+	"collision_nodes": [
+		"probe_box_collision"
+	],
+	"dims_blender_equivalent": {
+		"x": 0.600000023841858,
+		"y": 0.600000023841858,
+		"z": 0.600000023841858
+	},
+	"dims_godot": {
+		"x": 0.600000023841858,
+		"y": 0.600000023841858,
+		"z": 0.600000023841858
+	},
+	"id": "probe_box",
+	"loaded": true,
+	"materials": [
+		{
+			"color": "#8A5A33",
+			"name": "probe_box_wood"
+		}
+	],
+	"node_count": 3,
+	"node_names": [
+		"probe_box2",
+		"probe_box",
+		"probe_box_collision"
+	],
+	"nodes_detail": [
+		{
+			"dims_godot": {
+				"x": 0.600000023841858,
+				"y": 0.600000023841858,
+				"z": 0.600000023841858
+			},
+			"name": "probe_box",
+			"pos": [
+				-0.300000011920929,
+				-0.0000000119209291327138,
+				-0.300000011920929
+			]
+		}
+	],
+	"origin": {
+		"min_y": -0.0000000119209291327138,
+		"xy_center_offset": [
+			0.0,
+			0.0
+		]
+	},
+	"path": "res://assets/probe_box/probe_box.glb",
+	"tris": 12,
+	"tris_col": 12,
+	"visual_mesh_count": 1,
+	"warnings": []
+}

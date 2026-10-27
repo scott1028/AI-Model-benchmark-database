@@ -1,0 +1,54 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "tree",
+  "title": "樹",
+  "intent": "低模樹，撞了會搖晃掉葉",
+  "dims_m": {
+    "x": 3.2,
+    "y": 3.2,
+    "z": 4.2
+  },
+  "tris_max": 420,
+  "collision": {
+    "mode": "body",
+    "shape": "cylinder",
+    "radius_m": 0.32,
+    "height_m": 1.7,
+    "offset_m": [
+      0,
+      0,
+      0.85
+    ],
+    "note": "只有樹幹擋人"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "tree_trunk",
+      "color": "#6E4A2E",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "tree_leaf",
+      "color": "#4E8C3A",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "tree_leaf_light",
+      "color": "#6FAE4C",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": true,
+    "wind_sway": true,
+    "shake_on_hit": true,
+    "leaf_drop_on_hit": true
+  },
+  "notes": "樹幹 6 邊柱 + 3 顆低模葉球；葉球要能承接風擺 shader（頂點位移）"
+}

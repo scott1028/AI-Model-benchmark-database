@@ -1,0 +1,167 @@
+{
+  "id": "probe_box",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:27",
+  "spec": "specs/probe_box.json",
+  "measurements": [
+    {
+      "target": 0.6,
+      "measured": 0.6,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.06,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.6,
+      "measured": 0.6,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.06,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.6,
+      "measured": 0.6,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.06,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": -0.0,
+      "delta": -0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.03,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 40,
+      "measured": 12,
+      "ok": true
+    },
+    {
+      "name": "material:probe_box_wood",
+      "side": "blender",
+      "target": "probe_box_wood",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:probe_box_wood",
+      "side": "blender",
+      "target": "#8A5A33",
+      "measured": "#8A5A33",
+      "ok": true
+    },
+    {
+      "target": 0.6,
+      "measured": 0.6,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.06,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.6,
+      "measured": 0.6,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.06,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.6,
+      "measured": 0.6,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.06,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": -0.0,
+      "delta": -0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.03,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 40,
+      "measured": 12,
+      "ok": true
+    },
+    {
+      "name": "material:probe_box_wood",
+      "side": "godot",
+      "target": "probe_box_wood",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:probe_box_wood",
+      "side": "godot",
+      "target": "#8A5A33",
+      "measured": "#8A5A33",
+      "ok": true
+    },
+    {
+      "name": "collision_mesh",
+      "side": "blender",
+      "target": "body",
+      "measured": "{\"present\": true, \"names\": [\"probe_box_collision\"], \"flag_ok\": true, \"hide_render\": true}",
+      "ok": true
+    },
+    {
+      "name": "collision_mesh",
+      "side": "godot",
+      "target": "body",
+      "measured": "{\"nodes\": [\"probe_box_collision\"], \"meta_ok\": true}",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

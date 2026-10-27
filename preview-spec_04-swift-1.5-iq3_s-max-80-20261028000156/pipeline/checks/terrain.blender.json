@@ -1,0 +1,97 @@
+{
+  "id": "terrain",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/terrain.blend",
+  "top_level_objects": [
+    "terrain"
+  ],
+  "visual_objects": [
+    "terrain_slab"
+  ],
+  "parts_detail": [
+    {
+      "name": "terrain_slab",
+      "dims": {
+        "x": 44.0,
+        "y": 44.0,
+        "z": 3.6172
+      },
+      "min": [
+        -22.0,
+        -22.0,
+        0.0
+      ],
+      "max": [
+        22.0,
+        22.0,
+        3.6172
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 44.0,
+    "y": 44.0,
+    "z": 3.6172068119049072
+  },
+  "bbox_min": [
+    -22.0,
+    -22.0,
+    0.0
+  ],
+  "bbox_max": [
+    22.0,
+    22.0,
+    3.6172068119049072
+  ],
+  "tris_visual": 5102,
+  "tris_col": 0,
+  "origin": {
+    "min_z": 0.0,
+    "xy_center_offset": [
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "terrain_grass_dark",
+      "color": "#3E7330"
+    },
+    {
+      "name": "terrain_grass_light",
+      "color": "#6FAE4C"
+    },
+    {
+      "name": "terrain_grass_mid",
+      "color": "#4E8C3A"
+    },
+    {
+      "name": "terrain_plaza",
+      "color": "#DCCFAF"
+    },
+    {
+      "name": "terrain_road",
+      "color": "#C8A97E"
+    },
+    {
+      "name": "terrain_rock",
+      "color": "#8C8C86"
+    },
+    {
+      "name": "terrain_soil_mid",
+      "color": "#6A4A2E"
+    },
+    {
+      "name": "terrain_soil_top",
+      "color": "#7A5B3A"
+    }
+  ],
+  "collision": {
+    "present": false,
+    "names": [],
+    "flag_ok": false,
+    "hide_render": false
+  },
+  "animations": [],
+  "scene_fps": 30
+}

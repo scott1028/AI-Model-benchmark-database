@@ -1,0 +1,46 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "endpoint_flag",
+  "title": "終點旗",
+  "intent": "旗桿加旗子，碰到判定抵達終點",
+  "dims_m": {
+    "x": 1.1,
+    "y": 0.46,
+    "z": 3.6
+  },
+  "tris_max": 260,
+  "collision": {
+    "mode": "sensor",
+    "shape": "cylinder",
+    "radius_m": 0.8,
+    "height_m": 3.6,
+    "note": "觸碰範圍以旗桿為軸"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "flag_pole",
+      "color": "#6E5138",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "flag_cloth",
+      "color": "#C0392B",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "flag_trim",
+      "color": "#E8B92C",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "goal": true
+  },
+  "notes": "旗面波浪狀（3 段折角），旗桿頂有金球；含圓形底座（直徑 0.44），y 向 bbox 以底座為準"
+}

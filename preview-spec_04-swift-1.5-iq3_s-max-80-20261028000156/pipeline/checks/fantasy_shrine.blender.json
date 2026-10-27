@@ -1,0 +1,480 @@
+{
+  "id": "fantasy_shrine",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/fantasy_shrine.blend",
+  "top_level_objects": [
+    "fantasy_shrine"
+  ],
+  "visual_objects": [
+    "shrine_cell",
+    "shrine_col_0",
+    "shrine_col_1",
+    "shrine_col_2",
+    "shrine_col_3",
+    "shrine_col_base_0",
+    "shrine_col_base_1",
+    "shrine_col_base_2",
+    "shrine_col_base_3",
+    "shrine_col_cap_0",
+    "shrine_col_cap_1",
+    "shrine_col_cap_2",
+    "shrine_col_cap_3",
+    "shrine_crown",
+    "shrine_crystal_dn",
+    "shrine_crystal_up",
+    "shrine_entab",
+    "shrine_stairs",
+    "shrine_step0",
+    "shrine_step1",
+    "shrine_step2",
+    "shrine_trim"
+  ],
+  "parts_detail": [
+    {
+      "name": "shrine_step0",
+      "dims": {
+        "x": 5.0,
+        "y": 5.0,
+        "z": 0.3
+      },
+      "min": [
+        -2.5,
+        -2.7255,
+        0.0
+      ],
+      "max": [
+        2.5,
+        2.2745,
+        0.3
+      ]
+    },
+    {
+      "name": "shrine_step1",
+      "dims": {
+        "x": 4.4,
+        "y": 4.4,
+        "z": 0.3
+      },
+      "min": [
+        -2.2,
+        -2.4255,
+        0.3
+      ],
+      "max": [
+        2.2,
+        1.9745,
+        0.6
+      ]
+    },
+    {
+      "name": "shrine_step2",
+      "dims": {
+        "x": 3.8,
+        "y": 3.8,
+        "z": 0.3
+      },
+      "min": [
+        -1.9,
+        -2.1255,
+        0.6
+      ],
+      "max": [
+        1.9,
+        1.6745,
+        0.9
+      ]
+    },
+    {
+      "name": "shrine_cell",
+      "dims": {
+        "x": 2.4,
+        "y": 2.4,
+        "z": 1.9
+      },
+      "min": [
+        -1.2,
+        -1.4255,
+        0.9
+      ],
+      "max": [
+        1.2,
+        0.9745,
+        2.8
+      ]
+    },
+    {
+      "name": "shrine_col_0",
+      "dims": {
+        "x": 0.44,
+        "y": 0.44,
+        "z": 2.0
+      },
+      "min": [
+        -1.77,
+        -1.9955,
+        0.9
+      ],
+      "max": [
+        -1.33,
+        -1.5555,
+        2.9
+      ]
+    },
+    {
+      "name": "shrine_col_base_0",
+      "dims": {
+        "x": 0.6,
+        "y": 0.6,
+        "z": 0.16
+      },
+      "min": [
+        -1.85,
+        -2.0755,
+        0.9
+      ],
+      "max": [
+        -1.25,
+        -1.4755,
+        1.06
+      ]
+    },
+    {
+      "name": "shrine_col_cap_0",
+      "dims": {
+        "x": 0.62,
+        "y": 0.62,
+        "z": 0.16
+      },
+      "min": [
+        -1.86,
+        -2.0855,
+        2.84
+      ],
+      "max": [
+        -1.24,
+        -1.4655,
+        3.0
+      ]
+    },
+    {
+      "name": "shrine_col_1",
+      "dims": {
+        "x": 0.44,
+        "y": 0.44,
+        "z": 2.0
+      },
+      "min": [
+        1.33,
+        -1.9955,
+        0.9
+      ],
+      "max": [
+        1.77,
+        -1.5555,
+        2.9
+      ]
+    },
+    {
+      "name": "shrine_col_base_1",
+      "dims": {
+        "x": 0.6,
+        "y": 0.6,
+        "z": 0.16
+      },
+      "min": [
+        1.25,
+        -2.0755,
+        0.9
+      ],
+      "max": [
+        1.85,
+        -1.4755,
+        1.06
+      ]
+    },
+    {
+      "name": "shrine_col_cap_1",
+      "dims": {
+        "x": 0.62,
+        "y": 0.62,
+        "z": 0.16
+      },
+      "min": [
+        1.24,
+        -2.0855,
+        2.84
+      ],
+      "max": [
+        1.86,
+        -1.4655,
+        3.0
+      ]
+    },
+    {
+      "name": "shrine_col_2",
+      "dims": {
+        "x": 0.44,
+        "y": 0.44,
+        "z": 2.0
+      },
+      "min": [
+        -1.77,
+        1.1045,
+        0.9
+      ],
+      "max": [
+        -1.33,
+        1.5445,
+        2.9
+      ]
+    },
+    {
+      "name": "shrine_col_base_2",
+      "dims": {
+        "x": 0.6,
+        "y": 0.6,
+        "z": 0.16
+      },
+      "min": [
+        -1.85,
+        1.0245,
+        0.9
+      ],
+      "max": [
+        -1.25,
+        1.6245,
+        1.06
+      ]
+    },
+    {
+      "name": "shrine_col_cap_2",
+      "dims": {
+        "x": 0.62,
+        "y": 0.62,
+        "z": 0.16
+      },
+      "min": [
+        -1.86,
+        1.0145,
+        2.84
+      ],
+      "max": [
+        -1.24,
+        1.6345,
+        3.0
+      ]
+    },
+    {
+      "name": "shrine_col_3",
+      "dims": {
+        "x": 0.44,
+        "y": 0.44,
+        "z": 2.0
+      },
+      "min": [
+        1.33,
+        1.1045,
+        0.9
+      ],
+      "max": [
+        1.77,
+        1.5445,
+        2.9
+      ]
+    },
+    {
+      "name": "shrine_col_base_3",
+      "dims": {
+        "x": 0.6,
+        "y": 0.6,
+        "z": 0.16
+      },
+      "min": [
+        1.25,
+        1.0245,
+        0.9
+      ],
+      "max": [
+        1.85,
+        1.6245,
+        1.06
+      ]
+    },
+    {
+      "name": "shrine_col_cap_3",
+      "dims": {
+        "x": 0.62,
+        "y": 0.62,
+        "z": 0.16
+      },
+      "min": [
+        1.24,
+        1.0145,
+        2.84
+      ],
+      "max": [
+        1.86,
+        1.6345,
+        3.0
+      ]
+    },
+    {
+      "name": "shrine_entab",
+      "dims": {
+        "x": 4.05,
+        "y": 4.05,
+        "z": 0.28
+      },
+      "min": [
+        -2.025,
+        -2.2505,
+        2.98
+      ],
+      "max": [
+        2.025,
+        1.7995,
+        3.26
+      ]
+    },
+    {
+      "name": "shrine_trim",
+      "dims": {
+        "x": 4.25,
+        "y": 4.25,
+        "z": 0.1
+      },
+      "min": [
+        -2.125,
+        -2.3505,
+        3.25
+      ],
+      "max": [
+        2.125,
+        1.8995,
+        3.35
+      ]
+    },
+    {
+      "name": "shrine_crown",
+      "dims": {
+        "x": 4.3134,
+        "y": 4.3134,
+        "z": 1.3
+      },
+      "min": [
+        -2.1567,
+        -2.3822,
+        3.33
+      ],
+      "max": [
+        2.1567,
+        1.9312,
+        4.63
+      ]
+    },
+    {
+      "name": "shrine_crystal_up",
+      "dims": {
+        "x": 0.84,
+        "y": 0.84,
+        "z": 0.85
+      },
+      "min": [
+        -0.42,
+        -0.6455,
+        4.625
+      ],
+      "max": [
+        0.42,
+        0.1945,
+        5.475
+      ]
+    },
+    {
+      "name": "shrine_crystal_dn",
+      "dims": {
+        "x": 0.84,
+        "y": 0.84,
+        "z": 0.6
+      },
+      "min": [
+        -0.42,
+        -0.6455,
+        4.12
+      ],
+      "max": [
+        0.42,
+        0.1945,
+        4.72
+      ]
+    },
+    {
+      "name": "shrine_stairs",
+      "dims": {
+        "x": 1.6,
+        "y": 0.702,
+        "z": 0.18
+      },
+      "min": [
+        -0.8,
+        2.0235,
+        0.0
+      ],
+      "max": [
+        0.8,
+        2.7255,
+        0.18
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 5.0,
+    "y": 5.450999975204468,
+    "z": 5.475000381469727
+  },
+  "bbox_min": [
+    -2.5,
+    -2.7255001068115234,
+    0.0
+  ],
+  "bbox_max": [
+    2.5,
+    2.7254998683929443,
+    5.475000381469727
+  ],
+  "tris_visual": 310,
+  "tris_col": 0,
+  "origin": {
+    "min_z": 0.0,
+    "xy_center_offset": [
+      0.0,
+      -0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "shrine_crystal",
+      "color": "#59C2E0"
+    },
+    {
+      "name": "shrine_marble",
+      "color": "#E6E2D8"
+    },
+    {
+      "name": "shrine_stone",
+      "color": "#C4BFB2"
+    },
+    {
+      "name": "shrine_trim",
+      "color": "#C8952C"
+    }
+  ],
+  "collision": {
+    "present": false,
+    "names": [],
+    "flag_ok": false,
+    "hide_render": false
+  },
+  "animations": [],
+  "scene_fps": 30
+}

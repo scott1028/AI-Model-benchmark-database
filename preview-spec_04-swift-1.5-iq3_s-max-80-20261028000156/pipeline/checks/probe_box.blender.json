@@ -1,0 +1,71 @@
+{
+  "id": "probe_box",
+  "blender_version": "5.2.2 LTS",
+  "blend_file": "/home/scott/workspace/AI-Model-benchmark-database/preview-spec_04-swift-1.5-iq3_s-max-20261028000156/blender/probe_box.blend",
+  "top_level_objects": [
+    "probe_box"
+  ],
+  "visual_objects": [
+    "probe_box"
+  ],
+  "parts_detail": [
+    {
+      "name": "probe_box",
+      "dims": {
+        "x": 0.6,
+        "y": 0.6,
+        "z": 0.6
+      },
+      "min": [
+        -0.3,
+        -0.3,
+        -0.0
+      ],
+      "max": [
+        0.3,
+        0.3,
+        0.6
+      ]
+    }
+  ],
+  "dims_blender": {
+    "x": 0.6000000238418579,
+    "y": 0.6000000238418579,
+    "z": 0.600000035762787
+  },
+  "bbox_min": [
+    -0.30000001192092896,
+    -0.30000001192092896,
+    -1.1920929132713809e-08
+  ],
+  "bbox_max": [
+    0.30000001192092896,
+    0.30000001192092896,
+    0.6000000238418579
+  ],
+  "tris_visual": 12,
+  "tris_col": 12,
+  "origin": {
+    "min_z": -1.1920929132713809e-08,
+    "xy_center_offset": [
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "name": "probe_box_wood",
+      "color": "#8A5A33"
+    }
+  ],
+  "collision": {
+    "present": true,
+    "names": [
+      "probe_box_collision"
+    ],
+    "flag_ok": true,
+    "hide_render": true
+  },
+  "animations": [],
+  "scene_fps": 24
+}

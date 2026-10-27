@@ -1,0 +1,244 @@
+{
+  "id": "fantasy_shrine",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:29",
+  "spec": "specs/fantasy_shrine.json",
+  "measurements": [
+    {
+      "target": 5.0,
+      "measured": 5.0,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.5,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 5.0,
+      "measured": 5.451,
+      "delta": 0.451,
+      "delta_pct": 9.02,
+      "tol_m": 0.5,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 5.5,
+      "measured": 5.475,
+      "delta": -0.025,
+      "delta_pct": -0.45,
+      "tol_m": 0.55,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.25,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 700,
+      "measured": 310,
+      "ok": true
+    },
+    {
+      "name": "material:shrine_marble",
+      "side": "blender",
+      "target": "shrine_marble",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:shrine_marble",
+      "side": "blender",
+      "target": "#E6E2D8",
+      "measured": "#E6E2D8",
+      "ok": true
+    },
+    {
+      "name": "material:shrine_stone",
+      "side": "blender",
+      "target": "shrine_stone",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:shrine_stone",
+      "side": "blender",
+      "target": "#C4BFB2",
+      "measured": "#C4BFB2",
+      "ok": true
+    },
+    {
+      "name": "material:shrine_crystal",
+      "side": "blender",
+      "target": "shrine_crystal",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:shrine_crystal",
+      "side": "blender",
+      "target": "#59C2E0",
+      "measured": "#59C2E0",
+      "ok": true
+    },
+    {
+      "name": "material:shrine_trim",
+      "side": "blender",
+      "target": "shrine_trim",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:shrine_trim",
+      "side": "blender",
+      "target": "#C8952C",
+      "measured": "#C8952C",
+      "ok": true
+    },
+    {
+      "target": 5.0,
+      "measured": 5.0,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "tol_m": 0.5,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 5.0,
+      "measured": 5.451,
+      "delta": 0.451,
+      "delta_pct": 9.02,
+      "tol_m": 0.5,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 5.5,
+      "measured": 5.475,
+      "delta": -0.025,
+      "delta_pct": -0.45,
+      "tol_m": 0.55,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.25,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 700,
+      "measured": 310,
+      "ok": true
+    },
+    {
+      "name": "material:shrine_marble",
+      "side": "godot",
+      "target": "shrine_marble",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:shrine_marble",
+      "side": "godot",
+      "target": "#E6E2D8",
+      "measured": "#E6E2D8",
+      "ok": true
+    },
+    {
+      "name": "material:shrine_stone",
+      "side": "godot",
+      "target": "shrine_stone",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:shrine_stone",
+      "side": "godot",
+      "target": "#C4BFB2",
+      "measured": "#C4BFB2",
+      "ok": true
+    },
+    {
+      "name": "material:shrine_crystal",
+      "side": "godot",
+      "target": "shrine_crystal",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:shrine_crystal",
+      "side": "godot",
+      "target": "#59C2E0",
+      "measured": "#59C2E0",
+      "ok": true
+    },
+    {
+      "name": "material:shrine_trim",
+      "side": "godot",
+      "target": "shrine_trim",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:shrine_trim",
+      "side": "godot",
+      "target": "#C8952C",
+      "measured": "#C8952C",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "box",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}

@@ -1,0 +1,71 @@
+{
+  "tolerance_pct": 10,
+  "tolerance_min_cm": 2,
+  "origin": "bottom_center",
+  "id": "fantasy_arch",
+  "title": "古代奇幻拱門",
+  "intent": "古代奇幻風格建築（副件/遺跡）",
+  "dims_m": {
+    "x": 5.5,
+    "y": 1.3,
+    "z": 6.0
+  },
+  "tris_max": 500,
+  "collision": {
+    "mode": "body",
+    "shape": "box_pair",
+    "boxes": [
+      {
+        "size_m": [
+          1.2,
+          1.2,
+          4.6
+        ],
+        "offset_m": [
+          -2.05,
+          0,
+          2.3
+        ]
+      },
+      {
+        "size_m": [
+          1.2,
+          1.2,
+          4.6
+        ],
+        "offset_m": [
+          2.05,
+          0,
+          2.3
+        ]
+      }
+    ],
+    "note": "兩側柱阻擋，中央 3 m 可通行"
+  },
+  "animations": [],
+  "materials": [
+    {
+      "name": "arch_marble",
+      "color": "#E6E2D8",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "arch_stone",
+      "color": "#C4BFB2",
+      "flat": true,
+      "note": ""
+    },
+    {
+      "name": "arch_crystal",
+      "color": "#59C2E0",
+      "flat": true,
+      "note": ""
+    }
+  ],
+  "gameplay": {
+    "blocks": true,
+    "walk_through": true
+  },
+  "notes": "兩根柱 + 拱樑，中央留 3 m 通道"
+}

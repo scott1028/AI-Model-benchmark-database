@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/smoke_probe.gd" id="1_smoke"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat_smoke"]
+sky_top_color = Color(0.42, 0.62, 0.85, 1)
+sky_horizon_color = Color(0.86, 0.78, 0.66, 1)
+ground_bottom_color = Color(0.32, 0.3, 0.28, 1)
+ground_horizon_color = Color(0.72, 0.66, 0.58, 1)
+
+[sub_resource type="Sky" id="Sky_smoke"]
+sky_material = SubResource("SkyMat_smoke")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_smoke"]
+size = Vector2(1, 1)
+
+[sub_resource type="Environment" id="Env_smoke"]
+background_mode = 2
+sky = SubResource("Sky_smoke")
+tonemap_mode = 2
+ambient_light_source = 3
+ssao_enabled = true
+dof_blur_far_enabled = true
+dof_blur_far_distance = 22.0
+dof_blur_far_amount = 0.18
+
+[node name="root" type="Node3D" unique_id=1421328770]
+script = ExtResource("1_smoke")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1642148718]
+environment = SubResource("Env_smoke")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1642148719]
+transform = Transform3D(0.766044, -0.321394, 0.55767, 0, 0.866025, 0.5, -0.642788, -0.383023, 0.663414, 6, 12, 8)
+light_energy = 1.25
+shadow_enabled = true
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+transform = Transform3D(40, 0, 0, 0, 1, 0, 0, 0, 40, 0, -0.02, 0)
+mesh = SubResource("PlaneMesh_smoke")
+
+[node name="Camera" type="Camera3D" parent="." unique_id=1786433310]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 16, 20)
+current = true

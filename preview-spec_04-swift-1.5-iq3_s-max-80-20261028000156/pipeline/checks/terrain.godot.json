@@ -1,0 +1,86 @@
+{
+	"animations": [],
+	"collision_flags": [],
+	"collision_meta_keys": [],
+	"collision_meta_ok": false,
+	"collision_nodes": [],
+	"dims_blender_equivalent": {
+		"x": 44.0,
+		"y": 44.0,
+		"z": 3.61720681190491
+	},
+	"dims_godot": {
+		"x": 44.0,
+		"y": 3.61720681190491,
+		"z": 44.0
+	},
+	"id": "terrain",
+	"loaded": true,
+	"materials": [
+		{
+			"color": "#6FAE4C",
+			"name": "terrain_grass_light"
+		},
+		{
+			"color": "#4E8C3A",
+			"name": "terrain_grass_mid"
+		},
+		{
+			"color": "#3E7330",
+			"name": "terrain_grass_dark"
+		},
+		{
+			"color": "#C8A97E",
+			"name": "terrain_road"
+		},
+		{
+			"color": "#DCCFAF",
+			"name": "terrain_plaza"
+		},
+		{
+			"color": "#7A5B3A",
+			"name": "terrain_soil_top"
+		},
+		{
+			"color": "#6A4A2E",
+			"name": "terrain_soil_mid"
+		},
+		{
+			"color": "#8C8C86",
+			"name": "terrain_rock"
+		}
+	],
+	"node_count": 3,
+	"node_names": [
+		"terrain2",
+		"terrain",
+		"terrain_slab"
+	],
+	"nodes_detail": [
+		{
+			"dims_godot": {
+				"x": 44.0,
+				"y": 3.61720681190491,
+				"z": 44.0
+			},
+			"name": "terrain_slab",
+			"pos": [
+				-22.0,
+				0.0,
+				-22.0
+			]
+		}
+	],
+	"origin": {
+		"min_y": 0.0,
+		"xy_center_offset": [
+			0.0,
+			0.0
+		]
+	},
+	"path": "res://assets/terrain/terrain.glb",
+	"tris": 5102,
+	"tris_col": 0,
+	"visual_mesh_count": 1,
+	"warnings": []
+}

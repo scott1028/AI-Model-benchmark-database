@@ -1,0 +1,216 @@
+{
+  "id": "tree",
+  "pass": true,
+  "attempt": 1,
+  "ts": "2026-10-28T00:20:34",
+  "spec": "specs/tree.json",
+  "measurements": [
+    {
+      "target": 3.2,
+      "measured": 3.3129,
+      "delta": 0.1129,
+      "delta_pct": 3.53,
+      "tol_m": 0.32,
+      "name": "dim_x",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 3.2,
+      "measured": 2.9575,
+      "delta": -0.2425,
+      "delta_pct": -7.58,
+      "tol_m": 0.32,
+      "name": "dim_y",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 4.2,
+      "measured": 4.054,
+      "delta": -0.146,
+      "delta_pct": -3.48,
+      "tol_m": 0.42,
+      "name": "dim_z",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "blender",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "blender",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.16,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "blender",
+      "target": 420,
+      "measured": 304,
+      "ok": true
+    },
+    {
+      "name": "material:tree_trunk",
+      "side": "blender",
+      "target": "tree_trunk",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:tree_trunk",
+      "side": "blender",
+      "target": "#6E4A2E",
+      "measured": "#6E4A2E",
+      "ok": true
+    },
+    {
+      "name": "material:tree_leaf",
+      "side": "blender",
+      "target": "tree_leaf",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:tree_leaf",
+      "side": "blender",
+      "target": "#4E8C3A",
+      "measured": "#4E8C3A",
+      "ok": true
+    },
+    {
+      "name": "material:tree_leaf_light",
+      "side": "blender",
+      "target": "tree_leaf_light",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:tree_leaf_light",
+      "side": "blender",
+      "target": "#6FAE4C",
+      "measured": "#6FAE4C",
+      "ok": true
+    },
+    {
+      "target": 3.2,
+      "measured": 3.3129,
+      "delta": 0.1129,
+      "delta_pct": 3.53,
+      "tol_m": 0.32,
+      "name": "dim_x",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 3.2,
+      "measured": 2.9575,
+      "delta": -0.2425,
+      "delta_pct": -7.58,
+      "tol_m": 0.32,
+      "name": "dim_y",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 4.2,
+      "measured": 4.054,
+      "delta": -0.146,
+      "delta_pct": -3.48,
+      "tol_m": 0.42,
+      "name": "dim_z",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "target": 0.0,
+      "measured": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "tol_m": 0.02,
+      "name": "origin_bottom",
+      "side": "godot",
+      "ok": true
+    },
+    {
+      "name": "origin_xy_center",
+      "side": "godot",
+      "target": 0.0,
+      "measured": 0.0,
+      "tol_m": 0.16,
+      "ok": true
+    },
+    {
+      "name": "tris",
+      "side": "godot",
+      "target": 420,
+      "measured": 304,
+      "ok": true
+    },
+    {
+      "name": "material:tree_trunk",
+      "side": "godot",
+      "target": "tree_trunk",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:tree_trunk",
+      "side": "godot",
+      "target": "#6E4A2E",
+      "measured": "#6E4A2E",
+      "ok": true
+    },
+    {
+      "name": "material:tree_leaf",
+      "side": "godot",
+      "target": "tree_leaf",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:tree_leaf",
+      "side": "godot",
+      "target": "#4E8C3A",
+      "measured": "#4E8C3A",
+      "ok": true
+    },
+    {
+      "name": "material:tree_leaf_light",
+      "side": "godot",
+      "target": "tree_leaf_light",
+      "measured": "ok",
+      "ok": true
+    },
+    {
+      "name": "material_color:tree_leaf_light",
+      "side": "godot",
+      "target": "#6FAE4C",
+      "measured": "#6FAE4C",
+      "ok": true
+    },
+    {
+      "name": "collision_params",
+      "side": "spec",
+      "target": "cylinder",
+      "measured": "declared (body built by WorldBuilder)",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "cause": "none",
+  "cause_note": "",
+  "suggested_fix": [],
+  "blender_audit_ok": true,
+  "godot_audit_ok": true
+}
