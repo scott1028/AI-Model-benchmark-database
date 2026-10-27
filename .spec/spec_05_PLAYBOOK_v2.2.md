@@ -20,30 +20,32 @@ runner ◄──讀 STATUS── pipeline/progress.md：還不是 DONE / BLOCKED
 
 1. 建一個空資料夾，把本檔放到 `.spec/PLAYBOOK_v2.2.md`，`PLAYBOOK_MCP_SETUP.md` 也放進 `.spec/`。資料夾裡不要放其他版本的 playbook 或前一次的成品
 2. 先裝好 agent-switch 與 opencode，runner 靠它們啟動 agent。Phase 0 列的軟體也建議先裝好；沒裝的話 agent 會試著自己裝
-3. 在該資料夾跑 runner。它每輪用 agent-switch 啟動 opencode 的非互動模式（`run`），掛上 Godot MCP 與 Blender MCP；`--yolo` 讓所有工具不用詢問就執行（agent-switch 會轉成 opencode 的 `--auto`）。Godot 路徑先讀 agent 寫的 `pipeline/godot-path`，沒有就用 PATH 上的 `godot`：
+3. 在該資料夾跑 runner。第一次跑會建立工作資料夾 `preview-wip/` 並複製一份 `.spec/` 進去；之後每輪都在這個資料夾裡啟動 agent，本輪所有產出都放在裡面，最後由 agent 依 Phase 10 的命名規則改名。它每輪用 agent-switch 啟動 opencode 的非互動模式（`run`），掛上 Godot MCP 與 Blender MCP；`--yolo` 讓所有工具不用詢問就執行（agent-switch 會轉成 opencode 的 `--auto`）。Godot 路徑先讀 agent 寫的 `pipeline/godot-path`，沒有就用 PATH 上的 `godot`：
 
 ```bash
+ls -d preview-*/ >/dev/null 2>&1 || { mkdir preview-wip && cp -r .spec preview-wip/; }
 for i in $(seq 1 30); do
-  grep -qE '^STATUS: (DONE|BLOCKED)' pipeline/progress.md 2>/dev/null && break
-  GODOT_PATH="$(cat pipeline/godot-path 2>/dev/null || command -v godot)"
-  agent-switch opencode --yolo \
+  P="$(ls -d preview-*/ | head -n1)"
+  grep -qE '^STATUS: (DONE|BLOCKED)' "${P}pipeline/progress.md" 2>/dev/null && break
+  GODOT_PATH="$(cat "${P}pipeline/godot-path" 2>/dev/null || command -v godot)"
+  (cd "$P" && agent-switch opencode --yolo \
     --mcp-stdio "godot:npx -y @coding-solo/godot-mcp" \
     --mcp-env "godot:GODOT_PATH=$GODOT_PATH" \
     --mcp-stdio "blender:uvx blender-mcp" \
     --mcp-env "blender:DISABLE_TELEMETRY=true" \
-    -- run "讀 .spec/PLAYBOOK_v2.2.md；有 pipeline/progress.md 就一起讀，從未完成的步驟繼續，沒有就從頭開始。依工作原則 9 自動執行，不要問我。"
+    -- run "讀 .spec/PLAYBOOK_v2.2.md；有 pipeline/progress.md 就一起讀，從未完成的步驟繼續，沒有就從頭開始。依工作原則 9 自動執行，不要問我。")
 done
 ```
 
 要接本地模型時，在 `--yolo` 後面加 `--url` / `--model`（見 `.spec/PLAYBOOK_MCP_SETUP.md` 第 3 節）。
 
-4. 跑完看 `pipeline/REPORT.md`：
-   - `STATUS: DONE`：全部 Phase 都跑過了，沒通過的 DoD 項目會標 `[x]` 並寫原因。成品在 `build/web/`，開啟方式寫在 REPORT（要經過 HTTP server，不能直接雙擊 `index.html`）
-   - `STATUS: BLOCKED`：缺了 agent 自己補不了的東西，REPORT 會寫你要做什麼。做完後把 `pipeline/progress.md` 第一行改回 `STATUS: RUNNING`，再跑一次 runner 就會續跑
+4. 跑完看 `preview-*/pipeline/REPORT.md`：
+   - `STATUS: DONE`：全部 Phase 都跑過了，沒通過的 DoD 項目會標 `[x]` 並寫原因。成品就是整個 `preview-*/` 資料夾，入口是裡面的 `index.html`：在 `<project>/` 這層啟動 HTTP server，開 `http://<host>/preview-.../index.html`（不能直接雙擊），細節寫在 REPORT
+   - `STATUS: BLOCKED`：缺了 agent 自己補不了的東西，REPORT 會寫你要做什麼。做完後把 `preview-*/pipeline/progress.md` 第一行改回 `STATUS: RUNNING`，再跑一次 runner 就會續跑
 
 兩件事一定要記得：
 - 權限全開代表 Blender MCP 的 `execute_blender_code` 可以不經核准執行任意 Python。只在可拋棄的環境跑（VM、容器或專用帳號）
-- `30` 是最多跑幾輪的保險，避免無限重啟；到上限還沒 DONE，看 `pipeline/progress.md` 和 `pipeline/log.md` 找原因
+- `30` 是最多跑幾輪的保險，避免無限重啟；到上限還沒 DONE，看 `preview-*/pipeline/progress.md` 和 `preview-*/pipeline/log.md` 找原因
 
 ---
 
@@ -53,7 +55,7 @@ done
 
 - 所有 3D 模型（含地面）都由 Blender MCP 產生；Godot MCP 負責組裝與執行
 - 模型不符合規格時，要能自動發現並回到 Blender 修正
-- 最後交付的成品是 Godot 匯出的 Web（WebGL）build，放在 `build/web/`，用瀏覽器就能玩
+- 最後交付的是整個工作資料夾（含 Godot 匯出的 Web（WebGL）build），依 Phase 10 的命名規則改名成 `preview-.../`；用瀏覽器開裡面的 `index.html` 就能玩
 
 ### 使用者需求（已定案，執行時不要再問）
 
@@ -80,7 +82,7 @@ done
 - [ ] 自動物理測試通過：「移動」與「物理互動」兩列需求的每一項都有可量測的檢查
 - [ ] 透過 Godot MCP 實際執行遊戲沒有錯誤；遊戲畫面截圖依附錄 B 檢查過
 - [ ] 完成一次迴圈演練（Phase 9）
-- [ ] Web build（Phase 10）：Godot 匯出的 WebGL build 在瀏覽器裡載入沒有錯誤，bot 模式能收齊金幣並抵達終點
+- [ ] Web build（Phase 10）：從入口 `index.html` 能導向 Godot 匯出的 WebGL build，在瀏覽器裡載入沒有錯誤，bot 模式能收齊金幣並抵達終點
 - [ ] `pipeline/REPORT.md` 已寫
 
 跑完所有 Phase 後照實勾選：通過標 `[v]`，做了沒過標 `[x]` 並寫原因。某一項沒過不是停下來的理由，繼續做完其他 Phase。
@@ -100,6 +102,7 @@ done
 4. **不要手動修改匯出的模型檔或 Godot 的匯入設定檔**；要改就回 Blender 重新匯出。
 5. **工具優先順序**：建模用 Blender MCP；Godot 端優先用 Godot MCP，做不到時改用其他方式，並把原因記進 log 的「MCP 問題」。MCP 連不上時的處理見 Phase 2。
 6. **進度與紀錄**：
+   - 本輪所有產出都放在工作資料夾（runner 啟動你的位置，`preview-*/`）；本檔的路徑都相對於它。不要在上層資料夾新增檔案
    - `pipeline/progress.md`：第一行是 `STATUS: RUNNING`、`STATUS: DONE` 或 `STATUS: BLOCKED`，runner 靠它決定要不要再跑一輪。下面是本檔各 Phase 的步驟清單，完成就打勾（`[v]` 通過、`[x]` 做了沒過、`[ ]` 未做）。每做完一個步驟就更新，重啟後靠它續跑，不重做已完成的步驟
    - `pipeline/log.md`：設計決策、每次檢查與修正、MCP 問題
    - 過程中可以 `git commit` 當檢查點（例如每個 Phase 完成、結束本輪前）；Phase 11 再把本次執行產生的所有 commit squash 成一個，不動其他歷史。git 沒設定使用者時，只設定這個 repo 的身分，不改全域設定
@@ -110,14 +113,14 @@ done
    - 原本要人做的事都由你做：安裝缺少的軟體、在 Blender 裝好並啟動 MCP server、需要時結束本輪讓 runner 重啟
    - 指令失敗或工具呼叫被拒：換方法再試，記進 log。任何修正迴圈（資產 FAIL、測試修復、截圖重拍）都要有次數上限，沒另外規定就是 3 次，超過就記錄並往下做
    - **結束本輪**：只在需要重啟 agent 才能生效時（例如 `pipeline/godot-path` 剛寫好，這一輪的 Godot MCP 還找不到 Godot），或 context 快不夠時。先更新 progress.md（寫原因與下一步），再正常結束；runner 會重啟並續跑
-   - **BLOCKED**：只在沒有任何方法能繼續時（例如缺 Blender 又裝不起來）。progress.md 第一行改成 `STATUS: BLOCKED`，在 `pipeline/REPORT.md` 寫卡在哪、試過什麼、人要做什麼，然後結束
+   - **BLOCKED**：只在沒有任何方法能繼續時（例如缺 Blender 又裝不起來）。progress.md 第一行改成 `STATUS: BLOCKED` 並記下時間，在 `pipeline/REPORT.md` 寫卡在哪、試過什麼、人要做什麼，然後結束。恢復後的第一輪先在 progress.md 記下恢復時間；兩者之間不算進耗時（Phase 10）
    - 做完 Phase 11 才把第一行改成 `STATUS: DONE`
 
 ---
 
 ## Phase 0：環境檢查（agent 自動處理）
 
-1. 建立 `pipeline/progress.md`（第一行 `STATUS: RUNNING`）與 `pipeline/log.md`
+1. 建立 `pipeline/progress.md`（第一行 `STATUS: RUNNING`，並記下開始時間，Phase 10 算耗時用）與 `pipeline/log.md`
 2. 確認已安裝：Godot ≥ 4.3（含同版本的 Web 匯出模板）、Blender、Node.js ≥ 18、uv、git、能跑 WebGL 2 的無頭瀏覽器，並找到 Godot 執行檔的位置（PATH 和常見安裝位置都要找）。也確認有可用的顯示環境給 Blender 與截圖用，沒有就準備虛擬顯示（例如 Xvfb）
 3. 缺少的軟體自己裝：只從官方來源下載，裝在使用者空間（不用 sudo、不改系統設定），安裝位置與版本記進 log
 4. 把 Godot 執行檔的絕對路徑寫進 `pipeline/godot-path`，runner 下一輪會用它設定 Godot MCP 的 `GODOT_PATH`
@@ -134,8 +137,8 @@ done
    - Godot 端的檔案位置、輸入規則（只用使用者定案的按鍵）、MCP 使用規則
 3. MCP 伺服器（Godot MCP、Blender MCP）與權限由 runner 每輪掛上，專案裡不用另外設定；掛載細節見 `.spec/PLAYBOOK_MCP_SETUP.md`。`--yolo` 讓 `execute_blender_code` 也會被自動允許，所以在規則檔限制它的用途（只在 Blender 裡建模與匯出、不碰專案外檔案、不連外網）
 4. 建立 Godot 專案、Web 匯出設定與使用者定案的按鍵設定，並用程式確認按鍵真的有綁上。Web 匯出只支援 Compatibility renderer，所以專案從一開始就用它，之後的檢查與截圖才會和成品一致
-5. 建立自動化工具（實作方式自訂），至少要能：檢查環境（含 Blender MCP 埠能否連線）、在背景啟動 Blender 並開好 MCP server、讓 Godot 匯入資產、依工作原則第 2 點比對資產規格、跑 bot 測試、跑物理測試、匯出 Web build 並用瀏覽器驗證
-6. 在專案資料夾自己 `git init`（上層資料夾已經是 git repo 也一樣），做第一次 Godot 匯入
+5. 建立自動化工具（實作方式自訂），至少要能：檢查環境（含 Blender MCP 埠能否連線）、在背景啟動 Blender 並開好 MCP server、讓 Godot 匯入資產、依工作原則第 2 點比對資產規格、跑 bot 測試、跑物理測試、匯出 Web build 並從入口 `index.html` 用瀏覽器驗證
+6. 在工作資料夾自己 `git init`（上層資料夾已經是 git repo 也一樣），做第一次 Godot 匯入
 
 ## Phase 2：連線 MCP（agent 自動完成）
 
@@ -188,15 +191,23 @@ done
 ## Phase 10：Web 交付
 
 1. 用 Godot 把最終版本匯出成 Web（WebGL）build 到 `build/web/`；匯出要能用自動化工具一個指令重做
-2. 用本機 HTTP server 提供檔案，在無頭瀏覽器載入：console 沒有錯誤，截圖依附錄 B 檢查
-3. 在 Web build 裡跑一次 bot 模式（啟動參數怎麼傳由你決定），要能收齊 3 枚金幣並抵達終點
-4. `build/` 不進 git（可以用指令重新產生）
+2. 在工作資料夾根目錄建立入口 `index.html`，把使用者導向 `build/web/index.html`。使用者會在上層資料夾（`<project>/`）啟動 HTTP server，最終網址像 `http://<host>/preview-04-claude-opus-5.5-xhigh-187-20261028143005/index.html`；所以要用相對路徑，資料夾改名後也要導得到，需要時調整 base URL
+3. 照使用者的方式驗證：在上層資料夾啟動本機 HTTP server，在無頭瀏覽器開 `http://<host>/<工作資料夾名稱>/index.html`（改名前是 `preview-wip`）：要被導向 Web build、console 沒有錯誤，截圖依附錄 B 檢查
+4. 在 Web build 裡跑一次 bot 模式（啟動參數怎麼傳由你決定），要能收齊 3 枚金幣並抵達終點
+5. 資料夾命名規則（Phase 11 改名時套用）：`preview-${spec_num}-${MODEL_NAME}-${TIME_COST_MINUTES}-${FILE_CREATED_AT_YYYYMMDDHHMMSS}/`
+   - `spec_num`：`04`
+   - `MODEL_NAME`：執行本次任務的 model 名稱與版本，版本號用點分隔（例如 `claude-opus-5.5`）；有設定 reasoning effort 時接在後面（例如 `-xhigh`），沒有就省略。去掉 provider 前綴（例如 `anthropic/`），`[A-Za-z0-9._-]` 以外的字元換成 `-`
+   - `TIME_COST_MINUTES`：從 Phase 0 開始到改名當下的經過時間，扣掉 BLOCKED 等人處理的時間（工作原則 9）；單位分鐘，無條件進位成整數
+   - `FILE_CREATED_AT_YYYYMMDDHHMMSS`：改名當下的本機時間
+   - 範例：`preview-04-claude-opus-5.5-xhigh-187-20261028143005/index.html`
+6. `preview-${spec_num}-${MODEL_NAME}-${TIME_COST_MINUTES}-${FILE_CREATED_AT_YYYYMMDDHHMMSS}/` 都要 commit 進版本控制
 
 ## Phase 11：收尾
 
 1. 撰寫 `pipeline/REPORT.md`：DoD 勾選結果、每個資產的迭代次數、MCP 問題與替代做法、物理測試的門檻與實測數字、Web build 的位置與開啟方式、Web 版改用替代做法的效果、主要設計決策與理由、遇到的問題與解法、花最多時間的步驟、建議的下一步
-2. 把 `pipeline/progress.md` 第一行改成 `STATUS: DONE`，commit 後把本次執行產生的所有 commit squash 成一個
-3. 輸出 REPORT 摘要，包含沒通過的 DoD 項目
+2. 依 Phase 10 的命名規則把工作資料夾改名（例如 `preview-wip/` → `preview-04-...`），在 progress.md 打勾
+3. 把 `pipeline/progress.md` 第一行改成 `STATUS: DONE`，commit 後把本次執行產生的所有 commit squash 成一個
+4. 輸出 REPORT 摘要，包含資料夾名稱與沒通過的 DoD 項目
 
 ---
 

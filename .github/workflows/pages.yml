@@ -42,15 +42,20 @@ jobs:
           <thead><tr><th>Created</th><th>Spec</th><th>Model</th><th>Minutes</th><th>Title</th></tr></thead>
           <tbody>
           HTML
-            # Newest first by trailing YYYYMMDDHHMMSS in file name
-            for f in *.html; do
+            shopt -s nullglob
+            # Root .html files + preview-spec_* folders (skip folder if a same-name .html exists)
+            # Newest first by trailing YYYYMMDDHHMMSS in name
+            for f in *.html preview-spec_*/index.html; do
               [ "$f" = index.html ] && continue
-              [[ $f =~ ([0-9]{14})\.html$ ]] && ts=${BASH_REMATCH[1]} || ts=0
+              [[ $f == */index.html && -e ${f%/index.html}.html ]] && continue
+              name=${f%/index.html}; name=${name%.html}
+              [[ $name =~ ([0-9]{14})$ ]] && ts=${BASH_REMATCH[1]} || ts=0
               echo "$ts $f"
             done | sort -r | while read -r ts f; do
               title=$(grep -o -m1 '<title>[^<]*</title>' "$f" | sed -E 's#</?title>##g' || true)
-              # preview-${spec}-${model}-${minutes}-${YYYYMMDDHHMMSS}.html
-              if [[ $f =~ ^preview-(spec[-_][0-9]+)-(.+)-([0-9]+)-[0-9]{14}\.html$ ]]; then
+              name=${f%/index.html}; name=${name%.html}
+              # preview-${spec}-${model}-${minutes}-${YYYYMMDDHHMMSS}[.html|/index.html]
+              if [[ $name =~ ^preview-(spec[-_][0-9]+)-(.+)-([0-9]+)-[0-9]{14}$ ]]; then
                 spec=${BASH_REMATCH[1]} model=${BASH_REMATCH[2]} minutes=${BASH_REMATCH[3]}
                 created="${ts:0:4}-${ts:4:2}-${ts:6:2} ${ts:8:2}:${ts:10:2}"
               else
