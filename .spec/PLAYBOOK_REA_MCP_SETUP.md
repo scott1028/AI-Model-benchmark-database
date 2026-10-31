@@ -282,5 +282,5 @@ agent 應該呼叫 `open_binary`、`list_procedures` 等 REA 工具（Claude Cod
   - `skills/reverse-engineer-anything/SKILL.md`
 - Ghidra releases：https://github.com/NationalSecurityAgency/ghidra/releases
 - Eclipse Temurin：https://adoptium.net/temurin/releases/
-- 同系列：`.spec/PLAYBOOK_MCP_SETUP.md`（Godot / Blender MCP + opencode）
+- 同系列：`.spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md`（Godot / Blender MCP + opencode）
 - 逆向任務本體：`.spec/spec_06_rea_kmines-PLAYBOOK.md`
