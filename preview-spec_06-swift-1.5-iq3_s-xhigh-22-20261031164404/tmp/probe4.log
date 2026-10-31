@@ -1,0 +1,4 @@
+BASE 0x555555554000
+== QLabel::setText rsi=0x7fffffffc9a0
+  obj qwords: ['0x5555557edd20', '0x5555557edd30', '0xa', '0x4044000000000000']
+  d= 0x5555557edd20

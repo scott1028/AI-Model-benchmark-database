@@ -1,0 +1,100 @@
+openjdk version "21.0.13" 2026-10-20 LTS
+OpenJDK Runtime Environment Temurin-21.0.13+9 (build 21.0.13+9-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.13+9 (build 21.0.13+9-LTS, mixed mode)
+INFO  Using log config file: jar:file:/home/scott/tools/ghidra/Ghidra/Framework/Generic/lib/Generic.jar!/generic.log4j.xml (LoggingInitialization)  
+INFO  Using log file: /home/scott/.config/ghidra/ghidra_12.1.4_PUBLIC/application.log (LoggingInitialization)  
+INFO  Loading user preferences: /home/scott/.config/ghidra/ghidra_12.1.4_PUBLIC/preferences (Preferences)  
+INFO  Searching for classes... (ClassSearcher)  
+INFO  Class search complete (396 ms) (ClassSearcher)  
+INFO  Initializing SSL Context (DefaultSSLContextInitializer)  
+INFO  Initializing Random Number Generator... (SecureRandomFactory)  
+INFO  Random Number Generator initialization complete: NativePRNGNonBlocking (SecureRandomFactory)  
+INFO  Trust manager disabled, cacerts have not been set (DefaultTrustManagerFactory)  
+INFO  Starting cache cleanup: /var/tmp/scott-ghidra/fscache2 (FileCacheMaintenanceDaemon)  
+INFO  Finished cache cleanup, estimated storage used: 0 (FileCacheMaintenanceDaemon)  
+INFO  Headless startup complete (954 ms) (AnalyzeHeadless)  
+INFO  Class searcher loaded 59 extension points (20 false positives) (ClassSearcher)  
+INFO  HEADLESS Script Paths:
+    /home/scott/tools/ghidra/Ghidra/Debug/Debugger/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/DecompilerDependent/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Processors/PIC/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Processors/JVM/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/VersionTracking/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Processors/DATA/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/Base/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/PDB/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/FileFormats/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/PyGhidra/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/WildcardAssembler/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/FunctionID/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/Decompiler/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/SwiftDemangler/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Debug/Debugger-rmi-trace/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/BSim/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Processors/Atmel/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/GnuDemangler/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/SystemEmulation/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/MicrosoftCodeAnalyzer/ghidra_scripts
+    /home/scott/tools/ghidra/Ghidra/Features/BytePatterns/ghidra_scripts
+    /home/scott/workspace/AI-Model-benchmark-database/preview-wip/tmp
+    /home/scott/tools/ghidra/Ghidra/Processors/8051/ghidra_scripts (HeadlessAnalyzer)  
+INFO  HEADLESS: execution starts (HeadlessAnalyzer)  
+INFO  Creating temporary project: /home/scott/workspace/AI-Model-benchmark-database/preview-wip/tmp/ghidra_proj/kminesproj (HeadlessAnalyzer)  
+INFO  Creating project: /home/scott/workspace/AI-Model-benchmark-database/preview-wip/tmp/ghidra_proj/kminesproj (DefaultProject)  
+INFO  REPORT: Processing input files:  (HeadlessAnalyzer)  
+INFO       project: /home/scott/workspace/AI-Model-benchmark-database/preview-wip/tmp/ghidra_proj/kminesproj (HeadlessAnalyzer)  
+INFO  IMPORTING: file:///usr/games/kmines (HeadlessAnalyzer)  
+INFO  Using Loader: Executable and Linking Format (ELF) (ProgramLoader)  
+INFO  Using Language/Compiler: x86:LE:64:default:gcc (ProgramLoader)  
+INFO  Using Library Search Path: [., /bin, /lib, /lib64, /lib/x86_64-linux-gnu, /lib/aarch64-linux-gnu, /usr/bin, /usr/lib, /usr/X11R6/bin, /usr/X11R6/lib, /home/scott/tools/TensorRT/lib, /usr/local/cuda-13.3/lib64, /usr/java/packages/lib, /usr/lib64] (ProgramLoader)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 00126ee0 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 00126ef8 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 00126f10 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 00126f70 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 00126fe0 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 00126ff8 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 001273b0 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 001273c8 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+WARN  EXTERNAL Data ELF Relocation with offset: at 001284c0 (External Location = _ZTVN10__cxxabiv120__si_class_type_infoE+0x10) (ElfRelocationHandler)  
+INFO  Additional info:
+Loading file:///usr/games/kmines?MD5=b75f5d40df0a68998db25363cff219af...
+ELF Relocation Failure: R_X86_64_COPY (5, 0x5) at 00126c20 (Symbol = _ZN13KConfigDialog16staticMetaObjectE) - Runtime copy not supported (56-bytes)
+ELF Relocation Failure: R_X86_64_COPY (5, 0x5) at 00126c60 (Symbol = _ZN15KGameDifficulty16staticMetaObjectE) - Runtime copy not supported (56-bytes)
+ELF Relocation Failure: R_X86_64_COPY (5, 0x5) at 00126ca0 (Symbol = _ZN7QAction16staticMetaObjectE) - Runtime copy not supported (56-bytes)
+ELF Relocation Failure: R_X86_64_COPY (5, 0x5) at 00126cd8 (Symbol = _ZTV15KConfigSkeleton) - Runtime copy not supported (160-bytes)
+ELF Relocation Failure: R_X86_64_COPY (5, 0x5) at 00126d80 (Symbol = _ZN18KGameThemeProvider16staticMetaObjectE) - Runtime copy not supported (56-bytes)
+ELF Relocation Failure: R_X86_64_COPY (5, 0x5) at 00126dc0 (Symbol = _ZN8QSpinBox16staticMetaObjectE) - Runtime copy not supported (56-bytes)
+ELF Relocation Failure: R_X86_64_COPY (5, 0x5) at 00126e00 (Symbol = _ZTV11QSpacerItem) - Runtime copy not supported (152-bytes)
+ELF Relocation Failure: R_X86_64_COPY (5, 0x5) at 00126ea0 (Symbol = _ZN10KGameClock16staticMetaObjectE) - Runtime copy not supported (56-bytes)
+Setting block .init_array to read-only
+Setting block .fini_array to read-only
+Setting block .data.rel.ro to read-only
+Setting block .dynamic to read-only
+------------------------------------------------
+
+Linking the External Programs of 'kmines' to imported libraries...
+  [libKDEGames6.so.6] -> not found in project
+  [libKF6TextWidgets.so.6] -> not found in project
+  [libKF6DBusAddons.so.6] -> not found in project
+  [libKF6Crash.so.6] -> not found in project
+  [libKF6XmlGui.so.6] -> not found in project
+  [libKF6IconThemes.so.6] -> not found in project
+  [libKF6ConfigWidgets.so.6] -> not found in project
+  [libKF6I18n.so.6] -> not found in project
+  [libKF6WidgetsAddons.so.6] -> not found in project
+  [libQt6Widgets.so.6] -> not found in project
+  [libKF6ConfigGui.so.6] -> not found in project
+  [libKF6ConfigCore.so.6] -> not found in project
+  [libKF6CoreAddons.so.6] -> not found in project
+  [libQt6Gui.so.6] -> not found in project
+  [libQt6Core.so.6] -> not found in project
+  [libstdc++.so.6] -> not found in project
+  [libc.so.6] -> not found in project
+------------------------------------------------
+
+Resolving External Symbols of [/kmines] - 429 unresolved symbols, no external libraries configured - skipping
+ (ProgramLoader)  
+INFO  IMPORTING: Loaded 0 additional files (HeadlessAnalyzer)  
+INFO  ANALYZING all memory and code: file:///usr/games/kmines (HeadlessAnalyzer)  
+INFO  DWARF external debug information found: ExternalDebugInfo [filename=400df0baf38d248537a4f44d6ae691518ef071.debug, crc=404929607, hash=15400df0baf38d248537a4f44d6ae691518ef071, objectType=DEBUGINFO, extra=null] (ExternalDebugFileSectionProvider)  
+INFO  Unable to find DWARF information, skipping DWARF analysis (DWARFAnalyzer)  

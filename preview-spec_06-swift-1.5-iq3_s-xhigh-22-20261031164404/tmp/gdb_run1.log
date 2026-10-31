@@ -1,0 +1,202 @@
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/x86_64-linux-gnu/libthread_db.so.1".
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+[New Thread 0x7fffec7ff6c0 (LWP 495932)]
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+Python Exception <class 'TypeError'>: this function got an unexpected keyword argument 'to_stdout'
+[New Thread 0x7fffeb7f06c0 (LWP 495934)]
+[New Thread 0x7fffea7ef6c0 (LWP 495935)]
+[New Thread 0x7fffe93ff6c0 (LWP 495936)]
+[New Thread 0x7fffdbfff6c0 (LWP 495937)]
+[New Thread 0x7fffdaffe6c0 (LWP 495938)]
+[New Thread 0x7fffd9ffd6c0 (LWP 495939)]
+[New Thread 0x7fffcffff6c0 (LWP 495940)]
+[New Thread 0x7fffceffe6c0 (LWP 495941)]
+[New Thread 0x7fffcdffd6c0 (LWP 495942)]
+[New Thread 0x7fffbbfff6c0 (LWP 495943)]
+[New Thread 0x7fffbaffe6c0 (LWP 495944)]
+[New Thread 0x7fffb9ffd6c0 (LWP 495945)]
+This plugin does not support propagateSizeHints()
+[New Thread 0x7fffa7fff6c0 (LWP 495946)]
+[New Thread 0x7fffa6ffe6c0 (LWP 495947)]
+[New Thread 0x7fffa5ffd6c0 (LWP 495948)]
+[New Thread 0x7fff9ffff6c0 (LWP 495949)]
+[New Thread 0x7fff9effe6c0 (LWP 495950)]
+[Thread 0x7fffbaffe6c0 (LWP 495944) exited]
+[Thread 0x7fffcffff6c0 (LWP 495940) exited]
+[Thread 0x7fffdaffe6c0 (LWP 495938) exited]
+[Thread 0x7fffb9ffd6c0 (LWP 495945) exited]
+[Thread 0x7fffcdffd6c0 (LWP 495942) exited]
+[Thread 0x7fffceffe6c0 (LWP 495941) exited]
+[Thread 0x7fffa7fff6c0 (LWP 495946) exited]
+[Thread 0x7fffbbfff6c0 (LWP 495943) exited]
+[Thread 0x7fffdbfff6c0 (LWP 495937) exited]
+[Thread 0x7fffa5ffd6c0 (LWP 495948) exited]
+[Thread 0x7fffd9ffd6c0 (LWP 495939) exited]
+[Thread 0x7fff9effe6c0 (LWP 495950) exited]
+[Thread 0x7fffa6ffe6c0 (LWP 495947) exited]
+[Thread 0x7fffea7ef6c0 (LWP 495935) exited]
+[Thread 0x7fff9ffff6c0 (LWP 495949) exited]
+[Thread 0x7fffeb7f06c0 (LWP 495934) exited]
+[Thread 0x7fffe93ff6c0 (LWP 495936) exited]

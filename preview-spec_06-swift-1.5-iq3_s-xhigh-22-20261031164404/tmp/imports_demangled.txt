@@ -1,0 +1,440 @@
+qRegisterResourceData(int, unsigned char const*, unsigned char const*, unsigned char const*)
+qUnregisterResourceData(int, unsigned char const*, unsigned char const*, unsigned char const*)
+ki18n(char const*)
+ki18nc(char const*, char const*)
+operator delete[](void*)
+operator delete[](void*, unsigned long)
+operator delete(void*)
+operator delete(void*, unsigned long)
+KAboutData::setupCommandLine(QCommandLineParser*)
+KAboutData::processCommandLine(QCommandLineParser*)
+KAboutData::setApplicationData(KAboutData const&)
+KAboutData::addAuthor(QString const&, QString const&, QString const&, QString const&, QUrl const&)
+KAboutData::addCredit(QString const&, QString const&, QString const&, QString const&, QUrl const&)
+KAboutData::KAboutData(QString const&, QString const&, QString const&, QString const&, KAboutLicense::LicenseKey, QString const&, QString const&, QString const&, QString const&)
+KAboutData::~KAboutData()
+KGameClock::timeChanged(QString const&)
+KGameClock::staticMetaObject
+KGameClock::KGameClock(QObject*, KGameClock::ClockType)
+KIconTheme::initTheme()
+QArrayData::deallocate(QArrayData*, long long, long long)
+QArrayData::reallocateUnaligned(QArrayData*, void*, long long, long long, QArrayData::AllocationOption)
+QArrayData::allocate(QArrayData**, long long, long long, long long, QArrayData::AllocationOption)
+QBoxLayout::addLayout(QLayout*, int)
+QBoxLayout::addWidget(QWidget*, int, QFlags<Qt::AlignmentFlag>)
+QByteArray::QByteArray(char const*, long long)
+QStatusBar::insertPermanentWidget(int, QWidget*, int)
+KMainWindow::closeEvent(QCloseEvent*)
+KMainWindow::queryClose()
+KMainWindow::setCaption(QString const&)
+KMainWindow::setCaption(QString const&, bool)
+KMainWindow::canBeRestored(int)
+KMainWindow::keyPressEvent(QKeyEvent*)
+KMainWindow::setPlainCaption(QString const&)
+KMainWindow::classNameOfToplevel(int)
+KMainWindow::readGlobalProperties(KConfig*)
+KMainWindow::saveGlobalProperties(KConfig*)
+KMainWindow::restore(int, bool)
+KMessageBox::questionTwoActions(QWidget*, QString const&, QString const&, KGuiItem const&, KGuiItem const&, QString const&, QFlags<KMessageBox::Option>)
+QGridLayout::addItem(QLayoutItem*, int, int, int, int, QFlags<Qt::AlignmentFlag>)
+QGridLayout::addWidget(QWidget*, int, int, int, int, QFlags<Qt::AlignmentFlag>)
+QGridLayout::QGridLayout(QWidget*)
+QHBoxLayout::QHBoxLayout()
+QMainWindow::createPopupMenu()
+QMainWindow::contextMenuEvent(QContextMenuEvent*)
+QMainWindow::setCentralWidget(QWidget*)
+QMetaObject::Connection::~Connection()
+QMetaObject::connectSlotsByName(QObject*)
+QMetaObject::activate(QObject*, QMetaObject const*, int, void**)
+QTextStream::operator<<(char)
+QTextStream::operator<<(QString const&)
+QVBoxLayout::QVBoxLayout(QWidget*)
+KDBusService::KDBusService(QFlags<KDBusService::StartupOption>, QObject*)
+KDBusService::~KDBusService()
+QApplication::exec()
+QApplication::QApplication(int&, char**, int)
+QApplication::~QApplication()
+KConfigDialog::showDialog(QString const&)
+KConfigDialog::settingsChanged(QString const&)
+KConfigDialog::staticMetaObject
+KConfigDialog::addPage(QWidget*, QString const&, QString const&, QString const&, bool)
+KConfigDialog::KConfigDialog(QWidget*, QString const&, KCoreConfigSkeleton*)
+KGameRenderer::KGameRenderer(KGameThemeProvider*, unsigned int)
+KGameRenderer::~KGameRenderer()
+KStyleManager::initStyle()
+KXMLGUIClient::setXMLFile(QString const&, bool, bool)
+KXMLGUIClient::stateChanged(QString const&, KXMLGUIClient::ReverseStateChange)
+KXMLGUIClient::virtual_hook(int, void*)
+KXMLGUIClient::setDOMDocument(QDomDocument const&, bool)
+KXMLGUIClient::setLocalXMLFile(QString const&)
+KXMLGUIClient::setComponentName(QString const&, QString const&)
+KXMLGUIClient::setXML(QString const&, bool)
+KXMLGUIClient::KXMLGUIClient()
+KXMLGUIClient::~KXMLGUIClient()
+KXmlGuiWindow::guiFactory()
+KXmlGuiWindow::qt_metacall(QMetaObject::Call, int, void**)
+KXmlGuiWindow::qt_metacast(char const*)
+KXmlGuiWindow::slotStateChanged(QString const&)
+KXmlGuiWindow::staticMetaObject
+KXmlGuiWindow::configureToolbars()
+KXmlGuiWindow::saveNewToolbarConfig()
+KXmlGuiWindow::applyMainWindowSettings(KConfigGroup const&)
+KXmlGuiWindow::event(QEvent*)
+KXmlGuiWindow::setupGUI(QSize const&, QFlags<KXmlGuiWindow::StandardWindowOption>, QString const&)
+KXmlGuiWindow::KXmlGuiWindow(QWidget*, QFlags<Qt::WindowType>)
+KXmlGuiWindow::~KXmlGuiWindow()
+QGraphicsItem::itemChange(QGraphicsItem::GraphicsItemChange, QVariant const&)
+QGraphicsItem::sceneEvent(QEvent*)
+QGraphicsItem::setVisible(bool)
+QGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent*)
+QGraphicsItem::focusInEvent(QFocusEvent*)
+QGraphicsItem::setExtension(QGraphicsItem::Extension, QVariant const&)
+QGraphicsItem::dragMoveEvent(QGraphicsSceneDragDropEvent*)
+QGraphicsItem::focusOutEvent(QFocusEvent*)
+QGraphicsItem::keyPressEvent(QKeyEvent*)
+QGraphicsItem::dragEnterEvent(QGraphicsSceneDragDropEvent*)
+QGraphicsItem::dragLeaveEvent(QGraphicsSceneDragDropEvent*)
+QGraphicsItem::hoverMoveEvent(QGraphicsSceneHoverEvent*)
+QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent*)
+QGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent*)
+QGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent*)
+QGraphicsItem::keyReleaseEvent(QKeyEvent*)
+QGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent*)
+QGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent*)
+QGraphicsItem::inputMethodEvent(QInputMethodEvent*)
+QGraphicsItem::sceneEventFilter(QGraphicsItem*, QEvent*)
+QGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
+QGraphicsItem::setAcceptTouchEvents(bool)
+QGraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent*)
+QGraphicsItem::prepareGeometryChange()
+QGraphicsItem::setPos(QPointF const&)
+QGraphicsItem::advance(int)
+QGraphicsItem::setFlag(QGraphicsItem::GraphicsItemFlag, bool)
+QGraphicsItem::dropEvent(QGraphicsSceneDragDropEvent*)
+QGraphicsView::paintEvent(QPaintEvent*)
+QGraphicsView::wheelEvent(QWheelEvent*)
+QGraphicsView::qt_metacall(QMetaObject::Call, int, void**)
+QGraphicsView::qt_metacast(char const*)
+QGraphicsView::focusInEvent(QFocusEvent*)
+QGraphicsView::setCacheMode(QFlags<QGraphicsView::CacheModeFlag>)
+QGraphicsView::dragMoveEvent(QDragMoveEvent*)
+QGraphicsView::focusOutEvent(QFocusEvent*)
+QGraphicsView::keyPressEvent(QKeyEvent*)
+QGraphicsView::setupViewport(QWidget*)
+QGraphicsView::viewportEvent(QEvent*)
+QGraphicsView::dragEnterEvent(QDragEnterEvent*)
+QGraphicsView::dragLeaveEvent(QDragLeaveEvent*)
+QGraphicsView::drawBackground(QPainter*, QRectF const&)
+QGraphicsView::drawForeground(QPainter*, QRectF const&)
+QGraphicsView::mouseMoveEvent(QMouseEvent*)
+QGraphicsView::keyReleaseEvent(QKeyEvent*)
+QGraphicsView::mousePressEvent(QMouseEvent*)
+QGraphicsView::contextMenuEvent(QContextMenuEvent*)
+QGraphicsView::inputMethodEvent(QInputMethodEvent*)
+QGraphicsView::scrollContentsBy(int, int)
+QGraphicsView::staticMetaObject
+QGraphicsView::mouseReleaseEvent(QMouseEvent*)
+QGraphicsView::focusNextPrevChild(bool)
+QGraphicsView::resetCachedContent()
+QGraphicsView::setOptimizationFlags(QFlags<QGraphicsView::OptimizationFlag>)
+QGraphicsView::mouseDoubleClickEvent(QMouseEvent*)
+QGraphicsView::event(QEvent*)
+QGraphicsView::drawItems(QPainter*, int, QGraphicsItem**, QStyleOptionGraphicsItem const*)
+QGraphicsView::dropEvent(QDropEvent*)
+QGraphicsView::showEvent(QShowEvent*)
+QGraphicsView::QGraphicsView(QGraphicsScene*, QWidget*)
+QGraphicsView::~QGraphicsView()
+QPointerEvent::point(long long)
+KGamePopupItem::showMessage(QString const&, KGamePopupItem::Position, KGamePopupItem::ReplaceMode)
+KGamePopupItem::setMessageOpacity(double)
+KGamePopupItem::setMessageTimeout(int)
+KGamePopupItem::setHideOnMouseClick(bool)
+KGamePopupItem::forceHide(KGamePopupItem::HideType)
+KGamePopupItem::KGamePopupItem(QGraphicsItem*)
+KXMLGUIBuilder::finalizeGUI(KXMLGUIClient*)
+KXMLGUIBuilder::virtual_hook(int, void*)
+KXMLGUIBuilder::createContainer(QWidget*, int, QDomElement const&, QAction*&)
+KXMLGUIBuilder::removeContainer(QWidget*, QWidget*, QDomElement&, QAction*)
+KXMLGUIBuilder::createCustomElement(QWidget*, int, QDomElement const&)
+QGraphicsScene::removeItem(QGraphicsItem*)
+QGraphicsScene::wheelEvent(QGraphicsSceneWheelEvent*)
+QGraphicsScene::eventFilter(QObject*, QEvent*)
+QGraphicsScene::qt_metacall(QMetaObject::Call, int, void**)
+QGraphicsScene::qt_metacast(char const*)
+QGraphicsScene::focusInEvent(QFocusEvent*)
+QGraphicsScene::setSceneRect(QRectF const&)
+QGraphicsScene::dragMoveEvent(QGraphicsSceneDragDropEvent*)
+QGraphicsScene::focusOutEvent(QFocusEvent*)
+QGraphicsScene::keyPressEvent(QKeyEvent*)
+QGraphicsScene::dragEnterEvent(QGraphicsSceneDragDropEvent*)
+QGraphicsScene::dragLeaveEvent(QGraphicsSceneDragDropEvent*)
+QGraphicsScene::drawBackground(QPainter*, QRectF const&)
+QGraphicsScene::drawForeground(QPainter*, QRectF const&)
+QGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent*)
+QGraphicsScene::keyReleaseEvent(QKeyEvent*)
+QGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent*)
+QGraphicsScene::contextMenuEvent(QGraphicsSceneContextMenuEvent*)
+QGraphicsScene::inputMethodEvent(QInputMethodEvent*)
+QGraphicsScene::staticMetaObject
+QGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
+QGraphicsScene::focusNextPrevChild(bool)
+QGraphicsScene::setBackgroundBrush(QBrush const&)
+QGraphicsScene::setItemIndexMethod(QGraphicsScene::ItemIndexMethod)
+QGraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent*)
+QGraphicsScene::event(QEvent*)
+QGraphicsScene::addItem(QGraphicsItem*)
+QGraphicsScene::drawItems(QPainter*, int, QGraphicsItem**, QStyleOptionGraphicsItem const*, QWidget*)
+QGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent*)
+QGraphicsScene::helpEvent(QGraphicsSceneHelpEvent*)
+QGraphicsScene::QGraphicsScene(QObject*)
+QGraphicsScene::~QGraphicsScene()
+KConfigSkeleton::qt_metacall(QMetaObject::Call, int, void**)
+KConfigSkeleton::qt_metacast(char const*)
+KConfigSkeleton::KConfigSkeleton(QString const&, QObject*)
+KGameDifficulty::globalLevel()
+KGameDifficulty::setGameRunning(bool)
+KGameDifficulty::staticMetaObject
+KGameDifficulty::currentLevelChanged(KGameDifficultyLevel const*)
+KGameDifficulty::addStandardLevelRange(KGameDifficultyLevel::StandardLevel, KGameDifficultyLevel::StandardLevel)
+KGameDifficulty::global()
+KGameDifficulty::addLevel(KGameDifficultyLevel*)
+KStandardAction::_k_createInternal(KStandardAction::StandardAction, QObject*)
+QAbstractButton::setChecked(bool)
+QAbstractButton::setText(QString const&)
+QGraphicsObject::qt_metacall(QMetaObject::Call, int, void**)
+QGraphicsObject::qt_metacast(char const*)
+QGraphicsObject::staticMetaObject
+QGraphicsObject::event(QEvent*)
+QGraphicsObject::QGraphicsObject(QGraphicsItem*)
+QGraphicsObject::~QGraphicsObject()
+QGuiApplication::setWindowIcon(QIcon const&)
+QtSharedPointer::ExternalRefCountData::getAndRef(QObject const*)
+KLocalizedString::setApplicationDomain(QByteArray const&)
+KLocalizedString::~KLocalizedString()
+KStandardGuiItem::cancel()
+QLoggingCategory::QLoggingCategory(char const*, QtMsgType)
+QLoggingCategory::~QLoggingCategory()
+QRandomGenerator::_fillRange(void*, long long)
+QRandomGenerator::QRandomGenerator(unsigned int const*, unsigned int const*)
+KGameRenderedItem::receivePixmap(QPixmap const&)
+KGameRenderedItem::KGameRenderedItem(KGameRenderer*, QString const&, QGraphicsItem*)
+KGameRenderedItem::KGameRenderedItem(KGameRenderer*, QString const&, QGraphicsItem*)
+KGameRenderedItem::~KGameRenderedItem()
+KGameDifficultyGUI::init(KXmlGuiWindow*, KGameDifficulty*)
+KGameThemeProvider::discoverThemes(QString const&, QString const&, QMetaObject const*)
+KGameThemeProvider::staticMetaObject
+KGameThemeProvider::currentThemeChanged(KGameTheme const*)
+KGameThemeProvider::KGameThemeProvider(QByteArray const&, QObject*)
+KGameThemeSelector::KGameThemeSelector(KGameThemeProvider*, QFlags<KGameThemeSelector::Option>, QWidget*)
+QCommandLineParser::process(QCoreApplication const&)
+QCommandLineParser::QCommandLineParser()
+QCommandLineParser::~QCommandLineParser()
+QRandomGenerator64::global()
+KCoreConfigSkeleton::setDefaults()
+KCoreConfigSkeleton::useDefaults(bool)
+KCoreConfigSkeleton::usrSetDefaults()
+KCoreConfigSkeleton::usrUseDefaults(bool)
+KCoreConfigSkeleton::setCurrentGroup(QString const&)
+KCoreConfigSkeleton::read()
+KCoreConfigSkeleton::addItem(KConfigSkeletonItem*, QString const&)
+KCoreConfigSkeleton::ItemInt::setMaxValue(int)
+KCoreConfigSkeleton::ItemInt::setMinValue(int)
+KCoreConfigSkeleton::ItemInt::ItemInt(QString const&, QString const&, int&, int)
+KCoreConfigSkeleton::usrRead()
+KCoreConfigSkeleton::usrSave()
+KCoreConfigSkeleton::ItemBool::ItemBool(QString const&, QString const&, bool&, bool)
+KCoreConfigSkeleton::ItemEnum::ItemEnum(QString const&, QString const&, int&, QList<KCoreConfigSkeleton::ItemEnum::Choice> const&, int)
+KCoreConfigSkeleton::~KCoreConfigSkeleton()
+KGameRendererClient::setSpriteKey(QString const&)
+KGameRendererClient::setRenderSize(QSize)
+KGameStandardAction::_k_createInternal(KGameStandardAction::GameStandardAction, QObject*)
+QAbstractScrollArea::eventFilter(QObject*, QEvent*)
+QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarPolicy)
+QAbstractScrollArea::setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy)
+QGraphicsPixmapItem::setExtension(QGraphicsItem::Extension, QVariant const&)
+QGraphicsPixmapItem::setShapeMode(QGraphicsPixmapItem::ShapeMode)
+QGraphicsPixmapItem::paint(QPainter*, QStyleOptionGraphicsItem const*, QWidget*)
+KGameDifficultyLevel::KGameDifficultyLevel(int, QByteArray const&, QString const&, bool)
+KGameHighScoreDialog::initFromDifficulty(KGameDifficulty const*, bool)
+KGameHighScoreDialog::addScore(QMap<int, QString> const&, QFlags<KGameHighScoreDialog::AddScoreFlag>)
+KGameHighScoreDialog::hideField(int)
+KGameHighScoreDialog::KGameHighScoreDialog(int, QWidget*)
+KPluralHandlingSpinBox::KPluralHandlingSpinBox(QWidget*)
+QUrl::QUrl()
+QUrl::~QUrl()
+QIcon::fromTheme(QString const&)
+QIcon::QIcon()
+QIcon::~QIcon()
+KCrash::initialize()
+QBrush::QBrush(QPixmap const&)
+QBrush::~QBrush()
+QDebug::~QDebug()
+QFrame::changeEvent(QEvent*)
+QFrame::setFrameStyle(int)
+QLabel::setText(QString const&)
+QLabel::QLabel(QWidget*, QFlags<Qt::WindowType>)
+QAction::setChecked(bool)
+QAction::setEnabled(bool)
+QAction::staticMetaObject
+QAction::triggered(bool)
+QObject::childEvent(QChildEvent*)
+QObject::timerEvent(QTimerEvent*)
+QObject::connectImpl(QObject const*, void**, QObject const*, void**, QtPrivate::QSlotObjectBase*, Qt::ConnectionType, int const*, QMetaObject const*)
+QObject::customEvent(QEvent*)
+QObject::eventFilter(QObject*, QEvent*)
+QObject::connectNotify(QMetaMethod const&)
+QObject::setObjectName(QAnyStringView)
+QObject::disconnectNotify(QMetaMethod const&)
+QObject::event(QEvent*)
+QPixmap::~QPixmap()
+QString::setNum(unsigned long long, int)
+QString::fromUtf8(QByteArrayView)
+QWidget::closeEvent(QCloseEvent*)
+QWidget::enterEvent(QEnterEvent*)
+QWidget::leaveEvent(QEvent*)
+QWidget::paintEvent(QPaintEvent*)
+QWidget::setVisible(bool)
+QWidget::wheelEvent(QWheelEvent*)
+QWidget::actionEvent(QActionEvent*)
+QWidget::changeEvent(QEvent*)
+QWidget::nativeEvent(QByteArray const&, void*, long long*)
+QWidget::qt_metacall(QMetaObject::Call, int, void**)
+QWidget::qt_metacast(char const*)
+QWidget::resizeEvent(QResizeEvent*)
+QWidget::tabletEvent(QTabletEvent*)
+QWidget::focusInEvent(QFocusEvent*)
+QWidget::dragMoveEvent(QDragMoveEvent*)
+QWidget::focusOutEvent(QFocusEvent*)
+QWidget::keyPressEvent(QKeyEvent*)
+QWidget::dragEnterEvent(QDragEnterEvent*)
+QWidget::dragLeaveEvent(QDragLeaveEvent*)
+QWidget::mouseMoveEvent(QMouseEvent*)
+QWidget::keyReleaseEvent(QKeyEvent*)
+QWidget::mousePressEvent(QMouseEvent*)
+QWidget::contextMenuEvent(QContextMenuEvent*)
+QWidget::inputMethodEvent(QInputMethodEvent*)
+QWidget::staticMetaObject
+QWidget::mouseReleaseEvent(QMouseEvent*)
+QWidget::focusNextPrevChild(bool)
+QWidget::mouseDoubleClickEvent(QMouseEvent*)
+QWidget::show()
+QWidget::close()
+QWidget::event(QEvent*)
+QWidget::resize(QSize const&)
+QWidget::dropEvent(QDropEvent*)
+QWidget::hideEvent(QHideEvent*)
+QWidget::moveEvent(QMoveEvent*)
+QWidget::showEvent(QShowEvent*)
+QWidget::QWidget(QWidget*, QFlags<Qt::WindowType>)
+QWidget::~QWidget()
+KGuiItem::KGuiItem(QString const&, QString const&, QString const&, QString const&)
+KGuiItem::~KGuiItem()
+QSpinBox::setMaximum(int)
+QSpinBox::valueChanged(int)
+QSpinBox::staticMetaObject
+QVariant::~QVariant()
+QCheckBox::setTristate(bool)
+QCheckBox::QCheckBox(QWidget*)
+QComboBox::insertItem(int, QIcon const&, QString const&, QVariant const&)
+QComboBox::setItemText(int, QString const&)
+QComboBox::QComboBox(QWidget*)
+QHashSeed::globalSeed()
+QtPrivate::equalStrings(QStringView, QLatin1String)
+QtPrivate::QMetaTypeInterfaceWrapper<QString>::metaType
+QtPrivate::QMetaTypeInterfaceWrapper<bool>::metaType
+QtPrivate::QMetaTypeInterfaceWrapper<int>::metaType
+operator new[](unsigned long)
+KGameClock::timeString() const
+KGameClock::seconds() const
+QEventPoint::position() const
+QMainWindow::statusBar() const
+QMetaObject::className() const
+QObjectData::dynamicMetaObject() const
+KGameRenderer::spritePixmap(QString const&, QSize, int, QHash<QColor, QColor> const&) const
+KGameRenderer::themeProvider() const
+KXMLGUIClient::domDocument() const
+KXMLGUIClient::localXMLFile() const
+KXMLGUIClient::componentName() const
+KXMLGUIClient::actionCollection() const
+KXMLGUIClient::action(QDomElement const&) const
+KXMLGUIClient::xmlFile() const
+KXmlGuiWindow::metaObject() const
+QGraphicsItem::childItems() const
+QGraphicsItem::opaqueArea() const
+QGraphicsItem::isObscuredBy(QGraphicsItem const*) const
+QGraphicsItem::collidesWithItem(QGraphicsItem const*, Qt::ItemSelectionMode) const
+QGraphicsItem::collidesWithPath(QPainterPath const&, Qt::ItemSelectionMode) const
+QGraphicsItem::inputMethodQuery(Qt::InputMethodQuery) const
+QGraphicsItem::supportsExtension(QGraphicsItem::Extension) const
+QGraphicsItem::type() const
+QGraphicsItem::scene() const
+QGraphicsItem::shape() const
+QGraphicsItem::contains(QPointF const&) const
+QGraphicsItem::extension(QVariant const&) const
+QGraphicsView::inputMethodQuery(Qt::InputMethodQuery) const
+QGraphicsView::sizeHint() const
+KXMLGUIBuilder::customTags() const
+KXMLGUIBuilder::containerTags() const
+QGraphicsScene::inputMethodQuery(Qt::InputMethodQuery) const
+QGraphicsScene::sceneRect() const
+QMessageLogger::debug() const
+KConfigSkeleton::metaObject() const
+QGuiApplication::isSessionRestored() const
+KLocalizedString::subs(int, int, int, QChar) const
+KLocalizedString::subs(QString const&, int, QChar) const
+KLocalizedString::toString() const
+KCoreConfigSkeleton::currentGroup() const
+KGameRendererClient::renderSize() const
+KGameRendererClient::renderer() const
+QAbstractScrollArea::minimumSizeHint() const
+QAbstractScrollArea::viewportSizeHint() const
+QGraphicsPixmapItem::opaqueArea() const
+QGraphicsPixmapItem::boundingRect() const
+QGraphicsPixmapItem::isObscuredBy(QGraphicsItem const*) const
+QGraphicsPixmapItem::supportsExtension(QGraphicsItem::Extension) const
+QGraphicsPixmapItem::shape() const
+QGraphicsPixmapItem::contains(QPointF const&) const
+QGraphicsPixmapItem::extension(QVariant const&) const
+QGraphicsSceneMouseEvent::pos() const
+QGraphicsSceneMouseEvent::button() const
+QGraphicsSceneMouseEvent::buttons() const
+QFrame::initStyleOption(QStyleOptionFrame*) const
+QAction::isChecked() const
+QObject::objectName() const
+QScreen::availableGeometry() const
+QWidget::metaObject() const
+QWidget::redirected(QPoint*) const
+QWidget::initPainter(QPainter*) const
+QWidget::paintEngine() const
+QWidget::sharedPainter() const
+QWidget::heightForWidth(int) const
+QWidget::minimumSizeHint() const
+QWidget::inputMethodQuery(Qt::InputMethodQuery) const
+QWidget::hasHeightForWidth() const
+QWidget::metric(QPaintDevice::PaintDeviceMetric) const
+QWidget::screen() const
+QWidget::devType() const
+QWidget::sizeHint() const
+QSpinBox::value() const
+QComboBox::count() const
+std::chrono::_V2::system_clock::now()
+operator new(unsigned long)
+std::_Rb_tree_decrement(std::_Rb_tree_node_base*)
+std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)
+non-virtual thunk to KGameRenderedItem::receivePixmap(QPixmap const&)
+non-virtual thunk to QWidget::redirected(QPoint*) const
+non-virtual thunk to QWidget::initPainter(QPainter*) const
+non-virtual thunk to QWidget::paintEngine() const
+non-virtual thunk to QWidget::sharedPainter() const
+non-virtual thunk to QWidget::metric(QPaintDevice::PaintDeviceMetric) const
+non-virtual thunk to QWidget::devType() const
+typeinfo for KXmlGuiWindow
+typeinfo for QGraphicsView
+typeinfo for QGraphicsScene
+typeinfo for KConfigSkeleton
+typeinfo for QGraphicsObject
+typeinfo for KGameRenderedItem
+typeinfo for QWidget
+vtable for QSpacerItem
+vtable for KConfigSkeleton
+vtable for __cxxabiv1::__si_class_type_info
