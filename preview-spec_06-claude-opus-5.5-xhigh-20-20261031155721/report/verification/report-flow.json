@@ -1,0 +1,24 @@
+{
+  "win": {
+    "mines": "Mines: 1/1",
+    "scoresOpen": true,
+    "hasNameInput": true,
+    "saved": "{\"custom\":[{\"name\":\"Tester\",\"seconds\":0}]}"
+  },
+  "lose": {
+    "minesLabel": "Mines: 0/15",
+    "lostAt": [
+      0,
+      0
+    ],
+    "resetDialogOpen": true,
+    "afterReset": {
+      "dialogOpen": false,
+      "pauseEnabled": true,
+      "mines": "Mines: 0/15"
+    }
+  },
+  "settingsOpen": true,
+  "console": [],
+  "errors": []
+}

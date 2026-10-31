@@ -1,0 +1,41 @@
+{
+  "url": "http://127.0.0.1:8765/preview-spec_06-claude-opus-5.5-xhigh-20-20261031155721/index.html",
+  "finalUrl": "http://127.0.0.1:8765/preview-spec_06-claude-opus-5.5-xhigh-20-20261031155721/webgl/index.html",
+  "title": "KMines WebGL",
+  "webgl": true,
+  "loadStatus": "",
+  "pixelsBefore": {
+    "corner": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "cell": [
+      0,
+      0,
+      0,
+      255
+    ]
+  },
+  "afterFirstClick": {
+    "mines": "Mines: 0/10",
+    "time": "Time: 00:01",
+    "pauseEnabled": true
+  },
+  "flaggedAt": [
+    0,
+    0
+  ],
+  "minesAfterFlag": "Mines: 1/10",
+  "themes": {
+    "classic": "ok",
+    "clean_blue_dark": "ok",
+    "green": "ok",
+    "graveyard-mayhem": "ok",
+    "clean_blue": "ok",
+    "default": "ok"
+  },
+  "console": [],
+  "errors": []
+}
