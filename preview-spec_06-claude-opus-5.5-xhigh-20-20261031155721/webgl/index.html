@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KMines WebGL</title>
+  <link rel="icon" type="image/png" href="themes/default_preview.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header class="toolbar" role="toolbar" aria-label="Main Toolbar">
+      <button type="button" id="action-new" title="Start a new game (Ctrl+N)">New</button>
+      <button type="button" id="action-pause" aria-pressed="false" disabled title="Pause (P)">Pause</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button type="button" id="action-highscores" title="Show High Scores (Ctrl+H)">High Scores</button>
+      <button type="button" id="action-settings" title="Configure KMines">Settings</button>
+    </header>
+
+    <main id="view" class="view">
+      <canvas id="scene" aria-label="Minefield"></canvas>
+      <p id="load-status" class="load-status" role="status">Loading theme…</p>
+    </main>
+
+    <footer class="statusbar">
+      <span id="mines-display">Mines: 0/0</span>
+      <span id="time-display">Time: 00:00</span>
+      <label class="difficulty">Difficulty:
+        <select id="difficulty"></select>
+      </label>
+    </footer>
+  </div>
+
+  <dialog id="reset-dialog">
+    <form method="dialog">
+      <p>Reset the Game?</p>
+      <menu>
+        <button value="reset" autofocus>Reset</button>
+        <button value="cancel">Cancel</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog" class="settings">
+    <form method="dialog" id="settings-form">
+      <h2>Configure – KMines</h2>
+      <nav class="tabs" role="tablist">
+        <button type="button" role="tab" data-tab="general" aria-selected="true">General</button>
+        <button type="button" role="tab" data-tab="theme" aria-selected="false">Theme</button>
+        <button type="button" role="tab" data-tab="custom" aria-selected="false">Custom Game</button>
+      </nav>
+      <section data-page="general">
+        <label><input type="checkbox" name="useQuestionMarks"> Use '?' marks</label>
+        <label><input type="checkbox" name="allowKminesReset"> Allow KMines reset</label>
+        <label><input type="checkbox" name="disableScoreOnReset"> Disable score on reset</label>
+        <label><input type="checkbox" name="exploreWithLeftClickOnNumberCells"> Explore with left click on number cells</label>
+        <fieldset>
+          <legend>Place flag when mouse button is:</legend>
+          <label><input type="radio" name="placeFlagOn" value="0"> Released</label>
+          <label><input type="radio" name="placeFlagOn" value="1"> Pressed</label>
+        </fieldset>
+      </section>
+      <section data-page="theme" hidden>
+        <ul id="theme-list" class="theme-list"></ul>
+      </section>
+      <section data-page="custom" hidden>
+        <label>Width: <input type="number" name="customWidth" min="5" max="50" required></label>
+        <label>Height: <input type="number" name="customHeight" min="5" max="50" required></label>
+        <label>Mines: <input type="number" name="customMines" min="1" required></label>
+      </section>
+      <menu>
+        <button type="button" id="settings-defaults">Defaults</button>
+        <span class="grow"></span>
+        <button value="ok">OK</button>
+        <button type="button" id="settings-apply">Apply</button>
+        <button value="cancel" formnovalidate>Cancel</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="scores-dialog" class="scores">
+    <form method="dialog" id="scores-form">
+      <h2>High Scores</h2>
+      <label>Level: <select id="scores-level"></select></label>
+      <table>
+        <thead><tr><th>Rank</th><th>Name</th><th>Time</th></tr></thead>
+        <tbody id="scores-body"></tbody>
+      </table>
+      <menu><button value="close">Close</button></menu>
+    </form>
+  </dialog>
+
+  <script type="module" src="src/index.js"></script>
+</body>
+</html>
