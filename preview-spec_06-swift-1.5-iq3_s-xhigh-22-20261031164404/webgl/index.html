@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KMines (WebGL port)</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <!-- Head panel: mirrors the "Inside game" QFrame of KMinesMainWindow:
+       a clock label, a mines label and the reset action button. -->
+  <header id="head">
+    <div class="head-row">
+      <span id="timeLabel" class="hud">Time: 00:00</span>
+      <span id="mineLabel" class="hud">Mines: 0/0</span>
+      <button id="resetButton" type="button" title="Reset the Game?" aria-label="Reset the Game?">&#8635;</button>
+    </div>
+    <div class="head-row sub">
+      <span id="levelLabel" class="hud sub">Easy</span>
+      <span class="spacer"></span>
+      <button id="pauseButton" type="button">Pause</button>
+      <button id="scoresButton" type="button">Highscores</button>
+      <button id="settingsButton" type="button">Configure KMines</button>
+      <select id="levelSelect" aria-label="Game difficulty">
+        <option value="30">Easy</option>
+        <option value="40">Medium</option>
+        <option value="50">Hard</option>
+        <option value="1000">Custom</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- The board: WebGL canvas = the QGraphicsView / KMinesView viewport. -->
+  <div id="viewPort">
+    <canvas id="board" width="800" height="600" tabindex="0"
+            aria-label="Mine field. Left click to open a cell, right click to flag."></canvas>
+    <div id="popup" class="popup" hidden></div>
+  </div>
+
+  <footer id="status">
+    <span id="hintText">Left click: open &middot; Right click: flag &middot; Middle click / click a number: explore</span>
+  </footer>
+</div>
+
+<!-- Configure KMines: mirrors GeneralOptsConfig + CustomGameConfig pages. -->
+<dialog id="settingsDialog">
+  <form method="dialog" id="settingsForm">
+    <h2>Configure KMines</h2>
+    <fieldset>
+      <legend>General</legend>
+      <label><input type="checkbox" id="optUseQuestionMarks"> Use '?' marks</label>
+      <label><input type="checkbox" id="optAllowKminesReset"> Allow KMines reset</label>
+      <label><input type="checkbox" id="optDisableScoreOnReset"> Disable score on reset</label>
+      <label><input type="checkbox" id="optExploreWithLeftClickOnNumberCells">
+        Explore with left click on number cells</label>
+      <label>Place flag when mouse button is:
+        <select id="optPlaceFlagOn">
+          <option value="0">Released</option>
+          <option value="1">Pressed</option>
+        </select>
+      </label>
+    </fieldset>
+    <fieldset>
+      <legend>Custom Game</legend>
+      <label>Width: <input type="number" id="optCustomWidth" min="5" max="50"></label>
+      <label>Height: <input type="number" id="optCustomHeight" min="5" max="50"></label>
+      <label>Mines: <input type="number" id="optCustomMines" min="1"></label>
+    </fieldset>
+    <menu>
+      <button type="button" id="settingsCancel">Cancel</button>
+      <button type="submit" id="settingsOk">OK</button>
+    </menu>
+  </form>
+</dialog>
+
+<dialog id="scoreDialog">
+  <h2>Highscores</h2>
+  <div id="scoreBody"></div>
+  <menu><button type="button" id="scoreClose">Close</button></menu>
+</dialog>
+
+<script src="js/sprites.js"></script>
+<script src="js/field.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

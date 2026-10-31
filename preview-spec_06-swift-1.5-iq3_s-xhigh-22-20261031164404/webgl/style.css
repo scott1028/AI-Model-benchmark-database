@@ -1,0 +1,167 @@
+/* style.css — layout of the KMines WebGL port.
+   Mirrors KMinesMainWindow: a head panel (clock label, mines label, reset),
+   the QGraphicsView viewport, and a status bar. */
+:root {
+  color-scheme: dark;
+  --bg: #151a22;
+  --panel: #222b38;
+  --text: #dbe6f2;
+  --muted: #8fa3b8;
+  --accent: #4b9fea;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.4 "Segoe UI", "Noto Sans", "DejaVu Sans", sans-serif;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100vh;
+}
+
+/* head panel ("Inside game" frame): HUD labels + controls */
+#head {
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.head-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.head-row.sub { font-size: 13px; }
+.head-row .spacer { flex: 1; }
+
+.hud {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 18px;
+  min-width: 9ch;
+}
+
+.hud.sub { font-weight: 500; font-size: 13px; color: var(--muted); }
+
+button, select, input[type="number"] {
+  background: #2c3949;
+  color: var(--text);
+  border: 1px solid #3d4d61;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover { background: #35455a; }
+button:focus-visible, select:focus-visible, input:focus-visible,
+canvas:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+input[type="number"] { width: 6ch; cursor: text; }
+input[type="checkbox"] { accent-color: var(--accent); }
+
+/* viewport */
+#viewPort {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex: 1;
+}
+
+#board {
+  display: block;
+  border-radius: 6px;
+  touch-action: manipulation;
+}
+
+/* KGamePopupItem-like message overlay */
+.popup {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 30, 45, 0.92);
+  border: 1px solid var(--accent);
+  color: #eaf4ff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#status {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 4px 0 8px;
+}
+
+/* dialogs (Configure KMines / Highscores) */
+dialog {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid #3d4d61;
+  border-radius: 10px;
+  padding: 16px 20px;
+  min-width: 320px;
+}
+
+dialog::backdrop { background: rgba(0, 0, 0, 0.55); }
+
+dialog h2 { margin: 0 0 10px; font-size: 18px; }
+
+fieldset {
+  border: 1px solid #3d4d61;
+  border-radius: 8px;
+  margin: 8px 0;
+  padding: 8px 12px;
+}
+
+legend { color: var(--muted); font-size: 13px; padding: 0 4px; }
+
+fieldset label {
+  display: block;
+  margin: 6px 0;
+}
+
+menu {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0;
+  margin: 10px 0 0;
+}
+
+#scoreBody table {
+  border-collapse: collapse;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+#scoreBody th, #scoreBody td {
+  text-align: left;
+  padding: 3px 10px 3px 0;
+  border-bottom: 1px solid #33414f;
+}
+
+#scoreBody thead th { color: var(--muted); font-weight: 600; }
