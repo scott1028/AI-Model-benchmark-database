@@ -18,7 +18,7 @@ runner ◄──讀 STATUS── pipeline/progress.md：還不是 DONE / BLOCKED
 
 `pipeline/progress.md` 像交班簿：每輪 agent 結束前寫好做到哪，下一輪照著接手。agent 只在需要重啟才能生效時（例如剛裝好 Godot、寫好它的路徑）或 context 快不夠時結束一輪。
 
-1. 建一個空資料夾，把本檔放到 `.spec/PLAYBOOK_v2.2.md`，`PLAYBOOK_MCP_SETUP.md` 也放進 `.spec/`。資料夾裡不要放其他版本的 playbook 或前一次的成品
+1. 建一個空資料夾，把本檔放到 `.spec/PLAYBOOK_v2.2.md`，`PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md` 也放進 `.spec/`。資料夾裡不要放其他版本的 playbook 或前一次的成品
 2. 先裝好 agent-switch 與 opencode，runner 靠它們啟動 agent。Phase 0 列的軟體也建議先裝好；沒裝的話 agent 會試著自己裝
 3. 在該資料夾跑 runner。第一次跑會建立工作資料夾 `preview-wip/` 並複製一份 `.spec/` 進去；之後每輪都在這個資料夾裡啟動 agent，本輪所有產出都放在裡面，最後由 agent 依 Phase 10 的命名規則改名。它每輪用 agent-switch 啟動 opencode 的非互動模式（`run`），掛上 Godot MCP 與 Blender MCP；`--yolo` 讓所有工具不用詢問就執行（agent-switch 會轉成 opencode 的 `--auto`）。Godot 路徑先讀 agent 寫的 `pipeline/godot-path`，沒有就用 PATH 上的 `godot`：
 
@@ -37,7 +37,7 @@ for i in $(seq 1 30); do
 done
 ```
 
-要接本地模型時，在 `--yolo` 後面加 `--url` / `--model`（見 `.spec/PLAYBOOK_MCP_SETUP.md` 第 3 節）。
+要接本地模型時，在 `--yolo` 後面加 `--url` / `--model`（見 `.spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md` 第 3 節）。
 
 4. 跑完看 `preview-*/pipeline/REPORT.md`：
    - `STATUS: DONE`：全部 Phase 都跑過了，沒通過的 DoD 項目會標 `[x]` 並寫原因。成品就是整個 `preview-*/` 資料夾，入口是裡面的 `index.html`：在 `<project>/` 這層啟動 HTTP server，開 `http://<host>/preview-.../index.html`（不能直接雙擊），細節寫在 REPORT
@@ -137,14 +137,14 @@ done
    - Blender 建模與匯出規則（每個資產怎麼組織、原點、材質限制、碰撞怎麼標示、`execute_blender_code` 每次只做一小步、不刪專案外檔案、不下載外部 3D 資產如模型、材質、貼圖；軟體與 MCP addon 可以從官方來源安裝）
    - 每次匯出後必做的檢查，以及 FAIL 迴圈規則
    - Godot 端的檔案位置、輸入規則（只用使用者定案的按鍵）、MCP 使用規則
-3. MCP 伺服器（Godot MCP、Blender MCP）與權限由 runner 每輪掛上，專案裡不用另外設定；掛載細節見 `.spec/PLAYBOOK_MCP_SETUP.md`。`--yolo` 讓 `execute_blender_code` 也會被自動允許，所以在規則檔限制它的用途（只在 Blender 裡建模與匯出、不碰專案外檔案、不連外網）
+3. MCP 伺服器（Godot MCP、Blender MCP）與權限由 runner 每輪掛上，專案裡不用另外設定；掛載細節見 `.spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md`。`--yolo` 讓 `execute_blender_code` 也會被自動允許，所以在規則檔限制它的用途（只在 Blender 裡建模與匯出、不碰專案外檔案、不連外網）
 4. 建立 Godot 專案、Web 匯出設定與使用者定案的按鍵設定，並用程式確認按鍵真的有綁上。Web 匯出只支援 Compatibility renderer，所以專案從一開始就用它，之後的檢查與截圖才會和成品一致
 5. 建立自動化工具（實作方式自訂），至少要能：檢查環境（含 Blender MCP 埠能否連線）、在背景啟動 Blender 並開好 MCP server、讓 Godot 匯入資產、依工作原則第 2 點比對資產規格、跑 bot 測試、跑物理測試、匯出 Web build 並從入口 `index.html` 用瀏覽器驗證
 6. 在工作資料夾自己 `git init`（上層資料夾已經是 git repo 也一樣），做第一次 Godot 匯入
 
 ## Phase 2：連線 MCP（agent 自動完成）
 
-原本要人在 Blender 裡點的步驟，都改用腳本做。步驟可參考 `.spec/PLAYBOOK_MCP_SETUP.md` 第 2 節，但不要依賴 UI 操作。
+原本要人在 Blender 裡點的步驟，都改用腳本做。步驟可參考 `.spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md` 第 2 節，但不要依賴 UI 操作。
 
 1. 用 Blender 命令列或啟動腳本安裝並啟用 Blender MCP addon；外部資產庫與生成器保持關閉
 2. Blender 5.x 有內建的 Blender Lab「MCP」擴充時，用腳本停用它，否則它會佔用同一個埠

@@ -79,7 +79,7 @@
    - Blender 建模與匯出規則（每個資產怎麼組織、原點、材質限制、碰撞怎麼標示、`execute_blender_code` 每次只做一小步、不刪專案外檔案、不下載外部資產）
    - 每次匯出後必做的檢查，以及 FAIL 迴圈規則
    - Godot 端的檔案位置、輸入規則（只用使用者定案的按鍵）、MCP 使用規則
-3. 設定 MCP 伺服器（Godot MCP、Blender MCP）與 agent 權限：Godot 工具與你的檢查工具可以自動允許；Blender 的程式執行工具**不要**自動允許。用 agent-switch + opencode 的話，參考 `.spec/PLAYBOOK_MCP_SETUP.md`
+3. 設定 MCP 伺服器（Godot MCP、Blender MCP）與 agent 權限：Godot 工具與你的檢查工具可以自動允許；Blender 的程式執行工具**不要**自動允許。用 agent-switch + opencode 的話，參考 `.spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md`
 4. 建立 Godot 專案與使用者定案的按鍵設定，並用程式確認按鍵真的有綁上
 5. 建立自動化工具（實作方式自訂），至少要能：檢查環境（含 Blender MCP 埠能否連線）、讓 Godot 匯入資產、依工作原則第 2 點比對資產規格、跑 bot 測試、跑物理測試
 6. 建立 `pipeline/progress.md`、`pipeline/log.md`，`git init`，做第一次 Godot 匯入，`git commit`

@@ -2,7 +2,7 @@
 
 ## MCP 設定
 
-啟動 agent 用的指令（agent-switch + opencode，照 `.spec/PLAYBOOK_MCP_SETUP.md`）：
+啟動 agent 用的指令（agent-switch + opencode，照 `.spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md`）：
 
 ```bash
 agent-switch opencode \

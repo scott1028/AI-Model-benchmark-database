@@ -4,7 +4,7 @@
 
 （MCP 工具失敗與替代做法記錄在這裡）
 
-- 2026-10-26 Phase 1：本環境為 opencode + agent-switch，不使用 `.mcp.json` / `.claude/settings.json`（照抄留檔）；規則檔採 `AGENTS.md`（同 CLAUDE.md 內容），依 .spec/PLAYBOOK_MCP_SETUP.md §5。
+- 2026-10-26 Phase 1：本環境為 opencode + agent-switch，不使用 `.mcp.json` / `.claude/settings.json`（照抄留檔）；規則檔採 `AGENTS.md`（同 CLAUDE.md 內容），依 .spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md §5。
 - 2026-10-26 Phase 1.10：外層 benchmark repo 已 git init，不另建巢狀 repo，phase commit 直接進外層 repo。
 - 2026-10-26 Phase 2：人工安裝/啟動已在會話外完成（agent-switch 掛好 godot/blender MCP、Blender server 已在 9876），故跳過 STOP 直接做 agent 端驗證。
 - 2026-10-26 Phase 3.6 godot-mcp `create_scene` 不接受 rootNodeName（root 名稱固定 "root"）→ 直接編輯 .tscn 重新命名並加 ext_resource/instance（附錄 C-5 預期內）。

@@ -2,7 +2,7 @@
 
 > 標記：`[v]` 已處理且通過、`[x]` 做了沒過、`[ ]` 未做。重啟後從未完成的步驟續跑。
 > 本專案根目錄：preview-spec_03-qwen3.8-flash-next-iq3_s-max-25-20261026123341/
-> 本環境 MCP 由 agent-switch 掛載（見 .spec/PLAYBOOK_MCP_SETUP.md），MCP 已連線。
+> 本環境 MCP 由 agent-switch 掛載（見 .spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md），MCP 已連線。
 
 ## Phase 0 環境檢查
 - [v] 0.1 node v22.22.3、uv 0.12.18、git 2.53.0

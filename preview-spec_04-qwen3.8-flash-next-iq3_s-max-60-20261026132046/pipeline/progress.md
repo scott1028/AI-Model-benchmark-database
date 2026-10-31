@@ -9,7 +9,7 @@
 ## Phase 1 專案骨架
 - [v] 1.1 專案結構規劃
 - [v] 1.2 專案規則檔 AGENTS.md + CLAUDE.md
-- [v] 1.3 MCP 伺服器與權限設定（依 .spec/PLAYBOOK_MCP_SETUP.md）
+- [v] 1.3 MCP 伺服器與權限設定（依 .spec/PLAYBOOK_BLENDER_GODOT_MCP_SETUP.md）
 - [v] 1.4 Godot 專案 + 定案按鍵 + 程式確認綁定
 - [v] 1.5 自動化工具：環境檢查 / Godot 匯入 / 規格比對 / bot 測試 / 物理測試
 - [v] 1.6 progress.md、log.md、git、第一次 Godot 匯入、commit
