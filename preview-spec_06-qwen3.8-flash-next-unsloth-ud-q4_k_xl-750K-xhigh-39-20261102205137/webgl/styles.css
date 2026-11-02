@@ -1,0 +1,215 @@
+/* KMines WebGL port — window chrome only.  The minefield itself is WebGL;
+   this file is the equivalent of the Qt window, toolbar and status bar. */
+
+:root {
+  --accent: #d6d6d6;
+  --panel: #8e8e8e;
+  --canvas-bg: #4a4a4e;
+  --text: #f2f2f4;
+  --text-dim: #b9bcc4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #1e1f24;
+  color: var(--text);
+  font: 14px/1.45 "DejaVu Sans", "Noto Sans", sans-serif;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#toolbar,
+#statusbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #2b2d34;
+  border-bottom: 1px solid #16171b;
+}
+
+#statusbar {
+  border-bottom: 0;
+  border-top: 1px solid #16171b;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+#mines-label,
+#time-label {
+  min-width: 110px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+#time-label {
+  text-align: right;
+}
+
+#hint-label {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+button,
+select,
+input[type="number"] {
+  font: inherit;
+  color: var(--text);
+  background: #3a3d46;
+  border: 1px solid #54585f;
+  border-radius: 4px;
+  padding: 5px 10px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #4a4e59;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+button[aria-pressed="true"] {
+  background: var(--panel);
+  border-color: var(--accent);
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-dim);
+}
+
+#board-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: var(--canvas-bg);
+}
+
+#board {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: pointer;
+}
+
+#dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(12, 12, 16, 0.62);
+}
+
+#dialog-backdrop[hidden] {
+  display: none;
+}
+
+#dialog {
+  width: min(560px, 92vw);
+  max-height: 86vh;
+  overflow: auto;
+  padding: 18px 20px;
+  border-radius: 8px;
+  background: #2f323a;
+  border: 1px solid #565b66;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+}
+
+#dialog h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+.tabs {
+  display: grid;
+  gap: 14px;
+}
+
+.tabs section {
+  border: 1px solid #4a4e58;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.tabs h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tabs label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.tabs input[type="number"] {
+  width: 76px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+table.scores {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.scores th,
+table.scores td {
+  padding: 4px 8px;
+  border-bottom: 1px solid #454a55;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+
+.new-score {
+  background: rgba(120, 190, 120, 0.18);
+}
+
+.new-score-banner {
+  color: #a5e6a5;
+  font-weight: 700;
+}
+
+.hint {
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.error-box {
+  margin: 24px;
+  padding: 16px;
+  border: 1px solid #a33;
+  border-radius: 6px;
+  background: #3a2020;
+}

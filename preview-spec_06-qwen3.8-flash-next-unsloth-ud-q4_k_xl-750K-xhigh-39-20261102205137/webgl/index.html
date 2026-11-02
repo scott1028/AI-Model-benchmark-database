@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KMines — WebGL port</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%234c4c50'/%3E%3Ccircle cx='8' cy='9' r='4' fill='%23111'/%3E%3Crect x='7' y='1' width='2' height='14' fill='%23111'/%3E%3Crect x='1' y='8' width='14' height='2' fill='%23111'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header id="toolbar">
+    <button id="new-action" type="button" title="New game (Ctrl+N)">New</button>
+    <button id="pause-action" type="button" title="Pause (P)" aria-pressed="false">Pause</button>
+    <span class="spacer"></span>
+    <label class="level">Difficulty
+      <select id="difficulty"></select>
+    </label>
+    <button id="highscores-action" type="button" title="Show high scores (Ctrl+H)">High Scores</button>
+    <button id="settings-action" type="button" title="Configure KMines">Settings</button>
+    <button id="help-action" type="button" title="Handbook (F1)">Help</button>
+  </header>
+
+  <main id="board-wrap">
+    <canvas id="board" width="640" height="480" aria-label="KMines minefield"></canvas>
+    <noscript>This WebGL port needs JavaScript and WebGL.</noscript>
+  </main>
+
+  <footer id="statusbar">
+    <span id="mines-label">Mines: 0/0</span>
+    <span id="hint-label">left click digs · right click flags · middle click or left+right explores</span>
+    <span id="time-label">Time: 00:00</span>
+  </footer>
+
+  <div id="dialog-backdrop" hidden>
+    <div id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <h2 id="dialog-title">Configure KMines</h2>
+      <div id="dialog-body"></div>
+      <div class="dialog-actions">
+        <button id="dialog-accept" type="button" hidden>OK</button>
+        <button id="dialog-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
