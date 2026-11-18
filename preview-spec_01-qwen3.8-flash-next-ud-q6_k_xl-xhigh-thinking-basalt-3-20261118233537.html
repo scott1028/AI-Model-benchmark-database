@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shanghai Lujiazui · Day &amp; Night — SVG Loop (spec_01)</title>
+<style>
+  :root { --cycle: 60s; }
+  html, body {
+    margin: 0; height: 100%;
+    background: #0b0e17;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  svg.stage {
+    height: min(100vh, 100vw);
+    width: min(100vh, 100vw);
+    display: block;
+    box-shadow: 0 20px 80px rgba(0,0,0,.6);
+  }
+  /* ============ shared helpers ============ */
+  .sky-l, .water-l, .dim, .lights, .glow, .stars, .dawnwash, .cityglow,
+  .sun, .sun-glint, .moon, .moon-glint { will-change: opacity, transform; }
+
+  /* ============ sky gradient layers (0% = midnight) ============ */
+  .daySky   { animation: daySky   var(--cycle) linear infinite; }
+  .dawnSky  { animation: dawnSky  var(--cycle) linear infinite; }
+  .nightSky { animation: nightSky var(--cycle) linear infinite; }
+  @keyframes daySky {
+    0%,24% { opacity: 0; } 32% { opacity: 1; } 66% { opacity: 1; } 76% { opacity: 0; } 100% { opacity: 0; }
+  }
+  @keyframes dawnSky {
+    0%,16% { opacity: 0; } 24% { opacity: 1; } 29% { opacity: 1; } 36% { opacity: 0; }
+    62% { opacity: 0; } 71% { opacity: 1; } 77% { opacity: 1; } 86% { opacity: 0; } 100% { opacity: 0; }
+  }
+  @keyframes nightSky {
+    0%,17% { opacity: 1; } 25% { opacity: 0; } 78% { opacity: 0; } 87% { opacity: 1; } 100% { opacity: 1; }
+  }
+
+  /* ============ sun / moon ============ */
+  .sun { animation: sunArc var(--cycle) linear infinite; }
+  @keyframes sunArc {
+    0%   { transform: translate(975px, 940px); opacity: 0; }
+    23%  { transform: translate(975px, 940px); opacity: 0; }
+    28%  { transform: translate(968px, 470px); opacity: 1; }
+    31%  { transform: translate(940px, 150px); opacity: 1; }
+    38%  { transform: translate(800px, 105px); opacity: 1; }
+    46%  { transform: translate(640px, 120px); opacity: 1; }
+    52%  { transform: translate(520px, 125px); opacity: 1; }
+    60%  { transform: translate(430px, 180px); opacity: 1; }
+    66%  { transform: translate(330px, 300px); opacity: 1; }
+    71%  { transform: translate(315px, 430px); opacity: 1; }
+    75%  { transform: translate(300px, 540px); opacity: .95; }
+    78%  { transform: translate(290px, 660px); opacity: 0; }
+    100% { transform: translate(290px, 660px); opacity: 0; }
+  }
+  .sun-core { animation: sunColor var(--cycle) linear infinite; }
+  @keyframes sunColor {
+    0%,26% { fill: #ff8a2e; } 36% { fill: #ffd76a; } 50% { fill: #fff6c8; }
+    64% { fill: #ffd76a; } 76% { fill: #ff7a2e; } 100% { fill: #ff7a2e; }
+  }
+  .sun-halo  { animation: sunHalo  var(--cycle) linear infinite; }
+  .sun-halo2 { animation: sunHalo2 var(--cycle) linear infinite; }
+  @keyframes sunHalo {
+    0%,28% { opacity: .5; } 36% { opacity: .32; } 50% { opacity: .25; }
+    64% { opacity: .32; } 75% { opacity: .5; } 100% { opacity: .5; }
+  }
+  @keyframes sunHalo2 {
+    0%,29% { opacity: .9; } 36% { opacity: 0; } 68% { opacity: 0; } 75% { opacity: .9; } 100% { opacity: .9; }
+  }
+  .moon { animation: moonArc var(--cycle) linear infinite; }
+  @keyframes moonArc {
+    0%   { transform: translate(676px, 250px); opacity: 1; }
+    6%   { transform: translate(560px, 158px); opacity: 1; }
+    14%  { transform: translate(392px, 320px); opacity: 1; }
+    20%  { transform: translate(280px, 660px); opacity: 1; }
+    23%  { transform: translate(230px, 900px); opacity: 0; }
+    78%  { transform: translate(905px, 940px); opacity: 0; }
+    84%  { transform: translate(880px, 700px); opacity: 1; }
+    92%  { transform: translate(772px, 380px); opacity: 1; }
+    100% { transform: translate(676px, 250px); opacity: 1; }
+  }
+  /* light paths on water following sun / moon */
+  .sun-glint { animation: sunGlintX var(--cycle) linear infinite; }
+  @keyframes sunGlintX {
+    0%,24% { transform: translateX(975px); opacity: 0; }
+    29% { opacity: .5; } 50% { opacity: .38; } 73% { opacity: .55; }
+    77% { transform: translateX(300px); opacity: 0; }
+    100% { transform: translateX(300px); opacity: 0; }
+  }
+  .moon-glint { animation: moonGlintX var(--cycle) linear infinite; }
+  @keyframes moonGlintX {
+    0%   { transform: translateX(676px); opacity: .5; }
+    14%  { transform: translateX(392px); opacity: .5; }
+    20%  { transform: translateX(280px); opacity: .5; }
+    23%  { opacity: 0; } 78% { opacity: 0; }
+    86%  { opacity: .45; }
+    100% { transform: translateX(676px); opacity: .5; }
+  }
+
+  /* ============ stars / night overlays ============ */
+  .stars { animation: starsOn var(--cycle) linear infinite; }
+  @keyframes starsOn {
+    0%,14% { opacity: 1; } 21% { opacity: 0; } 76% { opacity: 0; } 85% { opacity: 1; } 100% { opacity: 1; }
+  }
+  .twinkle  { animation: twinkle 2.2s ease-in-out infinite; }
+  .twinkle2 { animation: twinkle 3.1s ease-in-out infinite; animation-delay: -1.2s; }
+  @keyframes twinkle { 0%,100% { opacity: 1; } 50% { opacity: .15; } }
+  /* night dim over city (isolated group keeps the sky untouched) */
+  .isolate { isolation: isolate; }
+  .dim {
+    animation: dimOn var(--cycle) linear infinite;
+  }
+  @keyframes dimOn {
+    0%,16% { opacity: .55; } 24% { opacity: 0; } 72% { opacity: 0; } 83% { opacity: .55; } 100% { opacity: .55; }
+  }
+  .lights { animation: lightsOn var(--cycle) linear infinite; }
+  @keyframes lightsOn {
+    0%,17% { opacity: 1; } 26% { opacity: 0; } 71% { opacity: 0; } 82% { opacity: 1; } 100% { opacity: 1; }
+  }
+  .cityglow { animation: cityGlowOn var(--cycle) linear infinite; }
+  @keyframes cityGlowOn {
+    0%,17% { opacity: .75; } 26% { opacity: 0; } 70% { opacity: 0; } 81% { opacity: .75; } 100% { opacity: .75; }
+  }
+  .sphereglow { animation: sphereGlowOn var(--cycle) linear infinite; }
+  @keyframes sphereGlowOn {
+    0%,17% { opacity: .95; } 26% { opacity: 0; } 69% { opacity: 0; } 80% { opacity: .95; } 100% { opacity: .95; }
+  }
+  /* warm wash tint on the city at golden hours */
+  .dawnwash { mix-blend-mode: soft-light;
+    animation: dawnwashOn var(--cycle) linear infinite; }
+  @keyframes dawnwashOn {
+    0%,18% { opacity: 0; } 25% { opacity: .8; } 30% { opacity: 0; }
+    64% { opacity: 0; } 73% { opacity: .9; } 79% { opacity: 0; } 100% { opacity: 0; }
+  }
+
+  /* ============ water gradient layers ============ */
+  .waterDay   { animation: daySky   var(--cycle) linear infinite; }
+  .waterDawn  { animation: dawnSky  var(--cycle) linear infinite; }
+  .waterNight { animation: nightSky var(--cycle) linear infinite; }
+
+  /* shimmer strokes on the river (ambient, independent of cycle) */
+  .shim  { animation: shim 5s ease-in-out infinite; }
+  .shim2 { animation: shim 6.4s ease-in-out infinite; animation-delay: -2.1s; }
+  .shim3 { animation: shim 4.2s ease-in-out infinite; animation-delay: -3.3s; }
+  @keyframes shim {
+    0%,100% { opacity: .18; transform: translateX(0); }
+    50% { opacity: .5; transform: translateX(10px); }
+  }
+
+  /* ============ clouds ============ */
+  .cloud   { animation: cloudTint var(--cycle) linear infinite; }
+  @keyframes cloudTint {
+    0% { fill: #232c4f; } 20% { fill: #4a4370; } 25% { fill: #ffc9a0; } 33% { fill: #ffffff; }
+    66% { fill: #ffffff; } 72% { fill: #ffb58a; } 80% { fill: #4a4370; } 90% { fill: #232c4f; } 100% { fill: #232c4f; }
+  }
+  .drift1 { animation: drift 170s linear infinite; animation-delay: -40s; }
+  .drift2 { animation: drift 215s linear infinite; animation-delay: -150s; }
+  .drift3 { animation: drift 250s linear infinite; animation-delay: -200s; }
+  @keyframes drift {
+    from { transform: translateX(-320px); }
+    to   { transform: translateX(1320px); }
+  }
+
+  /* ============ beacons / lamps / boats ============ */
+  .beacon { animation: beacon 1.4s steps(1) infinite; }
+  @keyframes beacon { 0% { opacity: 1; } 50% { opacity: .1; } }
+  .ferry  { animation: ferryMove 150s linear infinite; animation-delay: -55s; }
+  @keyframes ferryMove {
+    from { transform: translateX(-180px); }
+    to   { transform: translateX(1160px); }
+  }
+  .barge { animation: bargeMove 190s linear infinite; animation-delay: -120s; }
+  @keyframes bargeMove {
+    from { transform: translateX(300px); }
+    to   { transform: translateX(-1180px); }
+  }
+  .bob { animation: bob 4.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(2.5px) rotate(.4deg); } }
+</style>
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Shanghai Lujiazui skyline day and night animation">
+  <defs>
+    <!-- ======== sky gradients ======== -->
+    <linearGradient id="gDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#1d6ccf"/>
+      <stop offset=".45" stop-color="#6fb1e6"/>
+      <stop offset=".8"  stop-color="#bcdff4"/>
+      <stop offset="1"   stop-color="#e3f1f8"/>
+    </linearGradient>
+    <linearGradient id="gDawn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#2c3e78"/>
+      <stop offset=".4"  stop-color="#7a6ba8"/>
+      <stop offset=".68" stop-color="#e08a6d"/>
+      <stop offset=".86" stop-color="#ffb36b"/>
+      <stop offset="1"   stop-color="#ffd9a0"/>
+    </linearGradient>
+    <linearGradient id="gNight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#04081c"/>
+      <stop offset=".55" stop-color="#0b1738"/>
+      <stop offset="1"   stop-color="#1c2c56"/>
+    </linearGradient>
+    <!-- ======== water gradients ======== -->
+    <linearGradient id="wDay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#87c0dd"/>
+      <stop offset=".3"  stop-color="#4c8cbd"/>
+      <stop offset="1"   stop-color="#1e5b90"/>
+    </linearGradient>
+    <linearGradient id="wDawn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#e0975f"/>
+      <stop offset=".35" stop-color="#9c6f86"/>
+      <stop offset="1"   stop-color="#33486e"/>
+    </linearGradient>
+    <linearGradient id="wNight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#152444"/>
+      <stop offset=".35" stop-color="#0a152e"/>
+      <stop offset="1"   stop-color="#050b1c"/>
+    </linearGradient>
+    <!-- ======== objects ======== -->
+    <radialGradient id="gSphere" cx=".35" cy=".3" r=".9">
+      <stop offset="0"   stop-color="#f4899c"/>
+      <stop offset=".5"  stop-color="#d94f6e"/>
+      <stop offset="1"   stop-color="#9c2545"/>
+    </radialGradient>
+    <radialGradient id="gSphereGlow" cx=".5" cy=".5" r=".5">
+      <stop offset="0"   stop-color="#ff7a95" stop-opacity=".9"/>
+      <stop offset=".6"  stop-color="#ff5578" stop-opacity=".35"/>
+      <stop offset="1"   stop-color="#ff5578" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gShaft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#c98f66"/>
+      <stop offset=".35" stop-color="#f2d3ae"/>
+      <stop offset=".7"  stop-color="#e3b189"/>
+      <stop offset="1"   stop-color="#b57a55"/>
+    </linearGradient>
+    <linearGradient id="gGlassA" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#7ea6c4"/>
+      <stop offset=".5"  stop-color="#b9d6e8"/>
+      <stop offset="1"   stop-color="#6d93b4"/>
+    </linearGradient>
+    <linearGradient id="gGlassB" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#5b7fa6"/>
+      <stop offset=".55" stop-color="#9cc0dc"/>
+      <stop offset="1"   stop-color="#4d6f96"/>
+    </linearGradient>
+    <linearGradient id="gGlassC" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#8aa9bd"/>
+      <stop offset=".45" stop-color="#dcebf4"/>
+      <stop offset="1"   stop-color="#7e9cb2"/>
+    </linearGradient>
+    <linearGradient id="gTowerS" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#8fa7b8"/>
+      <stop offset=".4"  stop-color="#d5e3ec"/>
+      <stop offset=".75" stop-color="#a9bfcd"/>
+      <stop offset="1"   stop-color="#7c93a6"/>
+    </linearGradient>
+    <linearGradient id="gDome" x1=".2" y1="0" x2=".8" y2="1">
+      <stop offset="0"   stop-color="#9fd8cf"/>
+      <stop offset=".35" stop-color="#4f9fae"/>
+      <stop offset=".62" stop-color="#7fb98c"/>
+      <stop offset=".82" stop-color="#c98f6a"/>
+      <stop offset="1"   stop-color="#5d4a86"/>
+    </linearGradient>
+    <radialGradient id="gDomeGlow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#7fe8d8" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#7fe8d8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gMoonGlint" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#ffe9b0" stop-opacity=".75"/>
+      <stop offset="1"   stop-color="#ffe9b0" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="gCityGlow" cx=".5" cy="1" r=".9">
+      <stop offset="0"   stop-color="#ffb45e" stop-opacity=".55"/>
+      <stop offset=".6"  stop-color="#ff8c3c" stop-opacity=".18"/>
+      <stop offset="1"   stop-color="#ff8c3c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gWarmWash" cx=".5" cy=".5" r=".9">
+      <stop offset="0" stop-color="#ffb066"/>
+      <stop offset="1" stop-color="#ff7a4d"/>
+    </radialGradient>
+    <radialGradient id="gSunHalo" cx=".5" cy=".5" r=".5">
+      <stop offset="0"   stop-color="#fff3c0" stop-opacity=".9"/>
+      <stop offset=".45" stop-color="#ffe493" stop-opacity=".4"/>
+      <stop offset="1"   stop-color="#ffe493" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gSunHaloLow" cx=".5" cy=".5" r=".5">
+      <stop offset="0"   stop-color="#ff9a3c" stop-opacity=".8"/>
+      <stop offset=".55" stop-color="#ff7a2e" stop-opacity=".35"/>
+      <stop offset="1"   stop-color="#ff7a2e" stop-opacity="0"/>
+    </radialGradient>
+    <!-- ======== patterns ======== -->
+    <pattern id="win1" width="13" height="15" patternUnits="userSpaceOnUse">
+      <rect x="2.5" y="3" width="4.5" height="6" fill="#ffd98a" fill-opacity=".7"/>
+      <rect x="8.5" y="9" width="3"  height="4" fill="#ffe7b8" fill-opacity=".7"/>
+    </pattern>
+    <pattern id="win2" width="9" height="11" patternUnits="userSpaceOnUse">
+      <rect x="2" y="2.5" width="3.2" height="4.2" fill="#ffcf7d" fill-opacity=".7"/>
+      <rect x="6" y="7"   width="2"   height="2.6" fill="#ffe4a8" fill-opacity=".7"/>
+    </pattern>
+    <pattern id="winDense" width="7" height="8" patternUnits="userSpaceOnUse">
+      <rect x="1.6" y="1.6" width="2.6" height="3.2" fill="#ffd285" fill-opacity=".6"/>
+    </pattern>
+    <pattern id="vstripe" width="9" height="9" patternUnits="userSpaceOnUse">
+      <rect width="2.2" height="9" fill="#ffffff" opacity=".22"/>
+    </pattern>
+    <pattern id="hgrid" width="10" height="8" patternUnits="userSpaceOnUse">
+      <rect y="6.4" width="10" height="1.2" fill="#5a748c" opacity=".45"/>
+      <rect x="8.4" width="1.2" height="8"  fill="#5a748c" opacity=".3"/>
+    </pattern>
+    <pattern id="hgridW" width="12" height="10" patternUnits="userSpaceOnUse">
+      <rect y="8" width="12" height="1.6" fill="#7d8f9c" opacity=".5"/>
+      <rect x="10" width="1.6" height="10" fill="#7d8f9c" opacity=".35"/>
+    </pattern>
+    <pattern id="greenGrid" width="12" height="12" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" fill="#57a03c"/>
+      <rect x="1.5" y="1.5" width="9" height="9" fill="#7cc45c"/>
+    </pattern>
+    <pattern id="lattice" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="16" height="2" fill="#7e1c38" opacity=".55"/>
+      <rect width="2"  height="16" fill="#7e1c38" opacity=".55"/>
+    </pattern>
+    <!-- ======== reusable shapes ======== -->
+    <clipPath id="clipSphere"><circle r="60"/></clipPath>
+    <g id="pearlSphere">
+      <circle r="60" fill="url(#gSphere)"/>
+      <g clip-path="url(#clipSphere)">
+        <circle r="60" fill="url(#lattice)"/>
+        <path d="M -60 -18 Q 0 4 60 -18"  stroke="#7e1c38" stroke-width="2.5" fill="none" opacity=".6"/>
+        <path d="M -60 12 Q 0 36 60 12"   stroke="#7e1c38" stroke-width="2.5" fill="none" opacity=".6"/>
+        <path d="M -46 -46 Q 0 -18 46 -46" stroke="#ffd0da" stroke-width="2" fill="none" opacity=".5"/>
+        <ellipse rx="26" ry="60" stroke="#7e1c38" stroke-width="2" fill="none" opacity=".45"/>
+        <ellipse rx="50" ry="60" stroke="#7e1c38" stroke-width="2" fill="none" opacity=".45"/>
+      </g>
+      <circle cy="-24" r="20" fill="#ffffff" opacity=".18"/>
+      <g fill="#f2d9b8">
+        <circle cx="52.6" cy="19.2" r="3.6"/><circle cx="42.9" cy="36" r="3.6"/>
+        <circle cx="28"   cy="48.5" r="3.6"/><circle cx="9.7" cy="55.1" r="3.6"/>
+        <circle cx="-9.7" cy="55.1" r="3.6"/><circle cx="-28" cy="48.5" r="3.6"/>
+        <circle cx="-42.9" cy="36" r="3.6"/><circle cx="-52.6" cy="19.2" r="3.6"/>
+      </g>
+    </g>
+    <path id="towerJinMao" d="M618,850 L618,560 L624,560 L624,470 L630,470 L630,400 L636,400 L636,352 L642,352 L642,320 L648,317 L648,258 L652,258 L652,317 L658,320 L658,352 L664,352 L664,400 L670,400 L670,470 L676,470 L676,560 L682,560 L682,850 Z"/>
+    <path id="towerSWFC" fill-rule="evenodd" d="M680,850 L675,336 Q710,262 751,306 L746,850 Z M696,278 L732,278 L727,308 L701,308 Z"/>
+    <path id="towerShanghai" d="M838,850 L846,180 Q852,86 890,58 Q926,88 916,192 L922,850 Z"/>
+    <path id="towerCitigroup" d="M285,850 L285,470 Q330,432 375,474 L375,850 Z"/>
+    <path id="towerCurve" d="M755,850 L755,420 Q785,358 815,432 L815,850 Z"/>
+    <g id="arch">
+      <path d="M0,44 L0,12 A12,12 0 0 1 24,12 L24,44 Z" fill="#8a6f4d"/>
+    </g>
+  </defs>
+
+  <!-- ================= SKY ================= -->
+  <rect class="daySky"   x="0" y="0" width="1000" height="1000" fill="url(#gDay)"/>
+  <rect class="dawnSky"  x="0" y="0" width="1000" height="1000" fill="url(#gDawn)"/>
+  <rect class="nightSky" x="0" y="0" width="1000" height="1000" fill="url(#gNight)"/>
+
+  <!-- ================= STARS ================= -->
+  <g class="stars" fill="#ffffff">
+    <g class="twinkle">
+      <circle cx="60"  cy="70"  r="1.6"/><circle cx="180" cy="130" r="1.2"/>
+      <circle cx="320" cy="55"  r="1.8"/><circle cx="470" cy="95"  r="1.1"/>
+      <circle cx="610" cy="42"  r="1.5"/><circle cx="760" cy="120" r="1.3"/>
+      <circle cx="900" cy="60"  r="1.7"/><circle cx="960" cy="180" r="1.2"/>
+      <circle cx="120" cy="250" r="1.3"/><circle cx="420" cy="210" r="1.5"/>
+    </g>
+    <g class="twinkle2">
+      <circle cx="250" cy="180" r="1.4"/><circle cx="540" cy="150" r="1.6"/>
+      <circle cx="700" cy="70"  r="1.2"/><circle cx="840" cy="210" r="1.4"/>
+      <circle cx="40"  cy="170" r="1.1"/><circle cx="380" cy="130" r="1.2"/>
+      <circle cx="660" cy="180" r="1.5"/><circle cx="930" cy="120" r="1.1"/>
+      <circle cx="150" cy="40"  r="1.3"/><circle cx="500" cy="35"  r="1.4"/>
+    </g>
+    <g opacity=".8">
+      <circle cx="215" cy="90" r="1"/><circle cx="290" cy="300" r="1"/>
+      <circle cx="75"  cy="330" r="1"/><circle cx="580" cy="255" r="1"/>
+      <circle cx="815" cy="45" r="1"/><circle cx="975" cy="90" r="1"/>
+      <circle cx="440" cy="160" r=".9"/><circle cx="870" cy="150" r=".9"/>
+    </g>
+  </g>
+
+  <!-- ================= SUN ================= -->
+  <g class="sun">
+    <circle class="sun-halo"  r="110" fill="url(#gSunHalo)"/>
+    <circle class="sun-halo2" r="70"  fill="url(#gSunHaloLow)"/>
+    <circle class="sun-core"  r="36"  fill="#fff2b8"/>
+  </g>
+
+  <!-- ================= MOON ================= -->
+  <g class="moon">
+    <defs>
+      <mask id="moonMask">
+        <circle r="26" fill="#fff"/>
+        <circle cx="11" cy="-7" r="22" fill="#000"/>
+      </mask>
+    </defs>
+    <circle r="52" fill="#cfe0ff" opacity=".14"/>
+    <circle r="26" fill="#f4f7ee" mask="url(#moonMask)"/>
+    <g opacity=".5" fill="#c8cdbd" mask="url(#moonMask)">
+      <circle cx="-10" cy="6" r="4"/><circle cx="-3" cy="14" r="2.6"/><circle cx="-15" cy="-6" r="2.2"/>
+    </g>
+  </g>
+
+  <!-- ================= CLOUDS ================= -->
+  <g class="drift1" opacity=".9">
+    <g class="cloud" fill="#ffffff">
+      <ellipse cx="0"   cy="200" rx="70" ry="20"/>
+      <ellipse cx="-45" cy="210" rx="45" ry="15"/>
+      <ellipse cx="55"  cy="212" rx="50" ry="14"/>
+      <ellipse cx="10"  cy="186" rx="38" ry="16"/>
+    </g>
+  </g>
+  <g class="drift2" opacity=".8">
+    <g class="cloud" fill="#ffffff">
+      <ellipse cx="0"   cy="130" rx="55" ry="15"/>
+      <ellipse cx="-40" cy="140" rx="35" ry="11"/>
+      <ellipse cx="42"  cy="140" rx="40" ry="10"/>
+    </g>
+  </g>
+  <g class="drift3" opacity=".7">
+    <g class="cloud" fill="#ffffff">
+      <ellipse cx="0"  cy="290" rx="80" ry="16"/>
+      <ellipse cx="60" cy="300" rx="45" ry="11"/>
+      <ellipse cx="-55" cy="299" rx="40" ry="10"/>
+    </g>
+  </g>
+  <!-- ================= CITYSCAPE ================= -->
+  <g class="isolate">
+    <!-- far-left pale towers -->
+    <rect x="8"   y="560" width="64" height="292" fill="#c9d9e6"/>
+    <rect x="64"  y="612" width="58" height="240" fill="#bcd0e0"/>
+    <rect x="110" y="585" width="55" height="267" fill="#cfdde8"/>
+    <rect x="168" y="520" width="36" height="332" fill="#c2d4e2"/>
+    <rect x="176" y="495" width="20" height="26"  fill="#c2d4e2"/>
+    <rect x="205" y="600" width="35" height="252" fill="#cddce7"/>
+    <rect x="240" y="640" width="48" height="212" fill="#c3d5e2"/>
+
+    <!-- Citigroup-style curved-crown glass tower -->
+    <use xlink:href="#towerCitigroup" fill="url(#gGlassA)"/>
+    <use xlink:href="#towerCitigroup" fill="url(#vstripe)"/>
+    <use xlink:href="#towerCitigroup" fill="url(#hgrid)"/>
+    <!-- generic mid towers -->
+    <rect x="398" y="560" width="46" height="292" fill="#a8c4d8"/>
+    <rect x="398" y="560" width="46" height="292" fill="url(#hgrid)"/>
+    <rect x="448" y="540" width="26" height="312" fill="#b4cdda"/>
+    <polygon points="448,540 461,506 474,540" fill="#c9dce6"/>
+    <rect x="460" y="470" width="2.4" height="38" fill="#9fb4c2"/>
+    <!-- tall blue background tower -->
+    <rect x="556" y="370" width="72" height="482" fill="url(#gGlassB)"/>
+    <rect x="556" y="370" width="72" height="482" fill="url(#hgrid)"/>
+    <rect x="574" y="352" width="34" height="20" fill="#7fa2c0"/>
+    <rect x="588" y="316" width="3"  height="38" fill="#8fb0cc"/>
+
+    <!-- Jin Mao Tower -->
+    <use xlink:href="#towerJinMao" fill="url(#gGlassC)"/>
+    <use xlink:href="#towerJinMao" fill="url(#hgridW)"/>
+    <circle class="beacon" cx="650" cy="252" r="3" fill="#ff3b30"/>
+    <!-- SWFC (bottle opener) -->
+    <use xlink:href="#towerSWFC" fill="url(#gGlassB)"/>
+    <use xlink:href="#towerSWFC" fill="url(#vstripe)"/>
+    <!-- curved white tower (Plaza 530) -->
+    <use xlink:href="#towerCurve" fill="url(#gGlassA)"/>
+    <use xlink:href="#towerCurve" fill="url(#hgrid)"/>
+    <!-- Shanghai Tower -->
+    <use xlink:href="#towerShanghai" fill="url(#gTowerS)"/>
+    <path d="M858,118 Q832,430 904,850" stroke="#ffffff" stroke-width="3" fill="none" opacity=".4"/>
+    <path d="M902,92 Q874,420 918,690"  stroke="#7c93a6" stroke-width="2.5" fill="none" opacity=".45"/>
+    <use xlink:href="#towerShanghai" fill="url(#hgrid)" opacity=".5"/>
+    <circle class="beacon" cx="890" cy="56" r="3" fill="#ff3b30"/>
+
+    <!-- right-mid blocks -->
+    <rect x="612" y="620" width="40" height="232" fill="#dfe3dc"/>
+    <rect x="612" y="620" width="40" height="232" fill="url(#hgridW)"/>
+    <rect x="757" y="570" width="150" height="282" fill="#e8e6da"/>
+    <rect x="757" y="570" width="150" height="282" fill="url(#hgridW)"/>
+    <rect x="768" y="552" width="60" height="20" fill="#f0eee2"/>
+    <rect x="905" y="610" width="38" height="242" fill="#cfd6cf"/>
+    <!-- green glass block far right -->
+    <rect x="940" y="480" width="60" height="372" fill="url(#greenGrid)"/>
+    <rect x="940" y="480" width="60" height="372" fill="url(#hgrid)" opacity=".5"/>
+
+    <!-- ===== Oriental Pearl Tower ===== -->
+    <g>
+      <rect x="163" y="14"  width="4"  height="66"  fill="url(#gShaft)"/>
+      <rect x="159" y="100" width="12" height="30"  fill="url(#gShaft)"/>
+      <circle cx="165" cy="92" r="13" fill="url(#gSphere)"/>
+      <rect x="152" y="247" width="26" height="292" fill="url(#gShaft)"/>
+      <g fill="#d98d7a">
+        <rect x="146" y="285" width="38" height="8" rx="3"/><rect x="146" y="340" width="38" height="8" rx="3"/>
+        <rect x="146" y="395" width="38" height="8" rx="3"/><rect x="146" y="450" width="38" height="8" rx="3"/>
+        <rect x="146" y="505" width="38" height="8" rx="3"/>
+      </g>
+      <polygon points="140,630 168,655 84,832 52,822" fill="url(#gShaft)"/>
+      <polygon points="178,640 196,662 246,814 224,820" fill="url(#gShaft)"/>
+      <use xlink:href="#pearlSphere" transform="translate(92,762) scale(.35)"/>
+      <use xlink:href="#pearlSphere" transform="translate(163,184) scale(.98)"/>
+      <use xlink:href="#pearlSphere" transform="translate(163,600) scale(1.05)"/>
+      <circle class="beacon" cx="165" cy="10" r="4" fill="#ff3b30"/>
+    </g>
+
+    <!-- golden-hour warm wash over the city -->
+    <rect class="dawnwash" x="0" y="0" width="1000" height="860" fill="url(#gWarmWash)"/>
+    <!-- night dim: silhouette copies (blend-mode independent) -->
+    <g class="dim" fill="#0a1230">
+      <rect x="8"   y="560" width="64"  height="292"/><rect x="64"  y="612" width="58" height="240"/>
+      <rect x="110" y="585" width="55"  height="267"/><rect x="168" y="520" width="36" height="332"/>
+      <rect x="176" y="495" width="20"  height="26"/><rect x="205" y="600" width="35" height="252"/>
+      <rect x="240" y="640" width="48"  height="212"/>
+      <use xlink:href="#towerCitigroup"/>
+      <rect x="398" y="560" width="46"  height="292"/><rect x="448" y="540" width="26" height="312"/>
+      <polygon points="448,540 461,506 474,540"/><rect x="460" y="470" width="2.4" height="38"/>
+      <rect x="556" y="370" width="72"  height="482"/><rect x="574" y="352" width="34" height="20"/>
+      <rect x="588" y="316" width="3"   height="38"/>
+      <use xlink:href="#towerJinMao"/><use xlink:href="#towerSWFC"/>
+      <use xlink:href="#towerCurve"/><use xlink:href="#towerShanghai"/>
+      <rect x="612" y="620" width="40"  height="232"/><rect x="757" y="570" width="150" height="282"/>
+      <rect x="768" y="552" width="60"  height="20"/><rect x="905" y="610" width="38" height="242"/>
+      <rect x="940" y="480" width="60"  height="372"/>
+      <!-- Oriental Pearl copies -->
+      <rect x="163" y="14" width="4" height="66"/><rect x="159" y="100" width="12" height="30"/>
+      <circle cx="165" cy="92" r="13"/><rect x="152" y="247" width="26" height="292"/>
+      <rect x="146" y="285" width="38" height="8" rx="3"/><rect x="146" y="340" width="38" height="8" rx="3"/>
+      <rect x="146" y="395" width="38" height="8" rx="3"/><rect x="146" y="450" width="38" height="8" rx="3"/>
+      <rect x="146" y="505" width="38" height="8" rx="3"/>
+      <polygon points="140,630 168,655 84,832 52,822"/><polygon points="178,640 196,662 246,814 224,820"/>
+      <circle cx="92" cy="762" r="21"/><circle cx="163" cy="184" r="59"/><circle cx="163" cy="600" r="63"/>
+    </g>
+    <!-- night city glow behind towers -->
+    <ellipse class="cityglow" cx="500" cy="856" rx="560" ry="190" fill="url(#gCityGlow)"/>
+
+    <!-- ===== night lights (drawn above the dim) ===== -->
+    <use class="lights" xlink:href="#towerCitigroup" fill="url(#win2)"/>
+    <use class="lights" xlink:href="#towerJinMao"    fill="url(#winDense)"/>
+    <use class="lights" xlink:href="#towerSWFC"      fill="url(#win2)"/>
+    <use class="lights" xlink:href="#towerShanghai"  fill="url(#winDense)"/>
+    <use class="lights" xlink:href="#towerCurve"     fill="url(#win2)"/>
+    <rect class="lights" x="757" y="570" width="150" height="282" fill="url(#winDense)"/>
+    <rect class="lights" x="556" y="370" width="72"  height="482" fill="url(#winDense)" fill-opacity=".7"/>
+    <rect class="lights" x="398" y="560" width="46"  height="292" fill="url(#win2)"/>
+    <rect class="lights" x="448" y="540" width="26"  height="312" fill="url(#win2)"/>
+    <rect class="lights" x="8"   y="560" width="64"  height="292" fill="url(#winDense)" fill-opacity=".6"/>
+    <rect class="lights" x="110" y="585" width="55"  height="267" fill="url(#winDense)" fill-opacity=".6"/>
+    <rect class="lights" x="168" y="520" width="36"  height="332" fill="url(#winDense)" fill-opacity=".6"/>
+    <rect class="lights" x="612" y="620" width="40"  height="232" fill="url(#winDense)" fill-opacity=".6"/>
+    <!-- tower rim lights -->
+    <use class="lights" xlink:href="#towerSWFC"     fill="none" stroke="#bfe8ff" stroke-width="2.5" stroke-opacity=".65"/>
+    <use class="lights" xlink:href="#towerShanghai" fill="none" stroke="#cfe9ff" stroke-width="2.5" stroke-opacity=".55"/>
+    <path class="lights" d="M858,118 Q832,430 904,850" stroke="#9ad8ff" stroke-width="2.5" fill="none" stroke-opacity=".6"/>
+    <!-- pearl sphere glow at night -->
+    <circle class="sphereglow" cx="163" cy="184" r="96"  fill="url(#gSphereGlow)"/>
+    <circle class="sphereglow" cx="163" cy="600" r="104" fill="url(#gSphereGlow)"/>
+    <circle class="sphereglow" cx="92"  cy="762" r="38"  fill="url(#gSphereGlow)"/>
+    <g class="sphereglow" fill="#ff8fa8">
+      <ellipse cx="163" cy="123" rx="60" ry="3.6" fill-opacity=".75"/>
+      <ellipse cx="163" cy="245" rx="55" ry="3.6" fill-opacity=".75"/>
+      <ellipse cx="163" cy="538" rx="66" ry="4"   fill-opacity=".75"/>
+      <ellipse cx="163" cy="662" rx="60" ry="4"   fill-opacity=".75"/>
+    </g>
+  </g>
+
+  <!-- ================= MIDGROUND (convention centre, trees, embankment) ================= -->
+  <g class="isolate">
+    <!-- third dome hint behind facade -->
+    <circle cx="560" cy="700" r="34" fill="#4f9fae"/>
+    <!-- left glass dome -->
+    <g>
+      <circle cx="208" cy="686" r="61" fill="url(#gDome)"/>
+      <g stroke="#e8f4f2" stroke-width="1.6" fill="none" opacity=".55">
+        <path d="M147,686 A61,61 0 0 1 269,686" fill="none"/>
+        <ellipse cx="208" cy="686" rx="24" ry="61"/>
+        <ellipse cx="208" cy="686" rx="45" ry="61"/>
+        <path d="M150,660 Q208,682 266,660"/><path d="M150,712 Q208,732 266,712"/>
+        <line x1="147" y1="686" x2="269" y2="686"/>
+      </g>
+      <ellipse cx="186" cy="656" rx="20" ry="13" fill="#ffffff" opacity=".35"/>
+      <rect x="190" y="742" width="36" height="14" fill="#cfd2cc"/>
+    </g>
+    <!-- right glass dome -->
+    <g>
+      <circle cx="607" cy="677" r="64" fill="url(#gDome)"/>
+      <g stroke="#e8f4f2" stroke-width="1.6" fill="none" opacity=".55">
+        <path d="M543,677 A64,64 0 0 1 671,677" fill="none"/>
+        <ellipse cx="607" cy="677" rx="26" ry="64"/>
+        <ellipse cx="607" cy="677" rx="48" ry="64"/>
+        <path d="M546,649 Q607,672 668,649"/><path d="M546,705 Q607,726 668,705"/>
+        <line x1="543" y1="677" x2="671" y2="677"/>
+      </g>
+      <ellipse cx="583" cy="646" rx="21" ry="14" fill="#ffffff" opacity=".35"/>
+      <rect x="587" y="736" width="40" height="16" fill="#cfd2cc"/>
+    </g>
+    <!-- classical facade building between the domes -->
+    <g>
+      <rect x="262" y="652" width="300" height="12" fill="#f0e3c2"/>
+      <rect x="264" y="663" width="296" height="165" fill="#e7d6b0"/>
+      <!-- colonnade half -->
+      <g fill="#cdb283">
+        <rect x="272" y="678" width="5" height="140"/><rect x="290" y="678" width="5" height="140"/>
+        <rect x="308" y="678" width="5" height="140"/><rect x="326" y="678" width="5" height="140"/>
+        <rect x="344" y="678" width="5" height="140"/><rect x="362" y="678" width="5" height="140"/>
+        <rect x="380" y="678" width="5" height="140"/><rect x="398" y="678" width="5" height="140"/>
+      </g>
+      <rect x="264" y="732" width="146" height="6" fill="#cdb283"/>
+      <!-- arcade half with arches -->
+      <use xlink:href="#arch" transform="translate(416,700)"/>
+      <use xlink:href="#arch" transform="translate(444,700)"/>
+      <use xlink:href="#arch" transform="translate(472,700)"/>
+      <use xlink:href="#arch" transform="translate(500,700)"/>
+      <use xlink:href="#arch" transform="translate(528,700)"/>
+      <!-- central finial tower -->
+      <rect x="450" y="624" width="16" height="30" fill="#e7d6b0"/>
+      <polygon points="450,624 458,610 466,624" fill="#d9c398"/>
+    </g>
+    <!-- trees along the promenade -->
+    <g fill="#3e7a3a">
+      <ellipse cx="270" cy="808" rx="30" ry="18"/><ellipse cx="320" cy="812" rx="26" ry="16"/>
+      <ellipse cx="368" cy="808" rx="28" ry="17"/><ellipse cx="420" cy="814" rx="24" ry="14"/>
+      <ellipse cx="470" cy="812" rx="26" ry="15"/><ellipse cx="540" cy="810" rx="28" ry="16"/>
+      <ellipse cx="870" cy="812" rx="26" ry="15"/><ellipse cx="920" cy="808" rx="30" ry="17"/>
+    </g>
+    <g fill="#c0512e">
+      <ellipse cx="620" cy="808" rx="28" ry="17"/><ellipse cx="668" cy="812" rx="26" ry="16"/>
+      <ellipse cx="716" cy="806" rx="28" ry="17"/><ellipse cx="764" cy="812" rx="26" ry="16"/>
+      <ellipse cx="812" cy="808" rx="28" ry="17"/>
+    </g>
+    <g fill="#d97a3a" opacity=".85">
+      <ellipse cx="644" cy="816" rx="18" ry="11"/><ellipse cx="692" cy="818" rx="16" ry="10"/>
+      <ellipse cx="740" cy="816" rx="18" ry="11"/><ellipse cx="788" cy="818" rx="16" ry="10"/>
+    </g>
+    <!-- embankment wall -->
+    <rect x="0" y="826" width="1000" height="26" fill="#d8d5cc"/>
+    <rect x="0" y="826" width="1000" height="4"  fill="#b8b4a8"/>
+    <rect x="0" y="848" width="1000" height="4"  fill="#8f8c82"/>
+    <!-- promenade lamps -->
+    <g fill="#6b675e">
+      <rect x="58" y="798" width="3" height="30"/><rect x="278" y="798" width="3" height="30"/>
+      <rect x="498" y="798" width="3" height="30"/><rect x="718" y="798" width="3" height="30"/>
+      <rect x="938" y="798" width="3" height="30"/>
+    </g>
+    <!-- night dim of the midground -->
+    <g class="dim" fill="#0a1230">
+      <circle cx="560" cy="700" r="34"/><circle cx="208" cy="686" r="61"/><circle cx="607" cy="677" r="64"/>
+      <rect x="190" y="742" width="36" height="14"/><rect x="587" y="736" width="40" height="16"/>
+      <rect x="262" y="652" width="300" height="12"/><rect x="264" y="663" width="296" height="165"/>
+      <rect x="450" y="624" width="16" height="30"/><polygon points="450,624 458,610 466,624"/>
+      <g>
+        <ellipse cx="270" cy="808" rx="30" ry="18"/><ellipse cx="320" cy="812" rx="26" ry="16"/>
+        <ellipse cx="368" cy="808" rx="28" ry="17"/><ellipse cx="420" cy="814" rx="24" ry="14"/>
+        <ellipse cx="470" cy="812" rx="26" ry="15"/><ellipse cx="540" cy="810" rx="28" ry="16"/>
+        <ellipse cx="870" cy="812" rx="26" ry="15"/><ellipse cx="920" cy="808" rx="30" ry="17"/>
+        <ellipse cx="620" cy="808" rx="28" ry="17"/><ellipse cx="668" cy="812" rx="26" ry="16"/>
+        <ellipse cx="716" cy="806" rx="28" ry="17"/><ellipse cx="764" cy="812" rx="26" ry="16"/>
+        <ellipse cx="812" cy="808" rx="28" ry="17"/>
+      </g>
+      <rect x="0" y="826" width="1000" height="26"/>
+    </g>
+    <!-- night lights of the midground -->
+    <circle class="sphereglow" cx="208" cy="686" r="82" fill="url(#gDomeGlow)"/>
+    <circle class="sphereglow" cx="607" cy="677" r="86" fill="url(#gDomeGlow)"/>
+    <rect class="lights" x="272" y="678" width="132" height="140" fill="url(#winDense)" fill-opacity=".45"/>
+    <rect class="lights" x="416" y="700" width="136" height="44"  fill="url(#winDense)" fill-opacity=".55"/>
+    <rect class="lights" x="450" y="624" width="16"  height="30"  fill="#ffd98a" fill-opacity=".8"/>
+    <g class="lights" fill="#ffdf9e">
+      <circle cx="59.5" cy="796" r="3"/><circle cx="279.5" cy="796" r="3"/><circle cx="499.5" cy="796" r="3"/>
+      <circle cx="719.5" cy="796" r="3"/><circle cx="939.5" cy="796" r="3"/>
+      <circle cx="59.5" cy="796" r="9"  fill="#ffdf9e" fill-opacity=".25"/>
+      <circle cx="279.5" cy="796" r="9" fill="#ffdf9e" fill-opacity=".25"/>
+      <circle cx="499.5" cy="796" r="9" fill="#ffdf9e" fill-opacity=".25"/>
+      <circle cx="719.5" cy="796" r="9" fill="#ffdf9e" fill-opacity=".25"/>
+      <circle cx="939.5" cy="796" r="9" fill="#ffdf9e" fill-opacity=".25"/>
+    </g>
+  </g>
+
+  <!-- ================= HUANGPU RIVER ================= -->
+  <g class="isolate">
+    <rect class="waterDay"   x="0" y="850" width="1000" height="150" fill="url(#wDay)"/>
+    <rect class="waterDawn"  x="0" y="850" width="1000" height="150" fill="url(#wDawn)"/>
+    <rect class="waterNight" x="0" y="850" width="1000" height="150" fill="url(#wNight)"/>
+    <!-- soft tower reflections -->
+    <g fill="#ffffff" opacity=".07">
+      <rect x="140" y="852" width="46" height="120"/><rect x="300" y="852" width="36" height="110"/>
+      <rect x="640" y="852" width="40" height="105"/><rect x="700" y="852" width="34" height="115"/>
+      <rect x="866" y="852" width="52" height="130"/><rect x="770" y="852" width="30" height="95"/>
+    </g>
+    <!-- colour pools under landmarks -->
+    <ellipse cx="163" cy="886" rx="78" ry="16" fill="#ff7a95" opacity=".35"/>
+    <ellipse cx="163" cy="906" rx="52" ry="10" fill="#ff7a95" opacity=".25"/>
+    <ellipse cx="208" cy="872" rx="56" ry="12" fill="#7fe8d8" opacity=".22"/>
+    <ellipse cx="607" cy="870" rx="58" ry="12" fill="#7fe8d8" opacity=".22"/>
+    <!-- red channel marker + its reflection -->
+    <rect x="953" y="772" width="5" height="82" fill="#cc2f26"/>
+    <circle cx="955.5" cy="770" r="5" fill="#e03a2e"/>
+    <rect x="950" y="856" width="11" height="86" fill="#e0442e" opacity=".28"/>
+    <!-- shimmer strokes -->
+    <g fill="#ffffff">
+      <rect class="shim"  x="90"  y="866" width="52" height="3" rx="1.5"/>
+      <rect class="shim2" x="330" y="880" width="60" height="3" rx="1.5"/>
+      <rect class="shim3" x="520" y="862" width="44" height="3" rx="1.5"/>
+      <rect class="shim"  x="700" y="886" width="56" height="3" rx="1.5" style="animation-delay:-1.4s"/>
+      <rect class="shim2" x="150" y="912" width="64" height="3.4" rx="1.7"/>
+      <rect class="shim3" x="420" y="926" width="50" height="3.4" rx="1.7"/>
+      <rect class="shim"  x="620" y="944" width="66" height="3.6" rx="1.8" style="animation-delay:-2.8s"/>
+      <rect class="shim2" x="820" y="922" width="58" height="3.4" rx="1.7"/>
+      <rect class="shim3" x="60"  y="956" width="70" height="3.6" rx="1.8"/>
+      <rect class="shim"  x="270" y="972" width="60" height="3.6" rx="1.8" style="animation-delay:-0.7s"/>
+      <rect class="shim2" x="740" y="968" width="64" height="3.6" rx="1.8"/>
+      <rect class="shim3" x="900" y="900" width="46" height="3"   rx="1.5"/>
+    </g>
+    <!-- sightseeing ferry (left to right) -->
+    <g class="ferry">
+      <g transform="translate(-40,806)">
+      <g class="bob">
+        <path d="M0,22 L148,22 L138,40 L10,40 Z" fill="#f2f2ee"/>
+        <rect x="0" y="19" width="148" height="5" fill="#b03a30"/>
+        <rect x="12" y="4" width="120" height="16" fill="#fafaf6"/>
+        <g fill="#35506b">
+          <rect x="18" y="9" width="8" height="7"/><rect x="32" y="9" width="8" height="7"/>
+          <rect x="46" y="9" width="8" height="7"/><rect x="60" y="9" width="8" height="7"/>
+          <rect x="74" y="9" width="8" height="7"/><rect x="88" y="9" width="8" height="7"/>
+          <rect x="102" y="9" width="8" height="7"/><rect x="116" y="9" width="8" height="7"/>
+        </g>
+        <rect x="30" y="-8" width="70" height="12" fill="#f6f6f2"/>
+        <g fill="#35506b">
+          <rect x="36" y="-5" width="7" height="6"/><rect x="49" y="-5" width="7" height="6"/>
+          <rect x="62" y="-5" width="7" height="6"/><rect x="75" y="-5" width="7" height="6"/>
+          <rect x="88" y="-5" width="7" height="6"/>
+        </g>
+        <rect x="58" y="-22" width="2" height="14" fill="#7a7a72"/>
+      </g>
+      </g>
+    </g>
+    <!-- cargo barge (right to left) -->
+    <g class="barge">
+      <g transform="translate(600,826)">
+      <g class="bob" style="animation-delay:-1.9s; animation-duration:5.4s">
+        <path d="M0,18 L190,18 L180,36 L12,36 Z" fill="#6e3b2e"/>
+        <rect x="2" y="13" width="186" height="5" fill="#8a4a33"/>
+        <rect x="8"  y="6"  width="42" height="8" fill="#4a3a2a"/>
+        <rect x="118" y="7" width="52" height="7" fill="#4a3a2a"/>
+        <rect x="58" y="-6" width="46" height="20" fill="#2e6fb0"/>
+        <rect x="60" y="-4" width="42" height="7"  fill="#3f83c6"/>
+        <g fill="#cfe6ff">
+          <rect x="62" y="-2" width="6" height="4"/><rect x="72" y="-2" width="6" height="4"/>
+          <rect x="82" y="-2" width="6" height="4"/><rect x="92" y="-2" width="6" height="4"/>
+        </g>
+        <rect x="80" y="-18" width="2" height="12" fill="#5a5a54"/>
+      </g>
+      </g>
+    </g>
+    <!-- night dim for the whole river -->
+    <rect class="dim" x="0" y="850" width="1000" height="150" fill="#060c1e"/>
+    <!-- sun / moon light paths (above the dim) -->
+    <g class="sun-glint">
+      <ellipse cx="0" cy="868" rx="34" ry="5" fill="#ffd9a0" opacity=".55"/>
+      <ellipse cx="0" cy="898" rx="22" ry="4" fill="#ffd9a0" opacity=".45"/>
+      <ellipse cx="0" cy="930" rx="28" ry="5" fill="#ffc98a" opacity=".4"/>
+      <ellipse cx="0" cy="962" rx="15" ry="4" fill="#ffc98a" opacity=".35"/>
+    </g>
+    <g class="moon-glint">
+      <ellipse cx="0" cy="868" rx="30" ry="5" fill="#ffe9b0" opacity=".5"/>
+      <ellipse cx="0" cy="900" rx="20" ry="4" fill="#ffe9b0" opacity=".4"/>
+      <ellipse cx="0" cy="934" rx="26" ry="5" fill="#ffe9b0" opacity=".32"/>
+      <ellipse cx="0" cy="964" rx="14" ry="4" fill="#ffe9b0" opacity=".26"/>
+    </g>
+    <!-- boat night lights travel with the boats -->
+    <g class="ferry">
+      <g transform="translate(-40,806)">
+      <g class="lights" fill="#ffdf9e">
+        <rect x="14" y="6"  width="116" height="3" fill="#ffe9b0" opacity=".9"/>
+        <circle cx="59" cy="-22" r="3" fill="#ffdf9e"/>
+        <circle cx="20" cy="12" r="2.4"/><circle cx="128" cy="12" r="2.4"/>
+      </g>
+      </g>
+    </g>
+    <g class="barge">
+      <g transform="translate(600,826)">
+      <g class="lights" fill="#ffdf9e">
+        <rect x="60" y="-6" width="42" height="2" fill="#ffe9b0"/>
+        <circle cx="81" cy="-18" r="2.6"/>
+        <circle cx="8" cy="12" r="2.2" fill="#ff6a5e"/>
+        <circle cx="184" cy="12" r="2.2" fill="#6aff8e"/>
+      </g>
+      </g>
+    </g>
+    <!-- foam line at the quay -->
+    <rect x="0" y="852" width="1000" height="2.5" fill="#ffffff" opacity=".25"/>
+  </g>
+</svg>
+</body>
+</html>
