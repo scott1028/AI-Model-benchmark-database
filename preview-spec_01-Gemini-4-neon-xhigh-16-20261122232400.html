@@ -1,0 +1,2443 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>上海陸家嘴日夜無限循環光影動畫 (WebGL Optical Loop)</title>
+  <style>
+    :root {
+      --glass: rgba(10, 16, 30, 0.62);
+      --border: rgba(255, 255, 255, 0.16);
+      --accent: #52b6ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 35%, #121c33 0%, #050811 100%);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+      color: #f0f5ff;
+      user-select: none;
+    }
+    .viewport {
+      position: relative;
+      width: min(94vw, 94vh, 920px);
+      aspect-ratio: 745 / 742;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      background: #1b65d6;
+    }
+    .layer-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    #fgCanvas { pointer-events: none; }
+
+    /* 頂部狀態膠囊 */
+    .top-bar {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 12;
+      transition: opacity 0.3s ease;
+    }
+    .status-pill, .mini-btn {
+      pointer-events: auto;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: #f3f7ff;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffd66b;
+      box-shadow: 0 0 8px #ffd66b;
+    }
+    .mini-btn {
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .mini-btn:hover { background: rgba(24, 38, 68, 0.8); }
+
+    /* 底部控制列 */
+    .dock {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      z-index: 12;
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .dock.is-hidden, .top-bar.is-hidden .status-pill {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+    }
+    .dock-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ctrl-btn {
+      background: rgba(255, 255, 255, 0.11);
+      color: #f4f8ff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.32);
+    }
+    .ctrl-btn.primary {
+      background: rgba(82, 182, 255, 0.28);
+      border-color: rgba(120, 205, 255, 0.55);
+    }
+    .spacer { flex: 1; }
+    .timeline {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(
+        90deg,
+        #309aee 0%,
+        #f29b4b 14%,
+        #d14b5a 22%,
+        #192a63 32%,
+        #071029 52%,
+        #a8566e 73%,
+        #f4b572 82%,
+        #309aee 100%
+      );
+      outline: none;
+      cursor: pointer;
+    }
+    .timeline::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2.5px solid #2b88ff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+    }
+  </style>
+</head>
+<body>
+  <div class="viewport">
+    <canvas id="glCanvas" class="layer-canvas" width="1024" height="1024"></canvas>
+    <canvas id="fgCanvas" class="layer-canvas" width="1024" height="1024"></canvas>
+
+    <div class="top-bar" id="topBar">
+      <div class="status-pill">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="clockReadout">16:45 · 午後晴空（原圖時刻）</span>
+      </div>
+      <button class="mini-btn" id="uiToggle">純享模式 (H)</button>
+    </div>
+
+    <div class="dock" id="dock">
+      <input type="range" class="timeline" id="timeline" min="0" max="10000" value="0" />
+      <div class="dock-row">
+        <button class="ctrl-btn primary" id="togglePlay">暫停循環</button>
+        <button class="ctrl-btn" id="cycleSpeed">速度 1.0x</button>
+        <div class="spacer"></div>
+        <button class="ctrl-btn" data-jump="0.000">原圖午後</button>
+        <button class="ctrl-btn" data-jump="0.165">金色日落</button>
+        <button class="ctrl-btn" data-jump="0.285">藍調時刻</button>
+        <button class="ctrl-btn" data-jump="0.460">浦江夜景</button>
+        <button class="ctrl-btn" data-jump="0.765">東方破曉</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      // 統一採用 1024x1024（2 的次方確保 WebGL1 紋理線性取樣 100% 相容）
+      const SIZE = 1024;
+      const WATER_NORM = 0.822;
+      const WATER_PX = Math.round(SIZE * WATER_NORM); // 842px
+      const TAU = Math.PI * 2;
+
+      const glCanvas = document.getElementById("glCanvas");
+      const fgCanvas = document.getElementById("fgCanvas");
+      const fgCtx = fgCanvas.getContext("2d");
+
+      // 雙離屏畫布：主視覺畫面 (Albedo) + 獨立高光與夜景燈光層 (Emissive Bloom)
+      const albedoCanvas = document.createElement("canvas");
+      albedoCanvas.width = SIZE;
+      albedoCanvas.height = SIZE;
+      const aCtx = albedoCanvas.getContext("2d");
+
+      const emissiveCanvas = document.createElement("canvas");
+      emissiveCanvas.width = SIZE;
+      emissiveCanvas.height = SIZE;
+      const eCtx = emissiveCanvas.getContext("2d");
+
+      // ================================================================
+      // 數學與色彩工具
+      // ================================================================
+      const sat = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+      const mix = (a, b, t) => a + (b - a) * t;
+      const ease = (t) => t * t * (3 - 2 * t);
+      const px = (n) => n * SIZE;
+
+      function parseHex(h) {
+        const v = parseInt(h.slice(1), 16);
+        return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+      }
+      function mixC(c1, c2, t) {
+        return [
+          Math.round(mix(c1[0], c2[0], t)),
+          Math.round(mix(c1[1], c2[1], t)),
+          Math.round(mix(c1[2], c2[2], t)),
+        ];
+      }
+      function css(rgb, a = 1) {
+        return a >= 0.999
+          ? `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
+          : `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a.toFixed(3)})`;
+      }
+
+      // 確定性 PRNG (xorshift32)
+      function makeRng(seed) {
+        let s = seed | 0 || 123456789;
+        return () => {
+          s ^= s << 13;
+          s ^= s >>> 17;
+          s ^= s << 5;
+          return ((s >>> 0) % 1000000) / 1000000;
+        };
+      }
+
+      // ================================================================
+      // 晝夜循環大氣模型 (t=0.0 與 t=1.0 精準對應原圖實測色票)
+      // ================================================================
+      const ATMOSPHERE_STOPS = [
+        // 0.000: 原圖實測晴朗午後（天空 #2075eb -> #2c90ed -> #43a9e6）
+        {
+          t: 0.000, label: "午後晴空（原圖時刻）", dot: "#ffd86b",
+          sky0: "#2075eb", sky1: "#2c90ed", sky2: "#50aee8",
+          river0: "#5482bd", river1: "#3e6ca8",
+          day: 1.0, night: 0.0, sunset: 0.0, dawn: 0.0,
+          glare: 1.0, neon: 0.0, win: 0.0, star: 0.0, moon: 0.0, peach: 1.0,
+        },
+        // 0.115: 金色時刻（西南夕陽拉長暖金光）
+        {
+          t: 0.115, label: "金色時刻", dot: "#ffad52",
+          sky0: "#1f53ab", sky1: "#706694", sky2: "#f59d4e",
+          river0: "#5e5f87", river1: "#374978",
+          day: 0.85, night: 0.10, sunset: 0.68, dawn: 0.0,
+          glare: 0.35, neon: 0.10, win: 0.20, star: 0.0, moon: 0.0, peach: 0.9,
+        },
+        // 0.195: 晚霞紫橘黃昏
+        {
+          t: 0.195, label: "火燒晚霞", dot: "#ff6647",
+          sky0: "#132154", sky1: "#6b3268", sky2: "#ed5d37",
+          river0: "#473059", river1: "#1d2247",
+          day: 0.42, night: 0.48, sunset: 1.0, dawn: 0.0,
+          glare: 0.0, neon: 0.58, win: 0.65, star: 0.15, moon: 0.12, peach: 0.45,
+        },
+        // 0.285: 藍調時刻 (Blue Hour，陸家嘴燈光齊亮)
+        {
+          t: 0.285, label: "藍調時刻", dot: "#5fa8ff",
+          sky0: "#071236", sky1: "#162a68", sky2: "#3b437a",
+          river0: "#15234d", river1: "#0a1330",
+          day: 0.10, night: 0.88, sunset: 0.18, dawn: 0.0,
+          glare: 0.0, neon: 0.96, win: 0.95, star: 0.68, moon: 0.72, peach: 0.0,
+        },
+        // 0.420: 浦江璀璨深夜
+        {
+          t: 0.420, label: "浦江夜景燈秀", dot: "#ff4db8",
+          sky0: "#030716", sky1: "#071330", sky2: "#13264f",
+          river0: "#09132e", river1: "#040917",
+          day: 0.0, night: 1.0, sunset: 0.0, dawn: 0.0,
+          glare: 0.0, neon: 1.0, win: 1.0, star: 1.0, moon: 1.0, peach: 0.0,
+        },
+        // 0.625: 深夜轉凌晨
+        {
+          t: 0.625, label: "靜謐凌晨", dot: "#8ea8ff",
+          sky0: "#030614", sky1: "#07112b", sky2: "#112247",
+          river0: "#081129", river1: "#040814",
+          day: 0.0, night: 1.0, sunset: 0.0, dawn: 0.0,
+          glare: 0.0, neon: 0.86, win: 0.76, star: 1.0, moon: 0.88, peach: 0.0,
+        },
+        // 0.745: 東方魚肚白與玫瑰晨曦（光自浦東摩天樓後方升起）
+        {
+          t: 0.745, label: "東方破曉", dot: "#ff8c94",
+          sky0: "#0c1c47", sky1: "#2f3c73", sky2: "#c7686f",
+          river0: "#2a3059", river1: "#162245",
+          day: 0.35, night: 0.56, sunset: 0.0, dawn: 0.82,
+          glare: 0.0, neon: 0.28, win: 0.34, star: 0.22, moon: 0.16, peach: 0.0,
+        },
+        // 0.830: 晨光朝陽
+        {
+          t: 0.830, label: "日出朝陽", dot: "#ffc67a",
+          sky0: "#1e61bf", sky1: "#6a95cf", sky2: "#f5be7f",
+          river0: "#4c72a3", river1: "#2e558a",
+          day: 0.84, night: 0.12, sunset: 0.0, dawn: 0.72,
+          glare: 0.0, neon: 0.04, win: 0.06, star: 0.0, moon: 0.0, peach: 0.15,
+        },
+        // 0.920: 晴朗正午
+        {
+          t: 0.920, label: "晴朗白晝", dot: "#7cd2ff",
+          sky0: "#196de0", sky1: "#3391ee", sky2: "#7ec2f4",
+          river0: "#5889c4", river1: "#4071ad",
+          day: 1.0, night: 0.0, sunset: 0.0, dawn: 0.0,
+          glare: 0.25, neon: 0.0, win: 0.0, star: 0.0, moon: 0.0, peach: 0.45,
+        },
+        // 1.000: 與 0.000 完全相等，達成無縫閉環
+        {
+          t: 1.000, label: "午後晴空（原圖時刻）", dot: "#ffd86b",
+          sky0: "#2075eb", sky1: "#2c90ed", sky2: "#50aee8",
+          river0: "#5482bd", river1: "#3e6ca8",
+          day: 1.0, night: 0.0, sunset: 0.0, dawn: 0.0,
+          glare: 1.0, neon: 0.0, win: 0.0, star: 0.0, moon: 0.0, peach: 1.0,
+        },
+      ];
+
+      function evalAtmosphere(tRaw) {
+        const t = ((tRaw % 1) + 1) % 1;
+        let idx = 0;
+        while (idx < ATMOSPHERE_STOPS.length - 2 && t > ATMOSPHERE_STOPS[idx + 1].t) idx++;
+        const s0 = ATMOSPHERE_STOPS[idx];
+        const s1 = ATMOSPHERE_STOPS[idx + 1];
+        const k = ease(sat((t - s0.t) / Math.max(1e-6, s1.t - s0.t)));
+        return {
+          t,
+          theta: t * TAU,
+          label: k < 0.5 ? s0.label : s1.label,
+          dot: k < 0.5 ? s0.dot : s1.dot,
+          sky0: mixC(parseHex(s0.sky0), parseHex(s1.sky0), k),
+          sky1: mixC(parseHex(s0.sky1), parseHex(s1.sky1), k),
+          sky2: mixC(parseHex(s0.sky2), parseHex(s1.sky2), k),
+          river0: mixC(parseHex(s0.river0), parseHex(s1.river0), k),
+          river1: mixC(parseHex(s0.river1), parseHex(s1.river1), k),
+          day: mix(s0.day, s1.day, k),
+          night: mix(s0.night, s1.night, k),
+          sunset: mix(s0.sunset, s1.sunset, k),
+          dawn: mix(s0.dawn, s1.dawn, k),
+          glare: mix(s0.glare, s1.glare, k),
+          neon: mix(s0.neon, s1.neon, k),
+          win: mix(s0.win, s1.win, k),
+          star: mix(s0.star, s1.star, k),
+          moon: mix(s0.moon, s1.moon, k),
+          peach: mix(s0.peach, s1.peach, k),
+        };
+      }
+
+      // 依晝夜狀態與受光權重 (sunBias: +1朝右受光面, 0中性, -1朝左背陰面) 動態轉譯原圖色票
+      function tone(dayHex, nightHex, env, sunBias = 0) {
+        let c = mixC(parseHex(dayHex), parseHex(nightHex), env.night);
+        if (sunBias > 0) {
+          if (env.sunset > 0.02) c = mixC(c, [255, 138, 66], env.sunset * sunBias * 0.55);
+          if (env.dawn > 0.02) c = mixC(c, [255, 186, 140], env.dawn * sunBias * 0.35);
+        } else if (sunBias < 0 && env.sunset > 0.05) {
+          c = mixC(c, [96, 52, 108], env.sunset * (-sunBias) * 0.38);
+        }
+        return css(c);
+      }
+
+      // ================================================================
+      // 預計算靜態結構資料：星空、高空捲雲、各棟建築窗戶群、濱江樹冠
+      // ================================================================
+      const initRng = makeRng(88480520);
+
+      const STAR_FIELD = Array.from({ length: 160 }, () => ({
+        x: initRng() * SIZE,
+        y: initRng() * px(0.56),
+        r: 0.65 + initRng() * 1.45,
+        phase: initRng() * TAU,
+        harm: 2 + Math.floor(initRng() * 4), // 整數諧波
+        col: initRng() > 0.78 ? "#ffe6bd" : initRng() > 0.42 ? "#cfe5ff" : "#ffffff",
+      }));
+
+      const CLOUD_BANDS = Array.from({ length: 10 }, (_, i) => ({
+        x0: (i / 10) * 1440,
+        y: px(0.06 + initRng() * 0.28),
+        rx: 95 + initRng() * 115,
+        ry: 15 + initRng() * 17,
+        cycles: i % 3 === 0 ? 2 : 1, // 整數圈數完美閉合
+        alpha: 0.07 + initRng() * 0.13,
+      }));
+
+      function createFacadeWindows(cols, rows, seed, density = 0.74) {
+        const r = makeRng(seed);
+        const list = [];
+        for (let row = 0; row < rows; row++) {
+          const floorFactor = r() * 0.25;
+          for (let col = 0; col < cols; col++) {
+            if (r() > density) continue;
+            const pick = r();
+            const hue =
+              pick < 0.44
+                ? "#ffe099"
+                : pick < 0.78
+                ? "#fff3d4"
+                : pick < 0.93
+                ? "#cce9ff"
+                : "#86e5ff";
+            list.push({
+              c: col,
+              r: row,
+              onAt: 0.12 + r() * 0.58,
+              fadeLate: 0.55 + r() * 0.45 + floorFactor,
+              hue,
+              gain: 0.5 + r() * 0.5,
+            });
+          }
+        }
+        return { cols, rows, list };
+      }
+
+      const FACADES = {
+        behindLeft: createFacadeWindows(8, 28, 101, 0.68),
+        behindRight: createFacadeWindows(7, 19, 102, 0.74),
+        slantedBlue: createFacadeWindows(11, 34, 103, 0.76),
+        swfc: createFacadeWindows(10, 44, 104, 0.62),
+        jinMao: createFacadeWindows(9, 36, 105, 0.66),
+        sunlitWhite: createFacadeWindows(13, 30, 106, 0.72),
+        shanghai: createFacadeWindows(10, 56, 107, 0.56),
+        emeraldDark: createFacadeWindows(7, 25, 108, 0.70),
+        emeraldLit: createFacadeWindows(6, 22, 109, 0.74),
+        goldHat: createFacadeWindows(9, 18, 110, 0.80),
+        whiteBoxL: createFacadeWindows(8, 5, 111, 0.84),
+        whiteBoxR: createFacadeWindows(5, 5, 112, 0.84),
+        aurora: createFacadeWindows(8, 28, 113, 0.72),
+      };
+
+      const GREEN_CANOPIES = (() => {
+        const r = makeRng(3311);
+        const arr = [];
+        for (let x = 0.008; x < 0.608; x += 0.015) {
+          arr.push({
+            x: px(x),
+            y: px(0.786 + (r() - 0.5) * 0.018),
+            rad: px(0.014 + r() * 0.014),
+            toneShift: r(),
+          });
+        }
+        return arr;
+      })();
+
+      // 秋紅水杉林（實測位於 x = 0.604 .. 0.885, y = 0.759 .. 0.818）
+      const AUTUMN_CYPRESSES = [
+        [0.614, 0.778, 0.013, 0.038],
+        [0.632, 0.768, 0.015, 0.048],
+        [0.652, 0.764, 0.016, 0.052],
+        [0.674, 0.760, 0.017, 0.056],
+        [0.695, 0.765, 0.016, 0.051],
+        [0.716, 0.759, 0.017, 0.057],
+        [0.738, 0.762, 0.017, 0.054],
+        [0.760, 0.759, 0.018, 0.057],
+        [0.782, 0.764, 0.016, 0.052],
+        [0.804, 0.761, 0.017, 0.055],
+        [0.826, 0.766, 0.016, 0.050],
+        [0.848, 0.770, 0.015, 0.046],
+        [0.870, 0.775, 0.014, 0.041],
+      ];
+
+      // ================================================================
+      // 通用窗格與警示燈繪製（同時寫入 Albedo 與 Emissive 以驅動 WebGL Bloom）
+      // ================================================================
+      function paintWindows(grid, x, y, w, h, padX, padY, env, phaseBias = 0) {
+        if (env.win <= 0.015) return;
+        const iw = w - padX * 2;
+        const ih = h - padY * 2;
+        const cw = iw / grid.cols;
+        const ch = ih / grid.rows;
+        const ww = Math.max(1.5, cw * 0.56);
+        const wh = Math.max(1.5, ch * 0.54);
+        const late = env.t > 0.54 && env.t < 0.72 ? (env.t - 0.54) / 0.18 : 0;
+
+        for (const cell of grid.list) {
+          const on = sat((env.win - cell.onAt * 0.62) * 2.4);
+          if (on <= 0.02) continue;
+          const lateDim = late > 0 ? sat(1 - (late - (cell.fadeLate - 0.68)) * 2.4) : 1;
+          const shimmer = 0.93 + 0.07 * Math.sin(env.theta * 2 + phaseBias + cell.r * 0.4);
+          const alpha = on * cell.gain * (0.3 + 0.7 * lateDim) * shimmer;
+
+          const wx = x + padX + cell.c * cw + (cw - ww) * 0.5;
+          const wy = y + padY + cell.r * ch + (ch - wh) * 0.5;
+
+          aCtx.globalAlpha = alpha;
+          aCtx.fillStyle = cell.hue;
+          aCtx.fillRect(wx, wy, ww, wh);
+
+          eCtx.globalAlpha = alpha * 0.55;
+          eCtx.fillStyle = cell.hue;
+          eCtx.fillRect(wx, wy, ww, wh);
+        }
+        aCtx.globalAlpha = 1;
+        eCtx.globalAlpha = 1;
+      }
+
+      function paintAviationBeacon(x, y, env, freq = 14, hex = "#ff2c47") {
+        if (env.night < 0.22) return;
+        const pulse = Math.pow(0.5 + 0.5 * Math.sin(env.theta * freq), 7);
+        const a = env.night * (0.28 + 0.72 * pulse);
+
+        for (const target of [aCtx, eCtx]) {
+          const g = target.createRadialGradient(x, y, 0.5, x, y, 11);
+          g.addColorStop(0, `rgba(255, 200, 210, ${a.toFixed(3)})`);
+          g.addColorStop(0.38, `rgba(255, 40, 68, ${(a * 0.85).toFixed(3)})`);
+          g.addColorStop(1, "rgba(255, 30, 55, 0)");
+          target.fillStyle = g;
+          target.beginPath();
+          target.arc(x, y, 11, 0, TAU);
+          target.fill();
+        }
+        aCtx.fillStyle = hex;
+        aCtx.globalAlpha = a;
+        aCtx.beginPath();
+        aCtx.arc(x, y, 2.2, 0, TAU);
+        aCtx.fill();
+        aCtx.globalAlpha = 1;
+      }
+
+      // ================================================================
+      // 真 3D 球面經緯格紋投影引擎（東方明珠雙球 & 國際會議中心雙玻璃球）
+      // ================================================================
+      function drawProjected3DLattice(targetCtx, cx, cy, r, opts) {
+        const { latSteps, lonSteps, tiltDeg, diagSteps, stroke, lineWidth, yClipMin, yClipMax } = opts;
+        const tilt = (tiltDeg * Math.PI) / 180;
+        const cosT = Math.cos(tilt);
+        const sinT = Math.sin(tilt);
+
+        const proj = (lat, lon) => {
+          const x0 = Math.cos(lat) * Math.sin(lon);
+          const y0 = Math.sin(lat);
+          const z0 = Math.cos(lat) * Math.cos(lon);
+          // 仰角微傾
+          const y1 = y0 * cosT - z0 * sinT;
+          const z1 = y0 * sinT + z0 * cosT;
+          return { x: cx + x0 * r, y: cy - y1 * r, z: z1 };
+        };
+
+        targetCtx.save();
+        targetCtx.beginPath();
+        targetCtx.arc(cx, cy, r, 0, TAU);
+        targetCtx.clip();
+
+        if (yClipMin !== undefined && yClipMax !== undefined) {
+          targetCtx.beginPath();
+          targetCtx.rect(cx - r, yClipMin, r * 2, yClipMax - yClipMin);
+          targetCtx.clip();
+        }
+
+        targetCtx.strokeStyle = stroke;
+        targetCtx.lineWidth = lineWidth;
+
+        // 緯線
+        for (let i = 1; i < latSteps; i++) {
+          const lat = mix(-Math.PI * 0.44, Math.PI * 0.44, i / latSteps);
+          targetCtx.beginPath();
+          let started = false;
+          for (let j = 0; j <= 36; j++) {
+            const lon = mix(-Math.PI * 0.55, Math.PI * 0.55, j / 36);
+            const p = proj(lat, lon);
+            if (p.z >= -0.05) {
+              if (!started) { targetCtx.moveTo(p.x, p.y); started = true; }
+              else targetCtx.lineTo(p.x, p.y);
+            } else {
+              started = false;
+            }
+          }
+          targetCtx.stroke();
+        }
+
+        // 經線
+        for (let i = 0; i <= lonSteps; i++) {
+          const lon = mix(-Math.PI * 0.48, Math.PI * 0.48, i / lonSteps);
+          targetCtx.beginPath();
+          let started = false;
+          for (let j = 0; j <= 32; j++) {
+            const lat = mix(-Math.PI * 0.48, Math.PI * 0.48, j / 32);
+            const p = proj(lat, lon);
+            if (p.z >= -0.05) {
+              if (!started) { targetCtx.moveTo(p.x, p.y); started = true; }
+              else targetCtx.lineTo(p.x, p.y);
+            } else {
+              started = false;
+            }
+          }
+          targetCtx.stroke();
+        }
+
+        // 交叉斜向測地線（重現東方明珠三角形菱格）
+        if (diagSteps > 0) {
+          targetCtx.lineWidth = lineWidth * 0.8;
+          for (const dir of [-1, 1]) {
+            for (let k = -diagSteps; k <= diagSteps; k++) {
+              targetCtx.beginPath();
+              let started = false;
+              for (let j = 0; j <= 28; j++) {
+                const s = mix(-0.75, 0.75, j / 28);
+                const lat = s * Math.PI * 0.5;
+                const lon = (k / diagSteps) * Math.PI * 0.7 + dir * s * Math.PI * 0.45;
+                const p = proj(lat, lon);
+                if (p.z >= 0) {
+                  if (!started) { targetCtx.moveTo(p.x, p.y); started = true; }
+                  else targetCtx.lineTo(p.x, p.y);
+                } else {
+                  started = false;
+                }
+              }
+              targetCtx.stroke();
+            }
+          }
+        }
+        targetCtx.restore();
+      }
+
+      // ================================================================
+      // 圖層繪製模組（嚴格對應原圖遮擋順序與實測比例）
+      // ================================================================
+
+      // 1. 天空、星月、雲帶與夜間探照燈光束
+      function renderSkyAndAtmosphere(env) {
+        const g = aCtx.createLinearGradient(0, 0, 0, WATER_PX);
+        g.addColorStop(0.0, css(env.sky0));
+        g.addColorStop(0.52, css(env.sky1));
+        g.addColorStop(1.0, css(env.sky2));
+        aCtx.fillStyle = g;
+        aCtx.fillRect(0, 0, SIZE, WATER_PX);
+
+        // 日落西南側低空晚霞漫射
+        if (env.sunset > 0.01) {
+          const sg = aCtx.createRadialGradient(px(0.24), px(0.75), 15, px(0.28), px(0.70), px(0.68));
+          sg.addColorStop(0, `rgba(255, 132, 48, ${(env.sunset * 0.62).toFixed(3)})`);
+          sg.addColorStop(0.45, `rgba(236, 72, 92, ${(env.sunset * 0.34).toFixed(3)})`);
+          sg.addColorStop(1, "rgba(155, 42, 96, 0)");
+          aCtx.fillStyle = sg;
+          aCtx.fillRect(0, 0, SIZE, WATER_PX);
+        }
+
+        // 破曉東方曙光（從右側上海中心與 SWFC 後方透出！）
+        if (env.dawn > 0.01) {
+          const dg = aCtx.createRadialGradient(px(0.80), px(0.72), 15, px(0.78), px(0.68), px(0.65));
+          dg.addColorStop(0, `rgba(255, 198, 118, ${(env.dawn * 0.62).toFixed(3)})`);
+          dg.addColorStop(0.45, `rgba(242, 115, 128, ${(env.dawn * 0.32).toFixed(3)})`);
+          dg.addColorStop(1, "rgba(140, 72, 124, 0)");
+          aCtx.fillStyle = dg;
+          aCtx.fillRect(0, 0, SIZE, WATER_PX);
+        }
+
+        // 夜景浦東天際線城市泛光大氣散射
+        if (env.night > 0.08) {
+          const cg = aCtx.createLinearGradient(0, px(0.42), 0, WATER_PX);
+          cg.addColorStop(0, "rgba(22, 46, 108, 0)");
+          cg.addColorStop(1, `rgba(42, 76, 148, ${(env.night * 0.44).toFixed(3)})`);
+          aCtx.fillStyle = cg;
+          aCtx.fillRect(0, px(0.42), SIZE, WATER_PX - px(0.42));
+
+          // 兩道極柔和的夜間天際線探照光束（嚴格週期化擺動）
+          const beams = [
+            { bx: px(0.145), ang: -0.26 + Math.sin(env.theta * 2) * 0.22, col: "rgba(255, 105, 200, " },
+            { bx: px(0.885), ang: 0.22 + Math.cos(env.theta * 2) * 0.20, col: "rgba(85, 218, 255, " },
+          ];
+          for (const b of beams) {
+            aCtx.save();
+            aCtx.translate(b.bx, px(0.55));
+            aCtx.rotate(b.ang);
+            const bg = aCtx.createLinearGradient(0, 0, 0, -px(0.58));
+            bg.addColorStop(0, `${b.col}${(env.neon * 0.14).toFixed(3)})`);
+            bg.addColorStop(1, `${b.col}0)`);
+            aCtx.fillStyle = bg;
+            aCtx.beginPath();
+            aCtx.moveTo(-8, 0);
+            aCtx.lineTo(-74, -px(0.58));
+            aCtx.lineTo(74, -px(0.58));
+            aCtx.lineTo(8, 0);
+            aCtx.closePath();
+            aCtx.fill();
+            aCtx.restore();
+          }
+        }
+
+        // 閃爍星空
+        if (env.star > 0.02) {
+          for (const s of STAR_FIELD) {
+            const tw = 0.42 + 0.58 * Math.sin(s.phase + s.harm * env.theta);
+            const yFade = sat(1 - s.y / px(0.56));
+            const a = env.star * tw * yFade * 0.94;
+            if (a < 0.02) continue;
+            aCtx.globalAlpha = a;
+            aCtx.fillStyle = s.col;
+            aCtx.beginPath();
+            aCtx.arc(s.x, s.y, s.r, 0, TAU);
+            aCtx.fill();
+          }
+          aCtx.globalAlpha = 1;
+        }
+
+        // 夜間優雅新月
+        if (env.moon > 0.02) {
+          const span = sat((env.t - 0.22) / 0.54);
+          const mx = px(mix(0.74, 0.42, span));
+          const my = px(0.155 - Math.sin(span * Math.PI) * 0.055);
+          for (const target of [aCtx, eCtx]) {
+            const mh = target.createRadialGradient(mx, my, 6, mx, my, 78);
+            mh.addColorStop(0, `rgba(225, 240, 255, ${(0.28 * env.moon).toFixed(3)})`);
+            mh.addColorStop(1, "rgba(180, 210, 255, 0)");
+            target.fillStyle = mh;
+            target.beginPath();
+            target.arc(mx, my, 78, 0, TAU);
+            target.fill();
+          }
+          aCtx.save();
+          aCtx.globalAlpha = env.moon * 0.95;
+          aCtx.fillStyle = "#fff7e2";
+          aCtx.beginPath();
+          aCtx.arc(mx, my, 14, 0, TAU);
+          aCtx.fill();
+          aCtx.fillStyle = css(env.sky0);
+          aCtx.beginPath();
+          aCtx.arc(mx - 6, my - 3.2, 12.6, 0, TAU);
+          aCtx.fill();
+          aCtx.restore();
+        }
+
+        // 輕薄高空捲雲（晴晝幾近透明還原萬里無雲藍天，日落／破曉染霞光）
+        const cloudGain = 0.08 + env.sunset * 0.92 + env.dawn * 0.85 + env.night * 0.26;
+        for (const cl of CLOUD_BANDS) {
+          const cx = ((cl.x0 + env.t * 1440 * cl.cycles) % 1440) - 208;
+          const tint =
+            env.sunset > 0.2
+              ? mixC([255, 198, 165], [255, 118, 88], env.sunset)
+              : env.dawn > 0.2
+              ? mixC([255, 215, 185], [255, 150, 122], env.dawn)
+              : env.night > 0.5
+              ? [34, 52, 92]
+              : [235, 245, 255];
+          const cg = aCtx.createRadialGradient(cx, cl.y, cl.ry * 0.15, cx, cl.y, cl.rx);
+          cg.addColorStop(0, css(tint, cl.alpha * cloudGain));
+          cg.addColorStop(1, css(tint, 0));
+          aCtx.fillStyle = cg;
+          aCtx.beginPath();
+          aCtx.ellipse(cx, cl.y, cl.rx, cl.ry, 0, 0, TAU);
+          aCtx.fill();
+        }
+      }
+
+      // 2. 背景群樓（東方明珠兩側後方＋中央遠景雙塔與針尖塔）
+      function renderBackgroundSkyline(env) {
+        // 最左邊緣米白小樓 (x=0..0.018)
+        aCtx.fillStyle = tone("#ede1cc", "#19243b", env, 0.8);
+        aCtx.fillRect(0, px(0.562), px(0.018), px(0.24));
+
+        // 明珠左後方銀藍豎條辦公樓 (x=0.016..0.105, y=0.468..0.79)
+        const lg = aCtx.createLinearGradient(px(0.016), 0, px(0.105), 0);
+        lg.addColorStop(0, tone("#4f6887", "#0d172c", env, -0.5));
+        lg.addColorStop(0.45, tone("#c7d4e2", "#1c2c4a", env, 0.6));
+        lg.addColorStop(1, tone("#efe2ca", "#24324d", env, 0.9));
+        aCtx.fillStyle = lg;
+        aCtx.fillRect(px(0.018), px(0.468), px(0.088), px(0.32));
+        // 豎向玻璃肋條
+        aCtx.fillStyle = tone("#3c526e", "#091121", env, -0.3);
+        for (let x = 0.022; x < 0.102; x += 0.007) {
+          aCtx.fillRect(px(x), px(0.472), 2, px(0.31));
+        }
+        paintWindows(FACADES.behindLeft, px(0.020), px(0.476), px(0.080), px(0.270), 4, 5, env, 0.8);
+
+        // 明珠右後方階梯米白樓（含斜頂暗玻璃與紅色招牌）(x=0.155..0.242)
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.155), px(0.492));
+        aCtx.lineTo(px(0.180), px(0.465));
+        aCtx.lineTo(px(0.197), px(0.470));
+        aCtx.lineTo(px(0.197), px(0.502));
+        aCtx.closePath();
+        aCtx.fillStyle = tone("#385170", "#0b1428", env, -0.4);
+        aCtx.fill();
+
+        const rg = aCtx.createLinearGradient(px(0.155), 0, px(0.242), 0);
+        rg.addColorStop(0, tone("#c4b69f", "#182133", env, 0.2));
+        rg.addColorStop(0.7, tone("#ecddc4", "#242e42", env, 0.9));
+        rg.addColorStop(1, tone("#d8c8ae", "#1b2436", env, 0.6));
+        aCtx.fillStyle = rg;
+        aCtx.fillRect(px(0.156), px(0.500), px(0.084), px(0.18));
+
+        // 豎條柱格
+        aCtx.fillStyle = tone("#8a7e6e", "#101726", env, 0);
+        for (let x = 0.162; x < 0.236; x += 0.007) {
+          aCtx.fillRect(px(x), px(0.506), 2, px(0.165));
+        }
+        // 紅招牌
+        aCtx.fillStyle = env.night > 0.35 ? "#ff4c45" : "#c7392e";
+        aCtx.fillRect(px(0.178), px(0.520), px(0.044), px(0.008));
+        if (env.neon > 0.2) {
+          eCtx.fillStyle = `rgba(255, 76, 68, ${(env.neon * 0.7).toFixed(3)})`;
+          eCtx.fillRect(px(0.178), px(0.520), px(0.044), px(0.008));
+        }
+        paintWindows(FACADES.behindRight, px(0.160), px(0.508), px(0.074), px(0.155), 3, 4, env, 1.3);
+
+        // 中景雙八角冠米色大樓 (x=0.402..0.456, y=0.618..0.680)
+        aCtx.fillStyle = tone("#c9c4b0", "#172034", env, 0.5);
+        aCtx.fillRect(px(0.402), px(0.630), px(0.054), px(0.056));
+        for (const tx of [0.414, 0.442]) {
+          aCtx.fillStyle = tone("#6d7b8c", "#111a2e", env, -0.2);
+          aCtx.fillRect(px(tx - 0.009), px(0.622), px(0.018), px(0.012));
+          aCtx.fillStyle = tone("#e3dec8", "#26324d", env, 0.8);
+          aCtx.fillRect(px(tx - 0.005), px(0.615), px(0.010), px(0.008));
+        }
+
+        // 中景遠處細長針尖塔 (x=0.470..0.506, 尖頂 y=0.542)
+        aCtx.fillStyle = tone("#b5b1a5", "#141d31", env, 0.4);
+        aCtx.fillRect(px(0.472), px(0.594), px(0.034), px(0.088));
+        aCtx.fillStyle = tone("#d8d3c5", "#24304a", env, 0.7);
+        aCtx.fillRect(px(0.480), px(0.578), px(0.018), px(0.018));
+        aCtx.fillRect(px(0.4865), px(0.542), px(0.003), px(0.038));
+        paintAviationBeacon(px(0.488), px(0.542), env, 10);
+      }
+
+      // 3. 上海環球金融中心 SWFC (x=0.645..0.729, 真天空穿透倒梯形孔洞)
+      function renderSWFC(env) {
+        aCtx.save();
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.645), px(0.265));
+        aCtx.lineTo(px(0.727), px(0.258));
+        aCtx.lineTo(px(0.732), px(0.620));
+        aCtx.lineTo(px(0.642), px(0.620));
+        aCtx.closePath();
+
+        // 實測倒梯形開洞 (x=0.659..0.714, y=0.282..0.320) 逆時針挖洞透出天空
+        aCtx.moveTo(px(0.659), px(0.285));
+        aCtx.lineTo(px(0.664), px(0.320));
+        aCtx.lineTo(px(0.708), px(0.318));
+        aCtx.lineTo(px(0.713), px(0.282));
+        aCtx.closePath();
+        aCtx.clip("evenodd");
+
+        const g = aCtx.createLinearGradient(px(0.645), px(0.260), px(0.730), px(0.580));
+        g.addColorStop(0.0, tone("#164494", "#091636", env, -0.3));
+        g.addColorStop(0.55, tone("#113980", "#061028", env, -0.2));
+        g.addColorStop(1.0, tone("#0c2b63", "#040a1c", env, 0));
+        aCtx.fillStyle = g;
+        aCtx.fillRect(px(0.640), px(0.255), px(0.095), px(0.370));
+
+        // 細密玻璃豎縫
+        aCtx.fillStyle = tone("#2357ad", "#0a193b", env, 0);
+        for (let x = 0.650; x < 0.728; x += 0.006) {
+          aCtx.fillRect(px(x), px(0.258), 1, px(0.365));
+        }
+
+        paintWindows(FACADES.swfc, px(0.647), px(0.325), px(0.078), px(0.275), 4, 4, env, 2.4);
+        aCtx.restore();
+
+        // 夜間 SWFC 標誌性電光青白線條（同時寫入 Emissive 層觸發 WebGL 光暈！）
+        if (env.neon > 0.05) {
+          const ga = env.neon;
+          for (const target of [aCtx, eCtx]) {
+            target.save();
+            target.strokeStyle = `rgba(170, 238, 255, ${(ga * 0.94).toFixed(3)})`;
+            target.lineWidth = target === eCtx ? 3.2 : 2.2;
+            target.beginPath();
+            target.moveTo(px(0.644), px(0.460));
+            target.lineTo(px(0.645), px(0.265));
+            target.lineTo(px(0.727), px(0.258));
+            target.lineTo(px(0.729), px(0.420));
+            target.stroke();
+
+            target.beginPath();
+            target.moveTo(px(0.659), px(0.285));
+            target.lineTo(px(0.713), px(0.282));
+            target.lineTo(px(0.708), px(0.318));
+            target.lineTo(px(0.664), px(0.320));
+            target.closePath();
+            target.stroke();
+            target.restore();
+          }
+        }
+        paintAviationBeacon(px(0.646), px(0.263), env, 12);
+        paintAviationBeacon(px(0.726), px(0.257), env, 12);
+      }
+
+      // 4. 左側斜頂深藍塔樓 (x=0.563..0.646, y=0.368..0.675)
+      function renderSlantedBlueTower(env) {
+        aCtx.save();
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.563), px(0.368));
+        aCtx.lineTo(px(0.645), px(0.382));
+        aCtx.lineTo(px(0.648), px(0.675));
+        aCtx.lineTo(px(0.563), px(0.675));
+        aCtx.closePath();
+        aCtx.clip();
+
+        const bg = aCtx.createLinearGradient(px(0.563), px(0.368), px(0.648), px(0.670));
+        bg.addColorStop(0, tone("#29588e", "#0a162e", env, -0.3));
+        bg.addColorStop(1, tone("#1d416e", "#060e20", env, -0.2));
+        aCtx.fillStyle = bg;
+        aCtx.fillRect(px(0.560), px(0.365), px(0.092), px(0.315));
+
+        // 頂部斜楔受光帶（實測受光邊緣 y=0.392）
+        if (env.day > 0.05) {
+          aCtx.save();
+          aCtx.globalAlpha = env.day;
+          aCtx.beginPath();
+          aCtx.moveTo(px(0.563), px(0.368));
+          aCtx.lineTo(px(0.645), px(0.382));
+          aCtx.lineTo(px(0.645), px(0.415));
+          aCtx.lineTo(px(0.563), px(0.392));
+          aCtx.closePath();
+          const tg = aCtx.createLinearGradient(px(0.563), px(0.368), px(0.645), px(0.410));
+          tg.addColorStop(0, tone("#92a18f", "#142645", env, 0.7));
+          tg.addColorStop(1, tone("#c7ccbc", "#1b3257", env, 0.9));
+          aCtx.fillStyle = tg;
+          aCtx.fill();
+          aCtx.restore();
+        }
+
+        // 細密玻璃豎線＋兩道深色設備層帶
+        aCtx.fillStyle = tone("#1b3b63", "#050b18", env, 0);
+        for (let x = 0.568; x < 0.645; x += 0.006) {
+          aCtx.fillRect(px(x), px(0.368), 1.1, px(0.31));
+        }
+        aCtx.fillStyle = tone("#152f4f", "#030812", env, 0);
+        aCtx.fillRect(px(0.563), px(0.490), px(0.086), px(0.010));
+        aCtx.fillRect(px(0.563), px(0.590), px(0.086), px(0.011));
+
+        paintWindows(FACADES.slantedBlue, px(0.566), px(0.392), px(0.077), px(0.255), 3, 4, env, 1.9);
+
+        if (env.neon > 0.1) {
+          for (const target of [aCtx, eCtx]) {
+            target.strokeStyle = `rgba(115, 206, 255, ${(env.neon * 0.78).toFixed(3)})`;
+            target.lineWidth = 2.6;
+            target.beginPath();
+            target.moveTo(px(0.564), px(0.370));
+            target.lineTo(px(0.644), px(0.383));
+            target.stroke();
+          }
+        }
+        aCtx.restore();
+      }
+
+      // 5. 上海中心大廈（實測修長輪廓：頂寬 0.855..0.910 -> 底寬 0.856..0.946，螺旋扭轉光影）
+      function renderShanghaiTower(env) {
+        const leftEdge = (yf) => {
+          const k = sat((yf - 0.052) / 0.53);
+          return mix(0.855, 0.856, k) + Math.sin(k * Math.PI) * 0.004;
+        };
+        const rightEdge = (yf) => {
+          const k = sat((yf - 0.052) / 0.53);
+          return mix(0.910, 0.948, Math.pow(k, 0.82));
+        };
+
+        aCtx.save();
+        aCtx.beginPath();
+        aCtx.moveTo(px(leftEdge(0.053)), px(0.055));
+        aCtx.quadraticCurveTo(px(0.884), px(0.048), px(rightEdge(0.053)), px(0.055));
+        for (let yf = 0.08; yf <= 0.60; yf += 0.04) aCtx.lineTo(px(rightEdge(yf)), px(yf));
+        aCtx.lineTo(px(leftEdge(0.60)), px(0.60));
+        for (let yf = 0.56; yf >= 0.053; yf -= 0.04) aCtx.lineTo(px(leftEdge(yf)), px(yf));
+        aCtx.closePath();
+        aCtx.clip();
+
+        // 基礎立面：左冷藍玻璃 (#2b5890) -> 右暖銀受光曲面 (#c3c8b7 -> #edf0de)
+        const mg = aCtx.createLinearGradient(px(0.855), px(0.20), px(0.946), px(0.38));
+        mg.addColorStop(0.0, tone("#2b5890", "#081229", env, -0.5));
+        mg.addColorStop(0.45, tone("#5b7ea6", "#0e1d3d", env, 0.1));
+        mg.addColorStop(0.76, tone("#c3c8b7", "#1a2f59", env, 0.8));
+        mg.addColorStop(0.92, tone("#e6e8d5", "#233d70", env, 1.0));
+        mg.addColorStop(1.0, tone("#9aa6a8", "#111f3d", env, 0.4));
+        aCtx.fillStyle = mg;
+        aCtx.fillRect(px(0.848), px(0.048), px(0.105), px(0.560));
+
+        // 標誌性雙層螺旋扭轉溝槽（從右上向左下盤旋）
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.914), px(0.115));
+        aCtx.bezierCurveTo(px(0.904), px(0.220), px(0.880), px(0.330), px(0.862), px(0.450));
+        aCtx.lineTo(px(0.875), px(0.468));
+        aCtx.bezierCurveTo(px(0.896), px(0.345), px(0.918), px(0.232), px(0.924), px(0.125));
+        aCtx.closePath();
+        aCtx.fillStyle = tone("rgba(25, 52, 92, 0.46)", "rgba(5, 11, 24, 0.62)", env, -0.3);
+        aCtx.fill();
+
+        // 右側受強光亮銀螺旋帶
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.917), px(0.120));
+        aCtx.bezierCurveTo(px(0.912), px(0.235), px(0.928), px(0.365), px(0.944), px(0.490));
+        aCtx.lineTo(px(0.924), px(0.500));
+        aCtx.bezierCurveTo(px(0.905), px(0.365), px(0.896), px(0.240), px(0.905), px(0.125));
+        aCtx.closePath();
+        aCtx.fillStyle = tone("rgba(242, 244, 224, 0.54)", "rgba(42, 76, 134, 0.32)", env, 0.9);
+        aCtx.fill();
+
+        // 頂冠深藍格柵結構 (y=0.050..0.114)
+        aCtx.fillStyle = tone("#3b5c93", "#091530", env, -0.2);
+        aCtx.fillRect(px(0.850), px(0.048), px(0.072), px(0.066));
+        aCtx.fillStyle = tone("#233c66", "#050c1c", env, 0);
+        aCtx.fillRect(px(0.850), px(0.068), px(0.072), px(0.015));
+        for (let x = 0.855; x < 0.916; x += 0.0045) {
+          aCtx.fillRect(px(x), px(0.052), 1.4, px(0.062));
+        }
+
+        // 8 層結構設備環帶 + 細密橫向幕牆紋理
+        const belts = [0.114, 0.174, 0.232, 0.292, 0.352, 0.412, 0.474, 0.536];
+        for (const by of belts) {
+          aCtx.fillStyle = tone("#28436b", "#050b1a", env, 0);
+          aCtx.fillRect(px(0.852), px(by), px(0.098), 4);
+        }
+        aCtx.fillStyle = tone("rgba(255,255,255,0.16)", "rgba(120,185,255,0.06)", env, 0);
+        for (let yf = 0.120; yf < 0.580; yf += 0.0065) {
+          aCtx.fillRect(px(0.854), px(yf), px(0.094), 1);
+        }
+
+        paintWindows(FACADES.shanghai, px(0.860), px(0.122), px(0.072), px(0.450), 5, 4, env, 3.1);
+
+        // 夜間上海中心流光螺旋燈帶與環帶（同步寫入 Emissive 層觸發光暈）
+        if (env.neon > 0.04) {
+          const wPhase = env.theta * 3;
+          for (let yf = 0.116; yf < 0.576; yf += 0.007) {
+            const k = (yf - 0.116) / 0.46;
+            const hx = mix(0.918, 0.868, k) + Math.sin(k * Math.PI) * 0.005;
+            const wave = 0.5 + 0.5 * Math.sin(wPhase - k * 8.0);
+            const col = mixC([55, 222, 255], [255, 222, 148], wave);
+            const a = env.neon * (0.45 + 0.5 * wave);
+            aCtx.fillStyle = css(col, a);
+            aCtx.fillRect(px(hx) - 2, px(yf), 4.5, 5);
+            eCtx.fillStyle = css(col, a * 0.9);
+            eCtx.fillRect(px(hx) - 2.5, px(yf), 5.5, 5.5);
+          }
+
+          for (let i = 0; i < belts.length; i++) {
+            const pulse = 0.55 + 0.45 * Math.sin(wPhase + i * 0.85);
+            const col = `rgba(125, 228, 255, ${(env.neon * 0.78 * pulse).toFixed(3)})`;
+            aCtx.fillStyle = col;
+            aCtx.fillRect(px(0.854), px(belts[i]) + 1, px(0.094), 2.4);
+            eCtx.fillStyle = col;
+            eCtx.fillRect(px(0.854), px(belts[i]) + 0.5, px(0.094), 3.2);
+          }
+
+          // 頂冠冰藍極光漸層
+          for (const target of [aCtx, eCtx]) {
+            const cg = target.createLinearGradient(0, px(0.050), 0, px(0.116));
+            cg.addColorStop(0, `rgba(128, 232, 255, ${(env.neon * 0.88).toFixed(3)})`);
+            cg.addColorStop(0.5, `rgba(175, 240, 255, ${(env.neon * 0.42).toFixed(3)})`);
+            cg.addColorStop(1, "rgba(80, 180, 255, 0)");
+            target.fillStyle = cg;
+            target.fillRect(px(0.854), px(0.050), px(0.062), px(0.066));
+          }
+        }
+        aCtx.restore();
+
+        paintAviationBeacon(px(0.861), px(0.052), env, 14);
+        paintAviationBeacon(px(0.905), px(0.052), env, 14);
+      }
+
+      // 6. 金茂大廈 (cx=0.685, 塔尖 y=0.305 精準刺入 SWFC 開洞下緣)
+      function renderJinMao(env) {
+        const cx = px(0.685);
+        const tiers = [
+          [0.336, 0.354, 0.009],
+          [0.354, 0.375, 0.013],
+          [0.375, 0.399, 0.018],
+          [0.399, 0.429, 0.023],
+          [0.429, 0.464, 0.028],
+          [0.464, 0.504, 0.032],
+          [0.504, 0.562, 0.035],
+          [0.562, 0.640, 0.037],
+        ];
+
+        // 塔尖細針
+        aCtx.fillStyle = tone("#dbe2e0", "#ffe4a3", env, 0.8);
+        aCtx.fillRect(cx - 1.4, px(0.305), 2.8, px(0.034));
+        aCtx.fillStyle = tone("#9db0b5", "#cfa259", env, 0.5);
+        aCtx.fillRect(cx - 4, px(0.326), 8, px(0.012));
+
+        for (const [yt, yb, hw] of tiers) {
+          const x = cx - px(hw);
+          const w = px(hw * 2);
+          const y = px(yt);
+          const h = px(yb - yt);
+
+          // 左暗冷鋼 -> 右亮銀（符合右前方陽光！）
+          const g = aCtx.createLinearGradient(x, y, x + w, y);
+          g.addColorStop(0.0, tone("#4f6580", "#182236", env, -0.4));
+          g.addColorStop(0.30, tone("#83959e", "#382f22", env, 0.2));
+          g.addColorStop(0.55, tone("#b8c4c0", "#755a2c", env, 0.7));
+          g.addColorStop(0.82, tone("#dce3d9", "#9e7735", env, 0.95));
+          g.addColorStop(1.0, tone("#a3b1ac", "#5e4923", env, 0.5));
+          aCtx.fillStyle = g;
+          aCtx.fillRect(x, y, w, h);
+
+          // 垂直不鏽鋼骨架線
+          aCtx.fillStyle = tone("#ebefe6", "#ffd98a", env, 0.8);
+          aCtx.fillRect(x + 1, y, 2, h);
+          aCtx.fillRect(cx - 1.5, y, 3, h);
+          aCtx.fillRect(x + w - 3, y, 2, h);
+
+          // 夜間經典暖金琥珀色寶塔泛光
+          if (env.neon > 0.05) {
+            for (const target of [aCtx, eCtx]) {
+              const gld = target.createLinearGradient(cx, y + h, cx, y);
+              gld.addColorStop(0, `rgba(255, 198, 92, ${(env.neon * (target === eCtx ? 0.55 : 0.68)).toFixed(3)})`);
+              gld.addColorStop(0.55, `rgba(255, 174, 68, ${(env.neon * 0.24).toFixed(3)})`);
+              gld.addColorStop(1, `rgba(255, 232, 168, ${(env.neon * 0.76).toFixed(3)})`);
+              target.fillStyle = gld;
+              target.fillRect(x, y, w, h);
+
+              target.fillStyle = `rgba(255, 226, 140, ${(env.neon * 0.92).toFixed(3)})`;
+              target.fillRect(x, y, w, 2.4);
+            }
+          }
+        }
+
+        paintWindows(FACADES.jinMao, cx - px(0.025), px(0.388), px(0.050), px(0.220), 4, 4, env, 1.4);
+
+        if (env.neon > 0.15) {
+          eCtx.fillStyle = `rgba(255, 235, 175, ${(env.neon * 0.92).toFixed(3)})`;
+          eCtx.fillRect(cx - 1.8, px(0.305), 3.6, px(0.035));
+        }
+        paintAviationBeacon(cx, px(0.304), env, 16);
+      }
+
+      // 7. 暖銀白斜頂塔樓 (x=0.702..0.818，精準還原左背陰深藍、右強光暖白與腰部斜影)
+      function renderSunlitWhiteTower(env) {
+        // 左側背陰翼面 (0.702..0.730)
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.702), px(0.372));
+        aCtx.lineTo(px(0.730), px(0.365));
+        aCtx.lineTo(px(0.730), px(0.665));
+        aCtx.lineTo(px(0.702), px(0.665));
+        aCtx.closePath();
+        aCtx.fillStyle = tone("#153060", "#081226", env, -0.6);
+        aCtx.fill();
+
+        // 右側強光斜頂主面 (0.730..0.818)
+        aCtx.save();
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.730), px(0.365));
+        aCtx.lineTo(px(0.785), px(0.354));
+        aCtx.lineTo(px(0.818), px(0.568));
+        aCtx.lineTo(px(0.818), px(0.665));
+        aCtx.lineTo(px(0.730), px(0.665));
+        aCtx.closePath();
+        aCtx.clip();
+
+        const fg = aCtx.createLinearGradient(px(0.730), px(0.354), px(0.818), px(0.560));
+        fg.addColorStop(0.0, tone("#f9fbd4", "#1b2c4c", env, 1.0));
+        fg.addColorStop(0.55, tone("#f2e8c6", "#14223d", env, 0.95));
+        fg.addColorStop(1.0, tone("#ded6b4", "#0e1930", env, 0.7));
+        aCtx.fillStyle = fg;
+        aCtx.fillRect(px(0.728), px(0.352), px(0.094), px(0.316));
+
+        // 實測對角陰影切割線：(0.730, 0.485) -> (0.770, 0.532) -> (0.818, 0.542)
+        if (env.day > 0.05) {
+          aCtx.save();
+          aCtx.globalAlpha = env.day * 0.92;
+          aCtx.beginPath();
+          aCtx.moveTo(px(0.730), px(0.485));
+          aCtx.lineTo(px(0.770), px(0.532));
+          aCtx.lineTo(px(0.818), px(0.542));
+          aCtx.lineTo(px(0.818), px(0.665));
+          aCtx.lineTo(px(0.730), px(0.665));
+          aCtx.closePath();
+          aCtx.fillStyle = "#264b75";
+          aCtx.fill();
+          aCtx.restore();
+        }
+
+        // 細密水平窗線
+        aCtx.fillStyle = tone("rgba(55, 82, 118, 0.25)", "rgba(6, 12, 26, 0.55)", env, 0);
+        for (let yf = 0.372; yf < 0.655; yf += 0.010) {
+          aCtx.fillRect(px(0.730), px(yf), px(0.088), 1);
+        }
+
+        paintWindows(FACADES.sunlitWhite, px(0.733), px(0.370), px(0.080), px(0.260), 4, 4, env, 3.8);
+
+        if (env.neon > 0.1) {
+          for (const target of [aCtx, eCtx]) {
+            target.strokeStyle = `rgba(175, 228, 255, ${(env.neon * 0.78).toFixed(3)})`;
+            target.lineWidth = 2.4;
+            target.beginPath();
+            target.moveTo(px(0.702), px(0.372));
+            target.lineTo(px(0.730), px(0.365));
+            target.lineTo(px(0.785), px(0.354));
+            target.stroke();
+          }
+        }
+        aCtx.restore();
+      }
+
+      // 8. 最右側雙翡翠綠玻璃大樓 (x=0.892..1.000)
+      function renderEmeraldTowers(env) {
+        // 深墨綠斜頂塔
+        aCtx.save();
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.900), px(0.452));
+        aCtx.lineTo(px(0.956), px(0.486));
+        aCtx.lineTo(px(0.956), px(0.690));
+        aCtx.lineTo(px(0.894), px(0.690));
+        aCtx.closePath();
+        aCtx.clip();
+
+        const g1 = aCtx.createLinearGradient(px(0.894), px(0.452), px(0.956), px(0.680));
+        g1.addColorStop(0, tone("#264d4a", "#071c19", env, -0.2));
+        g1.addColorStop(1, tone("#385852", "#051212", env, 0.2));
+        aCtx.fillStyle = g1;
+        aCtx.fillRect(px(0.892), px(0.450), px(0.068), px(0.245));
+
+        aCtx.fillStyle = tone("#56a37d", "#0e382e", env, 0.6);
+        aCtx.fillRect(px(0.946), px(0.480), px(0.009), px(0.210));
+        paintWindows(FACADES.emeraldDark, px(0.900), px(0.488), px(0.052), px(0.188), 3, 4, env, 2.7);
+        aCtx.restore();
+
+        // 最右邊緣鮮亮反光翠綠塔 (#69dc66)
+        aCtx.save();
+        const g2 = aCtx.createLinearGradient(px(0.950), 0, px(1.0), 0);
+        g2.addColorStop(0, tone("#3aa65e", "#0b2e21", env, 0.1));
+        g2.addColorStop(0.55, tone("#69dc66", "#165236", env, 0.8));
+        g2.addColorStop(1, tone("#93ed7b", "#1e6340", env, 1.0));
+        aCtx.fillStyle = g2;
+        aCtx.fillRect(px(0.950), px(0.484), px(0.052), px(0.205));
+        aCtx.fillStyle = tone("rgba(18, 70, 42, 0.35)", "rgba(4, 16, 12, 0.55)", env, 0);
+        for (let yf = 0.494; yf < 0.688; yf += 0.010) {
+          aCtx.fillRect(px(0.950), px(yf), px(0.052), 1.4);
+        }
+        paintWindows(FACADES.emeraldLit, px(0.954), px(0.492), px(0.044), px(0.184), 3, 4, env, 1.1);
+        aCtx.restore();
+      }
+
+      // 9. 白色橫條格轉角樓 (精準還原左冷藍陰影面 0.761..0.842 + 右強光暖白面 0.843..0.904)
+      function renderWhiteStripedCornerBox(env) {
+        // 左側背陰面
+        aCtx.fillStyle = tone("#52729d", "#121b2e", env, -0.5);
+        aCtx.fillRect(px(0.761), px(0.570), px(0.082), px(0.130));
+
+        // 右側受強光暖白轉角面
+        aCtx.fillStyle = tone("#f9f6ba", "#202b40", env, 1.0);
+        aCtx.fillRect(px(0.843), px(0.570), px(0.062), px(0.130));
+
+        // 5 排深色豎格窗槽（兩面各自對齊透視）
+        for (let r = 0; r < 5; r++) {
+          const ry = px(0.580 + r * 0.020);
+          for (let col = 0; col < 8; col++) {
+            aCtx.fillStyle = tone("#11264a", "#050a14", env, 0);
+            aCtx.fillRect(px(0.768 + col * 0.009), ry, px(0.0052), px(0.014));
+          }
+          for (let col = 0; col < 5; col++) {
+            aCtx.fillStyle = tone("#311e0c", "#070b14", env, 0);
+            aCtx.fillRect(px(0.850 + col * 0.010), ry, px(0.0055), px(0.014));
+          }
+        }
+        paintWindows(FACADES.whiteBoxL, px(0.766), px(0.578), px(0.074), px(0.100), 2, 2, env, 2.0);
+        paintWindows(FACADES.whiteBoxR, px(0.848), px(0.578), px(0.052), px(0.100), 2, 2, env, 2.2);
+      }
+
+      // 10. 金頂飛碟帽棕銅色塔樓 (x=0.630..0.718)
+      function renderGoldHatTower(env) {
+        aCtx.fillStyle = tone("#5c524a", "#111622", env, -0.3);
+        aCtx.fillRect(px(0.628), px(0.550), px(0.022), px(0.145));
+
+        const bg = aCtx.createLinearGradient(px(0.640), 0, px(0.714), 0);
+        bg.addColorStop(0.0, tone("#433831", "#10141f", env, -0.4));
+        bg.addColorStop(0.55, tone("#6c5749", "#171c2b", env, 0.2));
+        bg.addColorStop(1.0, tone("#b39272", "#262838", env, 0.9));
+        aCtx.fillStyle = bg;
+        aCtx.fillRect(px(0.640), px(0.542), px(0.074), px(0.195));
+
+        for (let x = 0.646; x < 0.708; x += 0.008) {
+          aCtx.fillStyle = tone("#242022", "#070a12", env, 0);
+          aCtx.fillRect(px(x), px(0.554), px(0.0045), px(0.168));
+        }
+        paintWindows(FACADES.goldHat, px(0.643), px(0.554), px(0.066), px(0.140), 3, 3, env, 0.6);
+
+        // 屋簷下方紅金字帶
+        aCtx.fillStyle = env.night > 0.35 ? "#ffae45" : "#ba5836";
+        aCtx.fillRect(px(0.646), px(0.556), px(0.058), px(0.005));
+
+        // 飛碟狀橄欖金圓盤帽蓋（左暗右亮受日光）
+        aCtx.beginPath();
+        aCtx.ellipse(px(0.678), px(0.533), px(0.041), px(0.013), 0, Math.PI, TAU);
+        aCtx.lineTo(px(0.716), px(0.544));
+        aCtx.quadraticCurveTo(px(0.678), px(0.550), px(0.640), px(0.544));
+        aCtx.closePath();
+        const hg = aCtx.createLinearGradient(px(0.638), px(0.525), px(0.718), px(0.544));
+        hg.addColorStop(0.0, tone("#59503c", "#473715", env, -0.4));
+        hg.addColorStop(0.55, tone("#a08e6f", "#a37b29", env, 0.3));
+        hg.addColorStop(1.0, tone("#ebe0a6", "#ffd66e", env, 1.0));
+        aCtx.fillStyle = hg;
+        aCtx.fill();
+
+        aCtx.fillStyle = tone("#cbb982", "#ffe085", env, 0.7);
+        aCtx.beginPath();
+        aCtx.ellipse(px(0.678), px(0.520), px(0.014), px(0.005), 0, 0, TAU);
+        aCtx.fill();
+
+        if (env.neon > 0.1) {
+          for (const target of [aCtx, eCtx]) {
+            target.strokeStyle = `rgba(255, 214, 110, ${(env.neon * 0.85).toFixed(3)})`;
+            target.lineWidth = 2.2;
+            target.beginPath();
+            target.ellipse(px(0.678), px(0.536), px(0.040), px(0.009), 0, 0, TAU);
+            target.stroke();
+          }
+        }
+      }
+
+      // 11. 震旦國際大廈 Aurora Plaza (x=0.270..0.379)
+      function renderAuroraPlaza(env) {
+        // 主深寶藍圓弧玻璃塔身 (0.298..0.361, y=0.445..0.672)
+        aCtx.save();
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.298), px(0.448));
+        aCtx.quadraticCurveTo(px(0.330), px(0.438), px(0.361), px(0.446));
+        aCtx.lineTo(px(0.362), px(0.675));
+        aCtx.lineTo(px(0.298), px(0.675));
+        aCtx.closePath();
+        aCtx.clip();
+
+        const bg = aCtx.createLinearGradient(px(0.298), 0, px(0.362), 0);
+        bg.addColorStop(0.0, tone("#14366b", "#06112b", env, -0.5));
+        bg.addColorStop(0.35, tone("#255692", "#0c2154", env, 0.0));
+        bg.addColorStop(0.75, tone("#5285bd", "#14306e", env, 0.6));
+        bg.addColorStop(1.0, tone("#8bb0d4", "#1b3a7d", env, 0.9));
+        aCtx.fillStyle = bg;
+        aCtx.fillRect(px(0.296), px(0.438), px(0.068), px(0.240));
+
+        // 頂部震旦招牌帶
+        aCtx.fillStyle = env.night > 0.3 ? "#a6e6ff" : "#e3e8ed";
+        aCtx.fillRect(px(0.307), px(0.447), px(0.046), px(0.006));
+        if (env.neon > 0.15) {
+          eCtx.fillStyle = `rgba(155, 232, 255, ${(env.neon * 0.9).toFixed(3)})`;
+          eCtx.fillRect(px(0.307), px(0.447), px(0.046), px(0.006));
+        }
+
+        paintWindows(FACADES.aurora, px(0.300), px(0.460), px(0.060), px(0.158), 4, 4, env, 1.2);
+
+        // 夜間震旦外牆大螢幕動態像素燈光秀
+        if (env.neon > 0.08) {
+          const p = env.theta * 4;
+          for (let r = 0; r < 14; r++) {
+            const wy = px(0.464 + r * 0.0105);
+            const wv = 0.5 + 0.5 * Math.sin(p - r * 0.48);
+            const col = mixC([24, 136, 255], [255, 210, 96], wv * wv);
+            const alpha = env.neon * (0.24 + 0.56 * wv);
+            aCtx.fillStyle = css(col, alpha);
+            aCtx.fillRect(px(0.301), wy, px(0.058), 6);
+            eCtx.fillStyle = css(col, alpha * 0.85);
+            eCtx.fillRect(px(0.301), wy, px(0.058), 6);
+          }
+        }
+        aCtx.restore();
+
+        // 標誌性斜三角暖米色裙樓 (0.272..0.376, 頂尖 (0.354, 0.576))
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.276), px(0.672));
+        aCtx.lineTo(px(0.354), px(0.576));
+        aCtx.lineTo(px(0.376), px(0.672));
+        aCtx.closePath();
+        const pg = aCtx.createLinearGradient(px(0.276), px(0.672), px(0.376), px(0.576));
+        pg.addColorStop(0.0, tone("#9e8f77", "#141d30", env, -0.2));
+        pg.addColorStop(0.55, tone("#d9caa8", "#1d273d", env, 0.7));
+        pg.addColorStop(1.0, tone("#f4e8c4", "#27334d", env, 1.0));
+        aCtx.fillStyle = pg;
+        aCtx.fill();
+
+        // 斜坡豎線紋理
+        aCtx.strokeStyle = tone("rgba(58, 72, 92, 0.38)", "rgba(10, 18, 34, 0.6)", env, 0);
+        aCtx.lineWidth = 1.4;
+        for (let x = 0.292; x < 0.368; x += 0.008) {
+          const topY = x < 0.354 ? mix(0.672, 0.576, (x - 0.276) / 0.078) : mix(0.576, 0.672, (x - 0.354) / 0.022);
+          aCtx.beginPath();
+          aCtx.moveTo(px(x), px(topY));
+          aCtx.lineTo(px(x), px(0.672));
+          aCtx.stroke();
+        }
+      }
+
+      // 12. 東方明珠廣播電視塔（嚴格還原右受光左背陰、第3暗後柱、5膠囊、第4膠囊星芒、真3D球格）
+      function paintPearlSphere(cx, cy, r, env, cfg) {
+        const { topCap, botCap, isUpper, waveShift } = cfg;
+
+        // 夜間流光主色（紅紫／電青／暖金 3 週期平滑變幻）
+        const np = env.theta * 3 + waveShift;
+        const neonMain = mixC([255, 28, 125], [0, 226, 255], 0.5 + 0.5 * Math.sin(np));
+        const neonAccent = mixC([178, 45, 255], [255, 206, 62], 0.5 + 0.5 * Math.cos(np));
+
+        aCtx.save();
+        aCtx.beginPath();
+        aCtx.arc(cx, cy, r, 0, TAU);
+        aCtx.clip();
+
+        // 1) 白天球體（右側受強光 #f0918b -> 中段寶石紅 #af3c3a -> 左側冷紫陰影 #3b2d5f）
+        const dayG = aCtx.createRadialGradient(
+          cx + r * 0.36,
+          cy - r * 0.16,
+          r * 0.08,
+          cx - r * 0.12,
+          cy + r * 0.05,
+          r * 1.18
+        );
+        dayG.addColorStop(0.0, tone("#f49a90", "#42214a", env, 0.8));
+        dayG.addColorStop(0.45, tone("#b33b42", "#261233", env, 0.2));
+        dayG.addColorStop(1.0, tone("#3b2d5f", "#110a24", env, -0.5));
+        aCtx.fillStyle = dayG;
+        aCtx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+        // 2) 夜間霓虹球體著色（同時點亮 Emissive 層）
+        if (env.neon > 0.02) {
+          for (const target of [aCtx, eCtx]) {
+            const ng = target.createRadialGradient(cx, cy - r * 0.1, r * 0.08, cx, cy, r);
+            ng.addColorStop(0.0, css(neonAccent, env.neon * (target === eCtx ? 0.88 : 0.92)));
+            ng.addColorStop(0.62, css(neonMain, env.neon * (target === eCtx ? 0.78 : 0.88)));
+            ng.addColorStop(1.0, css(mixC(neonMain, [18, 8, 36], 0.72), env.neon * (target === eCtx ? 0.35 : 0.95)));
+            target.save();
+            target.beginPath();
+            target.arc(cx, cy, r, 0, TAU);
+            target.clip();
+            target.fillStyle = ng;
+            target.fillRect(cx - r, cy - r, r * 2, r * 2);
+            target.restore();
+          }
+        }
+
+        // 3) 上銀灰帽環（左暗右亮暖銀）
+        const capH = r * 2 * topCap;
+        const capG = aCtx.createLinearGradient(cx - r, cy - r, cx + r, cy - r + capH);
+        capG.addColorStop(0.0, tone("#52586e", "#221a3b", env, -0.4));
+        capG.addColorStop(0.55, tone("#c09880", "#594080", env, 0.3));
+        capG.addColorStop(1.0, tone("#f5e3be", "#e0c8ff", env, 1.0));
+        aCtx.fillStyle = capG;
+        aCtx.fillRect(cx - r, cy - r, r * 2, capH);
+
+        // 4) 下銀灰半球（下大球有大片銀灰底面＋環形觀景窗）
+        const botH = r * 2 * botCap;
+        const botY = cy + r - botH;
+        const botG = aCtx.createLinearGradient(cx - r, botY, cx + r, cy + r);
+        botG.addColorStop(0.0, tone("#494f66", "#16122b", env, -0.5));
+        botG.addColorStop(0.52, tone("#a98f68", "#352854", env, 0.3));
+        botG.addColorStop(1.0, tone("#f0d8a1", "#785ca3", env, 0.95));
+        aCtx.fillStyle = botG;
+        aCtx.fillRect(cx - r, botY, r * 2, botH);
+
+        if (!isUpper) {
+          // 下球環形觀景窗列
+          const winCol = env.neon > 0.3 ? "#ffe08c" : "#252936";
+          aCtx.fillStyle = winCol;
+          for (let wx = cx - r * 0.80; wx < cx + r * 0.80; wx += 9) {
+            aCtx.fillRect(wx, botY + 7, 5, 6);
+            if (env.neon > 0.3) {
+              eCtx.fillStyle = `rgba(255, 224, 140, ${(env.neon * 0.8).toFixed(3)})`;
+              eCtx.fillRect(wx, botY + 7, 5, 6);
+            }
+          }
+        }
+
+        // 5) 真 3D 球面經緯＋交叉三角測地網格！
+        drawProjected3DLattice(aCtx, cx, cy, r, {
+          latSteps: isUpper ? 6 : 7,
+          lonSteps: isUpper ? 10 : 12,
+          tiltDeg: 10,
+          diagSteps: 5,
+          stroke:
+            env.neon > 0.35
+              ? `rgba(255, 240, 255, ${(0.35 + env.neon * 0.48).toFixed(3)})`
+              : "rgba(242, 236, 228, 0.52)",
+          lineWidth: isUpper ? 1.1 : 1.25,
+          yClipMin: cy - r + capH,
+          yClipMax: botY,
+        });
+
+        aCtx.restore();
+
+        // 夜間球體柔和外暈（寫入 Emissive 供 WebGL Bloom 擴散）
+        if (env.neon > 0.1) {
+          const halo = eCtx.createRadialGradient(cx, cy, r * 0.82, cx, cy, r * 1.9);
+          halo.addColorStop(0, css(neonMain, env.neon * 0.45));
+          halo.addColorStop(1, "rgba(255, 30, 130, 0)");
+          eCtx.fillStyle = halo;
+          eCtx.beginPath();
+          eCtx.arc(cx, cy, r * 1.9, 0, TAU);
+          eCtx.fill();
+        }
+      }
+
+      function renderOrientalPearl(env) {
+        const cx = px(0.145);
+
+        // A. 底部三根斜撐巨柱與左下角銀灰裝飾小球
+        // 右後撐柱（自然置於國際會議中心左玻璃球後方）
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.162), px(0.635));
+        aCtx.lineTo(px(0.181), px(0.642));
+        aCtx.lineTo(px(0.205), px(0.755));
+        aCtx.lineTo(px(0.184), px(0.755));
+        aCtx.closePath();
+        aCtx.fillStyle = tone("#c7b599", "#241d38", env, 0.4);
+        aCtx.fill();
+
+        // 中央垂直電梯核心柱
+        aCtx.fillStyle = tone("#d9c8ac", "#2f2445", env, 0.6);
+        aCtx.fillRect(px(0.139), px(0.648), px(0.012), px(0.132));
+
+        // 內左斜撐柱（左暗右亮暖金）
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.121), px(0.645));
+        aCtx.lineTo(px(0.138), px(0.648));
+        aCtx.lineTo(px(0.118), px(0.778));
+        aCtx.lineTo(px(0.098), px(0.778));
+        aCtx.closePath();
+        const midLegG = aCtx.createLinearGradient(px(0.098), 0, px(0.138), 0);
+        midLegG.addColorStop(0, tone("#6c6b75", "#1c1530", env, -0.4));
+        midLegG.addColorStop(0.55, tone("#d4bc96", "#3a2954", env, 0.5));
+        midLegG.addColorStop(1, tone("#f7e4be", "#634685", env, 1.0));
+        aCtx.fillStyle = midLegG;
+        aCtx.fill();
+
+        // 最左長斜撐柱
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.096), px(0.632));
+        aCtx.lineTo(px(0.116), px(0.640));
+        aCtx.lineTo(px(0.052), px(0.778));
+        aCtx.lineTo(px(0.032), px(0.778));
+        aCtx.closePath();
+        const farLegG = aCtx.createLinearGradient(px(0.032), 0, px(0.116), 0);
+        farLegG.addColorStop(0, tone("#666773", "#1b142e", env, -0.4));
+        farLegG.addColorStop(0.55, tone("#d8c29e", "#3d2c59", env, 0.5));
+        farLegG.addColorStop(1, tone("#fae7c3", "#694b8c", env, 1.0));
+        aCtx.fillStyle = farLegG;
+        aCtx.fill();
+
+        // 實測左斜柱裝飾銀灰小球 (cx=0.071, cy=0.713, r=0.012)
+        const smCx = px(0.071);
+        const smCy = px(0.713);
+        const smR = px(0.0125);
+        const smG = aCtx.createRadialGradient(smCx + 4, smCy - 3, 2, smCx, smCy, smR);
+        smG.addColorStop(0, tone("#f5f0dc", "#ffa8e6", env, 0.9));
+        smG.addColorStop(0.65, tone("#9ba0a8", "#573575", env, 0.1));
+        smG.addColorStop(1, tone("#4f5666", "#1e1433", env, -0.4));
+        aCtx.fillStyle = smG;
+        aCtx.beginPath();
+        aCtx.arc(smCx, smCy, smR, 0, TAU);
+        aCtx.fill();
+
+        // B. 兩根主立柱之間：暗色第 3 根後柱 (x=0.140..0.148) + 實測 5 顆懸空小膠囊
+        aCtx.fillStyle = tone("#2f2c26", "#110d1f", env, -0.5);
+        aCtx.fillRect(px(0.139), px(0.242), px(0.0085), px(0.292));
+
+        const capsuleYs = [0.286, 0.335, 0.385, 0.434, 0.486];
+        for (let i = 0; i < capsuleYs.length; i++) {
+          const cy = px(capsuleYs[i]);
+          // 銀米托盤 + 暖紅中環（右側亮金受光）
+          const cg = aCtx.createLinearGradient(px(0.132), cy, px(0.160), cy);
+          cg.addColorStop(0, tone("#6c5d56", "#2c1c42", env, -0.4));
+          cg.addColorStop(0.6, tone("#d8b691", "#683c82", env, 0.5));
+          cg.addColorStop(1, tone("#fce1b0", "#b878d4", env, 1.0));
+          aCtx.fillStyle = cg;
+          aCtx.fillRect(px(0.132), cy - px(0.011), px(0.028), px(0.022));
+
+          aCtx.fillStyle = env.neon > 0.3 ? "#ff4da6" : "#a84440";
+          aCtx.fillRect(px(0.132), cy - px(0.0055), px(0.028), px(0.011));
+
+          if (env.neon > 0.1) {
+            const cp = 0.6 + 0.4 * Math.sin(env.theta * 3 + i * 1.15);
+            const lc = `rgba(255, 200, 245, ${(env.neon * 0.82 * cp).toFixed(3)})`;
+            aCtx.fillStyle = lc;
+            aCtx.fillRect(px(0.134), cy - 2.5, px(0.024), 5);
+            eCtx.fillStyle = lc;
+            eCtx.fillRect(px(0.134), cy - 3, px(0.024), 6);
+          }
+        }
+
+        // 實測左右兩根前立柱：左 (0.118..0.139)，右 (0.156..0.175)，皆為左陰右亮暖金！
+        for (const [x0, x1] of [
+          [0.118, 0.139],
+          [0.156, 0.175],
+        ]) {
+          const lx = px(x0);
+          const lw = px(x1 - x0);
+          const tubeG = aCtx.createLinearGradient(lx, 0, lx + lw, 0);
+          tubeG.addColorStop(0.0, tone("#525866", "#161129", env, -0.5));
+          tubeG.addColorStop(0.32, tone("#cfa97c", "#2d2047", env, 0.2));
+          tubeG.addColorStop(0.75, tone("#f6dea6", "#463169", env, 0.9));
+          tubeG.addColorStop(1.0, tone("#fbf0cc", "#573f7d", env, 1.0));
+          aCtx.fillStyle = tubeG;
+          aCtx.fillRect(lx, px(0.240), lw, px(0.296));
+
+          // 夜間柱身垂直霓虹線燈
+          if (env.neon > 0.08) {
+            for (const target of [aCtx, eCtx]) {
+              const sg = target.createLinearGradient(0, px(0.242), 0, px(0.532));
+              sg.addColorStop(0.0, `rgba(0, 226, 255, ${(env.neon * 0.72).toFixed(3)})`);
+              sg.addColorStop(0.5, `rgba(255, 72, 172, ${(env.neon * 0.72).toFixed(3)})`);
+              sg.addColorStop(1.0, `rgba(255, 206, 86, ${(env.neon * 0.72).toFixed(3)})`);
+              target.fillStyle = sg;
+              target.fillRect(lx + lw * 0.45, px(0.244), 3.6, px(0.288));
+            }
+          }
+        }
+
+        // 原圖實測耀眼午後太陽星芒反射：(0.1490, 0.4310) -> #f9fede（寫入 Emissive 產生鏡頭星芒！）
+        if (env.glare > 0.03) {
+          const gx = px(0.149);
+          const gy = px(0.431);
+          const ga = env.glare;
+          for (const target of [aCtx, eCtx]) {
+            const fl = target.createRadialGradient(gx, gy, 1, gx, gy, 28);
+            fl.addColorStop(0.0, `rgba(255, 255, 240, ${ga.toFixed(3)})`);
+            fl.addColorStop(0.24, `rgba(255, 224, 138, ${(ga * 0.92).toFixed(3)})`);
+            fl.addColorStop(1.0, "rgba(255, 170, 90, 0)");
+            target.fillStyle = fl;
+            target.beginPath();
+            target.arc(gx, gy, 28, 0, TAU);
+            target.fill();
+
+            target.strokeStyle = `rgba(255, 254, 225, ${(ga * 0.9).toFixed(3)})`;
+            target.lineWidth = 1.8;
+            target.beginPath();
+            target.moveTo(gx - 22, gy);
+            target.lineTo(gx + 22, gy);
+            target.moveTo(gx, gy - 22);
+            target.lineTo(gx, gy + 22);
+            target.stroke();
+          }
+        }
+
+        // C. 下大球體 (cx=0.145, cy=0.594, r=0.067)
+        paintPearlSphere(cx, px(0.594), px(0.067), env, {
+          topCap: 0.22,
+          botCap: 0.42,
+          isUpper: false,
+          waveShift: 0.0,
+        });
+
+        // D. 上球體 (cx=0.145, cy=0.192, r=0.052)
+        paintPearlSphere(cx, px(0.192), px(0.052), env, {
+          topCap: 0.16,
+          botCap: 0.16,
+          isUpper: true,
+          waveShift: Math.PI * 0.85,
+        });
+
+        // E. 頂部塔尖頸部與小型紅銀球節 (y=0.000..0.145)
+        const neckG = aCtx.createLinearGradient(px(0.133), 0, px(0.157), 0);
+        neckG.addColorStop(0, tone("#5b5e6e", "#1a152e", env, -0.4));
+        neckG.addColorStop(0.55, tone("#cbb394", "#3d2f5e", env, 0.4));
+        neckG.addColorStop(1, tone("#f7e3be", "#695194", env, 1.0));
+        aCtx.fillStyle = neckG;
+        aCtx.fillRect(px(0.133), px(0.114), px(0.024), px(0.030));
+        aCtx.fillRect(px(0.137), px(0.086), px(0.016), px(0.030));
+        aCtx.fillRect(px(0.140), 0, px(0.010), px(0.088));
+
+        // 頂端小紅球節 (y=0.042)
+        aCtx.beginPath();
+        aCtx.ellipse(cx, px(0.042), px(0.016), px(0.013), 0, 0, TAU);
+        aCtx.fillStyle = tone("#a83e46", "#ff3b95", env, 0.3);
+        aCtx.fill();
+        aCtx.fillStyle = tone("#ded4c4", "#a885e6", env, 0.6);
+        aCtx.fillRect(cx - px(0.014), px(0.031), px(0.028), px(0.004));
+        aCtx.fillRect(cx - px(0.014), px(0.049), px(0.028), px(0.004));
+
+        if (env.neon > 0.08) {
+          for (const target of [aCtx, eCtx]) {
+            target.fillStyle = `rgba(255, 198, 248, ${(env.neon * 0.72).toFixed(3)})`;
+            target.fillRect(cx - 1.8, 0, 3.6, px(0.140));
+          }
+        }
+        paintAviationBeacon(cx, 5, env, 18);
+      }
+
+      // 13. 上海國際會議中心（兩顆真 3D 球面玻璃球體 ＋ 10 拱門古典長廊）
+      function renderGlassGlobe(cx, cy, r, isRight, env) {
+        aCtx.save();
+        aCtx.beginPath();
+        aCtx.arc(cx, cy, r, 0, TAU);
+        aCtx.clip();
+
+        const g = aCtx.createRadialGradient(
+          cx + r * 0.25,
+          cy - r * 0.28,
+          r * 0.08,
+          cx - r * 0.15,
+          cy + r * 0.15,
+          r * 1.15
+        );
+        if (!isRight) {
+          // 左球：深海藍 (#16509c -> #0c3673) 與底部湖水青
+          g.addColorStop(0.0, tone("#2674c4", "#0e3d7d", env, 0.2));
+          g.addColorStop(0.55, tone("#14498a", "#082452", env, -0.2));
+          g.addColorStop(1.0, tone("#1c635f", "#0a3638", env, 0));
+        } else {
+          // 右球：上部天空藍，右下實測鮮活翠綠 (#9fb67e / #2c8a5c)
+          g.addColorStop(0.0, tone("#2e7ec7", "#0f3f7d", env, 0.2));
+          g.addColorStop(0.45, tone("#1c6668", "#0a3542", env, 0));
+          g.addColorStop(0.80, tone("#3ea162", "#114f34", env, 0.4));
+          g.addColorStop(1.0, tone("#1b573e", "#08291e", env, 0));
+        }
+        aCtx.fillStyle = g;
+        aCtx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+        // 右球上部實測橘紅色反光區 (#cc784c)
+        if (isRight && env.day > 0.1) {
+          const rg = aCtx.createRadialGradient(cx + r * 0.14, cy - r * 0.54, 2, cx + r * 0.14, cy - r * 0.54, r * 0.46);
+          rg.addColorStop(0, `rgba(222, 108, 62, ${(0.76 * env.day).toFixed(3)})`);
+          rg.addColorStop(1, "rgba(222, 108, 62, 0)");
+          aCtx.fillStyle = rg;
+          aCtx.fillRect(cx - r, cy - r, r * 2, r);
+        }
+
+        // 夜間雙玻璃球內部透光與外溢光暈
+        if (env.neon > 0.08) {
+          for (const target of [aCtx, eCtx]) {
+            const ig = target.createRadialGradient(cx, cy + r * 0.15, 4, cx, cy, r);
+            ig.addColorStop(
+              0,
+              isRight
+                ? `rgba(48, 232, 192, ${(env.neon * (target === eCtx ? 0.52 : 0.65)).toFixed(3)})`
+                : `rgba(54, 174, 255, ${(env.neon * (target === eCtx ? 0.52 : 0.65)).toFixed(3)})`
+            );
+            ig.addColorStop(1, "rgba(10, 35, 72, 0)");
+            target.save();
+            target.beginPath();
+            target.arc(cx, cy, r, 0, TAU);
+            target.clip();
+            target.fillStyle = ig;
+            target.fillRect(cx - r, cy - r, r * 2, r * 2);
+            target.restore();
+          }
+        }
+
+        // 3D 球面玻璃經緯網格
+        drawProjected3DLattice(aCtx, cx, cy, r, {
+          latSteps: 8,
+          lonSteps: 12,
+          tiltDeg: 8,
+          diagSteps: 0,
+          stroke:
+            env.neon > 0.35
+              ? `rgba(175, 240, 255, ${(0.34 + env.neon * 0.45).toFixed(3)})`
+              : "rgba(224, 238, 248, 0.56)",
+          lineWidth: 1.25,
+        });
+
+        // 玻璃弧面高光反光
+        if (env.day > 0.1) {
+          aCtx.fillStyle = `rgba(255, 255, 245, ${(0.24 * env.day).toFixed(3)})`;
+          aCtx.beginPath();
+          aCtx.ellipse(cx + r * 0.34, cy - r * 0.30, r * 0.16, r * 0.34, 0.52, 0, TAU);
+          aCtx.fill();
+        }
+        aCtx.restore();
+      }
+
+      function renderConventionCenter(env) {
+        // 中央古典米白柱廊長樓 (0.230..0.548, y=0.668..0.788)
+        const wg = aCtx.createLinearGradient(px(0.230), px(0.668), px(0.230), px(0.788));
+        wg.addColorStop(0, tone("#f4e8cd", "#272b3d", env, 0.95));
+        wg.addColorStop(1, tone("#d9c8ab", "#191e2e", env, 0.7));
+        aCtx.fillStyle = wg;
+        aCtx.fillRect(px(0.230), px(0.672), px(0.320), px(0.116));
+
+        // 屋頂古典線腳與紅色中文字招牌
+        aCtx.fillStyle = tone("#dfd1b6", "#31364a", env, 0.8);
+        aCtx.fillRect(px(0.228), px(0.666), px(0.324), px(0.009));
+        aCtx.fillStyle = env.night > 0.35 ? "#ff5247" : "#bd3228";
+        aCtx.fillRect(px(0.365), px(0.656), px(0.086), px(0.010));
+        if (env.neon > 0.15) {
+          eCtx.fillStyle = `rgba(255, 84, 72, ${(env.neon * 0.72).toFixed(3)})`;
+          eCtx.fillRect(px(0.365), px(0.656), px(0.086), px(0.010));
+        }
+
+        // 10 組高聳古典拱窗（與原圖完全一致的節奏感）
+        const count = 10;
+        const startX = 0.246;
+        const step = 0.0294;
+        for (let i = 0; i < count; i++) {
+          const ax = px(startX + i * step);
+          const aw = px(0.0175);
+          const ay = px(0.695);
+          const ah = px(0.070);
+
+          aCtx.beginPath();
+          aCtx.arc(ax + aw * 0.5, ay + aw * 0.5, aw * 0.5, Math.PI, 0);
+          aCtx.lineTo(ax + aw, ay + ah);
+          aCtx.lineTo(ax, ay + ah);
+          aCtx.closePath();
+
+          if (env.win > 0.08) {
+            const wc = mixC([32, 46, 68], [255, 210, 124], env.win * 0.92);
+            aCtx.fillStyle = css(wc);
+            aCtx.fill();
+
+            eCtx.fillStyle = `rgba(255, 206, 118, ${(env.win * 0.45).toFixed(3)})`;
+            eCtx.fillRect(ax + 1, ay + 4, aw - 2, ah - 6);
+          } else {
+            aCtx.fillStyle = tone("#22344a", "#101726", env, 0);
+            aCtx.fill();
+          }
+
+          // 白色十字窗欞
+          aCtx.strokeStyle = tone("#d6c7ae", "#3f3a44", env, 0.3);
+          aCtx.lineWidth = 1.3;
+          aCtx.beginPath();
+          aCtx.moveTo(ax + aw * 0.5, ay);
+          aCtx.lineTo(ax + aw * 0.5, ay + ah);
+          aCtx.moveTo(ax, ay + ah * 0.45);
+          aCtx.lineTo(ax + aw, ay + ah * 0.45);
+          aCtx.stroke();
+
+          // 夜間向上洗牆暖金光
+          if (env.neon > 0.1) {
+            const up = aCtx.createLinearGradient(ax, px(0.768), ax, px(0.678));
+            up.addColorStop(0, `rgba(255, 198, 96, ${(env.neon * 0.42).toFixed(3)})`);
+            up.addColorStop(1, "rgba(255, 198, 96, 0)");
+            aCtx.fillStyle = up;
+            aCtx.fillRect(ax - 3, px(0.678), aw + 6, px(0.090));
+          }
+        }
+
+        // 左右兩顆巨型玻璃球體 (實測中心 cx=0.202, 0.600)
+        renderGlassGlobe(px(0.202), px(0.713), px(0.073), false, env);
+        renderGlassGlobe(px(0.600), px(0.711), px(0.072), true, env);
+      }
+
+      // 14. 右側現代白色美術館群 (0.682..1.000, 含翡翠綠大幕牆)
+      function renderMuseumComplex(env) {
+        // 左側立方白塔（左背陰冷灰、右受強光米白）
+        aCtx.fillStyle = tone("#b5bcc2", "#121826", env, -0.3);
+        aCtx.fillRect(px(0.682), px(0.638), px(0.028), px(0.148));
+        aCtx.fillStyle = tone("#f4eed8", "#1d2538", env, 0.9);
+        aCtx.fillRect(px(0.710), px(0.638), px(0.058), px(0.148));
+        aCtx.fillStyle = tone("#2f3c4a", "#0a101b", env, 0);
+        aCtx.fillRect(px(0.718), px(0.658), px(0.015), px(0.018));
+
+        // 中段水平白盒
+        aCtx.fillStyle = tone("#e3dfd2", "#182030", env, 0.7);
+        aCtx.fillRect(px(0.768), px(0.706), px(0.098), px(0.082));
+
+        // 右側大型白盒＋翡翠綠大橫窗玻璃幕牆
+        aCtx.fillStyle = tone("#f5f0dc", "#1d2638", env, 0.9);
+        aCtx.fillRect(px(0.866), px(0.688), px(0.136), px(0.098));
+
+        const gg = aCtx.createLinearGradient(px(0.888), px(0.716), px(0.992), px(0.768));
+        gg.addColorStop(0.0, tone("#2e8a6b", "#0d3832", env, 0));
+        gg.addColorStop(0.55, tone("#52bf8f", "#18614e", env, 0.3));
+        gg.addColorStop(1.0, tone("#266e56", "#0a2a25", env, 0));
+        aCtx.fillStyle = gg;
+        aCtx.fillRect(px(0.888), px(0.716), px(0.104), px(0.052));
+
+        if (env.neon > 0.1) {
+          for (const target of [aCtx, eCtx]) {
+            target.fillStyle = `rgba(110, 245, 206, ${(env.neon * 0.28).toFixed(3)})`;
+            target.fillRect(px(0.888), px(0.716), px(0.104), px(0.052));
+          }
+        }
+      }
+
+      // 15. 濱江防波堤、深綠喬木、秋紅水杉林、紅浮標與左側遊輪
+      function renderWaterfrontAndLeftFerry(env) {
+        // 白色濱江防波堤與親水步道 (y=0.794..0.822)
+        aCtx.fillStyle = tone("#f0ebdc", "#1c2436", env, 0.8);
+        aCtx.fillRect(0, px(0.794), SIZE, px(0.028));
+        aCtx.fillStyle = tone("#9fa19b", "#0e1422", env, 0.1);
+        aCtx.fillRect(0, px(0.816), SIZE, px(0.006));
+        aCtx.fillStyle = tone("#38424d", "#050912", env, 0);
+        aCtx.fillRect(0, WATER_PX - 3, SIZE, 3.5);
+
+        // 左側深綠圓潤喬木林 (x=0..0.61)
+        for (const tr of GREEN_CANOPIES) {
+          const g = aCtx.createRadialGradient(
+            tr.x + tr.rad * 0.32,
+            tr.y - tr.rad * 0.30,
+            2,
+            tr.x,
+            tr.y,
+            tr.rad
+          );
+          g.addColorStop(0.0, tone("#597834", "#162b1f", env, 0.7));
+          g.addColorStop(0.55, tone("#314d20", "#0b1a13", env, 0.2));
+          g.addColorStop(1.0, tone("#152911", "#050d09", env, -0.3));
+          aCtx.fillStyle = g;
+          aCtx.beginPath();
+          aCtx.arc(tr.x, tr.y, tr.rad, 0, TAU);
+          aCtx.fill();
+        }
+
+        // 右側標誌性火紅秋日水杉林 (x=0.604..0.885)
+        for (const [rxN, tyN, rwN, rhN] of AUTUMN_CYPRESSES) {
+          const rx = px(rxN);
+          const ty = px(tyN);
+          const rw = px(rwN);
+          const rh = px(rhN);
+          const by = ty + rh;
+
+          aCtx.beginPath();
+          aCtx.moveTo(rx, ty);
+          aCtx.quadraticCurveTo(rx + rw * 0.92, ty + rh * 0.56, rx + rw * 0.56, by);
+          aCtx.lineTo(rx - rw * 0.56, by);
+          aCtx.quadraticCurveTo(rx - rw * 0.92, ty + rh * 0.56, rx, ty);
+          aCtx.closePath();
+
+          // 右側受日光亮橘紅、左側背陰深赭紅
+          const rg = aCtx.createLinearGradient(rx - rw, ty, rx + rw, by);
+          rg.addColorStop(0.0, tone("#6b2112", "#140808", env, -0.4));
+          rg.addColorStop(0.50, tone("#bf3819", "#2c110f", env, 0.3));
+          rg.addColorStop(1.0, tone("#f06626", "#4a1e17", env, 0.9));
+          aCtx.fillStyle = rg;
+          aCtx.fill();
+
+          if (env.neon > 0.14) {
+            const tg = aCtx.createRadialGradient(rx, by - 4, 2, rx, by - 12, 24);
+            tg.addColorStop(0, `rgba(255, 132, 56, ${(env.neon * 0.44).toFixed(3)})`);
+            tg.addColorStop(1, "rgba(255, 100, 40, 0)");
+            aCtx.fillStyle = tg;
+            aCtx.fillRect(rx - 26, ty - 4, 52, rh + 10);
+          }
+        }
+
+        // 右側堤岸低矮灌木
+        for (let x = 0.886; x < 0.996; x += 0.018) {
+          aCtx.fillStyle = tone("#2f4f24", "#0c1a14", env, 0.2);
+          aCtx.beginPath();
+          aCtx.arc(px(x), px(0.793), px(0.013), 0, TAU);
+          aCtx.fill();
+        }
+
+        // 夜間濱江步道暖金景觀燈列
+        if (env.neon > 0.08) {
+          for (let lx = 26; lx < SIZE - 16; lx += 38) {
+            for (const target of [aCtx, eCtx]) {
+              const lg = target.createRadialGradient(lx, px(0.808), 1, lx, px(0.808), 14);
+              lg.addColorStop(0, `rgba(255, 228, 148, ${(env.neon * 0.92).toFixed(3)})`);
+              lg.addColorStop(0.45, `rgba(255, 178, 70, ${(env.neon * 0.44).toFixed(3)})`);
+              lg.addColorStop(1, "rgba(255, 155, 55, 0)");
+              target.fillStyle = lg;
+              target.beginPath();
+              target.arc(lx, px(0.808), 14, 0, TAU);
+              target.fill();
+            }
+          }
+        }
+
+        // 實測最右側紅色水面航標 (0.956, 0.812) -> #ed4d4b
+        aCtx.fillStyle = env.night > 0.35 ? "#ff4642" : "#ed4d4b";
+        aCtx.beginPath();
+        aCtx.moveTo(px(0.956), px(0.798));
+        aCtx.lineTo(px(0.961), px(0.820));
+        aCtx.lineTo(px(0.951), px(0.820));
+        aCtx.closePath();
+        aCtx.fill();
+        paintAviationBeacon(px(0.956), px(0.797), env, 10);
+
+        // 左側白色雙層遊輪與紅橘棧橋（隨週期波浪微幅起伏）
+        const bob = Math.sin(env.theta * 6) * 1.1;
+        aCtx.save();
+        aCtx.translate(0, bob);
+        aCtx.fillStyle = tone("#d44a32", "#3b1718", env, 0.3);
+        aCtx.fillRect(px(0.110), px(0.815), px(0.208), px(0.005));
+        aCtx.fillStyle = tone("#f2efe6", "#2a3347", env, 0.6);
+        aCtx.fillRect(px(0.112), px(0.813), px(0.120), px(0.0025));
+
+        aCtx.beginPath();
+        aCtx.moveTo(0, px(0.794));
+        aCtx.lineTo(px(0.108), px(0.801));
+        aCtx.lineTo(px(0.100), px(0.820));
+        aCtx.lineTo(0, px(0.820));
+        aCtx.closePath();
+        aCtx.fillStyle = tone("#f7f6f0", "#2f384c", env, 0.7);
+        aCtx.fill();
+
+        aCtx.fillStyle = tone("#edece4", "#283245", env, 0.6);
+        aCtx.fillRect(0, px(0.787), px(0.066), px(0.014));
+
+        const cabinWin = env.win > 0.25 ? "#ffd97d" : "#1d2938";
+        aCtx.fillStyle = cabinWin;
+        aCtx.fillRect(px(0.004), px(0.792), px(0.056), px(0.005));
+        aCtx.fillRect(px(0.006), px(0.805), px(0.078), px(0.0045));
+
+        if (env.win > 0.2) {
+          eCtx.fillStyle = `rgba(255, 218, 130, ${(env.win * 0.65).toFixed(3)})`;
+          eCtx.fillRect(px(0.004), px(0.792) + bob, px(0.056), px(0.005));
+          eCtx.fillRect(px(0.006), px(0.805) + bob, px(0.078), px(0.0045));
+        }
+        aCtx.restore();
+      }
+
+      // 16. 前景獨立圖層：右側近景深藍橘頂防撞輪胎工作船 (x=0.755..1.000)
+      function renderForegroundWorkboat(env) {
+        fgCtx.clearRect(0, 0, SIZE, SIZE);
+        const bob = Math.sin(env.theta * 5 + 1.1) * 1.7;
+        const tilt = Math.sin(env.theta * 5 + 0.4) * 0.007;
+
+        fgCtx.save();
+        fgCtx.translate(px(0.865), px(0.840) + bob);
+        fgCtx.rotate(tilt);
+        fgCtx.translate(-px(0.865), -px(0.840));
+
+        // 船底水接觸柔和暗影
+        fgCtx.fillStyle = "rgba(6, 14, 28, 0.42)";
+        fgCtx.beginPath();
+        fgCtx.ellipse(px(0.868), px(0.855), px(0.115), px(0.0075), 0, 0, TAU);
+        fgCtx.fill();
+
+        // 後半段平板駁船與紅橘邊條 (0.908..1.005)
+        fgCtx.fillStyle = tone("#4b5666", "#131924", env, 0);
+        fgCtx.fillRect(px(0.908), px(0.836), px(0.098), px(0.012));
+        fgCtx.fillStyle = tone("#ce583c", "#421d1b", env, 0.3);
+        fgCtx.fillRect(px(0.910), px(0.834), px(0.095), px(0.004));
+
+        // 深黑船身主體 (0.756..0.935)
+        fgCtx.beginPath();
+        fgCtx.moveTo(px(0.762), px(0.830));
+        fgCtx.lineTo(px(0.935), px(0.833));
+        fgCtx.lineTo(px(0.931), px(0.852));
+        fgCtx.lineTo(px(0.756), px(0.850));
+        fgCtx.closePath();
+        fgCtx.fillStyle = tone("#222833", "#0a0f18", env, 0);
+        fgCtx.fill();
+
+        // 實測鮮亮海洋鈷藍船艙 (#002f9b -> 日光高亮 #165ad1)
+        const cabG = fgCtx.createLinearGradient(px(0.838), 0, px(0.908), 0);
+        cabG.addColorStop(0, tone("#002f9b", "#092154", env, -0.3));
+        cabG.addColorStop(1, tone("#1d64d6", "#12387d", env, 0.7));
+        fgCtx.fillStyle = cabG;
+        fgCtx.fillRect(px(0.838), px(0.816), px(0.070), px(0.022));
+
+        // 橘紅上簷＋船艙窗
+        fgCtx.fillStyle = tone("#db6139", "#542419", env, 0.3);
+        fgCtx.fillRect(px(0.838), px(0.812), px(0.070), px(0.005));
+        fgCtx.fillStyle = env.win > 0.22 ? "#ffe694" : "#122138";
+        fgCtx.fillRect(px(0.844), px(0.820), px(0.014), px(0.008));
+        fgCtx.fillRect(px(0.863), px(0.820), px(0.014), px(0.008));
+        fgCtx.fillRect(px(0.882), px(0.820), px(0.014), px(0.008));
+
+        // 左前方橘藍甲板設備箱
+        fgCtx.fillStyle = tone("#cc6a42", "#47241a", env, 0.3);
+        fgCtx.fillRect(px(0.788), px(0.821), px(0.048), px(0.014));
+        fgCtx.fillStyle = tone("#1e4e9c", "#0c2042", env, 0);
+        fgCtx.fillRect(px(0.793), px(0.825), px(0.020), px(0.008));
+
+        // 10 顆標誌性黑色橡膠輪胎防撞墊！
+        for (let tx = 0.772; tx <= 0.922; tx += 0.015) {
+          fgCtx.fillStyle = "#101318";
+          fgCtx.beginPath();
+          fgCtx.arc(px(tx), px(0.845), 6.0, 0, TAU);
+          fgCtx.fill();
+          fgCtx.fillStyle = "#39404d";
+          fgCtx.beginPath();
+          fgCtx.arc(px(tx), px(0.845), 2.3, 0, TAU);
+          fgCtx.fill();
+        }
+
+        // 船側白色微浪水花
+        const wakeA = 0.32 + 0.14 * Math.sin(env.theta * 6);
+        fgCtx.strokeStyle = `rgba(225, 240, 255, ${wakeA.toFixed(3)})`;
+        fgCtx.lineWidth = 1.6;
+        fgCtx.beginPath();
+        fgCtx.moveTo(px(0.748), px(0.851));
+        fgCtx.quadraticCurveTo(px(0.840), px(0.855), px(0.950), px(0.852));
+        fgCtx.stroke();
+
+        // 夜間船隻航行燈（紅左舷燈＋暖白桅燈）
+        if (env.night > 0.25) {
+          const glow = (x, y, col, r) => {
+            const g = fgCtx.createRadialGradient(x, y, 1, x, y, r);
+            g.addColorStop(0, col);
+            g.addColorStop(1, "rgba(0,0,0,0)");
+            fgCtx.fillStyle = g;
+            fgCtx.beginPath();
+            fgCtx.arc(x, y, r, 0, TAU);
+            fgCtx.fill();
+          };
+          const b = 0.6 + 0.4 * Math.sin(env.theta * 8);
+          glow(px(0.764), px(0.826), `rgba(255, 55, 65, ${(env.night * b).toFixed(3)})`, 14);
+          glow(px(0.873), px(0.805), `rgba(255, 236, 175, ${(env.night * 0.9).toFixed(3)})`, 16);
+        }
+        fgCtx.restore();
+      }
+
+      // 繪製全部水面以上離屏雙層紋理
+      function composeSkylineBuffers(env) {
+        aCtx.clearRect(0, 0, SIZE, SIZE);
+        eCtx.fillStyle = "#000000";
+        eCtx.fillRect(0, 0, SIZE, SIZE);
+
+        renderSkyAndAtmosphere(env);
+        renderBackgroundSkyline(env);
+        renderSWFC(env);
+        renderSlantedBlueTower(env);
+        renderShanghaiTower(env);
+        renderJinMao(env);
+        renderSunlitWhiteTower(env);
+        renderEmeraldTowers(env);
+        renderWhiteStripedCornerBox(env);
+        renderGoldHatTower(env);
+        renderAuroraPlaza(env);
+        renderOrientalPearl(env);
+        renderConventionCenter(env);
+        renderMuseumComplex(env);
+        renderWaterfrontAndLeftFerry(env);
+      }
+
+      // ================================================================
+      // WebGL1 光學著色器管線：多環 Bloom + 黃浦江菲涅爾水波折射
+      // ================================================================
+      function initWebGLOptics(canvas) {
+        const gl = canvas.getContext("webgl", { alpha: false, antialias: false, preserveDrawingBuffer: false });
+        if (!gl) return null;
+
+        const vsSrc = `
+          attribute vec2 aPos;
+          varying vec2 vUv;
+          void main() {
+            vUv = aPos * 0.5 + 0.5;
+            vUv.y = 1.0 - vUv.y;
+            gl_Position = vec4(aPos, 0.0, 1.0);
+          }
+        `;
+
+        const fsSrc = `
+          precision highp float;
+          varying vec2 vUv;
+
+          uniform sampler2D uAlbedo;
+          uniform sampler2D uEmissive;
+          uniform float uTheta;
+          uniform float uWaterY;
+          uniform float uNight;
+          uniform float uSunset;
+          uniform float uNeon;
+          uniform float uPeach;
+          uniform vec3 uRiverTop;
+          uniform vec3 uRiverBot;
+
+          // 多環柔焦光學泛光 (8方向 x 2半徑)
+          vec3 sampleBloom(vec2 uv, float spread) {
+            vec3 acc = texture2D(uEmissive, uv).rgb * 0.45;
+            for (int i = 0; i < 8; i++) {
+              float ang = float(i) * 0.78539816;
+              vec2 dir = vec2(cos(ang), sin(ang));
+              acc += texture2D(uEmissive, clamp(uv + dir * spread, 0.001, 0.999)).rgb * 0.14;
+              acc += texture2D(uEmissive, clamp(uv + dir * spread * 2.2, 0.001, 0.999)).rgb * 0.075;
+            }
+            return acc;
+          }
+
+          void main() {
+            vec2 uv = vUv;
+
+            // 水面以上：主景 + 光學泛光合成
+            if (uv.y < uWaterY) {
+              vec3 base = texture2D(uAlbedo, uv).rgb;
+              vec3 bloom = sampleBloom(uv, 0.0065);
+              float bloomGain = mix(0.65, 1.15, uNeon);
+              vec3 col = base + bloom * bloomGain;
+              gl_FragColor = vec4(col, 1.0);
+              return;
+            }
+
+            // 黃浦江水面區域 (uv.y >= uWaterY)
+            float depth = clamp((uv.y - uWaterY) / (1.0 - uWaterY), 0.0, 1.0);
+
+            // 嚴格整數諧波 (4, 7, 11) 驅動三層水波，確保 theta=0 與 theta=2pi 完全無縫
+            float w1 = sin(uv.y * 195.0 - uTheta * 4.0 + uv.x * 16.0);
+            float w2 = cos(uv.y * 340.0 + uTheta * 7.0 - uv.x * 28.0);
+            float w3 = sin(uv.y * 560.0 - uTheta * 11.0 + uv.x * 46.0);
+
+            float dx = (w1 * 0.0036 + w2 * 0.0019 + w3 * 0.0009) * (0.32 + depth * 1.45);
+            float dy = (w2 * 0.0045 + w3 * 0.0022) * (0.28 + depth * 1.05);
+
+            // 透視壓縮反射座標（越往畫面底部越映照高處摩天樓與天空）
+            float reflY = uWaterY - (uv.y - uWaterY) * 3.05 + dy;
+            vec2 reflUv = vec2(clamp(uv.x + dx, 0.002, 0.998), clamp(reflY, 0.004, uWaterY - 0.002));
+
+            vec3 reflScene = texture2D(uAlbedo, reflUv).rgb;
+
+            // 垂直拉長高光霓虹水波倒影 (5-tap 縱向柔化取樣 Emissive)
+            vec3 reflGlow = vec3(0.0);
+            for (int k = -2; k <= 2; k++) {
+              float ky = clamp(reflUv.y + float(k) * 0.022, 0.004, uWaterY - 0.002);
+              float kx = clamp(reflUv.x + dx * (1.0 + abs(float(k)) * 0.4), 0.002, 0.998);
+              reflGlow += texture2D(uEmissive, vec2(kx, ky)).rgb;
+            }
+            reflGlow *= 0.24;
+
+            // 江水基底漸層 + 菲涅爾反射混合
+            vec3 riverBase = mix(uRiverTop, uRiverBot, pow(depth, 0.85));
+            float fresnel = mix(0.54, 0.82, uNight) * (1.0 - depth * 0.42);
+            vec3 waterCol = mix(riverBase, reflScene, fresnel);
+
+            // 疊加拉絲夜間霓虹水波反光
+            float sparkle = 0.72 + 0.28 * sin(uv.y * 420.0 - uTheta * 7.0 + uv.x * 35.0);
+            waterCol += reflGlow * (0.65 + uNeon * 0.85) * sparkle * (1.0 - depth * 0.45);
+
+            // 原圖實測細節：左側江面午後暖蜜桃粉橘反光 (#e3a080)
+            float leftMask = exp(-pow((uv.x - 0.14) / 0.145, 2.0)) * exp(-pow((depth - 0.34) / 0.42, 2.0));
+            float peachWave = 0.65 + 0.35 * sin(uv.y * 280.0 - uTheta * 4.0 + uv.x * 20.0);
+            vec3 peachRgb = vec3(0.89, 0.63, 0.50);
+            waterCol = mix(waterCol, peachRgb, leftMask * peachWave * (uPeach * 0.34 + uSunset * 0.32));
+
+            // 表面微細波峰高光
+            float crest = smoothstep(0.68, 0.98, (w1 * 0.45 + w2 * 0.35 + w3 * 0.20));
+            vec3 crestTint = mix(vec3(0.75, 0.88, 1.0), vec3(1.0, 0.76, 0.58), uSunset);
+            crestTint = mix(crestTint, vec3(0.55, 0.74, 0.98), uNight);
+            waterCol += crestTint * crest * (0.075 + depth * 0.105);
+
+            // 緊貼堤岸水線處自然接觸暗影
+            float bankAo = smoothstep(0.0, 0.08, depth);
+            waterCol *= mix(0.58, 1.0, bankAo);
+
+            gl_FragColor = vec4(waterCol, 1.0);
+          }
+        `;
+
+        function compile(type, src) {
+          const sh = gl.createShader(type);
+          gl.shaderSource(sh, src);
+          gl.compileShader(sh);
+          if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+            console.warn("Shader compile error:", gl.getShaderInfoLog(sh));
+            return null;
+          }
+          return sh;
+        }
+
+        const vs = compile(gl.VERTEX_SHADER, vsSrc);
+        const fs = compile(gl.FRAGMENT_SHADER, fsSrc);
+        if (!vs || !fs) return null;
+
+        const prog = gl.createProgram();
+        gl.attachShader(prog, vs);
+        gl.attachShader(prog, fs);
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+
+        gl.useProgram(prog);
+
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+          gl.STATIC_DRAW
+        );
+        const locPos = gl.getAttribLocation(prog, "aPos");
+        gl.enableVertexAttribArray(locPos);
+        gl.vertexAttribPointer(locPos, 2, gl.FLOAT, false, 0, 0);
+
+        function createTex(unit) {
+          const tex = gl.createTexture();
+          gl.activeTexture(gl.TEXTURE0 + unit);
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          return tex;
+        }
+
+        const texAlbedo = createTex(0);
+        const texEmissive = createTex(1);
+
+        const u = {
+          albedo: gl.getUniformLocation(prog, "uAlbedo"),
+          emissive: gl.getUniformLocation(prog, "uEmissive"),
+          theta: gl.getUniformLocation(prog, "uTheta"),
+          waterY: gl.getUniformLocation(prog, "uWaterY"),
+          night: gl.getUniformLocation(prog, "uNight"),
+          sunset: gl.getUniformLocation(prog, "uSunset"),
+          neon: gl.getUniformLocation(prog, "uNeon"),
+          peach: gl.getUniformLocation(prog, "uPeach"),
+          riverTop: gl.getUniformLocation(prog, "uRiverTop"),
+          riverBot: gl.getUniformLocation(prog, "uRiverBot"),
+        };
+        gl.uniform1i(u.albedo, 0);
+        gl.uniform1i(u.emissive, 1);
+
+        return function drawWebGL(env) {
+          gl.viewport(0, 0, SIZE, SIZE);
+
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, texAlbedo);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, albedoCanvas);
+
+          gl.activeTexture(gl.TEXTURE1);
+          gl.bindTexture(gl.TEXTURE_2D, texEmissive);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, emissiveCanvas);
+
+          gl.uniform1f(u.theta, env.theta);
+          gl.uniform1f(u.waterY, WATER_NORM);
+          gl.uniform1f(u.night, env.night);
+          gl.uniform1f(u.sunset, env.sunset);
+          gl.uniform1f(u.neon, env.neon);
+          gl.uniform1f(u.peach, env.peach);
+          gl.uniform3f(u.riverTop, env.river0[0] / 255, env.river0[1] / 255, env.river0[2] / 255);
+          gl.uniform3f(u.riverBot, env.river1[0] / 255, env.river1[1] / 255, env.river1[2] / 255);
+
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+        };
+      }
+
+      // Canvas 2D 自動備援渲染器（若瀏覽器關閉硬體加速／WebGL）
+      function initFallback2D(canvas) {
+        const ctx2d = canvas.getContext("2d");
+        return function draw2D(env) {
+          ctx2d.clearRect(0, 0, SIZE, SIZE);
+          ctx2d.drawImage(albedoCanvas, 0, 0);
+          if (env.neon > 0.05 || env.glare > 0.05) {
+            ctx2d.save();
+            ctx2d.globalCompositeOperation = "screen";
+            ctx2d.drawImage(emissiveCanvas, 0, 0);
+            ctx2d.restore();
+          }
+
+          const waterH = SIZE - WATER_PX;
+          const wg = ctx2d.createLinearGradient(0, WATER_PX, 0, SIZE);
+          wg.addColorStop(0, css(env.river0));
+          wg.addColorStop(1, css(env.river1));
+          ctx2d.fillStyle = wg;
+          ctx2d.fillRect(0, WATER_PX, SIZE, waterH);
+
+          for (let dy = 0; dy < waterH; dy += 2) {
+            const depth = dy / waterH;
+            const sy = sat((WATER_PX - 2 - dy * 3.0) / SIZE) * SIZE;
+            const wx =
+              Math.sin(dy * 0.25 - env.theta * 4) * (2 + depth * 6) +
+              Math.cos(dy * 0.55 + env.theta * 7) * (1 + depth * 2.5);
+            ctx2d.globalAlpha = mix(0.55, 0.82, env.night) * (1 - depth * 0.5);
+            ctx2d.drawImage(albedoCanvas, 0, sy, SIZE, 3, wx, WATER_PX + dy, SIZE, 2);
+          }
+          ctx2d.globalAlpha = 1;
+        };
+      }
+
+      const presentFrame = initWebGLOptics(glCanvas) || initFallback2D(glCanvas);
+
+      // ================================================================
+      // 主循環與互動介面
+      // ================================================================
+      const clockReadout = document.getElementById("clockReadout");
+      const statusDot = document.getElementById("statusDot");
+      const timeline = document.getElementById("timeline");
+      const togglePlayBtn = document.getElementById("togglePlay");
+      const speedBtn = document.getElementById("cycleSpeed");
+      const uiToggle = document.getElementById("uiToggle");
+      const dock = document.getElementById("dock");
+      const topBar = document.getElementById("topBar");
+
+      const CYCLE_SECONDS = 36;
+      const SPEEDS = [0.5, 1.0, 2.0, 4.0];
+      let speedIndex = 1;
+      let playing = true;
+      let progress = 0.0; // t = 0.0 即原圖 16:45 午後晴空，無縫無限播放
+
+      function formatClock(t) {
+        const hrs = (16.75 + t * 24) % 24;
+        const h = Math.floor(hrs);
+        const m = Math.floor((hrs - h) * 60);
+        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+      }
+
+      let prevStamp = performance.now();
+      function tick(now) {
+        const dt = Math.min(0.1, (now - prevStamp) / 1000);
+        prevStamp = now;
+
+        if (playing) {
+          progress = (progress + (dt * SPEEDS[speedIndex]) / CYCLE_SECONDS) % 1;
+          timeline.value = Math.round(progress * 10000);
+        }
+
+        const env = evalAtmosphere(progress);
+        composeSkylineBuffers(env);
+        presentFrame(env);
+        renderForegroundWorkboat(env);
+
+        clockReadout.textContent = `${formatClock(progress)} · ${env.label}`;
+        statusDot.style.background = env.dot;
+        statusDot.style.boxShadow = `0 0 8px ${env.dot}`;
+
+        requestAnimationFrame(tick);
+      }
+
+      togglePlayBtn.addEventListener("click", () => {
+        playing = !playing;
+        togglePlayBtn.textContent = playing ? "暫停循環" : "繼續播放";
+      });
+
+      speedBtn.addEventListener("click", () => {
+        speedIndex = (speedIndex + 1) % SPEEDS.length;
+        speedBtn.textContent = `速度 ${SPEEDS[speedIndex].toFixed(1)}x`;
+      });
+
+      timeline.addEventListener("input", () => {
+        progress = Number(timeline.value) / 10000;
+      });
+
+      document.querySelectorAll("[data-jump]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          progress = Number(btn.getAttribute("data-jump"));
+          timeline.value = Math.round(progress * 10000);
+        });
+      });
+
+      function togglePureView() {
+        const hidden = dock.classList.toggle("is-hidden");
+        topBar.classList.toggle("is-hidden", hidden);
+        uiToggle.textContent = hidden ? "顯示控制 (H)" : "純享模式 (H)";
+      }
+      uiToggle.addEventListener("click", togglePureView);
+
+      window.addEventListener("keydown", (e) => {
+        if (e.code === "Space") {
+          e.preventDefault();
+          togglePlayBtn.click();
+        } else if (e.key === "h" || e.key === "H") {
+          togglePureView();
+        } else if (e.code === "ArrowRight") {
+          progress = (progress + 0.015) % 1;
+          timeline.value = Math.round(progress * 10000);
+        } else if (e.code === "ArrowLeft") {
+          progress = (progress - 0.015 + 1) % 1;
+          timeline.value = Math.round(progress * 10000);
+        }
+      });
+
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
