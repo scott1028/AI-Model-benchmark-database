@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shanghai Lujiazui Skyline - Infinite Day/Night Cycle</title>
+    <!-- Tailwind CSS for UI controls -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #090d16;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        /* Custom glassmorphism UI styling */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        .time-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            box-shadow: 0 0 10px #38bdf8;
+            transition: transform 0.1s ease;
+        }
+        .time-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="text-slate-100">
+
+    <!-- Canvas Rendering Container -->
+    <div id="canvas-container">
+        <canvas id="skylineCanvas"></canvas>
+    </div>
+
+    <!-- HUD Interface -->
+    <div class="relative z-10 flex flex-col justify-between h-full pointer-events-none p-4 md:p-6">
+        
+        <!-- Header / Title -->
+        <header class="flex justify-between items-start">
+            <div class="glass-panel rounded-2xl px-5 py-3 pointer-events-auto transition-all duration-300 hover:border-sky-500/40">
+                <div class="flex items-center gap-3">
+                    <span class="inline-block w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <div>
+                        <h1 class="text-base md:text-lg font-bold tracking-wide text-white">Shanghai Lujiazui (上海陸家嘴)</h1>
+                        <p class="text-xs text-slate-400">Infinite Day-Night Interactive Simulation</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Display Badge -->
+            <div class="glass-panel rounded-2xl px-5 py-3 pointer-events-auto flex items-center gap-3">
+                <i id="celestialIcon" class="fa-solid fa-sun text-amber-400 text-xl"></i>
+                <div class="text-right">
+                    <div id="clockDisplay" class="text-xl font-mono font-bold tracking-wider text-sky-300">12:00</div>
+                    <div id="phaseDisplay" class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Midday</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Bottom Controls Glass Bar -->
+        <footer class="w-full max-w-4xl mx-auto pointer-events-auto">
+            <div class="glass-panel rounded-3xl p-4 md:p-5 flex flex-col gap-4">
+                
+                <!-- Timeline Slider & Markers -->
+                <div class="w-full flex flex-col gap-1.5">
+                    <div class="flex justify-between text-xs text-slate-400 px-1 font-medium">
+                        <span><i class="fa-solid fa-moon text-indigo-400 mr-1"></i>00:00 (Night)</span>
+                        <span><i class="fa-solid fa-sun text-amber-400 mr-1"></i>06:00 (Dawn)</span>
+                        <span><i class="fa-solid fa-sun text-yellow-300 mr-1"></i>12:00 (Day)</span>
+                        <span><i class="fa-solid fa-sun-plant-wilt text-orange-400 mr-1"></i>18:00 (Sunset)</span>
+                        <span><i class="fa-solid fa-moon text-indigo-400 mr-1"></i>24:00</span>
+                    </div>
+                    <input type="range" id="timeSlider" min="0" max="1" step="0.001" value="0.25"
+                        class="time-slider w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400">
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-700/50">
+                    
+                    <!-- Playback Controls -->
+                    <div class="flex items-center gap-2">
+                        <button id="btnPlayPause" class="w-10 h-10 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold flex items-center justify-center transition-all shadow-lg shadow-sky-500/20 active:scale-95">
+                            <i class="fa-solid fa-pause text-base"></i>
+                        </button>
+
+                        <div class="flex rounded-xl bg-slate-900/80 p-1 border border-slate-700/60">
+                            <button data-speed="0.5" class="btn-speed px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">0.5x</button>
+                            <button data-speed="1" class="btn-speed px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/40 transition">1x</button>
+                            <button data-speed="2" class="btn-speed px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">2x</button>
+                            <button data-speed="5" class="btn-speed px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">5x</button>
+                        </div>
+                    </div>
+
+                    <!-- Preset Time Shortcuts -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto py-1">
+                        <button data-time="0.25" class="btn-preset px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-medium text-amber-300 border border-amber-500/20 flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-sun text-amber-400"></i> Day
+                        </button>
+                        <button data-time="0.48" class="btn-preset px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-medium text-orange-300 border border-orange-500/20 flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-cloud-sun text-orange-400"></i> Sunset
+                        </button>
+                        <button data-time="0.75" class="btn-preset px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-medium text-indigo-300 border border-indigo-500/20 flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-moon text-indigo-400"></i> Night
+                        </button>
+                        <button data-time="0.02" class="btn-preset px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-medium text-rose-300 border border-rose-500/20 flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-sun text-rose-400"></i> Dawn
+                        </button>
+                    </div>
+
+                    <!-- Visual Toggles -->
+                    <div class="flex items-center gap-2">
+                        <button id="btnToggleGlow" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 flex items-center gap-2 transition active:scale-95">
+                            <i class="fa-solid fa-wand-magic-sparkles text-sky-400"></i>
+                            <span id="glowText">Glow: ON</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Main Canvas Animation Logic -->
+    <script>
+        /**
+         * Shanghai Lujiazui Interactive Engine
+         * Rendered strictly via High-DPI HTML5 2D Canvas Context
+         */
+        (function() {
+            const canvas = document.getElementById('skylineCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // UI Elements
+            const timeSlider = document.getElementById('timeSlider');
+            const clockDisplay = document.getElementById('clockDisplay');
+            const phaseDisplay = document.getElementById('phaseDisplay');
+            const celestialIcon = document.getElementById('celestialIcon');
+            const btnPlayPause = document.getElementById('btnPlayPause');
+            const btnSpeedList = document.querySelectorAll('.btn-speed');
+            const btnPresetList = document.querySelectorAll('.btn-preset');
+            const btnToggleGlow = document.getElementById('btnToggleGlow');
+            const glowText = document.getElementById('glowText');
+
+            // Animation State
+            let isPlaying = true;
+            let cycleProgress = 0.25; // 0.0 to 1.0 (0.25 = 12:00 Noon)
+            let speedMultiplier = 1.0;
+            const BASE_CYCLE_DURATION_SEC = 90; // Seconds for full 24-hour cycle at 1x
+            let enableGlow = true;
+            let lastTimestamp = 0;
+
+            // Canvas & Layout Dimensions
+            let width = 0;
+            let height = 0;
+            let dpr = 1;
+            let baseScale = 1;
+
+            // Dynamic Entities
+            const stars = [];
+            const clouds = [];
+            let boatLeftX = 0;
+            let boatRightX = 0;
+
+            // Generate Stars
+            for (let i = 0; i < 220; i++) {
+                stars.push({
+                    x: Math.random(),
+                    y: Math.random() * 0.55,
+                    size: Math.random() * 1.8 + 0.5,
+                    alphaOffset: Math.random() * Math.PI * 2,
+                    speed: Math.random() * 2 + 1
+                });
+            }
+
+            // Generate Procedural Clouds
+            for (let i = 0; i < 6; i++) {
+                clouds.push({
+                    x: Math.random(),
+                    y: 0.08 + Math.random() * 0.2,
+                    scale: 0.6 + Math.random() * 0.8,
+                    speed: 0.005 + Math.random() * 0.01
+                });
+            }
+
+            // Resize Handler for Crisp High-DPI Rendering
+            function handleResize() {
+                dpr = window.devicePixelRatio || 1;
+                width = window.innerWidth;
+                height = window.innerHeight;
+
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+                ctx.scale(dpr, dpr);
+
+                // Base scaling relative to 1200x800 benchmark
+                baseScale = Math.min(width / 1200, height / 800);
+                if (baseScale < 0.6) baseScale = 0.6; // Floor scale for small screens
+            }
+
+            window.addEventListener('resize', handleResize);
+            handleResize();
+
+            // Color Interpolation Helper
+            function hexToRgb(hex) {
+                hex = hex.replace('#', '');
+                if (hex.length === 3) {
+                    hex = hex.split('').map(c => c + c).join('');
+                }
+                const num = parseInt(hex, 16);
+                return [num >> 16, (num >> 8) & 255, num & 255];
+            }
+
+            function interpolateColor(color1, color2, factor) {
+                const c1 = hexToRgb(color1);
+                const c2 = hexToRgb(color2);
+                const r = Math.round(c1[0] + factor * (c2[0] - c1[0]));
+                const g = Math.round(c1[1] + factor * (c2[1] - c1[1]));
+                const b = Math.round(c1[2] + factor * (c2[2] - c1[2]));
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+
+            // Multi-keyframe Color Palette Interpolator
+            function getPaletteColor(keyframes, t) {
+                t = (t % 1 + 1) % 1; // Normalize 0-1
+                for (let i = 0; i < keyframes.length - 1; i++) {
+                    const k1 = keyframes[i];
+                    const k2 = keyframes[i + 1];
+                    if (t >= k1.stop && t <= k2.stop) {
+                        const localFactor = (t - k1.stop) / (k2.stop - k1.stop);
+                        return interpolateColor(k1.color, k2.color, localFactor);
+                    }
+                }
+                return keyframes[0].color;
+            }
+
+            // Color Keyframe Sets
+            const skyTopKeyframes = [
+                { stop: 0.00, color: '#090d1a' }, // Midnight
+                { stop: 0.20, color: '#1e3a8a' }, // Dawn Blue
+                { stop: 0.25, color: '#1d4ed8' }, // Noon Bright Blue
+                { stop: 0.45, color: '#312e81' }, // Sunset Deep Purple
+                { stop: 0.55, color: '#4c1d95' }, // Dusk Violet
+                { stop: 0.70, color: '#090d1a' }, // Deep Night
+                { stop: 1.00, color: '#090d1a' }
+            ];
+
+            const skyHorizonKeyframes = [
+                { stop: 0.00, color: '#1e1b4b' }, // Midnight Horizon
+                { stop: 0.18, color: '#f43f5e' }, // Sunrise Pink/Red
+                { stop: 0.22, color: '#38bdf8' }, // Morning Sky Cyan
+                { stop: 0.25, color: '#7dd3fc' }, // Noon Cyan
+                { stop: 0.42, color: '#f97316' }, // Sunset Orange
+                { stop: 0.52, color: '#e11d48' }, // Dusk Crimson
+                { stop: 0.65, color: '#1e1b4b' }, // Night Horizon
+                { stop: 1.00, color: '#1e1b4b' }
+            ];
+
+            // Calculate Day/Night Factor (0 = Pure Day, 1 = Pure Night)
+            function getNightFactor(t) {
+                if (t >= 0.20 && t <= 0.40) return 0; // Pure Day
+                if (t >= 0.60 && t <= 0.95) return 1; // Pure Night
+                if (t > 0.40 && t < 0.60) {
+                    // Sunset transition
+                    return (t - 0.40) / 0.20;
+                }
+                // Dawn transition (0.95 to 0.20)
+                if (t > 0.95) return (1 - t) / 0.25;
+                return (0.20 - t) / 0.20;
+            }
+
+            // Core Drawing Logic
+            function render(time) {
+                ctx.clearRect(0, 0, width, height);
+
+                const nightFactor = getNightFactor(cycleProgress);
+
+                // River horizon level (65% down the screen)
+                const horizonY = height * 0.66;
+                const waterHeight = height - horizonY;
+
+                // 1. DRAW SKY GRADIENT
+                const skyGradient = ctx.createLinearGradient(0, 0, 0, horizonY);
+                skyGradient.addColorStop(0, getPaletteColor(skyTopKeyframes, cycleProgress));
+                skyGradient.addColorStop(1, getPaletteColor(skyHorizonKeyframes, cycleProgress));
+                ctx.fillStyle = skyGradient;
+                ctx.fillRect(0, 0, width, horizonY);
+
+                // 2. DRAW CELESTIAL BODIES (Sun & Moon)
+                drawCelestialBodies(horizonY, nightFactor);
+
+                // 3. DRAW STARS
+                if (nightFactor > 0.1) {
+                    ctx.save();
+                    for (const star of stars) {
+                        const starX = star.x * width;
+                        const starY = star.y * horizonY;
+                        const alpha = Math.min(1, nightFactor * 1.2) * (0.4 + 0.6 * Math.sin(time * 0.003 * star.speed + star.alphaOffset));
+                        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                        ctx.beginPath();
+                        ctx.arc(starX, starY, star.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                }
+
+                // 4. DRAW CLOUDS
+                drawClouds(horizonY, nightFactor);
+
+                // 5. DRAW BACKGROUND MOUNTAINS & FAR SKYSCRAPERS
+                drawBackgroundBuildings(horizonY, nightFactor);
+
+                // 6. DRAW MAIN SKYLINE BUILDINGS
+                drawMainSkyline(horizonY, nightFactor, time);
+
+                // 7. DRAW WATERFRONT EMBANKMENT & TREES
+                drawWaterfront(horizonY, nightFactor);
+
+                // 8. DRAW HUANGPU RIVER & WATER REFLECTIONS
+                drawHuangpuRiver(horizonY, waterHeight, nightFactor, time);
+
+                // 9. DRAW BOATS & WATER TRAFFIC
+                drawBoats(horizonY, nightFactor, time);
+            }
+
+            // Draw Celestial Arc (Sun & Moon)
+            function drawCelestialBodies(horizonY, nightFactor) {
+                ctx.save();
+                // Sun path: 0.15 (Dawn) to 0.50 (Sunset)
+                if (cycleProgress >= 0.12 && cycleProgress <= 0.53) {
+                    const sunProgress = (cycleProgress - 0.12) / 0.41;
+                    const sunX = width * (0.05 + sunProgress * 0.9);
+                    const sunY = horizonY - Math.sin(sunProgress * Math.PI) * (horizonY * 0.75);
+
+                    // Sun Glow
+                    if (enableGlow) {
+                        const sunGlow = ctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, 90);
+                        sunGlow.addColorStop(0, 'rgba(254, 240, 138, 0.9)');
+                        sunGlow.addColorStop(0.3, 'rgba(251, 146, 60, 0.4)');
+                        sunGlow.addColorStop(1, 'rgba(251, 146, 60, 0)');
+                        ctx.fillStyle = sunGlow;
+                        ctx.beginPath();
+                        ctx.arc(sunX, sunY, 90, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Sun Disc
+                    ctx.fillStyle = '#fffdf0';
+                    ctx.beginPath();
+                    ctx.arc(sunX, sunY, 22 * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Moon path: 0.58 (Rising) to 0.98 (Setting)
+                if (cycleProgress >= 0.55 || cycleProgress <= 0.10) {
+                    let moonProgress = 0;
+                    if (cycleProgress >= 0.55) {
+                        moonProgress = (cycleProgress - 0.55) / 0.50;
+                    } else {
+                        moonProgress = (cycleProgress + 0.45) / 0.50;
+                    }
+
+                    const moonX = width * (0.05 + moonProgress * 0.9);
+                    const moonY = horizonY - Math.sin(moonProgress * Math.PI) * (horizonY * 0.7);
+
+                    if (enableGlow) {
+                        const moonGlow = ctx.createRadialGradient(moonX, moonY, 5, moonX, moonY, 50);
+                        moonGlow.addColorStop(0, 'rgba(224, 242, 254, 0.6)');
+                        moonGlow.addColorStop(1, 'rgba(186, 230, 253, 0)');
+                        ctx.fillStyle = moonGlow;
+                        ctx.beginPath();
+                        ctx.arc(moonX, moonY, 50, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Crescent Moon Disc
+                    ctx.fillStyle = '#f0f9ff';
+                    ctx.beginPath();
+                    ctx.arc(moonX, moonY, 16 * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Moon shadow for realistic crescent
+                    ctx.fillStyle = getPaletteColor(skyTopKeyframes, cycleProgress);
+                    ctx.beginPath();
+                    ctx.arc(moonX + 6 * baseScale, moonY - 3 * baseScale, 14 * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            // Draw Clouds
+            function drawClouds(horizonY, nightFactor) {
+                ctx.save();
+                for (const cloud of clouds) {
+                    cloud.x += cloud.speed * 0.05;
+                    if (cloud.x > 1.2) cloud.x = -0.2;
+
+                    const cx = cloud.x * width;
+                    const cy = cloud.y * horizonY;
+                    const cSize = 35 * cloud.scale * baseScale;
+
+                    ctx.fillStyle = nightFactor > 0.5 
+                        ? `rgba(30, 41, 59, ${0.35 - nightFactor * 0.15})` 
+                        : `rgba(255, 255, 255, ${0.55 - nightFactor * 0.3})`;
+
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, cSize, 0, Math.PI * 2);
+                    ctx.arc(cx + cSize * 0.7, cy - cSize * 0.2, cSize * 0.8, 0, Math.PI * 2);
+                    ctx.arc(cx + cSize * 1.4, cy, cSize * 0.7, 0, Math.PI * 2);
+                    ctx.arc(cx - cSize * 0.6, cy + cSize * 0.1, cSize * 0.6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            // Background Distance Layer (Silhouette Office Towers)
+            function drawBackgroundBuildings(horizonY, nightFactor) {
+                ctx.save();
+                // Distant left building stack
+                const bgScale = baseScale;
+
+                // Color tint adaptation
+                const dayBg = '#64748b';
+                const nightBg = '#0f172a';
+                ctx.fillStyle = interpolateColor(dayBg, nightBg, nightFactor);
+
+                // Distant towers far left
+                ctx.fillRect(width * 0.01, horizonY - 260 * bgScale, 55 * bgScale, 260 * bgScale);
+                ctx.fillRect(width * 0.05, horizonY - 310 * bgScale, 70 * bgScale, 310 * bgScale);
+                ctx.fillRect(width * 0.11, horizonY - 220 * bgScale, 60 * bgScale, 220 * bgScale);
+
+                // Distant background right towers
+                ctx.fillRect(width * 0.78, horizonY - 280 * bgScale, 65 * bgScale, 280 * bgScale);
+                ctx.fillRect(width * 0.88, horizonY - 330 * bgScale, 80 * bgScale, 330 * bgScale);
+
+                // Windows in background buildings at night
+                if (nightFactor > 0.3) {
+                    ctx.fillStyle = `rgba(253, 224, 71, ${nightFactor * 0.4})`;
+                    for (let y = horizonY - 300 * bgScale; y < horizonY - 20; y += 18 * bgScale) {
+                        if (Math.random() > 0.4) {
+                            ctx.fillRect(width * 0.055, y, 12 * bgScale, 8 * bgScale);
+                            ctx.fillRect(width * 0.08, y, 12 * bgScale, 8 * bgScale);
+                        }
+                    }
+                }
+                ctx.restore();
+            }
+
+            // Main Detailed Skyline Renderer
+            function drawMainSkyline(horizonY, nightFactor, time) {
+                ctx.save();
+
+                // -------------------------------------------------------------
+                // A. LEFT SKYSCRAPERS (Behind Oriental Pearl)
+                // -------------------------------------------------------------
+                const leftBankX = width * 0.02;
+                const leftTowerWidth = 110 * baseScale;
+                const leftTowerHeight = 420 * baseScale;
+                const leftTowerY = horizonY - leftTowerHeight;
+
+                // Day / Night base building colors
+                const bldgBaseDay = '#94a3b8';
+                const bldgBaseNight = '#1e293b';
+                const mainBldgColor = interpolateColor(bldgBaseDay, bldgBaseNight, nightFactor);
+
+                // Building body
+                ctx.fillStyle = mainBldgColor;
+                ctx.fillRect(leftBankX, leftTowerY, leftTowerWidth, leftTowerHeight);
+
+                // Vertical window grids
+                ctx.fillStyle = nightFactor > 0.4 
+                    ? `rgba(254, 240, 138, ${nightFactor * 0.7})` 
+                    : `rgba(226, 232, 240, 0.4)`;
+                
+                const cols = 5;
+                const rows = 22;
+                const cw = leftTowerWidth / (cols * 2);
+                const rh = leftTowerHeight / (rows * 1.5);
+
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        // Pseudo window light pattern
+                        if (nightFactor < 0.4 || (r + c + Math.floor(time * 0.0002)) % 3 !== 0) {
+                            ctx.fillRect(
+                                leftBankX + 10 * baseScale + c * (cw * 1.8), 
+                                leftTowerY + 20 * baseScale + r * (rh * 1.3), 
+                                cw, 
+                                rh
+                            );
+                        }
+                    }
+                }
+
+                // Roof sign on left tower
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(leftBankX + 15 * baseScale, leftTowerY - 14 * baseScale, 80 * baseScale, 14 * baseScale);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${Math.max(9, 10 * baseScale)}px sans-serif`;
+                ctx.fillText('震旦大廈', leftBankX + 22 * baseScale, leftTowerY - 3 * baseScale);
+
+
+                // -------------------------------------------------------------
+                // B. BANK OF COMMUNICATIONS TOWER (Mid-Left Curved Blue Glass Tower)
+                // -------------------------------------------------------------
+                const bocomX = width * 0.28;
+                const bocomW = 85 * baseScale;
+                const bocomH = 340 * baseScale;
+                const bocomY = horizonY - bocomH;
+
+                ctx.fillStyle = interpolateColor('#3b82f6', '#0f172a', nightFactor * 0.7);
+                ctx.beginPath();
+                ctx.moveTo(bocomX, horizonY);
+                ctx.lineTo(bocomX, bocomY + 40 * baseScale);
+                // Slanted top cut
+                ctx.lineTo(bocomX + bocomW, bocomY);
+                ctx.lineTo(bocomX + bocomW, horizonY);
+                ctx.closePath();
+                ctx.fill();
+
+                // Diagonal facade stripes
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 + nightFactor * 0.2})`;
+                ctx.lineWidth = 2 * baseScale;
+                ctx.beginPath();
+                for (let y = bocomY + 20; y < horizonY; y += 30 * baseScale) {
+                    ctx.moveTo(bocomX, y);
+                    ctx.lineTo(bocomX + bocomW, y - 20 * baseScale);
+                }
+                ctx.stroke();
+
+
+                // -------------------------------------------------------------
+                // C. SHANGHAI INTERNATIONAL CONVENTION CENTER (Center-Left Globes & Colonnade)
+                // -------------------------------------------------------------
+                const ccX = width * 0.12;
+                const ccW = 420 * baseScale;
+                const ccH = 140 * baseScale;
+                const ccY = horizonY - ccH;
+
+                // Main neoclassical colonnade building
+                ctx.fillStyle = interpolateColor('#e2e8f0', '#334155', nightFactor);
+                ctx.fillRect(ccX + 50 * baseScale, ccY + 30 * baseScale, ccW - 100 * baseScale, ccH - 30 * baseScale);
+
+                // Colonnade Arches
+                const archCount = 12;
+                const archW = (ccW - 120 * baseScale) / archCount;
+                ctx.fillStyle = nightFactor > 0.3 
+                    ? `rgba(251, 191, 36, ${0.85 * nightFactor})` 
+                    : '#cbd5e1';
+
+                for (let i = 0; i < archCount; i++) {
+                    const ax = ccX + 60 * baseScale + i * archW;
+                    const ay = ccY + 50 * baseScale;
+                    ctx.fillRect(ax + 2, ay, archW - 4, ccH - 55 * baseScale);
+                }
+
+                // Left Glass Globe
+                const g1Radius = 55 * baseScale;
+                const g1X = ccX + 55 * baseScale;
+                const g1Y = ccY + 55 * baseScale;
+
+                const glob1Grad = ctx.createRadialGradient(g1X - 15, g1Y - 15, 5, g1X, g1Y, g1Radius);
+                glob1Grad.addColorStop(0, '#60a5fa');
+                glob1Grad.addColorStop(0.7, nightFactor > 0.5 ? '#1d4ed8' : '#2563eb');
+                glob1Grad.addColorStop(1, '#1e3a8a');
+                ctx.fillStyle = glob1Grad;
+                ctx.beginPath();
+                ctx.arc(g1X, g1Y, g1Radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Left Globe Lat/Long Lines
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 + nightFactor * 0.3})`;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(g1X, g1Y, g1Radius, 0, Math.PI * 2);
+                ctx.ellipse(g1X, g1Y, g1Radius, g1Radius * 0.4, 0, 0, Math.PI * 2);
+                ctx.ellipse(g1X, g1Y, g1Radius * 0.5, g1Radius, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Right Globe (World Map Globe)
+                const g2Radius = 58 * baseScale;
+                const g2X = ccX + ccW - 55 * baseScale;
+                const g2Y = ccY + 55 * baseScale;
+
+                const glob2Grad = ctx.createRadialGradient(g2X - 15, g2Y - 15, 5, g2X, g2Y, g2Radius);
+                glob2Grad.addColorStop(0, '#34d399');
+                glob2Grad.addColorStop(0.6, nightFactor > 0.5 ? '#059669' : '#10b981');
+                glob2Grad.addColorStop(1, '#064e3b');
+                ctx.fillStyle = glob2Grad;
+                ctx.beginPath();
+                ctx.arc(g2X, g2Y, g2Radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Right Globe Continent Map Highlights
+                ctx.fillStyle = `rgba(252, 211, 77, ${0.7 + nightFactor * 0.3})`;
+                ctx.beginPath();
+                // Map continent shapes (procedural visual representation)
+                ctx.arc(g2X - 10 * baseScale, g2Y - 10 * baseScale, 18 * baseScale, 0, Math.PI * 2);
+                ctx.arc(g2X + 15 * baseScale, g2Y + 5 * baseScale, 14 * baseScale, 0, Math.PI * 2);
+                ctx.arc(g2X - 5 * baseScale, g2Y + 20 * baseScale, 12 * baseScale, 0, Math.PI * 2);
+                ctx.fill();
+
+
+                // -------------------------------------------------------------
+                // D. JIN MAO TOWER (金茂大廈 - Pagoda Stepped Spire)
+                // -------------------------------------------------------------
+                const jmX = width * 0.64;
+                const jmW = 90 * baseScale;
+                const jmH = 520 * baseScale;
+                const jmY = horizonY - jmH;
+
+                ctx.save();
+                // Tiered pagoda steps drawing
+                const tiers = 12;
+                let currentY = horizonY;
+                let currentW = jmW;
+                const tierH = jmH / tiers;
+
+                for (let t = 0; t < tiers; t++) {
+                    currentY -= tierH;
+                    currentW *= 0.94; // Narrows as it ascends
+                    const tx = jmX + (jmW - currentW) / 2;
+
+                    ctx.fillStyle = interpolateColor('#94a3b8', '#1e293b', nightFactor);
+                    ctx.fillRect(tx, currentY, currentW, tierH + 1);
+
+                    // Pagoda edge roof accents
+                    ctx.fillStyle = nightFactor > 0.4 ? '#fbbf24' : '#cbd5e1';
+                    ctx.fillRect(tx - 2, currentY, currentW + 4, 3 * baseScale);
+
+                    // Window lights in Jin Mao
+                    if (nightFactor > 0.3) {
+                        ctx.fillStyle = `rgba(253, 224, 71, ${nightFactor * 0.75})`;
+                        ctx.fillRect(tx + 4, currentY + 6, currentW - 8, tierH - 10);
+                    }
+                }
+
+                // Jin Mao Metallic Spire Top
+                const jmSpireX = jmX + jmW / 2;
+                ctx.strokeStyle = nightFactor > 0.4 ? '#fef08a' : '#94a3b8';
+                ctx.lineWidth = 3 * baseScale;
+                ctx.beginPath();
+                ctx.moveTo(jmSpireX, jmY);
+                ctx.lineTo(jmSpireX, jmY - 45 * baseScale);
+                ctx.stroke();
+
+                if (enableGlow && nightFactor > 0.4) {
+                    ctx.fillStyle = 'rgba(251, 191, 36, 0.8)';
+                    ctx.beginPath();
+                    ctx.arc(jmSpireX, jmY - 45 * baseScale, 6 * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+
+
+                // -------------------------------------------------------------
+                // E. SHANGHAI WORLD FINANCIAL CENTER (SWFC - 環球金融中心 "Bottle Opener")
+                // -------------------------------------------------------------
+                const swfcX = width * 0.56;
+                const swfcW = 105 * baseScale;
+                const swfcH = 590 * baseScale;
+                const swfcY = horizonY - swfcH;
+
+                ctx.save();
+                // Tapered glass body
+                const swfcGrad = ctx.createLinearGradient(swfcX, swfcY, swfcX + swfcW, horizonY);
+                swfcGrad.addColorStop(0, interpolateColor('#1e40af', '#0f172a', nightFactor * 0.8));
+                swfcGrad.addColorStop(1, interpolateColor('#3b82f6', '#1e293b', nightFactor * 0.8));
+
+                ctx.fillStyle = swfcGrad;
+                ctx.beginPath();
+                ctx.moveTo(swfcX + 15 * baseScale, swfcY);
+                ctx.lineTo(swfcX + swfcW - 15 * baseScale, swfcY);
+                ctx.lineTo(swfcX + swfcW, horizonY);
+                ctx.lineTo(swfcX, horizonY);
+                ctx.closePath();
+                ctx.fill();
+
+                // Trapezoidal Aperture Cutout at Top
+                const holeW = 42 * baseScale;
+                const holeH = 45 * baseScale;
+                const holeX = swfcX + (swfcW - holeW) / 2;
+                const holeY = swfcY + 30 * baseScale;
+
+                // Cut out trapezoid using sky gradient background
+                ctx.fillStyle = getPaletteColor(skyHorizonKeyframes, cycleProgress);
+                ctx.beginPath();
+                ctx.moveTo(holeX + 5, holeY);
+                ctx.lineTo(holeX + holeW - 5, holeY);
+                ctx.lineTo(holeX + holeW, holeY + holeH);
+                ctx.lineTo(holeX, holeY + holeH);
+                ctx.closePath();
+                ctx.fill();
+
+                // SWFC Night Aperture Frame Glow
+                if (nightFactor > 0.3) {
+                    ctx.strokeStyle = `rgba(56, 189, 248, ${nightFactor})`;
+                    ctx.lineWidth = 3 * baseScale;
+                    ctx.strokeRect(holeX - 2, holeY - 2, holeW + 4, holeH + 4);
+                }
+                ctx.restore();
+
+
+                // -------------------------------------------------------------
+                // F. SHANGHAI TOWER (上海中心大廈 - Twisting Spiral Skyscraper)
+                // -------------------------------------------------------------
+                const stX = width * 0.82;
+                const stW = 125 * baseScale;
+                const stH = 680 * baseScale; // Tallest structure
+                const stY = horizonY - stH;
+
+                ctx.save();
+                // Outer spiral double-skin glass curtain wall
+                const stGrad = ctx.createLinearGradient(stX, stY, stX + stW, horizonY);
+                stGrad.addColorStop(0, interpolateColor('#38bdf8', '#090d16', nightFactor * 0.85));
+                stGrad.addColorStop(0.5, interpolateColor('#0284c7', '#0f172a', nightFactor * 0.85));
+                stGrad.addColorStop(1, interpolateColor('#0369a1', '#1e293b', nightFactor * 0.85));
+
+                ctx.fillStyle = stGrad;
+                
+                // Draw rounded twisting cylinder silhouette
+                ctx.beginPath();
+                ctx.moveTo(stX + 25 * baseScale, stY);
+                ctx.quadraticCurveTo(stX + stW + 10, stY + stH * 0.3, stX + stW, horizonY);
+                ctx.lineTo(stX, horizonY);
+                ctx.quadraticCurveTo(stX - 10, stY + stH * 0.4, stX + 25 * baseScale, stY);
+                ctx.closePath();
+                ctx.fill();
+
+                // Spiral LED Ribbons climbing the tower
+                ctx.strokeStyle = nightFactor > 0.3 
+                    ? `rgba(56, 189, 248, ${0.85 * nightFactor})` 
+                    : 'rgba(255, 255, 255, 0.25)';
+                ctx.lineWidth = 2.5 * baseScale;
+
+                ctx.beginPath();
+                const spiralTurns = 9;
+                for (let i = 0; i < spiralTurns; i++) {
+                    const sy = stY + (stH / spiralTurns) * i;
+                    const offset = Math.sin(time * 0.002 + i) * 10 * baseScale;
+                    ctx.moveTo(stX + 5, sy);
+                    ctx.bezierCurveTo(stX + stW * 0.5 + offset, sy + 20, stX + stW * 0.8, sy + 35, stX + stW - 5, sy + 45);
+                }
+                ctx.stroke();
+
+                // Mechanical Floor Bands
+                ctx.fillStyle = nightFactor > 0.4 ? 'rgba(250, 204, 21, 0.9)' : 'rgba(203, 213, 225, 0.5)';
+                for (let b = 1; b < 6; b++) {
+                    const bandY = stY + (stH / 6) * b;
+                    ctx.fillRect(stX + 8, bandY, stW - 16, 6 * baseScale);
+                }
+
+                // Shanghai Tower Crown Spire
+                ctx.fillStyle = nightFactor > 0.4 ? '#38bdf8' : '#94a3b8';
+                ctx.fillRect(stX + stW / 2 - 4, stY - 25 * baseScale, 8 * baseScale, 25 * baseScale);
+                ctx.restore();
+
+
+                // -------------------------------------------------------------
+                // G. SURROUNDING RIGHT MIDGROUND BUILDINGS
+                // -------------------------------------------------------------
+                // Traditional brown/gold roofed tower in front of Jin Mao
+                const tradX = width * 0.71;
+                const tradW = 75 * baseScale;
+                const tradH = 260 * baseScale;
+                const tradY = horizonY - tradH;
+
+                ctx.fillStyle = interpolateColor('#b45309', '#451a03', nightFactor);
+                ctx.fillRect(tradX, tradY, tradW, tradH);
+                // Chinese traditional layered eaves
+                ctx.fillStyle = nightFactor > 0.4 ? '#f59e0b' : '#78350f';
+                for (let e = 0; e < 5; e++) {
+                    const ey = tradY + e * 45 * baseScale;
+                    ctx.fillRect(tradX - 6, ey, tradW + 12, 6 * baseScale);
+                }
+
+                // White gridded cubic building (far right)
+                const cubeX = width * 0.77;
+                const cubeW = 100 * baseScale;
+                const cubeH = 190 * baseScale;
+                const cubeY = horizonY - cubeH;
+
+                ctx.fillStyle = interpolateColor('#f8fafc', '#1e293b', nightFactor);
+                ctx.fillRect(cubeX, cubeY, cubeW, cubeH);
+
+                // Grid windows
+                ctx.fillStyle = nightFactor > 0.3 ? '#fef08a' : '#94a3b8';
+                for (let gx = cubeX + 8; gx < cubeX + cubeW - 10; gx += 14 * baseScale) {
+                    for (let gy = cubeY + 10; gy < cubeY + cubeH - 10; gy += 16 * baseScale) {
+                        ctx.fillRect(gx, gy, 8 * baseScale, 10 * baseScale);
+                    }
+                }
+
+                // Green low-rise glass pavilion on far right
+                const pavX = width * 0.88;
+                const pavW = 110 * baseScale;
+                const pavH = 130 * baseScale;
+                const pavY = horizonY - pavH;
+
+                ctx.fillStyle = interpolateColor('#10b981', '#064e3b', nightFactor * 0.7);
+                ctx.fillRect(pavX, pavY, pavW, pavH);
+
+
+                // -------------------------------------------------------------
+                // H. ORIENTAL PEARL TOWER (東方明珠廣播電視塔 - Foreground Left Star)
+                // -------------------------------------------------------------
+                const optX = width * 0.14; // Center column position
+                const optH = 620 * baseScale;
+                const optBaseY = horizonY;
+                const optTopY = optBaseY - optH;
+
+                ctx.save();
+
+                // Dynamic LED Color Cycle for Night Pearl Tower
+                const ledHue = (time * 0.03) % 360;
+                const pearlSphereColor = nightFactor > 0.3
+                    ? `hsla(${ledHue}, 90%, 60%, ${nightFactor})`
+                    : '#ec4899'; // Daytime pinkish-red
+
+                const sphereGlowColor = nightFactor > 0.3
+                    ? `hsla(${ledHue}, 90%, 65%, ${nightFactor * 0.8})`
+                    : 'rgba(236, 72, 153, 0.4)';
+
+                // 1. Three Slanted Legs at Base
+                ctx.strokeStyle = interpolateColor('#94a3b8', '#334155', nightFactor);
+                ctx.lineWidth = 10 * baseScale;
+                ctx.beginPath();
+                ctx.moveTo(optX - 70 * baseScale, optBaseY);
+                ctx.lineTo(optX - 25 * baseScale, optBaseY - 140 * baseScale);
+
+                ctx.moveTo(optX + 70 * baseScale, optBaseY);
+                ctx.lineTo(optX + 25 * baseScale, optBaseY - 140 * baseScale);
+
+                ctx.moveTo(optX, optBaseY);
+                ctx.lineTo(optX, optBaseY - 140 * baseScale);
+                ctx.stroke();
+
+                // Small sphere on lower left leg
+                ctx.fillStyle = pearlSphereColor;
+                ctx.beginPath();
+                ctx.arc(optX - 52 * baseScale, optBaseY - 50 * baseScale, 14 * baseScale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 2. Lower Large Sphere
+                const lowerR = 52 * baseScale;
+                const lowerY = optBaseY - 190 * baseScale;
+
+                // Sphere gradient (3D metallic look)
+                const lowerGrad = ctx.createRadialGradient(optX - 15, lowerY - 15, 5, optX, lowerY, lowerR);
+                lowerGrad.addColorStop(0, '#f472b6');
+                lowerGrad.addColorStop(0.5, pearlSphereColor);
+                lowerGrad.addColorStop(1, '#831843');
+
+                if (enableGlow && nightFactor > 0.3) {
+                    ctx.shadowColor = sphereGlowColor;
+                    ctx.shadowBlur = 25 * baseScale;
+                }
+
+                ctx.fillStyle = lowerGrad;
+                ctx.beginPath();
+                ctx.arc(optX, lowerY, lowerR, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0; // Reset shadow
+
+                // Geodesic Grid Lines on Lower Sphere
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.35 + nightFactor * 0.4})`;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.ellipse(optX, lowerY, lowerR, lowerR * 0.4, 0, 0, Math.PI * 2);
+                ctx.ellipse(optX, lowerY, lowerR * 0.5, lowerR, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Metallic Center Belt Ring on Lower Sphere
+                ctx.fillStyle = '#cbd5e1';
+                ctx.fillRect(optX - lowerR - 2, lowerY - 4 * baseScale, (lowerR * 2) + 4, 8 * baseScale);
+
+                // 3. Three Vertical Columns & 5 Spacer Rings/Pods
+                const colW = 7 * baseScale;
+                const colH = 200 * baseScale;
+                const colTopY = lowerY - colH;
+
+                ctx.fillStyle = interpolateColor('#cbd5e1', '#475569', nightFactor);
+                ctx.fillRect(optX - 25 * baseScale, colTopY, colW, colH);
+                ctx.fillRect(optX - 3.5 * baseScale, colTopY, colW, colH);
+                ctx.fillRect(optX + 18 * baseScale, colTopY, colW, colH);
+
+                // 5 Horizontal Spacer Rings
+                ctx.fillStyle = nightFactor > 0.4 ? '#fef08a' : '#e2e8f0';
+                for (let s = 1; s <= 5; s++) {
+                    const sy = lowerY - (colH / 6) * s;
+                    ctx.fillRect(optX - 30 * baseScale, sy, 60 * baseScale, 6 * baseScale);
+                }
+
+                // 4. Upper Medium Sphere
+                const upperR = 36 * baseScale;
+                const upperY = colTopY - upperR + 5;
+
+                const upperGrad = ctx.createRadialGradient(optX - 10, upperY - 10, 4, optX, upperY, upperR);
+                upperGrad.addColorStop(0, '#f472b6');
+                upperGrad.addColorStop(0.5, pearlSphereColor);
+                upperGrad.addColorStop(1, '#9d174d');
+
+                if (enableGlow && nightFactor > 0.3) {
+                    ctx.shadowColor = sphereGlowColor;
+                    ctx.shadowBlur = 20 * baseScale;
+                }
+
+                ctx.fillStyle = upperGrad;
+                ctx.beginPath();
+                ctx.arc(optX, upperY, upperR, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Lattice grid upper sphere
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 + nightFactor * 0.3})`;
+                ctx.beginPath();
+                ctx.ellipse(optX, upperY, upperR, upperR * 0.35, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // 5. Space Capsule Top & Antenna Spire
+                const capY = upperY - upperR - 35 * baseScale;
+                ctx.fillStyle = interpolateColor('#e2e8f0', '#334155', nightFactor);
+                ctx.fillRect(optX - 10 * baseScale, capY, 20 * baseScale, 35 * baseScale);
+
+                // Tiny Top Sphere
+                ctx.fillStyle = pearlSphereColor;
+                ctx.beginPath();
+                ctx.arc(optX, capY - 8 * baseScale, 10 * baseScale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Antenna Spire
+                ctx.strokeStyle = nightFactor > 0.3 ? '#38bdf8' : '#64748b';
+                ctx.lineWidth = 3 * baseScale;
+                ctx.beginPath();
+                ctx.moveTo(optX, capY - 18 * baseScale);
+                ctx.lineTo(optX, optTopY);
+                ctx.stroke();
+
+                // Aviation Flashing Red Light on Antenna Tip
+                const flash = Math.sin(time * 0.008) > 0;
+                ctx.fillStyle = flash ? '#ef4444' : '#7f1d1d';
+                ctx.beginPath();
+                ctx.arc(optX, optTopY, 4 * baseScale, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (flash && enableGlow) {
+                    ctx.fillStyle = 'rgba(239, 68, 68, 0.6)';
+                    ctx.beginPath();
+                    ctx.arc(optX, optTopY, 12 * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+
+            // Waterfront & Lush Embankment Trees
+            function drawWaterfront(horizonY, nightFactor) {
+                ctx.save();
+                const bankH = 18 * baseScale;
+                const bankY = horizonY - bankH / 2;
+
+                // Granite Embankment Wall
+                ctx.fillStyle = interpolateColor('#475569', '#0f172a', nightFactor);
+                ctx.fillRect(0, bankY, width, bankH);
+
+                // Promenade Railing
+                ctx.strokeStyle = interpolateColor('#cbd5e1', '#334155', nightFactor);
+                ctx.lineWidth = 2 * baseScale;
+                ctx.beginPath();
+                ctx.moveTo(0, bankY);
+                ctx.lineTo(width, bankY);
+                ctx.stroke();
+
+                // Left Bank Trees (Lush Summer Green)
+                const greenTreeColor = interpolateColor('#15803d', '#052e16', nightFactor * 0.7);
+                for (let x = 10; x < width * 0.45; x += 22 * baseScale) {
+                    ctx.fillStyle = greenTreeColor;
+                    ctx.beginPath();
+                    ctx.arc(x, bankY - 6 * baseScale, (12 + Math.sin(x) * 4) * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Right Bank Trees (Autumn Red / Orange Foliage as seen in photo)
+                for (let x = width * 0.48; x < width - 10; x += 20 * baseScale) {
+                    const isOrange = Math.sin(x) > 0;
+                    const autumnColor = isOrange ? '#c2410c' : '#b91c1c';
+                    ctx.fillStyle = interpolateColor(autumnColor, '#451a03', nightFactor * 0.7);
+                    ctx.beginPath();
+                    ctx.arc(x, bankY - 6 * baseScale, (11 + Math.cos(x) * 4) * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Red Navigation Buoy on Right Side of River
+                const buoyX = width * 0.88;
+                const buoyY = horizonY + 25 * baseScale;
+                ctx.fillStyle = '#dc2626';
+                ctx.beginPath();
+                ctx.arc(buoyX, buoyY, 7 * baseScale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Buoy Flashing Light
+                ctx.fillStyle = Math.sin(Date.now() * 0.005) > 0 ? '#fef08a' : '#854d0e';
+                ctx.fillRect(buoyX - 2, buoyY - 12 * baseScale, 4 * baseScale, 5 * baseScale);
+
+                ctx.restore();
+            }
+
+            // Huangpu River Animated Water & Dynamic City Reflections
+            function drawHuangpuRiver(horizonY, waterHeight, nightFactor, time) {
+                ctx.save();
+
+                // Water Surface Gradient
+                const waterGrad = ctx.createLinearGradient(0, horizonY, 0, height);
+                const dayWater = '#2563eb';
+                const nightWater = '#030712';
+                const horizonWater = interpolateColor('#38bdf8', '#0f172a', nightFactor);
+                const bottomWater = interpolateColor(dayWater, nightWater, nightFactor);
+
+                waterGrad.addColorStop(0, horizonWater);
+                waterGrad.addColorStop(1, bottomWater);
+
+                ctx.fillStyle = waterGrad;
+                ctx.fillRect(0, horizonY, width, waterHeight);
+
+                // DYNAMIC VERTICAL LIGHT PILLAR REFLECTIONS (Night City Lights Shimmer)
+                if (nightFactor > 0.15) {
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'screen';
+
+                    const ledHue = (time * 0.03) % 360;
+                    const reflections = [
+                        // Oriental Pearl Pink Light Streak
+                        { x: width * 0.14, w: 90 * baseScale, color: `hsla(${ledHue}, 90%, 60%, ${nightFactor * 0.45})` },
+                        // Convention Center Gold Streak
+                        { x: width * 0.22, w: 180 * baseScale, color: `rgba(251, 191, 36, ${nightFactor * 0.35})` },
+                        // Bank of Communications Blue Streak
+                        { x: width * 0.28, w: 60 * baseScale, color: `rgba(56, 189, 248, ${nightFactor * 0.3})` },
+                        // SWFC Blue Pillar
+                        { x: width * 0.60, w: 80 * baseScale, color: `rgba(14, 165, 233, ${nightFactor * 0.35})` },
+                        // Jin Mao Gold Pillar
+                        { x: width * 0.66, w: 70 * baseScale, color: `rgba(245, 158, 11, ${nightFactor * 0.4})` },
+                        // Shanghai Tower Cyan Ribbon Streak
+                        { x: width * 0.84, w: 100 * baseScale, color: `rgba(56, 189, 248, ${nightFactor * 0.4})` }
+                    ];
+
+                    for (const ref of reflections) {
+                        const refGrad = ctx.createLinearGradient(0, horizonY, 0, height);
+                        refGrad.addColorStop(0, ref.color);
+                        refGrad.addColorStop(0.7, 'rgba(0,0,0,0)');
+
+                        ctx.fillStyle = refGrad;
+                        ctx.fillRect(ref.x - ref.w / 2, horizonY, ref.w, waterHeight);
+                    }
+                    ctx.restore();
+                }
+
+                // Wave Ripples Motion
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 + (1 - nightFactor) * 0.15})`;
+                ctx.lineWidth = 1.2 * baseScale;
+
+                const waveRows = 25;
+                for (let i = 0; i < waveRows; i++) {
+                    const rowY = horizonY + (waterHeight / waveRows) * i;
+                    const waveSpeed = time * 0.002 * (1 + i * 0.1);
+                    const waveLength = 40 + i * 8;
+                    const amplitude = (1 + i * 0.3) * baseScale;
+
+                    ctx.beginPath();
+                    for (let x = 0; x < width; x += waveLength) {
+                        const waveY = rowY + Math.sin(x * 0.02 + waveSpeed) * amplitude;
+                        ctx.moveTo(x, waveY);
+                        ctx.lineTo(x + waveLength * 0.5, waveY);
+                    }
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+
+            // Boats & River Traffic Animation
+            function drawBoats(horizonY, nightFactor, time) {
+                ctx.save();
+
+                // -------------------------------------------------------------
+                // 1. LEFT WHITE SIGHTSEEING CRUISE BOAT
+                // -------------------------------------------------------------
+                boatLeftX = (width * 0.02) + Math.sin(time * 0.0005) * (width * 0.04);
+                const b1Y = horizonY + 35 * baseScale;
+                const b1W = 130 * baseScale;
+                const b1H = 28 * baseScale;
+
+                // Hull
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.moveTo(boatLeftX, b1Y);
+                ctx.lineTo(boatLeftX + b1W - 20 * baseScale, b1Y);
+                ctx.lineTo(boatLeftX + b1W, b1Y - 12 * baseScale);
+                ctx.lineTo(boatLeftX + b1W - 10 * baseScale, b1Y - b1H);
+                ctx.lineTo(boatLeftX, b1Y - b1H);
+                ctx.closePath();
+                ctx.fill();
+
+                // Windows
+                ctx.fillStyle = nightFactor > 0.3 ? '#fef08a' : '#38bdf8';
+                for (let wx = boatLeftX + 15 * baseScale; wx < boatLeftX + b1W - 30 * baseScale; wx += 14 * baseScale) {
+                    ctx.fillRect(wx, b1Y - b1H + 6 * baseScale, 8 * baseScale, 10 * baseScale);
+                }
+
+                // Water Wake Trail
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(boatLeftX + b1W, b1Y);
+                ctx.lineTo(boatLeftX + b1W + 40 * baseScale, b1Y + 5 * baseScale);
+                ctx.stroke();
+
+
+                // -------------------------------------------------------------
+                // 2. RIGHT CARGO TUG/BARGE BOAT (Moving across river)
+                // -------------------------------------------------------------
+                boatRightX = (width * 0.55) + ((time * 0.04) % (width * 0.45));
+                const b2Y = horizonY + 65 * baseScale;
+                const b2W = 140 * baseScale;
+                const b2H = 22 * baseScale;
+
+                // Dark Blue / Black Cargo Hull
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath();
+                ctx.moveTo(boatRightX, b2Y);
+                ctx.lineTo(boatRightX + b2W, b2Y);
+                ctx.lineTo(boatRightX + b2W + 15 * baseScale, b2Y - 10 * baseScale);
+                ctx.lineTo(boatRightX + b2W, b2Y - b2H);
+                ctx.lineTo(boatRightX, b2Y - b2H);
+                ctx.closePath();
+                ctx.fill();
+
+                // Red Stripe on Hull Base
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(boatRightX, b2Y - 4 * baseScale, b2W + 8 * baseScale, 4 * baseScale);
+
+                // Rubber Tire Bumpers along side (as in spec photo)
+                ctx.fillStyle = '#0f172a';
+                for (let tx = boatRightX + 15 * baseScale; tx < boatRightX + b2W - 10 * baseScale; tx += 18 * baseScale) {
+                    ctx.beginPath();
+                    ctx.arc(tx, b2Y - 8 * baseScale, 4 * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Stern Cabin / Wheelhouse
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillRect(boatRightX + 10 * baseScale, b2Y - b2H - 14 * baseScale, 30 * baseScale, 14 * baseScale);
+
+                // Navigation Lights at Night
+                if (nightFactor > 0.3) {
+                    // Green Starboard Light
+                    ctx.fillStyle = '#22c55e';
+                    ctx.beginPath();
+                    ctx.arc(boatRightX + b2W + 10 * baseScale, b2Y - 12 * baseScale, 3 * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Red Port Light
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.arc(boatRightX + 5 * baseScale, b2Y - b2H - 12 * baseScale, 3 * baseScale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Tugboat V-Shape Water Wake
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 2 * baseScale;
+                ctx.beginPath();
+                ctx.moveTo(boatRightX, b2Y - 5 * baseScale);
+                ctx.lineTo(boatRightX - 45 * baseScale, b2Y - 15 * baseScale);
+                ctx.moveTo(boatRightX, b2Y);
+                ctx.lineTo(boatRightX - 50 * baseScale, b2Y + 10 * baseScale);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            // HUD UI Sync Update Helper
+            function updateUI() {
+                timeSlider.value = cycleProgress;
+
+                // Calculate 24-hour Time
+                const totalMinutes = Math.floor(cycleProgress * 24 * 60);
+                const hours = Math.floor(totalMinutes / 60);
+                const mins = totalMinutes % 60;
+                const timeString = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+                clockDisplay.textContent = timeString;
+
+                // Update Phase Label & Icon
+                if (cycleProgress >= 0.20 && cycleProgress < 0.40) {
+                    phaseDisplay.textContent = 'Midday';
+                    celestialIcon.className = 'fa-solid fa-sun text-amber-400 text-xl';
+                } else if (cycleProgress >= 0.40 && cycleProgress < 0.55) {
+                    phaseDisplay.textContent = 'Sunset / Dusk';
+                    celestialIcon.className = 'fa-solid fa-cloud-sun text-orange-400 text-xl';
+                } else if (cycleProgress >= 0.55 && cycleProgress < 0.92) {
+                    phaseDisplay.textContent = 'Midnight';
+                    celestialIcon.className = 'fa-solid fa-moon text-indigo-400 text-xl';
+                } else {
+                    phaseDisplay.textContent = 'Dawn / Sunrise';
+                    celestialIcon.className = 'fa-solid fa-sun text-rose-400 text-xl';
+                }
+            }
+
+            // Event Listeners for UI Controls
+            btnPlayPause.addEventListener('click', () => {
+                isPlaying = !isPlaying;
+                btnPlayPause.innerHTML = isPlaying 
+                    ? '<i class="fa-solid fa-pause text-base"></i>' 
+                    : '<i class="fa-solid fa-play text-base"></i>';
+            });
+
+            timeSlider.addEventListener('input', (e) => {
+                cycleProgress = parseFloat(e.target.value);
+                updateUI();
+            });
+
+            btnSpeedList.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btnSpeedList.forEach(b => {
+                        b.className = 'btn-speed px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition';
+                    });
+                    btn.className = 'btn-speed px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/40 transition';
+                    speedMultiplier = parseFloat(btn.dataset.speed);
+                });
+            });
+
+            btnPresetList.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    cycleProgress = parseFloat(btn.dataset.time);
+                    updateUI();
+                });
+            });
+
+            btnToggleGlow.addEventListener('click', () => {
+                enableGlow = !enableGlow;
+                glowText.textContent = `Glow: ${enableGlow ? 'ON' : 'OFF'}`;
+                btnToggleGlow.classList.toggle('text-sky-400', enableGlow);
+                btnToggleGlow.classList.toggle('text-slate-400', !enableGlow);
+            });
+
+            // Main Animation Loop
+            function animationLoop(timestamp) {
+                if (!lastTimestamp) lastTimestamp = timestamp;
+                const deltaSec = (timestamp - lastTimestamp) / 1000;
+                lastTimestamp = timestamp;
+
+                if (isPlaying) {
+                    // Progress cycle (1.0 = full 24h loop)
+                    const increment = (deltaSec / BASE_CYCLE_DURATION_SEC) * speedMultiplier;
+                    cycleProgress = (cycleProgress + increment) % 1.0;
+                    updateUI();
+                }
+
+                render(timestamp);
+                requestAnimationFrame(animationLoop);
+            }
+
+            // Start Animation Loop on Window Load
+            window.onload = function() {
+                requestAnimationFrame(animationLoop);
+            };
+
+        })();
+    </script>
+</body>
+</html>
