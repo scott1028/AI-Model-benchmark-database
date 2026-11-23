@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shanghai Lujiazui — SVG Day &amp; Night Infinite Loop</title>
+<style>
+  :root {
+    --panel-bg: rgba(9, 15, 29, 0.72);
+    --panel-border: rgba(255, 255, 255, 0.15);
+    --text: #eef4ff;
+    --muted: #a4b6d8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 35%, #121f38 0%, #060a14 80%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stage-wrap {
+    position: relative;
+    width: min(94vmin, 840px);
+    aspect-ratio: 745 / 742;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow:
+      0 28px 86px rgba(0, 0, 0, 0.76),
+      0 0 0 1px rgba(255, 255, 255, 0.11),
+      0 0 70px rgba(36, 120, 236, 0.16);
+    background: #1c6ce3;
+  }
+  body.embed .stage-wrap {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  svg#scene {
+    display: block;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+  }
+  .hud {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-size: 12px;
+    transition: opacity 0.28s ease;
+    z-index: 10;
+  }
+  .hud.hidden { opacity: 0; pointer-events: none; }
+  .hud-btn {
+    appearance: none;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.1s ease;
+  }
+  .hud-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.36);
+  }
+  .hud-btn:active { transform: scale(0.96); }
+  .time-readout {
+    display: flex;
+    flex-direction: column;
+    min-width: 74px;
+    line-height: 1.15;
+  }
+  .time-clock {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.4px;
+  }
+  .time-phase {
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .scrubber {
+    flex: 1;
+    appearance: none;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #0d1a44 0%, #f5a078 24%, #3596f2 52%, #eb683f 76%, #0c173d 100%);
+    outline: none;
+    cursor: pointer;
+  }
+  .scrubber::-webkit-slider-thumb {
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #2a85ea;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.55);
+  }
+  .phase-group {
+    display: flex;
+    gap: 4px;
+  }
+  @media (max-width: 580px) {
+    .phase-group { display: none; }
+    .hud { gap: 7px; padding: 6px 9px; }
+  }
+</style>
+</head>
+<body>
+<div class="stage-wrap" id="stageWrap">
+  <svg id="scene" viewBox="0 0 745 742" width="745" height="742" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+    <defs>
+      <!-- Sky & Celestial Gradients (smoothly animated across 24h loop) -->
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop id="skyStop0" offset="0%" stop-color="#2071e8" />
+        <stop id="skyStop1" offset="38%" stop-color="#2684ed" />
+        <stop id="skyStop2" offset="74%" stop-color="#359be9" />
+        <stop id="skyStop3" offset="100%" stop-color="#7ec0e9" />
+      </linearGradient>
+
+      <radialGradient id="horizonGlow" cx="76%" cy="84%" r="65%">
+        <stop id="hzStop0" offset="0%" stop-color="#fff4d6" stop-opacity="0.18" />
+        <stop id="hzStop1" offset="42%" stop-color="#ffd99a" stop-opacity="0.06" />
+        <stop id="hzStop2" offset="100%" stop-color="#ffd99a" stop-opacity="0" />
+      </radialGradient>
+
+      <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+        <stop id="sunGlow0" offset="0%" stop-color="#fffef2" stop-opacity="1" />
+        <stop id="sunGlow1" offset="22%" stop-color="#ffe7a3" stop-opacity="0.9" />
+        <stop id="sunGlow2" offset="54%" stop-color="#ffaa4c" stop-opacity="0.34" />
+        <stop id="sunGlow3" offset="100%" stop-color="#ff7a29" stop-opacity="0" />
+      </radialGradient>
+
+      <radialGradient id="moonHalo" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#f2f8ff" stop-opacity="0.82" />
+        <stop offset="28%" stop-color="#b8d6ff" stop-opacity="0.34" />
+        <stop offset="68%" stop-color="#5d8fd9" stop-opacity="0.09" />
+        <stop offset="100%" stop-color="#5d8fd9" stop-opacity="0" />
+      </radialGradient>
+
+      <!-- Clean Crescent Moon Mask (no dark circle biting the moon halo!) -->
+      <mask id="crescentMask">
+        <rect x="-30" y="-30" width="60" height="60" fill="#ffffff" />
+        <circle cx="8" cy="-4.5" r="14.2" fill="#000000" />
+      </mask>
+
+      <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop id="watStop0" offset="0%" stop-color="#698db8" />
+        <stop id="watStop1" offset="24%" stop-color="#4b77b1" />
+        <stop id="watStop2" offset="58%" stop-color="#225291" />
+        <stop id="watStop3" offset="100%" stop-color="#3c6ca8" />
+      </linearGradient>
+
+      <linearGradient id="waterTintRight" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#245094" stop-opacity="0.16" />
+        <stop offset="56%" stop-color="#3a6ba3" stop-opacity="0" />
+        <stop offset="84%" stop-color="#a2a086" stop-opacity="0.44" />
+        <stop offset="100%" stop-color="#90937e" stop-opacity="0.52" />
+      </linearGradient>
+
+      <!-- Dynamic Color Matrix Filter applied ONLY to daytime architecture (zero bleed on sky/stars!) -->
+      <filter id="daylightTint" x="-2%" y="-2%" width="104%" height="104%" color-interpolation-filters="sRGB">
+        <feColorMatrix id="dayColorMatrix" type="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+      </filter>
+
+      <!-- Architectural Gradients -->
+      <!-- Oriental Pearl -->
+      <linearGradient id="pearlShaft" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#65626a" />
+        <stop offset="28%" stop-color="#ab9a86" />
+        <stop offset="68%" stop-color="#e5cca8" />
+        <stop offset="91%" stop-color="#f5e1c2" />
+        <stop offset="100%" stop-color="#c4ab8c" />
+      </linearGradient>
+      <linearGradient id="pearlShaftDark" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#384052" />
+        <stop offset="52%" stop-color="#6b686a" />
+        <stop offset="100%" stop-color="#9b8d7c" />
+      </linearGradient>
+      <radialGradient id="pearlRedSphere" cx="68%" cy="38%" r="64%">
+        <stop offset="0%" stop-color="#ee897e" />
+        <stop offset="30%" stop-color="#cf5052" />
+        <stop offset="65%" stop-color="#9a3145" />
+        <stop offset="100%" stop-color="#38254d" />
+      </radialGradient>
+      <radialGradient id="pearlMetalBowl" cx="72%" cy="34%" r="66%">
+        <stop offset="0%" stop-color="#ecdac2" />
+        <stop offset="38%" stop-color="#baa790" />
+        <stop offset="72%" stop-color="#586478" />
+        <stop offset="100%" stop-color="#1e2d4c" />
+      </radialGradient>
+      <radialGradient id="pearlBaseBall" cx="64%" cy="32%" r="66%">
+        <stop offset="0%" stop-color="#ffffff" />
+        <stop offset="28%" stop-color="#d2d8e2" />
+        <stop offset="68%" stop-color="#6a7589" />
+        <stop offset="100%" stop-color="#273144" />
+      </radialGradient>
+      <radialGradient id="pearlSunGlint" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+        <stop offset="28%" stop-color="#fff2bd" stop-opacity="0.96" />
+        <stop offset="58%" stop-color="#ff8d3a" stop-opacity="0.58" />
+        <stop offset="100%" stop-color="#ff5522" stop-opacity="0" />
+      </radialGradient>
+
+      <!-- SWFC, Jin Mao, IFC, Shanghai Tower -->
+      <linearGradient id="swfcGrad" x1="0" y1="0" x2="1" y2="0.4">
+        <stop offset="0%" stop-color="#173f8c" />
+        <stop offset="52%" stop-color="#2153a8" />
+        <stop offset="100%" stop-color="#133578" />
+      </linearGradient>
+      <linearGradient id="ifcNorthShadow" x1="0" y1="0" x2="1" y2="0.2">
+        <stop offset="0%" stop-color="#3d70a0" />
+        <stop offset="65%" stop-color="#2b588a" />
+        <stop offset="100%" stop-color="#1e406d" />
+      </linearGradient>
+      <linearGradient id="ifcNorthSun" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#9db29c" />
+        <stop offset="55%" stop-color="#e5e0cd" />
+        <stop offset="100%" stop-color="#bcc8ca" />
+      </linearGradient>
+      <linearGradient id="ifcSouthSun" x1="0" y1="0" x2="1" y2="0.35">
+        <stop offset="0%" stop-color="#e0dac3" />
+        <stop offset="40%" stop-color="#f8f2db" />
+        <stop offset="85%" stop-color="#f3e7c2" />
+        <stop offset="100%" stop-color="#d4d0b2" />
+      </linearGradient>
+      <linearGradient id="ifcSouthDark" x1="0" y1="0" x2="1" y2="0.2">
+        <stop offset="0%" stop-color="#264b75" />
+        <stop offset="60%" stop-color="#1e416b" />
+        <stop offset="100%" stop-color="#153156" />
+      </linearGradient>
+      <linearGradient id="shTowerBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#254c82" />
+        <stop offset="28%" stop-color="#366296" />
+        <stop offset="54%" stop-color="#6986a3" />
+        <stop offset="78%" stop-color="#bec4be" />
+        <stop offset="92%" stop-color="#ebe7da" />
+        <stop offset="100%" stop-color="#9ca6a5" />
+      </linearGradient>
+      <linearGradient id="shTowerCrease" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#122b50" />
+        <stop offset="52%" stop-color="#294e7c" />
+        <stop offset="100%" stop-color="#cfd8da" />
+      </linearGradient>
+      <linearGradient id="aziaGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#163667" />
+        <stop offset="28%" stop-color="#3167a2" />
+        <stop offset="56%" stop-color="#4e7fae" />
+        <stop offset="82%" stop-color="#224c80" />
+        <stop offset="100%" stop-color="#8b9ca8" />
+      </linearGradient>
+      <linearGradient id="aziaFin" x1="0" y1="0" x2="1" y2="0.3">
+        <stop offset="0%" stop-color="#6a6d66" />
+        <stop offset="45%" stop-color="#baa686" />
+        <stop offset="100%" stop-color="#e5d0ab" />
+      </linearGradient>
+      <linearGradient id="greenTowerDark" x1="0" y1="0" x2="1" y2="0.3">
+        <stop offset="0%" stop-color="#204c52" />
+        <stop offset="52%" stop-color="#336b5f" />
+        <stop offset="100%" stop-color="#477e65" />
+      </linearGradient>
+      <linearGradient id="greenTowerBright" x1="0" y1="0" x2="1" y2="0.2">
+        <stop offset="0%" stop-color="#44c260" />
+        <stop offset="55%" stop-color="#6ce074" />
+        <stop offset="100%" stop-color="#9bf094" />
+      </linearGradient>
+      <linearGradient id="saucerRoof" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#3b434c" />
+        <stop offset="42%" stop-color="#8c8469" />
+        <stop offset="76%" stop-color="#e2d49e" />
+        <stop offset="100%" stop-color="#9e8f64" />
+      </linearGradient>
+      <linearGradient id="saucerGoldDrum" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#484432" />
+        <stop offset="40%" stop-color="#ab964c" />
+        <stop offset="76%" stop-color="#ecd986" />
+        <stop offset="100%" stop-color="#9f8a45" />
+      </linearGradient>
+      <linearGradient id="siccLeftDome" x1="0.12" y1="0.88" x2="0.78" y2="0.06">
+        <stop offset="0%" stop-color="#0e336c" />
+        <stop offset="38%" stop-color="#2062ae" />
+        <stop offset="70%" stop-color="#4c7a7c" />
+        <stop offset="100%" stop-color="#92a470" />
+      </linearGradient>
+      <radialGradient id="siccRightDome" cx="62%" cy="54%" r="58%">
+        <stop offset="0%" stop-color="#b4ece8" />
+        <stop offset="38%" stop-color="#5d9a7a" />
+        <stop offset="70%" stop-color="#275c7d" />
+        <stop offset="100%" stop-color="#173550" />
+      </radialGradient>
+      <linearGradient id="mapGlass" x1="0" y1="0" x2="1" y2="0.3">
+        <stop offset="0%" stop-color="#2d7d5e" />
+        <stop offset="55%" stop-color="#4d9f79" />
+        <stop offset="100%" stop-color="#398a67" />
+      </linearGradient>
+      <linearGradient id="siccCream" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#f2dfc0" />
+        <stop offset="100%" stop-color="#cfb896" />
+      </linearGradient>
+
+      <!-- Night Glow Filters -->
+      <filter id="glowSoft" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="3.0" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="glowStrong" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="7.5" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="pearlNeonGlow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="9.5" result="b1" />
+        <feGaussianBlur stdDeviation="3.2" result="b2" />
+        <feMerge>
+          <feMergeNode in="b1" />
+          <feMergeNode in="b2" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+
+      <!-- Softly Blurred + Animated Rippled Water Reflection Filter -->
+      <filter id="waterRipple" x="-5%" y="-5%" width="110%" height="115%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.8 0.9" result="soft" />
+        <feTurbulence id="rippleTurb" type="fractalNoise" baseFrequency="0.016 0.16" numOctaves="2" seed="7" result="noise" />
+        <feDisplacementMap in="soft" in2="noise" scale="11.5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+
+      <!-- Clip Paths -->
+      <clipPath id="clipSky"><rect x="0" y="0" width="745" height="608" /></clipPath>
+      <clipPath id="clipWater"><rect x="0" y="605" width="745" height="137" /></clipPath>
+      <clipPath id="clipUpperSphere"><circle cx="107" cy="142" r="38" /></clipPath>
+      <clipPath id="clipUpperSphereRed">
+        <path d="M 67 100 L 147 100 L 147 153 Q 107 160 67 153 Z" />
+      </clipPath>
+      <clipPath id="clipLowerSphere"><circle cx="107" cy="442" r="45" /></clipPath>
+      <clipPath id="clipLowerSphereRed">
+        <path d="M 60 417 Q 107 410 154 417 L 154 451 Q 107 458 60 451 Z" />
+      </clipPath>
+      <!-- Full 3/4 Glass Globe Clip Paths matching spec_01.png height! -->
+      <clipPath id="clipLeftDome">
+        <rect x="94" y="476" width="116" height="87" />
+      </clipPath>
+      <clipPath id="clipLeftDomeCircle">
+        <circle cx="151" cy="537" r="55" />
+      </clipPath>
+      <clipPath id="clipRightDome">
+        <rect x="394" y="466" width="104" height="92" />
+      </clipPath>
+      <clipPath id="clipRightDomeCircle">
+        <circle cx="446" cy="521" r="50" />
+      </clipPath>
+      <clipPath id="clipShTower">
+        <path d="M 637 40 Q 658 34 679 39 C 687 102 696 202 702 318 C 705 398 707 466 708 520 L 635 520 C 637 420 640 305 643 200 C 644 134 640 78 637 40 Z" />
+      </clipPath>
+      <clipPath id="clipIfcNorth">
+        <polygon points="418,276 452,273 484,286 488,520 424,520" />
+      </clipPath>
+      <clipPath id="clipIfcSouth">
+        <polygon points="522,278 548,271 587,265 610,404 612,535 525,535" />
+      </clipPath>
+      <!-- Clip SWFC night glow strictly above Jin Mao/IFC overlap so cyan frame never bleeds over foreground towers! -->
+      <clipPath id="clipSwfcVisible">
+        <polygon points="476,186 546,186 546,278 526,278 518,246 498,246 490,278 476,278" />
+      </clipPath>
+      <!-- Clip Shanghai Tower night lights cleanly behind the foreground dark emerald slanted tower! -->
+      <clipPath id="clipShTowerNight">
+        <path d="M 637 40 Q 658 34 679 39 C 687 102 696 202 702 318 L 703 352 L 683 335 L 667 343 L 670 432 L 635 432 C 637 355 640 280 643 200 C 644 134 640 78 637 40 Z" />
+      </clipPath>
+
+      <!-- Night Pearl Sphere Gradients (animated color-cycle via JS) -->
+      <radialGradient id="pearlNightUpper" cx="55%" cy="42%" r="60%">
+        <stop id="pnUp0" offset="0%" stop-color="#ff99df" />
+        <stop id="pnUp1" offset="48%" stop-color="#ec3498" />
+        <stop id="pnUp2" offset="100%" stop-color="#69126e" />
+      </radialGradient>
+      <radialGradient id="pearlNightLower" cx="55%" cy="44%" r="60%">
+        <stop id="pnLo0" offset="0%" stop-color="#ffb3ec" />
+        <stop id="pnLo1" offset="50%" stop-color="#df298c" />
+        <stop id="pnLo2" offset="100%" stop-color="#5d1168" />
+      </radialGradient>
+
+      <!-- Water Reflection Vertical Fade Mask -->
+      <linearGradient id="reflFadeGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.72" />
+        <stop offset="45%" stop-color="#ffffff" stop-opacity="0.46" />
+        <stop offset="100%" stop-color="#ffffff" stop-opacity="0.14" />
+      </linearGradient>
+      <mask id="reflMask">
+        <rect x="0" y="605" width="745" height="137" fill="url(#reflFadeGrad)" />
+      </mask>
+    </defs>
+
+    <!-- ============================================================ -->
+    <!-- 1. SKY, STARS, CELESTIAL BODIES, CLOUDS                      -->
+    <!-- ============================================================ -->
+    <g id="layer-sky" clip-path="url(#clipSky)">
+      <rect x="0" y="0" width="745" height="610" fill="url(#skyGrad)" />
+      <rect x="0" y="0" width="745" height="610" fill="url(#horizonGlow)" />
+
+      <!-- Twinkling Starfield (populated procedurally) -->
+      <g id="stars-group" opacity="0"></g>
+
+      <!-- Shooting Star -->
+      <g id="shooting-star" opacity="0">
+        <line x1="0" y1="0" x2="-48" y2="-18" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity="0.92" />
+        <circle cx="0" cy="0" r="1.8" fill="#ffffff" />
+      </g>
+
+      <!-- Clean Masked Crescent Moon (zero halo cutout artifact!) -->
+      <g id="moon-group" transform="translate(260, 120)" opacity="0">
+        <circle cx="0" cy="0" r="64" fill="url(#moonHalo)" />
+        <g mask="url(#crescentMask)">
+          <circle cx="0" cy="0" r="17" fill="#f7faff" />
+          <circle cx="-6" cy="3" r="2.4" fill="#d5e2f5" opacity="0.48" />
+          <circle cx="-3" cy="-6" r="1.5" fill="#d5e2f5" opacity="0.38" />
+          <circle cx="-8" cy="-3" r="1.3" fill="#d5e2f5" opacity="0.32" />
+        </g>
+      </g>
+
+      <!-- Sun -->
+      <g id="sun-group" transform="translate(610, -120)" opacity="0">
+        <circle cx="0" cy="0" r="98" fill="url(#sunGlow)" />
+        <circle cx="0" cy="0" r="20" fill="#fffdf2" id="sunCore" />
+      </g>
+
+      <!-- Subtle Soft Clouds (wispy in day, rose/gold in dawn & sunset) -->
+      <g id="clouds-group" opacity="0.06">
+        <g id="cloud-1" transform="translate(180, 96)">
+          <path d="M 0 18 Q 18 4 44 10 Q 64 -4 96 6 Q 124 2 142 16 Q 156 22 130 25 L 12 25 Q -8 24 0 18 Z" fill="#ffffff" class="cloud-shape" />
+        </g>
+        <g id="cloud-2" transform="translate(460, 134) scale(0.85)">
+          <path d="M 0 16 Q 22 2 52 10 Q 76 -4 110 8 Q 138 6 154 18 Q 162 24 134 25 L 14 25 Q -8 24 0 16 Z" fill="#ffffff" class="cloud-shape" />
+        </g>
+        <g id="cloud-3" transform="translate(310, 212) scale(0.68)">
+          <path d="M 0 14 Q 24 3 56 9 Q 84 -2 114 10 Q 138 11 146 20 L 8 21 Q -6 20 0 14 Z" fill="#ffffff" class="cloud-shape" />
+        </g>
+      </g>
+
+      <!-- Subtle Distant River Gulls -->
+      <g id="birds-group" opacity="0.35" stroke="#1b3a69" stroke-width="1.2" fill="none" stroke-linecap="round">
+        <path id="bird-1" d="M -5.5 2 Q -2.8 -1.8 0 1 Q 2.8 -1.8 5.5 2" />
+        <path id="bird-2" d="M -4.8 1.8 Q -2.4 -1.6 0 1 Q 2.4 -1.6 4.8 1.8" />
+        <path id="bird-3" d="M -4.2 1.6 Q -2 -1.4 0 0.8 Q 2 -1.4 4.2 1.6" />
+      </g>
+    </g>
+
+    <!-- ============================================================ -->
+    <!-- MASTER SKYLINE GROUP (mirrored cleanly into river reflection)-->
+    <!-- ============================================================ -->
+    <g id="skyline-master">
+
+      <!-- ========================================================== -->
+      <!-- 2. DAYTIME ARCHITECTURE (tinted cleanly via daylightTint)  -->
+      <!-- ========================================================== -->
+      <g id="layer-buildings-day" filter="url(#daylightTint)">
+
+        <!-- Far Left Edge Beige Stepped Tower (x: 0..15, y: 418..596) -->
+        <g id="bldg-far-left-edge">
+          <rect x="0" y="560" width="120" height="36" fill="#25303d" />
+          <polygon points="0,420 9,424 14,432 14,592 0,592" fill="#e0d3b8" />
+          <rect x="0" y="432" width="12" height="160" fill="#cbbca0" opacity="0.55" />
+          <g fill="#5b6673" opacity="0.55">
+            <rect x="2" y="440" width="8" height="2" /><rect x="2" y="448" width="8" height="2" />
+            <rect x="2" y="456" width="8" height="2" /><rect x="2" y="464" width="8" height="2" />
+            <rect x="2" y="472" width="8" height="2" /><rect x="2" y="480" width="8" height="2" />
+            <rect x="2" y="488" width="8" height="2" /><rect x="2" y="496" width="8" height="2" />
+            <rect x="2" y="504" width="8" height="2" /><rect x="2" y="512" width="8" height="2" />
+            <rect x="2" y="520" width="8" height="2" /><rect x="2" y="528" width="8" height="2" />
+          </g>
+        </g>
+
+        <!-- Left Tall Blue-Glass & Cream Twin-Wing Tower (x: 11..86, y: 346..570) -->
+        <g id="bldg-left-bocom">
+          <line x1="51" y1="322" x2="51" y2="352" stroke="#dce5ee" stroke-width="0.9" opacity="0.8" />
+          <line x1="81" y1="326" x2="81" y2="350" stroke="#dce5ee" stroke-width="0.9" opacity="0.8" />
+          <polygon points="11,394 18,351 28,350 28,568 11,568" fill="#3b5474" />
+          <rect x="19" y="350" width="11" height="218" fill="#d9cca8" />
+          <rect x="19" y="350" width="5" height="218" fill="#8b95a3" opacity="0.45" />
+          <rect x="29" y="356" width="23" height="212" fill="#234978" />
+          <rect x="33" y="362" width="14" height="5" fill="#d8e3ef" opacity="0.72" />
+          <polygon points="52,347 84,352 84,568 52,568" fill="#ecdab8" />
+          <polygon points="52,388 84,368 84,568 52,568" fill="#4f637a" opacity="0.48" />
+          <g id="bldg-left-bocom-windows"></g>
+        </g>
+
+        <!-- Dark Slanted Glass Peak behind Pearl (x: 122..152, y: 345..385) -->
+        <polygon points="124,358 144,344 150,348 150,388 124,388" fill="#1e3656" />
+        <polygon points="136,349 144,344 148,348 148,382 136,382" fill="#527196" opacity="0.65" />
+
+        <!-- Right Teal Tower peeking behind Pearl (x: 165..192, y: 404..505) -->
+        <polygon points="166,404 185,420 185,498 166,498" fill="#29596b" />
+        <polygon points="180,456 192,462 186,498 180,498" fill="#3a7284" />
+
+        <!-- Cream Neoclassical Stepped Building behind Pearl's Lower Sphere (x: 54..176, y: 368..568) -->
+        <g id="bldg-behind-pearl">
+          <polygon points="56,396 86,374 144,370 165,388 175,398 175,568 56,568" fill="#eedcb8" />
+          <!-- Stepped roof cornice trim -->
+          <polyline points="86,374 144,370 165,388" fill="none" stroke="#fff6e0" stroke-width="1.4" opacity="0.82" />
+          <polygon points="56,396 86,374 114,372 114,568 56,568" fill="#777978" opacity="0.52" />
+          <!-- Red Chinese signage blocks (中国平安 accent) -->
+          <rect x="64" y="400" width="22" height="7" rx="1" fill="#b43e32" opacity="0.88" />
+          <rect x="136" y="395" width="32" height="8" rx="1" fill="#c73f2d" opacity="0.92" />
+          <g fill="#f7e4b6" opacity="0.65">
+            <rect x="138" y="397" width="4" height="4" /><rect x="145" y="397" width="4" height="4" />
+            <rect x="152" y="397" width="4" height="4" /><rect x="159" y="397" width="4" height="4" />
+          </g>
+          <g id="bldg-behind-pearl-windows"></g>
+        </g>
+
+        <!-- Azia Center (匯亞大廈) — Curved Blue Glass Tower + Diagonal Fin (x: 210..278, y: 312..502) -->
+        <g id="bldg-azia">
+          <line x1="225" y1="308" x2="225" y2="336" stroke="#c8dcf2" stroke-width="1" opacity="0.78" />
+          <path d="M 222 336 Q 245 330 268 334 L 269 494 L 222 494 Z" fill="url(#aziaGlass)" />
+          <path d="M 244 388 L 247 418 L 250 486 L 240 486 L 241 420 Z" fill="#102749" opacity="0.68" />
+          <path d="M 226 346 L 231 346 L 231 462 L 226 462 Z" fill="#89a8c9" opacity="0.42" />
+          <path d="M 261 344 L 266 344 L 266 472 L 261 472 Z" fill="#cad8e2" opacity="0.58" />
+          <path d="M 221 336 Q 245 330 269 334 L 269 346 Q 245 342 221 347 Z" fill="#2c4e7a" />
+          <path d="M 227 336 Q 247 332 267 335 L 267 343 Q 247 340 227 344 Z" fill="#e6cfa4" opacity="0.82" />
+          <path d="M 221 336 Q 245 330 269 334" fill="none" stroke="#dbe5ef" stroke-width="1.2" />
+          <polygon points="212,482 223,440 223,496 212,496" fill="#23456b" />
+          <polygon points="212,498 264,433 276,442 278,498" fill="url(#aziaFin)" />
+          <polygon points="212,498 264,433 266,437 219,498" fill="#5e645d" />
+          <polygon points="264,433 276,442 278,498 267,498" fill="#e8d4ad" />
+          <g id="bldg-azia-louvers"></g>
+        </g>
+
+        <!-- Distant Center-Left Twin-Turret Building (x: 298..342, y: 452..500) -->
+        <g id="bldg-twin-turrets">
+          <rect x="301" y="458" width="16" height="42" fill="#46607e" />
+          <rect x="309" y="458" width="8" height="42" fill="#a9b5be" />
+          <ellipse cx="309" cy="458" rx="9" ry="2.4" fill="#c7d0d6" />
+          <line x1="309" y1="450" x2="309" y2="458" stroke="#c7d0d6" stroke-width="1" />
+          <rect x="323" y="458" width="16" height="42" fill="#46607e" />
+          <rect x="331" y="458" width="8" height="42" fill="#b4bec4" />
+          <ellipse cx="331" cy="458" rx="9" ry="2.4" fill="#cfd6da" />
+          <line x1="331" y1="450" x2="331" y2="458" stroke="#cfd6da" stroke-width="1" />
+          <rect x="313" y="472" width="18" height="28" fill="#4d7a64" />
+          <g fill="#cad9cf" opacity="0.72">
+            <rect x="314" y="476" width="16" height="1.4" /><rect x="314" y="481" width="16" height="1.4" />
+            <rect x="314" y="486" width="16" height="1.4" /><rect x="314" y="491" width="16" height="1.4" />
+          </g>
+        </g>
+
+        <!-- Distant Center Needle-Spire Tower (x: 349..379, y: 402..502) -->
+        <g id="bldg-center-spire">
+          <line x1="364" y1="402" x2="364" y2="446" stroke="#b9c3cc" stroke-width="1.4" />
+          <rect x="361" y="425" width="6" height="22" fill="#9ba9b8" />
+          <rect x="358" y="438" width="12" height="10" fill="#aeb8c2" />
+          <polygon points="350,446 377,444 378,500 350,500" fill="#b9b5aa" />
+          <rect x="350" y="446" width="12" height="54" fill="#7b8796" opacity="0.55" />
+          <rect x="368" y="445" width="9" height="55" fill="#e1d6c1" opacity="0.72" />
+          <g stroke="#5a6b7d" stroke-width="0.7" opacity="0.55">
+            <line x1="355" y1="448" x2="355" y2="498" />
+            <line x1="362" y1="447" x2="362" y2="498" />
+            <line x1="370" y1="446" x2="370" y2="498" />
+          </g>
+        </g>
+
+        <!-- SWFC — Shanghai World Financial Center (Bottle Opener) -->
+        <g id="bldg-swfc">
+          <line x1="544" y1="240" x2="544" y2="282" stroke="#9eb8d6" stroke-width="1.1" />
+          <path fill="url(#swfcGrad)" fill-rule="evenodd" d="
+            M 480 198 L 541 191 L 545 450 L 485 450 Z
+            M 491 210 L 533 205 L 529 235 L 494 236 Z
+          " />
+          <polygon points="491,210 533,205 531,208 493,212" fill="#0d2659" />
+          <polygon points="494,236 529,235 530,238 493,239" fill="#4678c2" opacity="0.75" />
+          <path fill="#6da0e0" opacity="0.16" fill-rule="evenodd" d="
+            M 480 198 L 541 191 L 542 252 L 481 262 Z
+            M 491 210 L 533 205 L 529 235 L 494 236 Z
+          " />
+          <g id="bldg-swfc-grid"></g>
+        </g>
+
+        <!-- IFC NORTH TOWER (國金中心北座) -->
+        <g id="bldg-ifc-north">
+          <g clip-path="url(#clipIfcNorth)">
+            <rect x="416" y="270" width="75" height="252" fill="url(#ifcNorthShadow)" />
+            <polygon points="418,274 452,273 485,286 485,302 418,327" fill="url(#ifcNorthSun)" />
+            <polygon points="418,274 426,274 428,520 422,520" fill="#183861" opacity="0.45" />
+            <polygon points="462,277 485,286 488,520 468,520" fill="#142e54" opacity="0.38" />
+            <rect x="429" y="290" width="26" height="5.5" rx="0.8" fill="#f7f4ec" opacity="0.88" />
+            <rect x="431" y="291.8" width="22" height="2" fill="#b84237" opacity="0.78" />
+            <rect x="418" y="366" width="72" height="8" fill="#122742" opacity="0.85" />
+            <rect x="420" y="458" width="68" height="6" fill="#122742" opacity="0.72" />
+            <g id="bldg-ifc-north-grid"></g>
+          </g>
+          <polyline points="418,276 452,273 484,286" fill="none" stroke="#dbe6e0" stroke-width="1.1" opacity="0.85" />
+        </g>
+
+        <!-- JIN MAO TOWER (金茂大廈 — refined sleek fluted Art Deco pagoda) -->
+        <g id="bldg-jinmao">
+          <line x1="509" y1="219" x2="509" y2="246" stroke="#e4e8ee" stroke-width="1.2" />
+          <!-- Sleek cascading stepped pagoda pinnacle -->
+          <polygon points="507,238 511,238 512,248 506,248" fill="#d8dce0" />
+          <polygon points="504,248 514,248 516,258 502,258" fill="#c9ced4" />
+          <polygon points="500,258 518,258 521,269 497,269" fill="#d3d7dc" />
+          <polygon points="494,269 524,269 527,282 491,282" fill="#bcc5ce" />
+          <polygon points="489,282 529,282 532,296 487,296" fill="#a8b4c2" />
+          <!-- Main fluted shaft -->
+          <polygon points="487,296 532,296 535,452 484,452" fill="#233c60" />
+          <!-- Bright sunlit right flutes -->
+          <polygon points="507,258 526,278 532,296 535,452 507,452" fill="#cfd0ce" />
+          <!-- Crisp fluted Art Deco vertical silver & navy ribs -->
+          <rect x="507.5" y="242" width="4" height="210" fill="#f5f6f4" />
+          <rect x="502" y="262" width="2.4" height="190" fill="#9fb2c7" opacity="0.8" />
+          <rect x="495" y="276" width="2.4" height="176" fill="#7790ab" opacity="0.72" />
+          <rect x="489" y="290" width="2.2" height="162" fill="#4f6c8c" opacity="0.7" />
+          <rect x="514.5" y="264" width="3.2" height="188" fill="#f2efe8" />
+          <rect x="520.5" y="276" width="2.4" height="176" fill="#8998a8" />
+          <rect x="526" y="288" width="2.8" height="164" fill="#d8d6cf" />
+          <g id="bldg-jinmao-tiers"></g>
+        </g>
+
+        <!-- IFC SOUTH TOWER (國金中心南座) -->
+        <g id="bldg-ifc-south">
+          <g clip-path="url(#clipIfcSouth)">
+            <polygon points="522,278 548,271 548,536 524,536" fill="#1e3e68" />
+            <polygon points="548,271 587,265 612,404 612,536 548,536" fill="url(#ifcSouthSun)" />
+            <rect x="548" y="356" width="58" height="6" fill="#e5cd74" opacity="0.52" />
+            <rect x="548" y="366" width="59" height="4" fill="#d9be63" opacity="0.45" />
+            <polygon points="546,385 612,403 612,536 546,536" fill="url(#ifcSouthDark)" />
+            <polygon points="548,376 608,396 610,404 548,386" fill="#83a67c" opacity="0.45" />
+            <g id="bldg-ifc-south-grid"></g>
+          </g>
+          <polyline points="522,278 548,271 587,265" fill="none" stroke="#f6f1db" stroke-width="1.2" opacity="0.88" />
+        </g>
+
+        <!-- SHANGHAI TOWER (上海中心大廈 — refined slender tapering helix) -->
+        <g id="bldg-shanghai-tower">
+          <g clip-path="url(#clipShTower)">
+            <rect x="633" y="34" width="78" height="488" fill="url(#shTowerBody)" />
+            <path d="M 637 40 Q 658 34 679 39 L 683 94 L 639 94 Z" fill="#2a5183" opacity="0.48" />
+            <rect x="644" y="74" width="36" height="12" fill="#183254" opacity="0.68" />
+            <!-- Refined steeper helical V-notch crease matching crop_right.png -->
+            <path d="M 644 134 C 650 198 662 268 679 350 C 688 394 694 442 698 492 L 686 492 C 681 440 672 390 662 338 C 648 266 641 196 640 134 Z"
+                  fill="url(#shTowerCrease)" opacity="0.78" />
+            <path d="M 646 136 C 652 200 665 270 682 352 C 691 395 697 442 701 492"
+                  fill="none" stroke="#f4f2e8" stroke-width="2.2" opacity="0.86" />
+            <path d="M 677 42 C 685 104 694 204 700 320 C 703 398 705 466 706 520"
+                  fill="none" stroke="#f6f4eb" stroke-width="3" opacity="0.72" />
+            <g fill="#193458" opacity="0.54">
+              <rect x="636" y="158" width="58" height="5" />
+              <rect x="636" y="246" width="66" height="5" />
+              <rect x="635" y="336" width="72" height="5.5" />
+              <rect x="635" y="426" width="74" height="6" />
+            </g>
+            <rect x="653" y="164" width="35" height="3.8" fill="#fffdf2" opacity="0.84" />
+            <g id="bldg-shanghai-tower-grid"></g>
+          </g>
+          <path d="M 637 40 Q 658 34 679 39 C 687 102 696 202 702 318 C 705 398 707 466 708 520"
+                fill="none" stroke="#dbe6ef" stroke-width="0.8" opacity="0.55" />
+        </g>
+
+        <!-- FAR RIGHT GREEN-GLASS TOWERS -->
+        <g id="bldg-right-greens">
+          <polygon points="667,344 683,336 688,505 671,505" fill="#173859" />
+          <polygon points="683,336 713,363 718,505 688,505" fill="url(#greenTowerDark)" />
+          <polygon points="685,338 711,363 713,390 686,372" fill="#4f9972" opacity="0.52" />
+          <rect x="687" y="346" width="5" height="5" rx="0.8" fill="#e69238" />
+          <g id="bldg-green-dark-grid"></g>
+
+          <polygon points="711,366 739,361 744,502 716,502" fill="url(#greenTowerBright)" />
+          <polygon points="712,366 720,365 724,502 716,502" fill="#2e994b" opacity="0.38" />
+          <polygon points="736,362 741,361 745,502 740,502" fill="#f3ebd8" />
+          <polygon points="741,361 745,361 745,502 744,502" fill="#8b4e3c" />
+          <g id="bldg-green-bright-grid"></g>
+        </g>
+
+        <!-- PUDONG SHANGRI-LA / SAUCER-CROWN TOWER (refined architectural crown) -->
+        <g id="bldg-saucer-tower">
+          <rect x="474" y="422" width="66" height="145" fill="#3a4354" />
+          <rect x="474" y="422" width="24" height="145" fill="#24334a" />
+          <rect x="496" y="422" width="44" height="44" fill="#c79e7c" />
+          <rect x="496" y="422" width="12" height="145" fill="#524d54" opacity="0.45" />
+          <!-- Refined stepped terracotta right shoulder -->
+          <rect x="520" y="438" width="31" height="128" fill="#b48a6b" />
+          <rect x="520" y="437" width="31" height="4" fill="#e9cea5" />
+          <rect x="524" y="433" width="24" height="4" fill="#d9b78a" />
+          <rect x="486" y="405" width="42" height="18" fill="url(#saucerGoldDrum)" />
+          <ellipse cx="507" cy="395" rx="22" ry="6.5" fill="#5b6670" />
+          <path d="M 474 398 Q 507 388 540 398 Q 507 407 474 398 Z" fill="url(#saucerRoof)" />
+          <path d="M 480 400 Q 507 408 534 400" fill="none" stroke="#2c3540" stroke-width="1.8" />
+          <g id="bldg-saucer-windows"></g>
+        </g>
+
+        <!-- WHITE MODERN GRID BUILDING -->
+        <g id="bldg-white-grid">
+          <polygon points="565,429 630,422 630,526 568,526" fill="#9fb0c4" />
+          <polygon points="630,422 674,428 678,526 630,526" fill="#f7efe0" />
+          <polyline points="565,429 630,422 674,428" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.85" />
+          <g id="bldg-white-grid-windows"></g>
+        </g>
+
+        <!-- PUDONG ART MUSEUM (MAP / 浦東美術館) -->
+        <g id="bldg-map">
+          <rect x="680" y="492" width="65" height="24" fill="#1b4384" />
+          <polygon points="507,474 536,474 536,568 510,568" fill="#a8b4be" />
+          <polygon points="536,474 555,477 556,568 536,568" fill="#efe6d2" />
+          <rect x="539" y="485" width="13" height="27" fill="#f8f2e4" />
+          <rect x="541" y="495" width="9" height="12" fill="#4f565d" opacity="0.65" />
+          <text x="545.5" y="492" text-anchor="middle" font-size="5" font-weight="700" fill="#464b52" font-family="sans-serif">MAP</text>
+
+          <rect x="518" y="514" width="110" height="60" fill="#b8c0c4" />
+          <rect x="586" y="501" width="42" height="18" fill="#e9e0cc" />
+          <rect x="586" y="501" width="16" height="18" fill="#b4bec6" />
+          <rect x="524" y="534" width="10" height="15" fill="#2c444d" />
+          <rect x="544" y="544" width="8" height="6" fill="#3a4c56" opacity="0.7" />
+          <rect x="572" y="544" width="8" height="6" fill="#3a4c56" opacity="0.7" />
+
+          <polygon points="624,515 645,515 645,588 624,588" fill="#9ea8b0" />
+          <rect x="644" y="515" width="101" height="74" fill="#f7eed9" />
+          <rect x="642" y="514" width="103" height="5" fill="#ffffff" />
+          <rect x="652" y="527" width="93" height="33" fill="url(#mapGlass)" />
+          <rect x="652" y="527" width="93" height="4" fill="#20523e" opacity="0.55" />
+          <g stroke="#7bc7a0" stroke-width="0.7" opacity="0.45">
+            <line x1="668" y1="527" x2="668" y2="560" /><line x1="684" y1="527" x2="684" y2="560" />
+            <line x1="700" y1="527" x2="700" y2="560" /><line x1="716" y1="527" x2="716" y2="560" />
+            <line x1="732" y1="527" x2="732" y2="560" />
+          </g>
+          <rect x="652" y="568" width="93" height="15" fill="#357a5d" />
+          <rect x="644" y="560" width="101" height="8" fill="#f2e7ce" />
+        </g>
+
+        <!-- ======================================================== -->
+        <!-- ORIENTAL PEARL TV TOWER (drawn BEFORE SICC so right leg  -->
+        <!-- tucks cleanly BEHIND SICC's left glass dome like photo!) -->
+        <!-- ======================================================== -->
+        <g id="bldg-oriental-pearl">
+          <!-- TRIPOD LEGS & BASE PLAZA -->
+          <g id="pearl-base-legs">
+            <polygon points="34,568 96,562 104,578 24,578" fill="#d9d5cc" />
+            <polygon points="48,566 86,563 86,574 48,574" fill="#3a4c62" />
+            <polygon points="103,480 113,480 112,535 103,535" fill="#777474" />
+            <polygon points="52,537 56,532 90,557 86,563" fill="#9a8d7e" />
+            <polygon points="55,533 90,557 88,559 53,535" fill="#e5d0b3" />
+            <!-- Left diagonal tripod leg -->
+            <polygon points="79,474 91,479 35,576 23,574" fill="url(#pearlShaft)" />
+            <!-- Center-left thick support leg -->
+            <polygon points="88,479 102,480 96,575 82,575" fill="url(#pearlShaft)" />
+            <!-- Right diagonal tripod leg (tucks cleanly behind SICC Left Glass Dome!) -->
+            <polygon points="111,478 125,475 142,542 126,546" fill="url(#pearlShaft)" />
+            <!-- Glossy Silver Base Mini-Sphere -->
+            <circle cx="49" cy="535" r="9.5" fill="url(#pearlBaseBall)" />
+            <ellipse cx="52" cy="532" rx="3.2" ry="2.2" fill="#ffffff" opacity="0.86" />
+          </g>
+
+          <!-- THREE VERTICAL STRUCTURAL SHAFTS -->
+          <g id="pearl-columns">
+            <rect x="101.5" y="176" width="11" height="228" fill="url(#pearlShaftDark)" />
+            <rect x="88" y="176" width="12.5" height="228" fill="url(#pearlShaft)" />
+            <rect x="115.5" y="176" width="13" height="228" fill="url(#pearlShaft)" />
+            <rect x="88" y="176" width="12.5" height="7" fill="#3a3d4c" opacity="0.55" />
+            <rect x="115.5" y="176" width="13" height="7" fill="#4f4844" opacity="0.45" />
+          </g>
+
+          <!-- 5 SMALL SUSPENDED POD SPHERES + LOWER COLLAR -->
+          <g id="pearl-small-spheres"></g>
+
+          <!-- LOWER GIANT SPHERE (cx=107, cy=442, r=45) -->
+          <g id="pearl-lower-sphere">
+            <g clip-path="url(#clipLowerSphere)">
+              <circle cx="107" cy="442" r="45" fill="url(#pearlMetalBowl)" />
+              <g clip-path="url(#clipLowerSphereRed)">
+                <circle cx="107" cy="442" r="45" fill="url(#pearlRedSphere)" />
+                <g id="pearl-lower-lattice"></g>
+              </g>
+              <path d="M 62 438 Q 84 441 103 440 L 103 443.2 Q 84 444.2 62 441.5 Z" fill="#1d2738" />
+              <path d="M 62 437.5 Q 107 443 152 437.5" fill="none" stroke="#e9d8c4" stroke-width="0.9" opacity="0.68" />
+              <path d="M 61 417 Q 107 410 153 417" fill="none" stroke="#e6d4bc" stroke-width="1.1" opacity="0.8" />
+              <path d="M 61 451 Q 107 458 153 451" fill="none" stroke="#e8d6be" stroke-width="1.2" opacity="0.84" />
+              <g id="pearl-lower-portholes"></g>
+            </g>
+          </g>
+
+          <!-- UPPER LARGE SPHERE (cx=107, cy=142, r=38) -->
+          <g id="pearl-upper-sphere">
+            <g clip-path="url(#clipUpperSphere)">
+              <circle cx="107" cy="142" r="38" fill="url(#pearlMetalBowl)" />
+              <g clip-path="url(#clipUpperSphereRed)">
+                <circle cx="107" cy="142" r="38" fill="url(#pearlRedSphere)" />
+                <g id="pearl-upper-lattice"></g>
+              </g>
+              <!-- Sleeker observation deck dark glass ring & twin silver trim rings -->
+              <path d="M 68 153 Q 107 160 146 153 L 146 159.2 Q 107 166.2 68 159.2 Z" fill="#232c3d" />
+              <path d="M 68 153 Q 107 160 146 153" fill="none" stroke="#ece0cc" stroke-width="1.4" />
+              <path d="M 68 159.2 Q 107 166.2 146 159.2" fill="none" stroke="#decbb2" stroke-width="1.2" />
+            </g>
+          </g>
+
+          <!-- UPPER RIBBED MAST, SPACE CAPSULE & ANTENNA SPIRE -->
+          <g id="pearl-spire">
+            <path d="M 99 88 L 115 88 L 117 107 Q 107 104 97 107 Z" fill="url(#pearlShaft)" />
+            <rect x="100.5" y="44" width="13" height="45" fill="url(#pearlShaft)" />
+            <g id="pearl-mast-ribs"></g>
+            <ellipse cx="107" cy="88" rx="9" ry="2.2" fill="#e5d3ba" />
+            <circle cx="107" cy="32" r="12.5" fill="url(#pearlMetalBowl)" />
+            <path d="M 94.8 29 Q 107 26.5 119.2 29 L 119.2 36 Q 107 38.5 94.8 36 Z" fill="url(#pearlRedSphere)" />
+            <path d="M 95 29 Q 107 26.5 119 29" fill="none" stroke="#e9d8c0" stroke-width="0.9" />
+            <path d="M 95 36 Q 107 38.5 119 36" fill="none" stroke="#d4c3aa" stroke-width="0.9" />
+            <polygon points="104,0 110,0 111.5,20 102.5,20" fill="url(#pearlShaft)" />
+            <rect x="103.5" y="10" width="7" height="3.2" fill="#b4454c" />
+            <ellipse cx="107" cy="19.5" rx="6.5" ry="1.8" fill="#d9c6ae" />
+          </g>
+        </g>
+
+        <!-- ======================================================== -->
+        <!-- SHANGHAI INTERNATIONAL CONVENTION CENTER (SICC)          -->
+        <!-- FULL 3/4 Glass Globe Domes matching exact photo heights! -->
+        <!-- ======================================================== -->
+        <g id="bldg-sicc">
+          <!-- LEFT GLASS DOME (full 3/4 sphere: cx=151, cy=537, r=55, top y=482!) -->
+          <g id="sicc-left-dome">
+            <g clip-path="url(#clipLeftDome)">
+              <g clip-path="url(#clipLeftDomeCircle)">
+                <circle cx="151" cy="537" r="55" fill="url(#siccLeftDome)" />
+                <!-- Rich sky-blue lower reflection + warm olive crown glint -->
+                <ellipse cx="132" cy="536" rx="28" ry="24" fill="#216ec7" opacity="0.62" />
+                <ellipse cx="156" cy="494" rx="38" ry="18" fill="#92a86e" opacity="0.52" />
+                <ellipse cx="128" cy="516" rx="11" ry="24" fill="#7dc4ff" opacity="0.28" />
+                <!-- Dark lower shadow crescent -->
+                <path d="M 96 537 A 55 55 0 0 1 124 490 C 110 515 108 545 114 566 L 96 566 Z" fill="#0d254d" opacity="0.45" />
+                <g id="sicc-left-dome-grid"></g>
+              </g>
+            </g>
+            <!-- Curved white multi-tier drum base -->
+            <path d="M 94 563 Q 140 558 182 563 L 182 586 Q 140 584 94 586 Z" fill="#ebe4d4" />
+            <g fill="#2b4254">
+              <path d="M 96 567 Q 140 563 180 567 L 180 572 Q 140 568 96 572 Z" />
+              <path d="M 96 575 Q 140 572 180 575 L 180 580 Q 140 577 96 580 Z" />
+            </g>
+            <g id="sicc-left-base-mullions"></g>
+          </g>
+
+          <!-- CENTRAL NEOCLASSICAL 10-ARCH CREAM FACADE -->
+          <g id="sicc-facade">
+            <polygon points="172,498 408,492 414,586 172,586" fill="url(#siccCream)" />
+            <polygon points="170,496 410,490 410,498 170,504" fill="#f7ebd5" />
+            <polygon points="172,504 409,498 409,508 172,513" fill="#d9c19c" />
+            <line x1="172" y1="509" x2="409" y2="503" stroke="#99805d" stroke-width="1.2" opacity="0.65" />
+            <!-- Ornamental reddish-bronze Chinese calligraphy roof crests -->
+            <g fill="#8c392b" opacity="0.88">
+              <rect x="184" y="497" width="60" height="5.5" rx="1" />
+              <rect x="292" y="494" width="22" height="6" rx="1.5" />
+              <rect x="319" y="493" width="52" height="5.5" rx="1" />
+            </g>
+            <g fill="#f5dfb6" opacity="0.45">
+              <rect x="187" y="499" width="54" height="1.5" />
+              <rect x="322" y="495" width="46" height="1.5" />
+            </g>
+            <g id="sicc-arches"></g>
+          </g>
+
+          <!-- RIGHT WORLD-MAP GLASS GLOBE DOME (full 3/4 sphere: cx=446, cy=521, r=50, top y=471!) -->
+          <g id="sicc-right-dome">
+            <g clip-path="url(#clipRightDome)">
+              <g clip-path="url(#clipRightDomeCircle)">
+                <circle cx="446" cy="521" r="50" fill="url(#siccRightDome)" />
+                <!-- Softly Blended World Map Reflection Patches beneath glass sheen -->
+                <path d="M 430 482 Q 453 475 473 488 Q 478 502 460 508 Q 438 510 427 497 Z" fill="#d9592e" opacity="0.58" />
+                <path d="M 436 488 Q 454 484 466 494 Q 464 503 448 504 Z" fill="#f07846" opacity="0.46" />
+                <path d="M 430 508 Q 464 500 492 516 Q 492 534 466 536 Q 436 534 430 518 Z" fill="#b4f2f4" opacity="0.58" />
+                <path d="M 396 532 Q 446 523 496 530 L 496 560 L 396 560 Z" fill="#3a7a34" opacity="0.64" />
+                <path d="M 442 532 Q 468 528 492 538 L 492 558 L 438 558 Z" fill="#70a33e" opacity="0.45" />
+                <!-- Glossy spherical glass specular highlight -->
+                <ellipse cx="476" cy="514" rx="14" ry="30" fill="#fffce8" opacity="0.34" />
+                <!-- Deep navy shadow left crescent -->
+                <path d="M 396 521 A 50 50 0 0 1 426 476 C 412 502 410 536 420 560 L 396 560 Z" fill="#102744" opacity="0.62" />
+                <g id="sicc-right-dome-grid"></g>
+              </g>
+            </g>
+            <!-- Curved white drum pedestal -->
+            <path d="M 396 557 Q 446 551 499 557 L 499 583 Q 446 580 396 583 Z" fill="#f3ebd8" />
+            <g fill="#2e4452">
+              <path d="M 398 561 Q 446 556 497 561 L 497 566 Q 446 561 398 566 Z" />
+              <path d="M 398 570 Q 446 566 497 570 L 497 575 Q 446 571 398 575 Z" />
+            </g>
+            <g id="sicc-right-base-mullions"></g>
+          </g>
+        </g>
+
+        <!-- ======================================================== -->
+        <!-- WATERFRONT ORGANIC TREES, AUTUMN MAPLE & EMBANKMENT      -->
+        <!-- ======================================================== -->
+        <g id="layer-waterfront">
+          <g id="green-trees-group"></g>
+          <g id="red-trees-group"></g>
+
+          <!-- Pier White Geometric Truss Canopy -->
+          <g stroke="#eceae4" stroke-width="1.4" fill="none">
+            <polyline points="140,596 146,584 156,596 166,584 176,596 183,586" />
+            <line x1="138" y1="596" x2="186" y2="596" stroke-width="1.8" />
+          </g>
+
+          <!-- Left-Center Stone Riverside Promenade Embankment -->
+          <rect x="0" y="595" width="438" height="12" fill="#8d7252" />
+          <rect x="0" y="594" width="438" height="2.4" fill="#d8c3a3" />
+          <rect x="0" y="603" width="438" height="4" fill="#4f3e2c" />
+          <rect x="78" y="592" width="108" height="5" fill="#c7b59a" />
+          <rect x="82" y="607.5" width="156" height="3" rx="1.5" fill="#d14c33" />
+          <rect x="82" y="607.5" width="156" height="1" fill="#f59678" opacity="0.65" />
+
+          <!-- Right Sunlit Crisp White Riverside Embankment Wall -->
+          <rect x="436" y="590" width="154" height="16" fill="#f4eee0" />
+          <rect x="436" y="602" width="154" height="4" fill="#b8b09c" />
+          <polygon points="588,584 745,584 745,606 588,606" fill="#faf5e8" />
+          <rect x="588" y="601" width="157" height="5" fill="#ccc4b2" />
+          <line x1="454" y1="560" x2="454" y2="590" stroke="#e8e4d8" stroke-width="1" />
+        </g>
+
+      </g><!-- /#layer-buildings-day -->
+
+      <!-- Afternoon Sunburst Glint on 4th Pearl Sphere (unfiltered pure bright gleam!) -->
+      <g id="pearl-sun-glint" transform="translate(112.5, 318)">
+        <circle cx="0" cy="0" r="14" fill="url(#pearlSunGlint)" />
+        <path d="M -11 0 L 11 0 M 0 -11 L 0 11 M -6 -6 L 6 6 M -6 6 L 6 -6"
+              stroke="#fff7d6" stroke-width="1.1" stroke-linecap="round" opacity="0.74" />
+        <circle cx="0" cy="0" r="3.4" fill="#ffffff" />
+      </g>
+
+      <!-- ========================================================== -->
+      <!-- 3. SELF-ILLUMINATED NIGHT ARCHITECTURAL LIGHTS & LEDS      -->
+      <!-- (Completely unfiltered on top of moonlit dark silhouettes!)-->
+      <!-- ========================================================== -->
+      <g id="layer-night-lights" opacity="0">
+
+        <!-- SWFC Night Iconic White-Cyan Edge & Aperture Outline (clipped cleanly behind Jin Mao!) -->
+        <g id="night-swfc" clip-path="url(#clipSwfcVisible)" filter="url(#glowSoft)">
+          <path d="M 480 198 L 541 191 L 543 290 M 480 198 L 482 290" fill="none" stroke="#9de6ff" stroke-width="1.9" opacity="0.95" />
+          <polygon points="491,210 533,205 529,235 494,236" fill="none" stroke="#ebfcff" stroke-width="2.2" />
+          <line x1="480" y1="198" x2="541" y2="191" stroke="#ffffff" stroke-width="2.6" />
+        </g>
+
+        <!-- Jin Mao Tower Warm Golden Pagoda Tier Uplighting -->
+        <g id="night-jinmao">
+          <g filter="url(#glowSoft)">
+            <polygon points="504,248 514,248 518,269 500,269" fill="#ffd270" opacity="0.72" />
+            <polygon points="494,269 524,269 529,296 489,296" fill="#f7b94a" opacity="0.58" />
+            <line x1="509" y1="219" x2="509" y2="248" stroke="#fff4c8" stroke-width="1.8" />
+          </g>
+          <g id="night-jinmao-tiers"></g>
+        </g>
+
+        <!-- IFC North & South Night Roof Crowns + Lit Office Window Grids -->
+        <g id="night-ifc">
+          <polyline points="418,276 452,273 484,286" fill="none" stroke="#a6e3ff" stroke-width="2.2" filter="url(#glowSoft)" />
+          <polyline points="522,278 548,271 587,265" fill="none" stroke="#ffe5a3" stroke-width="2.4" filter="url(#glowSoft)" />
+          <rect x="429" y="290" width="26" height="5" fill="#ff5447" opacity="0.95" filter="url(#glowSoft)" />
+          <g id="night-ifc-windows"></g>
+        </g>
+
+        <!-- Shanghai Tower Iconic Animated Spiraling LED Light Ribbons & Crown -->
+        <g id="night-shanghai-tower">
+          <g clip-path="url(#clipShTowerNight)">
+            <path d="M 637 40 Q 658 34 679 39 L 682 86 L 639 86 Z" fill="#70d2ff" opacity="0.34" filter="url(#glowSoft)" />
+            <path id="sh-spiral-ribbon" d="M 644 134 C 650 198 662 268 679 350 C 688 394 694 442 698 492"
+                  fill="none" stroke="#6ae2ff" stroke-width="3.2" stroke-linecap="round"
+                  stroke-dasharray="28 14 12 12" filter="url(#glowSoft)" />
+            <path id="sh-spiral-ribbon-2" d="M 646 136 C 652 200 665 270 682 352 C 691 395 697 442 701 492"
+                  fill="none" stroke="#fff2b8" stroke-width="1.4" stroke-linecap="round"
+                  stroke-dasharray="14 28" />
+            <g id="night-shanghai-tower-bands"></g>
+          </g>
+          <path d="M 637 40 Q 658 34 679 39" fill="none" stroke="#dcf6ff" stroke-width="2.3" filter="url(#glowSoft)" />
+        </g>
+
+        <!-- Azia Center & Left Skyline Night Illumination -->
+        <g id="night-left-skyline">
+          <path d="M 222 336 Q 245 330 268 334 L 268 344 Q 245 340 222 345 Z" fill="#ffd98a" opacity="0.90" filter="url(#glowSoft)" />
+          <line x1="212" y1="498" x2="264" y2="433" stroke="#9edcff" stroke-width="1.6" opacity="0.72" filter="url(#glowSoft)" />
+          <rect x="136" y="395" width="32" height="7" rx="1" fill="#ff4d3b" filter="url(#glowSoft)" />
+          <rect x="64" y="400" width="22" height="6" rx="1" fill="#ff5442" filter="url(#glowSoft)" />
+          <g id="night-misc-windows"></g>
+        </g>
+
+        <!-- Right Emerald Towers, White Grid, Saucer Tower, MAP Night Lights -->
+        <g id="night-right-cluster">
+          <ellipse cx="507" cy="404" rx="34" ry="8" fill="#ffcf63" opacity="0.40" filter="url(#glowStrong)" />
+          <rect x="486" y="406" width="42" height="16" fill="#ffd970" opacity="0.92" filter="url(#glowSoft)" />
+          <path d="M 476 398 Q 507 390 538 398" fill="none" stroke="#ffea9c" stroke-width="2" filter="url(#glowSoft)" />
+          <polyline points="667,344 683,336 713,363" fill="none" stroke="#4effa8" stroke-width="1.9" filter="url(#glowSoft)" />
+          <polyline points="711,366 739,361" fill="none" stroke="#7bff9e" stroke-width="2" filter="url(#glowSoft)" />
+          <rect x="652" y="527" width="93" height="33" fill="#ffdf9e" opacity="0.54" filter="url(#glowSoft)" />
+          <rect x="652" y="568" width="93" height="15" fill="#ffd68a" opacity="0.50" />
+          <rect x="539" y="485" width="13" height="27" fill="#fff3d6" opacity="0.46" />
+        </g>
+
+        <!-- ORIENTAL PEARL TOWER NIGHT SHOW (drawn before SICC night domes so Z-order matches!) -->
+        <g id="night-oriental-pearl">
+          <circle id="pearl-halo-upper" cx="107" cy="142" r="58" fill="#ff3ca6" opacity="0.30" filter="url(#pearlNeonGlow)" />
+          <circle id="pearl-halo-lower" cx="107" cy="442" r="66" fill="#ff3ca6" opacity="0.30" filter="url(#pearlNeonGlow)" />
+          <circle id="pearl-halo-top" cx="107" cy="32" r="20" fill="#ff55bb" opacity="0.38" filter="url(#glowSoft)" />
+
+          <g clip-path="url(#clipUpperSphere)">
+            <circle cx="107" cy="142" r="38" fill="url(#pearlNightUpper)" opacity="0.88" />
+            <path d="M 68 153 Q 107 160 146 153" fill="none" stroke="#ffffff" stroke-width="1.9" opacity="0.92" />
+            <path d="M 68 159.2 Q 107 166.2 146 159.2" fill="none" stroke="#9beeff" stroke-width="1.6" opacity="0.86" />
+          </g>
+          <g clip-path="url(#clipLowerSphere)">
+            <circle cx="107" cy="442" r="45" fill="url(#pearlNightLower)" opacity="0.86" />
+            <path d="M 61 417 Q 107 410 153 417" fill="none" stroke="#9beeff" stroke-width="1.8" opacity="0.85" />
+            <path d="M 61 451 Q 107 458 153 451" fill="none" stroke="#ffffff" stroke-width="2.1" opacity="0.9" />
+          </g>
+          <circle cx="107" cy="32" r="12.5" fill="url(#pearlNightUpper)" opacity="0.9" />
+          <rect x="89" y="180" width="10.5" height="220" fill="#e8c8ff" opacity="0.34" />
+          <rect x="116.5" y="180" width="11" height="220" fill="#ffd9f4" opacity="0.44" />
+          <rect x="102" y="45" width="10" height="58" fill="#ffb8ec" opacity="0.48" />
+          <polygon points="80,474 89,478 34,574 26,573" fill="#ffd6b0" opacity="0.28" />
+          <polygon points="90,480 100,481 95,574 84,574" fill="#ffd6b0" opacity="0.30" />
+          <circle cx="49" cy="535" r="9.5" fill="#9de8ff" opacity="0.65" filter="url(#glowSoft)" />
+          <g id="night-pearl-nodes"></g>
+        </g>
+
+        <!-- SICC Night Illumination (Full 3/4 Glowing Blue & Emerald Globes + Golden Colonnade) -->
+        <g id="night-sicc">
+          <g clip-path="url(#clipLeftDome)">
+            <g clip-path="url(#clipLeftDomeCircle)">
+              <circle cx="151" cy="537" r="55" fill="#1e94ff" opacity="0.50" filter="url(#glowSoft)" />
+              <circle cx="151" cy="526" r="36" fill="#7be0ff" opacity="0.34" />
+            </g>
+          </g>
+          <g clip-path="url(#clipRightDome)">
+            <g clip-path="url(#clipRightDomeCircle)">
+              <circle cx="446" cy="521" r="50" fill="#2ee0a8" opacity="0.44" filter="url(#glowSoft)" />
+              <ellipse cx="452" cy="494" rx="22" ry="15" fill="#ff6e3a" opacity="0.52" />
+              <ellipse cx="454" cy="522" rx="28" ry="18" fill="#82f7ff" opacity="0.38" />
+            </g>
+          </g>
+          <line x1="172" y1="497" x2="409" y2="491" stroke="#ffd885" stroke-width="2" filter="url(#glowSoft)" />
+          <g id="night-sicc-arches"></g>
+        </g>
+
+        <!-- Waterfront Promenade Warm Streetlamps -->
+        <g id="night-streetlamps"></g>
+
+        <!-- Blinking Red Aviation Warning Beacons -->
+        <g id="night-beacons" filter="url(#glowSoft)">
+          <circle class="beacon" cx="107" cy="5" r="2.6" fill="#ff2c3b" />
+          <circle class="beacon" cx="481" cy="197" r="2.2" fill="#ff2c3b" />
+          <circle class="beacon" cx="541" cy="190" r="2.2" fill="#ff2c3b" />
+          <circle class="beacon" cx="509" cy="219" r="2.4" fill="#ff2c3b" />
+          <circle class="beacon" cx="658" cy="36" r="2.6" fill="#ff2c3b" />
+          <circle class="beacon" cx="364" cy="402" r="2" fill="#ff2c3b" />
+        </g>
+
+      </g><!-- /#layer-night-lights -->
+
+    </g><!-- /#skyline-master -->
+
+    <!-- ============================================================ -->
+    <!-- 4. HUANGPU RIVER WATER, REALISTIC RIPPLED REFLECTIONS & BOATS-->
+    <!-- ============================================================ -->
+    <g id="layer-river">
+      <rect x="0" y="605" width="745" height="137" fill="url(#waterGrad)" />
+      <rect id="water-day-tint" x="0" y="605" width="745" height="137" fill="url(#waterTintRight)" />
+
+      <!-- Softly Blurred + Rippled Mirrored Skyline Reflection -->
+      <g clip-path="url(#clipWater)" mask="url(#reflMask)">
+        <g id="water-reflection-wrap" transform="translate(0, 998) scale(1, -0.65)" filter="url(#waterRipple)" opacity="0.44">
+          <use href="#skyline-master" />
+        </g>
+        <!-- Iconic warm peach-rose Oriental Pearl reflection glow in daytime river -->
+        <g id="water-pearl-day-glint" opacity="0.72" filter="url(#waterRipple)">
+          <ellipse cx="110" cy="642" rx="48" ry="22" fill="#f59a7a" opacity="0.62" filter="url(#glowStrong)" />
+          <ellipse cx="110" cy="636" rx="34" ry="10" fill="#ffe0c4" opacity="0.52" filter="url(#glowSoft)" />
+        </g>
+        <!-- Rich luminous vertical neon water shimmer ribbons at night -->
+        <g id="water-night-ribbons" opacity="0" filter="url(#waterRipple)">
+          <rect x="78" y="608" width="58" height="122" fill="#ff3ea6" opacity="0.38" filter="url(#glowStrong)" />
+          <rect x="120" y="608" width="64" height="86" fill="#2ea4ff" opacity="0.28" filter="url(#glowStrong)" />
+          <rect x="198" y="608" width="204" height="68" fill="#ffb84d" opacity="0.24" filter="url(#glowStrong)" />
+          <rect x="410" y="608" width="74" height="88" fill="#2ee8b0" opacity="0.28" filter="url(#glowStrong)" />
+          <rect x="488" y="608" width="58" height="112" fill="#ffcb5c" opacity="0.28" filter="url(#glowStrong)" />
+          <rect x="634" y="608" width="76" height="124" fill="#5ce0ff" opacity="0.34" filter="url(#glowStrong)" />
+        </g>
+      </g>
+
+      <!-- Dense Photographic Horizontal Wave & Chop Texture (populated via JS) -->
+      <g id="water-ripples-group" clip-path="url(#clipWater)"></g>
+
+      <!-- Subtle Riverbank Shoreline Shadow -->
+      <rect x="0" y="605" width="745" height="3.2" fill="#18273c" opacity="0.42" />
+
+      <!-- Red Conical Navigation Buoy (x=711) -->
+      <g id="river-buoy" transform="translate(711, 610)">
+        <ellipse cx="0" cy="3" rx="7" ry="1.8" fill="#ffffff" opacity="0.45" />
+        <polygon points="-5,2 -2,-13 2,-13 5,2" fill="#d93228" />
+        <polygon points="0,-13 2,-13 5,2 0,2" fill="#ff6654" opacity="0.55" />
+        <rect x="-5.5" y="0.5" width="11" height="2.4" rx="1" fill="#8f1e18" />
+        <circle id="buoy-beacon" cx="0" cy="-14" r="2.2" fill="#ff3a2e" opacity="0" filter="url(#glowSoft)" />
+      </g>
+
+      <!-- Left Docked White Sightseeing Cruise Ferry -->
+      <g id="boat-left-ferry">
+        <ellipse cx="42" cy="616" rx="46" ry="2.2" fill="#e6effa" opacity="0.52" />
+        <polygon points="0,606 86,606 78,616 0,616" fill="#eef0eb" />
+        <rect x="0" y="613" width="78" height="2.6" fill="#465566" />
+        <polygon points="0,596 48,596 62,606 0,606" fill="#f7f6f0" />
+        <polygon points="0,589 24,589 34,596 0,596" fill="#ffffff" />
+        <g fill="#223244">
+          <rect x="4" y="600" width="9" height="4" /><rect x="16" y="600" width="9" height="4" />
+          <rect x="28" y="600" width="9" height="4" /><rect x="40" y="600" width="8" height="4" />
+          <rect x="4" y="608" width="11" height="3.5" /><rect x="18" y="608" width="11" height="3.5" />
+          <rect x="32" y="608" width="11" height="3.5" />
+        </g>
+        <g id="boat-left-lights" opacity="0" filter="url(#glowSoft)">
+          <rect x="4" y="600" width="44" height="4" fill="#ffdf8a" opacity="0.9" />
+          <rect x="4" y="608" width="39" height="3.5" fill="#ffd478" opacity="0.82" />
+          <circle cx="80" cy="607" r="1.8" fill="#52ff88" />
+        </g>
+      </g>
+
+      <!-- Right Cobalt-Blue Tugboat & Trailing Cargo Barge -->
+      <g id="boat-right-tug" transform="translate(564, 608)">
+        <path d="M -22 26 Q 40 28 240 27" fill="none" stroke="#dbe7f5" stroke-width="2" opacity="0.52" />
+        <ellipse cx="66" cy="28" rx="68" ry="3.2" fill="#152336" opacity="0.44" />
+        <polygon points="134,15 280,15 276,25 134,25" fill="#b84a36" />
+        <rect x="134" y="21" width="142" height="4.2" fill="#2c64b0" />
+        <rect x="136" y="13" width="138" height="2.4" fill="#d8a27c" />
+        <path d="M 0 18 Q 2 10 14 10 L 136 10 L 138 25 L 8 25 Q 0 24 0 18 Z" fill="#191f28" />
+        <rect x="96" y="17" width="40" height="6" fill="#d8dad5" />
+        <polygon points="24,18 28,4 122,4 130,18" fill="#1849b8" />
+        <polygon points="28,4 122,4 124,7 27,7" fill="#467be6" />
+        <rect x="26" y="6" width="24" height="12" fill="#15274a" />
+        <rect x="52" y="8" width="12" height="8" fill="#e6e4dc" />
+        <rect x="54" y="9.5" width="8" height="4.5" fill="#d45e36" />
+        <rect x="72" y="8" width="10" height="8" fill="#e6e4dc" />
+        <rect x="74" y="9.5" width="6" height="4.5" fill="#c44a2a" />
+        <rect x="108" y="8" width="9" height="9" fill="#d64126" />
+        <rect x="76" y="-2" width="4.5" height="6" fill="#1c222a" />
+        <rect x="85" y="-1.5" width="4" height="5.5" fill="#2b2628" />
+        <path d="M 96 4 Q 108 -1 120 4 Z" fill="#323842" />
+        <circle cx="8" cy="14" r="3.4" fill="#14181e" />
+        <g fill="#12161c" stroke="#5c626b" stroke-width="0.9">
+          <circle cx="38" cy="21" r="4" /><circle cx="48" cy="21" r="4" />
+          <circle cx="58" cy="21" r="4" /><circle cx="68" cy="21" r="4" />
+          <circle cx="78" cy="21" r="4" /><circle cx="88" cy="21" r="4" />
+          <circle cx="116" cy="21.5" r="3.8" /><circle cx="128" cy="21.5" r="3.8" />
+        </g>
+        <g id="boat-right-lights" opacity="0" filter="url(#glowSoft)">
+          <rect x="53" y="9" width="10" height="5.5" fill="#ffe294" />
+          <rect x="73" y="9" width="8" height="5.5" fill="#ffe294" />
+          <rect x="30" y="8" width="16" height="4" fill="#ffd97a" opacity="0.85" />
+          <circle cx="4" cy="12" r="2.2" fill="#ff3b30" />
+          <circle cx="78" cy="-3" r="2.4" fill="#fff8d6" />
+        </g>
+      </g>
+    </g><!-- /#layer-river -->
+
+  </svg>
+
+  <!-- Minimal Floating Interactive HUD -->
+  <div class="hud" id="hud">
+    <button class="hud-btn" id="btnPlay" type="button" title="暫停 / 播放">❚❚</button>
+    <div class="time-readout">
+      <span class="time-clock" id="clockText">15:00</span>
+      <span class="time-phase" id="phaseText">晴朗午後</span>
+    </div>
+    <input class="scrubber" id="timeScrubber" type="range" min="0" max="24" step="0.02" value="15" aria-label="時間軸" />
+    <div class="phase-group">
+      <button class="hud-btn" data-jump="5.9" type="button">黎明</button>
+      <button class="hud-btn" data-jump="15.0" type="button">白晝</button>
+      <button class="hud-btn" data-jump="18.1" type="button">黃昏</button>
+      <button class="hud-btn" data-jump="22.2" type="button">夜景</button>
+    </div>
+    <button class="hud-btn" id="btnSpeed" type="button" title="切換循環速度">1x</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const SVG_NS = "http://www.w3.org/2000/svg";
+
+  const el = (tag, attrs = {}, parent = null) => {
+    const node = document.createElementNS(SVG_NS, tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      node.setAttribute(k, String(v));
+    }
+    if (parent) parent.appendChild(node);
+    return node;
+  };
+
+  // Deterministic PRNG for consistent crisp procedural geometry
+  let seed = 20261123;
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+
+  // =========================================================================
+  // 1. PROCEDURAL HIGH-PRECISION ARCHITECTURAL & ENVIRONMENTAL DETAILS
+  // =========================================================================
+
+  // --- Starfield (130 stars across sky) ---
+  const starsGroup = document.getElementById("stars-group");
+  const starNodes = [];
+  for (let i = 0; i < 130; i++) {
+    const x = rand() * 745;
+    const y = rand() * 440;
+    const r = 0.55 + rand() * 1.35;
+    const tint = rand() > 0.72 ? "#ffe8c2" : (rand() > 0.5 ? "#c8e0ff" : "#ffffff");
+    const c = el("circle", { cx: x.toFixed(1), cy: y.toFixed(1), r: r.toFixed(2), fill: tint }, starsGroup);
+    starNodes.push({ node: c, phase: rand() * Math.PI * 2, speed: 1.4 + rand() * 2.6, base: 0.45 + rand() * 0.55 });
+  }
+
+  // --- Oriental Pearl: 5 Small Suspended Pod Spheres + Lower Collar ---
+  const smallSpheresGroup = document.getElementById("pearl-small-spheres");
+  const nightPearlNodes = document.getElementById("night-pearl-nodes");
+  [207, 244, 281, 318, 355].forEach((cy) => {
+    el("ellipse", { cx: 107, cy: cy + 4, rx: 9.2, ry: 7.4, fill: "url(#pearlMetalBowl)" }, smallSpheresGroup);
+    el("rect", { x: 96, y: cy - 4.2, width: 22, height: 7.2, rx: 3.2, fill: "url(#pearlShaft)" }, smallSpheresGroup);
+    el("rect", { x: 96.2, y: cy - 1.6, width: 21.6, height: 3.2, rx: 1.2, fill: "#b8444a" }, smallSpheresGroup);
+    el("line", { x1: 97, y1: cy - 3.6, x2: 117, y2: cy - 3.6, stroke: "#f7e6ce", "stroke-width": 0.9 }, smallSpheresGroup);
+    el("ellipse", {
+      cx: 107, cy, rx: 11, ry: 5.5, fill: "#ff4db8", opacity: 0.88, filter: "url(#glowSoft)"
+    }, nightPearlNodes);
+  });
+  el("rect", { x: 96.5, y: 389, width: 21, height: 8, rx: 2, fill: "url(#pearlShaft)" }, smallSpheresGroup);
+  el("rect", { x: 96.5, y: 392, width: 21, height: 3.2, fill: "#b8444a" }, smallSpheresGroup);
+
+  // --- Oriental Pearl: Ribbed Mast Rings & Geodesic Sphere Lattices ---
+  const mastRibs = document.getElementById("pearl-mast-ribs");
+  for (let y = 47; y <= 86; y += 3.5) {
+    el("line", { x1: 100.5, y1: y, x2: 113.5, y2: y, stroke: "#474c5c", "stroke-width": 0.85, opacity: 0.65 }, mastRibs);
+  }
+
+  const buildSphereLattice = (parent, cx, cy, r, yStart, yEnd, stepX, stepY, strokeCol) => {
+    for (let y = yStart; y <= yEnd; y += stepY) {
+      const curve = (y - cy) * 0.12;
+      el("path", {
+        d: `M ${cx - r - 2} ${y} Q ${cx} ${y + curve} ${cx + r + 2} ${y}`,
+        fill: "none", stroke: strokeCol, "stroke-width": 0.68, opacity: 0.56
+      }, parent);
+    }
+    for (let offset = -r * 1.7; offset <= r * 1.7; offset += stepX) {
+      el("line", {
+        x1: cx + offset - 26, y1: yStart - 6, x2: cx + offset + 26, y2: yEnd + 6,
+        stroke: strokeCol, "stroke-width": 0.68, opacity: 0.52
+      }, parent);
+      el("line", {
+        x1: cx + offset + 26, y1: yStart - 6, x2: cx + offset - 26, y2: yEnd + 6,
+        stroke: strokeCol, "stroke-width": 0.68, opacity: 0.52
+      }, parent);
+    }
+  };
+  buildSphereLattice(document.getElementById("pearl-upper-lattice"), 107, 142, 38, 108, 153, 8.6, 7.6, "#fae0d8");
+  buildSphereLattice(document.getElementById("pearl-lower-lattice"), 107, 442, 45, 418, 451, 9.2, 7.8, "#fae0d8");
+
+  // Oriental Pearl Lower Sphere Porthole Windows + Night Sparkles
+  const portholes = document.getElementById("pearl-lower-portholes");
+  for (let i = -5; i <= 5; i++) {
+    const px = 107 + i * 7.3;
+    const pyTop = 410.5 - (1 - (i * i) / 36) * 2.2;
+    const pyBot = 461.5 + (1 - (i * i) / 36) * 2.6;
+    el("rect", { x: px - 1.3, y: pyTop, width: 2.6, height: 2.2, fill: "#283344", opacity: 0.72 }, portholes);
+    el("rect", { x: px - 1.3, y: pyBot, width: 2.6, height: 2.2, fill: "#283344", opacity: 0.68 }, portholes);
+  }
+  const pearlSparkles = [];
+  for (let i = 0; i < 16; i++) {
+    const a = (i / 16) * Math.PI * 2;
+    const d1 = el("circle", { cx: (107 + Math.cos(a) * 24).toFixed(1), cy: (136 + Math.sin(a) * 14).toFixed(1), r: 1.5, fill: "#ffffff" }, nightPearlNodes);
+    const d2 = el("circle", { cx: (107 + Math.cos(a) * 31).toFixed(1), cy: (436 + Math.sin(a) * 14).toFixed(1), r: 1.6, fill: "#ffffff" }, nightPearlNodes);
+    pearlSparkles.push({ node: d1, phase: i * 0.7 }, { node: d2, phase: i * 0.7 + 1.5 });
+  }
+
+  // --- SICC Full 3/4 Glass Globe Meridian & Parallel Wireframes ---
+  const buildDomeGrid = (parent, cx, cy, r, bottomY, strokeCol) => {
+    const ratios = [-0.90, -0.74, -0.56, -0.38, -0.19, 0, 0.19, 0.38, 0.56, 0.74, 0.90];
+    ratios.forEach((f) => {
+      const mrx = Math.abs(f) * r;
+      if (f === 0) {
+        el("line", { x1: cx, y1: cy - r, x2: cx, y2: bottomY, stroke: strokeCol, "stroke-width": 0.9, opacity: 0.80 }, parent);
+      } else {
+        const sweep = f > 0 ? 1 : 0;
+        el("path", {
+          d: `M ${cx} ${cy - r} A ${mrx.toFixed(1)} ${r} 0 0 ${sweep} ${cx} ${cy + r}`,
+          fill: "none", stroke: strokeCol, "stroke-width": 0.85, opacity: 0.76
+        }, parent);
+      }
+    });
+    for (let y = cy - r + 10; y < bottomY; y += 8.6) {
+      const bend = (y - cy) * 0.14;
+      el("path", {
+        d: `M ${cx - r - 2} ${y} Q ${cx} ${y + bend} ${cx + r + 2} ${y}`,
+        fill: "none", stroke: strokeCol, "stroke-width": 0.75, opacity: 0.70
+      }, parent);
+    }
+  };
+  buildDomeGrid(document.getElementById("sicc-left-dome-grid"), 151, 537, 55, 564, "#dce3cf");
+  buildDomeGrid(document.getElementById("sicc-right-dome-grid"), 446, 521, 50, 558, "#f0ead0");
+
+  const leftBaseM = document.getElementById("sicc-left-base-mullions");
+  for (let x = 101; x <= 176; x += 6) {
+    el("line", { x1: x, y1: 563, x2: x, y2: 585, stroke: "#ede6d6", "stroke-width": 1.1 }, leftBaseM);
+  }
+  const rightBaseM = document.getElementById("sicc-right-base-mullions");
+  for (let x = 402; x <= 494; x += 6) {
+    el("line", { x1: x, y1: 557, x2: x, y2: 582, stroke: "#f4ede0", "stroke-width": 1.1 }, rightBaseM);
+  }
+
+  // --- SICC Central 10 Neoclassical Arched Bays + Night Palace Glow ---
+  const siccArches = document.getElementById("sicc-arches");
+  const nightSiccArches = document.getElementById("night-sicc-arches");
+  for (let i = 0; i < 10; i++) {
+    const bx = 179 + i * 22.8;
+    const ay = 516 - i * 0.55;
+    el("path", {
+      d: `M ${bx} 584 L ${bx} ${ay + 9} A 7.6 9 0 0 1 ${bx + 15.2} ${ay + 9} L ${bx + 15.2} 584 Z`,
+      fill: "#263646"
+    }, siccArches);
+    el("path", {
+      d: `M ${bx + 1.5} ${ay + 24} L ${bx + 1.5} ${ay + 9.5} A 6.1 7.2 0 0 1 ${bx + 13.7} ${ay + 9.5} L ${bx + 13.7} ${ay + 24} Z`,
+      fill: i < 4 ? "#45688c" : "#6c8085", opacity: 0.72
+    }, siccArches);
+    el("line", { x1: bx + 5.2, y1: ay + 2, x2: bx + 5.2, y2: 583, stroke: "#e9dec9", "stroke-width": 0.9 }, siccArches);
+    el("line", { x1: bx + 10.1, y1: ay + 2, x2: bx + 10.1, y2: 583, stroke: "#e9dec9", "stroke-width": 0.9 }, siccArches);
+    for (let my = ay + 12; my < 580; my += 10.5) {
+      el("line", { x1: bx + 1, y1: my, x2: bx + 14.2, y2: my, stroke: "#e9dec9", "stroke-width": 0.95 }, siccArches);
+    }
+    el("rect", { x: bx - 0.5, y: ay + 25, width: 16.2, height: 3.4, fill: "#ede0c7" }, siccArches);
+    el("rect", { x: bx - 5.2, y: ay - 6, width: 4.5, height: 74, fill: "#f4e5c8" }, siccArches);
+    el("rect", { x: bx - 5.2, y: ay - 6, width: 1.5, height: 74, fill: "#b89f7c" }, siccArches);
+
+    el("path", {
+      d: `M ${bx + 1} 572 L ${bx + 1} ${ay + 9} A 6.6 8 0 0 1 ${bx + 14.2} ${ay + 9} L ${bx + 14.2} 572 Z`,
+      fill: "#ffca6e", opacity: 0.56
+    }, nightSiccArches);
+  }
+
+  // --- Curtain Wall Grids & Night Lit Windows ---
+  const bocomWin = document.getElementById("bldg-left-bocom-windows");
+  for (let y = 372; y < 560; y += 6.5) {
+    el("line", { x1: 29, y1: y, x2: 52, y2: y, stroke: "#6f98c7", "stroke-width": 0.7, opacity: 0.48 }, bocomWin);
+  }
+  for (let x = 35; x < 50; x += 5.5) {
+    el("line", { x1: x, y1: 358, x2: x, y2: 564, stroke: "#132947", "stroke-width": 0.7, opacity: 0.6 }, bocomWin);
+  }
+
+  const behindPearlWin = document.getElementById("bldg-behind-pearl-windows");
+  for (let y = 412; y < 562; y += 7.5) {
+    for (let x = 60; x < 170; x += 6.5) {
+      el("rect", { x, y, width: 3.6, height: 4.6, fill: "#384759", opacity: 0.72 }, behindPearlWin);
+    }
+  }
+
+  const aziaLouvers = document.getElementById("bldg-azia-louvers");
+  for (let x = 220; x <= 274; x += 3.6) {
+    const t = Math.max(0, Math.min(1, (x - 212) / (264 - 212)));
+    const topY = x <= 264 ? (498 - t * (498 - 433)) : (433 + ((x - 264) / 12) * 9);
+    el("line", { x1: x, y1: topY + 2, x2: x, y2: 497, stroke: "#695c48", "stroke-width": 0.75, opacity: 0.65 }, aziaLouvers);
+  }
+
+  const swfcGrid = document.getElementById("bldg-swfc-grid");
+  for (let y = 242; y < 445; y += 9) {
+    el("line", { x1: 482, y1: y, x2: 544, y2: y - 2, stroke: "#5a8bd4", "stroke-width": 0.55, opacity: 0.25 }, swfcGrid);
+  }
+
+  const jmTiers = document.getElementById("bldg-jinmao-tiers");
+  const nightJmTiers = document.getElementById("night-jinmao-tiers");
+  [269, 282, 296, 313, 332, 353, 376, 404, 434].forEach((y) => {
+    el("line", { x1: 486, y1: y, x2: 533, y2: y, stroke: "#182b47", "stroke-width": 1.3, opacity: 0.72 }, jmTiers);
+    el("line", { x1: 506, y1: y - 1, x2: 533, y2: y - 1, stroke: "#ffffff", "stroke-width": 1, opacity: 0.65 }, jmTiers);
+    if (y < 390) {
+      el("rect", { x: 488, y: y - 2.2, width: 44, height: 3.4, fill: "#ffcb66", opacity: 0.80, filter: "url(#glowSoft)" }, nightJmTiers);
+    }
+  });
+
+  const ifcNGrid = document.getElementById("bldg-ifc-north-grid");
+  const ifcSGrid = document.getElementById("bldg-ifc-south-grid");
+  const nightIfcWin = document.getElementById("night-ifc-windows");
+
+  for (let y = 282; y < 516; y += 6.2) {
+    el("line", { x1: 418, y1: y, x2: 488, y2: y + 2.5, stroke: "#9bc2e0", "stroke-width": 0.55, opacity: 0.28 }, ifcNGrid);
+    if (y > 296 && y < 462 && Math.abs(y - 370) > 7 && rand() > 0.42) {
+      const segs = 1 + Math.floor(rand() * 3);
+      for (let s = 0; s < segs; s++) {
+        const wx = 426 + rand() * 44;
+        const ww = 6 + rand() * 14;
+        const maxRight = y > 388 ? 470 : 482;
+        if (wx < maxRight - 4) {
+          el("rect", {
+            x: wx.toFixed(1), y: (y + 1).toFixed(1), width: Math.min(ww, maxRight - wx).toFixed(1), height: 2.6,
+            fill: rand() > 0.3 ? "#ffe7a8" : "#bfeaff", opacity: (0.45 + rand() * 0.45).toFixed(2)
+          }, nightIfcWin);
+        }
+      }
+    }
+  }
+  for (let y = 278; y < 530; y += 6.4) {
+    el("line", { x1: 522, y1: y, x2: 548, y2: y - 2, stroke: "#6fa0cc", "stroke-width": 0.55, opacity: 0.34 }, ifcSGrid);
+    el("line", { x1: 548, y1: y - 2, x2: 612, y2: y + 1, stroke: y < 392 ? "#9e9882" : "#6c9ac7", "stroke-width": 0.55, opacity: 0.34 }, ifcSGrid);
+    if (y > 282 && y < 420 && rand() > 0.36) {
+      const segs = 1 + Math.floor(rand() * 3);
+      for (let s = 0; s < segs; s++) {
+        const wx = 550 + rand() * 42;
+        const ww = 6 + rand() * 16;
+        const maxRight = y < 404 ? 585 + ((y - 265) / 139) * 23 : 608;
+        if (wx < maxRight - 4) {
+          el("rect", {
+            x: wx.toFixed(1), y: (y + 0.5).toFixed(1), width: Math.min(ww, maxRight - wx - 2).toFixed(1), height: 2.8,
+            fill: y < 335 ? "#ffdd88" : (rand() > 0.35 ? "#fff0be" : "#b8e6ff"), opacity: (0.48 + rand() * 0.46).toFixed(2)
+          }, nightIfcWin);
+        }
+      }
+    }
+  }
+
+  const shGrid = document.getElementById("bldg-shanghai-tower-grid");
+  const nightShBands = document.getElementById("night-shanghai-tower-bands");
+  for (let y = 46; y < 516; y += 5.2) {
+    el("path", {
+      d: `M 633 ${y} Q 670 ${y - 2.4} 710 ${y + 0.8}`,
+      fill: "none", stroke: "#183354", "stroke-width": 0.85, opacity: 0.44
+    }, shGrid);
+    el("path", {
+      d: `M 633 ${y + 1.1} Q 670 ${y - 1.3} 710 ${y + 1.9}`,
+      fill: "none", stroke: "#eef2f0", "stroke-width": 0.55, opacity: 0.40
+    }, shGrid);
+    if (y > 56 && y < 495 && rand() > 0.52) {
+      const lx = 640 + rand() * 34;
+      const lw = 10 + rand() * 22;
+      el("rect", {
+        x: lx.toFixed(1), y: (y + 1).toFixed(1), width: lw.toFixed(1), height: 2.2,
+        fill: rand() > 0.45 ? "#9beeff" : "#fff0be", opacity: (0.45 + rand() * 0.42).toFixed(2)
+      }, nightShBands);
+    }
+  }
+
+  const greenDarkGrid = document.getElementById("bldg-green-dark-grid");
+  const greenBrightGrid = document.getElementById("bldg-green-bright-grid");
+  const nightMiscWin = document.getElementById("night-misc-windows");
+  for (let y = 352; y < 500; y += 7.5) {
+    el("line", { x1: 684, y1: y, x2: 716, y2: y + 4, stroke: "#9be0bd", "stroke-width": 0.6, opacity: 0.35 }, greenDarkGrid);
+    if (y > 368 && rand() > 0.48) {
+      el("rect", { x: 688 + rand() * 14, y: y + 1, width: 7 + rand() * 8, height: 2.5, fill: "#b0ffd2", opacity: 0.62 }, nightMiscWin);
+    }
+  }
+  for (let y = 372; y < 498; y += 7.5) {
+    el("line", { x1: 712, y1: y, x2: 742, y2: y - 1.5, stroke: "#e4ffe6", "stroke-width": 0.65, opacity: 0.48 }, greenBrightGrid);
+    if (rand() > 0.5) {
+      el("rect", { x: 716 + rand() * 12, y: y + 1, width: 6 + rand() * 10, height: 2.4, fill: "#d8ffe0", opacity: 0.55 }, nightMiscWin);
+    }
+  }
+
+  const saucerWin = document.getElementById("bldg-saucer-windows");
+  for (let x = 478; x <= 546; x += 5) {
+    el("line", { x1: x, y1: x > 518 ? 444 : 424, x2: x, y2: 564, stroke: "#1f2733", "stroke-width": 1.1, opacity: 0.52 }, saucerWin);
+  }
+  for (let y = 432; y < 548; y += 9) {
+    if (rand() > 0.42) {
+      el("rect", { x: 484 + rand() * 34, y, width: 6 + rand() * 10, height: 2.5, fill: "#ffd980", opacity: 0.72 }, nightMiscWin);
+    }
+  }
+
+  const wgWin = document.getElementById("bldg-white-grid-windows");
+  for (let row = 0; row < 5; row++) {
+    const ry = 439 + row * 16.5;
+    for (let col = 0; col < 10; col++) {
+      const wx = 569 + col * 5.9;
+      const slope = (630 - wx) * 0.095;
+      el("rect", { x: wx.toFixed(1), y: (ry + slope).toFixed(1), width: 3.4, height: 11.2, fill: "#1c2d42" }, wgWin);
+      if (rand() > 0.52) {
+        el("rect", { x: wx.toFixed(1), y: (ry + slope).toFixed(1), width: 3.4, height: 11.2, fill: "#ffe29c", opacity: 0.72 }, nightMiscWin);
+      }
+    }
+    for (let col = 0; col < 8; col++) {
+      const wx = 633 + col * 5.2;
+      const slope = (wx - 630) * 0.11;
+      el("rect", { x: wx.toFixed(1), y: (ry + slope).toFixed(1), width: 3.1, height: 11.2, fill: "#382f2a" }, wgWin);
+      if (rand() > 0.45) {
+        el("rect", { x: wx.toFixed(1), y: (ry + slope).toFixed(1), width: 3.1, height: 11.2, fill: "#ffd980", opacity: 0.78 }, nightMiscWin);
+      }
+    }
+  }
+  for (let y = 368; y < 548; y += 9) {
+    if (rand() > 0.5) el("rect", { x: 32 + rand() * 16, y, width: 4 + rand() * 5, height: 2.2, fill: "#ffe4a0", opacity: 0.72 }, nightMiscWin);
+    if (y > 416 && rand() > 0.45) el("rect", { x: 132 + rand() * 34, y, width: 5 + rand() * 6, height: 2.6, fill: "#ffda88", opacity: 0.7 }, nightMiscWin);
+    if (y < 470 && rand() > 0.58) el("rect", { x: 228 + rand() * 30, y, width: 6 + rand() * 8, height: 2.2, fill: "#c2eaff", opacity: 0.62 }, nightMiscWin);
+  }
+
+  // --- Organic Multi-Tuft Waterfront Green & Autumn Red Foliage ---
+  const greenTrees = document.getElementById("green-trees-group");
+  const drawFoliageCluster = (parent, cx, baseY, width, height, palette) => {
+    const puffs = 7 + Math.floor(rand() * 4);
+    for (let p = 0; p < puffs; p++) {
+      const t = p / (puffs - 1);
+      const px = cx + (rand() - 0.5) * width * 0.9;
+      const py = baseY - (0.2 + rand() * 0.72) * height;
+      const rx = 5 + rand() * (width * 0.34);
+      const ry = 4.5 + rand() * (height * 0.32);
+      const col = palette[Math.min(palette.length - 1, Math.floor(t * palette.length))];
+      el("ellipse", { cx: px.toFixed(1), cy: py.toFixed(1), rx: rx.toFixed(1), ry: ry.toFixed(1), fill: col }, parent);
+    }
+  };
+
+  const greenPal = ["#1a2410", "#243116", "#2f3d1a", "#4a5624", "#6e7331"];
+  const greenSpecs = [
+    [16, 596, 36, 20], [56, 596, 44, 18], [104, 596, 44, 17], [156, 596, 36, 16],
+    [194, 596, 34, 24], [224, 596, 26, 20], [250, 596, 38, 30], [282, 596, 40, 34],
+    [314, 596, 40, 32], [346, 596, 34, 26], [374, 596, 28, 22], [402, 596, 34, 26],
+    [432, 596, 34, 28], [454, 596, 24, 24]
+  ];
+  greenSpecs.forEach(([cx, by, w, h]) => drawFoliageCluster(greenTrees, cx, by, w, h, greenPal));
+
+  // Lush Overlapping Autumn Grove (Metasequoia / Red Maples in front of MAP)
+  const redTrees = document.getElementById("red-trees-group");
+  // Continuous deep-burgundy shadow hedge base so no stark gaps show between trees
+  el("path", {
+    d: "M 456 594 Q 475 568 505 570 Q 535 560 568 564 Q 605 556 646 568 L 649 594 Z",
+    fill: "#3a170c"
+  }, redTrees);
+  const redPal = ["#4f1c0e", "#6d2410", "#8f2c12", "#b33816", "#cf481a", "#7c2612"];
+  for (let cx = 464; cx <= 645; cx += 13) {
+    const h = 23 + Math.sin(cx * 0.17) * 5 + rand() * 8;
+    const baseY = 594;
+    for (let layer = 0; layer < 8; layer++) {
+      const f = layer / 7;
+      const spread = (1 - f * 0.55) * 14;
+      const px = cx + (rand() - 0.5) * spread;
+      const py = baseY - 4 - f * (h - 4);
+      const rx = (6.8 + rand() * 4.2) * (1 - f * 0.36);
+      const ry = (5.2 + rand() * 3.4) * (1 - f * 0.25);
+      el("ellipse", {
+        cx: px.toFixed(1), cy: py.toFixed(1), rx: rx.toFixed(1), ry: ry.toFixed(1),
+        fill: redPal[Math.floor(rand() * redPal.length)]
+      }, redTrees);
+      if (rand() > 0.38) {
+        el("ellipse", {
+          cx: (px + rx * 0.35).toFixed(1), cy: (py - ry * 0.22).toFixed(1),
+          rx: (rx * 0.54).toFixed(1), ry: (ry * 0.52).toFixed(1),
+          fill: rand() > 0.45 ? "#d84f1e" : "#bd3b16", opacity: 0.78
+        }, redTrees);
+      }
+    }
+  }
+
+  // --- Promenade Warm Streetlamps (Night) ---
+  const lampsGroup = document.getElementById("night-streetlamps");
+  for (let x = 26; x <= 730; x += 38) {
+    const ly = x > 588 ? 584 : 592;
+    el("circle", { cx: x, cy: ly, r: 7, fill: "#ffbe55", opacity: 0.34, filter: "url(#glowSoft)" }, lampsGroup);
+    el("circle", { cx: x, cy: ly, r: 1.8, fill: "#fff2c2" }, lampsGroup);
+  }
+
+  // --- Dense Photographic Horizontal Huangpu River Wave Chops (155 streaks) ---
+  const ripplesGroup = document.getElementById("water-ripples-group");
+  const rippleStreaks = [];
+  for (let i = 0; i < 155; i++) {
+    const depth = Math.pow(rand(), 1.25); // denser near horizon, wider in foreground
+    const y = 608 + depth * 132;
+    const x = rand() * 745;
+    const w = 14 + depth * 72 + rand() * 42;
+    const h = 0.7 + depth * 1.8;
+    const isDark = rand() > 0.44;
+    const rect = el("rect", {
+      x: x.toFixed(1), y: y.toFixed(1), width: w.toFixed(1), height: h.toFixed(2), rx: 0.9,
+      fill: isDark ? "#12305e" : "#a8c9eb", opacity: (isDark ? 0.28 : 0.24).toFixed(2)
+    }, ripplesGroup);
+    rippleStreaks.push({
+      node: rect, baseX: x, y, w, depth, isDark, speed: 5 + depth * 16 + rand() * 8, phase: rand() * Math.PI * 2
+    });
+  }
+
+  // =========================================================================
+  // 2. COLOR & KEYFRAME INTERPOLATION ENGINE (24-HOUR INFINITE LOOP)
+  // =========================================================================
+
+  const parseHex = (hex) => [
+    parseInt(hex.slice(1, 3), 16),
+    parseInt(hex.slice(3, 5), 16),
+    parseInt(hex.slice(5, 7), 16)
+  ];
+  const rgbToHex = (r, g, b) =>
+    "#" + [r, g, b].map((v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join("");
+
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpColor = (c1, c2, t) => {
+    const a = parseHex(c1);
+    const b = parseHex(c2);
+    return rgbToHex(lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t));
+  };
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  const smoothstep = (e0, e1, x) => {
+    const t = clamp01((x - e0) / (e1 - e0));
+    return t * t * (3 - 2 * t);
+  };
+
+  // Distinct Dawn (rose-lavender-apricot), Reference Day (15.0 = crisp spec_01.png),
+  // Dramatic Golden Sunset (18.1 = molten amber-crimson-indigo), Starry Neon Night (22.2)
+  const KEYFRAMES = [
+    {
+      h: 0.0,
+      sky: ["#04091a", "#081430", "#10224a", "#1c3363"],
+      hz: ["#24427a", 0.26],
+      water: ["#101e3c", "#0b1936", "#071128", "#0c1835"],
+      tint: [0.24, 0.29, 0.44],
+      cloud: ["#3b527a", 0.14],
+      night: 1.0, stars: 1.0, moon: 1.0, sunGlint: 0.0
+    },
+    {
+      h: 4.5,
+      sky: ["#070f28", "#12214b", "#223468", "#444a7c"],
+      hz: ["#6b538a", 0.36],
+      water: ["#18264a", "#112044", "#0b1634", "#122146"],
+      tint: [0.30, 0.34, 0.50],
+      cloud: ["#707499", 0.18],
+      night: 0.94, stars: 0.84, moon: 0.84, sunGlint: 0.0
+    },
+    {
+      h: 5.9, // FRESH ROSE-PEACH-LAVENDER DAWN
+      sky: ["#243d82", "#5d68a8", "#d98c9c", "#ffd099"],
+      hz: ["#ffd58c", 0.68],
+      water: ["#b58d94", "#6674a3", "#364f82", "#52628c"],
+      tint: [0.76, 0.69, 0.72],
+      cloud: ["#ffe3c7", 0.44],
+      night: 0.28, stars: 0.10, moon: 0.14, sunGlint: 0.10
+    },
+    {
+      h: 7.4,
+      sky: ["#1f68d6", "#3d91e8", "#72baf0", "#cae5f5"],
+      hz: ["#fff2d0", 0.34],
+      water: ["#7ca0c9", "#5886be", "#3667a3", "#4b7ab2"],
+      tint: [0.98, 0.97, 0.96],
+      cloud: ["#ffffff", 0.22],
+      night: 0.0, stars: 0.0, moon: 0.0, sunGlint: 0.28
+    },
+    {
+      h: 12.0,
+      sky: ["#1a6ae0", "#2484ec", "#389ce9", "#87c6ee"],
+      hz: ["#e8f5ff", 0.12],
+      water: ["#6c92be", "#4d7bb6", "#2a5b9a", "#3d6faa"],
+      tint: [1.0, 1.0, 1.0],
+      cloud: ["#ffffff", 0.14],
+      night: 0.0, stars: 0.0, moon: 0.0, sunGlint: 0.45
+    },
+    {
+      h: 15.0, // EXACT .spec/spec_01.png REFERENCE MOMENT
+      sky: ["#2071e8", "#2684ed", "#339ae9", "#7fc0e9"],
+      hz: ["#fff2d2", 0.14],
+      water: ["#698db8", "#4b77b1", "#225291", "#3c6ca8"],
+      tint: [1.0, 1.0, 1.0],
+      cloud: ["#ffffff", 0.04],
+      night: 0.0, stars: 0.0, moon: 0.0, sunGlint: 1.0
+    },
+    {
+      h: 17.4,
+      sky: ["#1f4db3", "#4c6bb8", "#c97468", "#ffa452"],
+      hz: ["#ff8d33", 0.68],
+      water: ["#ab7562", "#5c648f", "#2b4578", "#4d587f"],
+      tint: [1.08, 0.88, 0.72],
+      cloud: ["#ffcca0", 0.46],
+      night: 0.08, stars: 0.0, moon: 0.0, sunGlint: 0.70
+    },
+    {
+      h: 18.2, // DRAMATIC MOLTEN AMBER-CRIMSON-VIOLET SUNSET
+      sky: ["#172259", "#4f2f66", "#c44558", "#ff7c3e"],
+      hz: ["#ff672e", 0.74],
+      water: ["#a34b52", "#4a3869", "#1e2754", "#3b355e"],
+      tint: [0.84, 0.58, 0.56],
+      cloud: ["#ff9975", 0.42],
+      night: 0.56, stars: 0.16, moon: 0.14, sunGlint: 0.04
+    },
+    {
+      h: 19.6, // BLUE HOUR TWILIGHT
+      sky: ["#081234", "#122354", "#203772", "#384a80"],
+      hz: ["#524d87", 0.34],
+      water: ["#1c2d57", "#13234b", "#0b1838", "#15254a"],
+      tint: [0.34, 0.38, 0.55],
+      cloud: ["#52628a", 0.18],
+      night: 0.96, stars: 0.80, moon: 0.76, sunGlint: 0.0
+    },
+    {
+      h: 24.0,
+      sky: ["#04091a", "#081430", "#10224a", "#1c3363"],
+      hz: ["#24427a", 0.26],
+      water: ["#101e3c", "#0b1936", "#071128", "#0c1835"],
+      tint: [0.24, 0.29, 0.44],
+      cloud: ["#3b527a", 0.14],
+      night: 1.0, stars: 1.0, moon: 1.0, sunGlint: 0.0
+    }
+  ];
+
+  const sampleState = (hour) => {
+    const h = ((hour % 24) + 24) % 24;
+    let k0 = KEYFRAMES[0];
+    let k1 = KEYFRAMES[KEYFRAMES.length - 1];
+    for (let i = 0; i < KEYFRAMES.length - 1; i++) {
+      if (h >= KEYFRAMES[i].h && h <= KEYFRAMES[i + 1].h) {
+        k0 = KEYFRAMES[i];
+        k1 = KEYFRAMES[i + 1];
+        break;
+      }
+    }
+    const span = Math.max(0.0001, k1.h - k0.h);
+    const t = smoothstep(0, 1, (h - k0.h) / span);
+    return {
+      sky: k0.sky.map((c, idx) => lerpColor(c, k1.sky[idx], t)),
+      hzCol: lerpColor(k0.hz[0], k1.hz[0], t),
+      hzOp: lerp(k0.hz[1], k1.hz[1], t),
+      water: k0.water.map((c, idx) => lerpColor(c, k1.water[idx], t)),
+      tint: [
+        lerp(k0.tint[0], k1.tint[0], t),
+        lerp(k0.tint[1], k1.tint[1], t),
+        lerp(k0.tint[2], k1.tint[2], t)
+      ],
+      cloudCol: lerpColor(k0.cloud[0], k1.cloud[0], t),
+      cloudOp: lerp(k0.cloud[1], k1.cloud[1], t),
+      night: lerp(k0.night, k1.night, t),
+      stars: lerp(k0.stars, k1.stars, t),
+      moon: lerp(k0.moon, k1.moon, t),
+      sunGlint: lerp(k0.sunGlint, k1.sunGlint, t)
+    };
+  };
+
+  // =========================================================================
+  // 3. DOM REFERENCES FOR 60FPS RENDERING
+  // =========================================================================
+
+  const skyStops = [0, 1, 2, 3].map((i) => document.getElementById(`skyStop${i}`));
+  const hzStop0 = document.getElementById("hzStop0");
+  const hzStop1 = document.getElementById("hzStop1");
+  const horizonGlow = document.getElementById("horizonGlow");
+  const watStops = [0, 1, 2, 3].map((i) => document.getElementById(`watStop${i}`));
+  const dayColorMatrix = document.getElementById("dayColorMatrix");
+  const nightLayer = document.getElementById("layer-night-lights");
+  const sunGroup = document.getElementById("sun-group");
+  const sunCore = document.getElementById("sunCore");
+  const sunGlow1 = document.getElementById("sunGlow1");
+  const sunGlow2 = document.getElementById("sunGlow2");
+  const moonGroup = document.getElementById("moon-group");
+  const cloudsGroup = document.getElementById("clouds-group");
+  const cloudShapes = Array.from(document.querySelectorAll(".cloud-shape"));
+  const cloud1 = document.getElementById("cloud-1");
+  const cloud2 = document.getElementById("cloud-2");
+  const cloud3 = document.getElementById("cloud-3");
+  const birdsGroup = document.getElementById("birds-group");
+  const bird1 = document.getElementById("bird-1");
+  const bird2 = document.getElementById("bird-2");
+  const bird3 = document.getElementById("bird-3");
+  const pearlSunGlint = document.getElementById("pearl-sun-glint");
+  const waterDayTint = document.getElementById("water-day-tint");
+  const waterPearlDayGlint = document.getElementById("water-pearl-day-glint");
+  const waterNightRibbons = document.getElementById("water-night-ribbons");
+  const waterReflectionWrap = document.getElementById("water-reflection-wrap");
+  const rippleTurb = document.getElementById("rippleTurb");
+  const shSpiral1 = document.getElementById("sh-spiral-ribbon");
+  const shSpiral2 = document.getElementById("sh-spiral-ribbon-2");
+  const pearlHaloUp = document.getElementById("pearl-halo-upper");
+  const pearlHaloLo = document.getElementById("pearl-halo-lower");
+  const pnUp0 = document.getElementById("pnUp0");
+  const pnUp1 = document.getElementById("pnUp1");
+  const pnLo0 = document.getElementById("pnLo0");
+  const pnLo1 = document.getElementById("pnLo1");
+  const beacons = Array.from(document.querySelectorAll(".beacon"));
+  const buoy = document.getElementById("river-buoy");
+  const buoyBeacon = document.getElementById("buoy-beacon");
+  const boatLeft = document.getElementById("boat-left-ferry");
+  const boatLeftLights = document.getElementById("boat-left-lights");
+  const boatRight = document.getElementById("boat-right-tug");
+  const boatRightLights = document.getElementById("boat-right-lights");
+  const shootingStar = document.getElementById("shooting-star");
+
+  // HUD Controls
+  const hud = document.getElementById("hud");
+  const btnPlay = document.getElementById("btnPlay");
+  const btnSpeed = document.getElementById("btnSpeed");
+  const scrubber = document.getElementById("timeScrubber");
+  const clockText = document.getElementById("clockText");
+  const phaseText = document.getElementById("phaseText");
+  const jumpButtons = Array.from(document.querySelectorAll("[data-jump]"));
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "1") document.body.classList.add("embed");
+  if (params.get("nohud") === "1") hud.classList.add("hidden");
+
+  const CYCLE_SECONDS = 42;
+  let simHour = params.has("t") ? parseFloat(params.get("t")) || 15.0 : 15.0;
+  let paused = params.get("paused") === "1";
+  let speedMult = 1;
+
+  const getPhaseLabel = (h) => {
+    if (h >= 5.0 && h < 7.0) return "破曉晨曦";
+    if (h >= 7.0 && h < 11.5) return "清新晨光";
+    if (h >= 11.5 && h < 16.8) return "晴朗午後";
+    if (h >= 16.8 && h < 18.8) return "日落金輝";
+    if (h >= 18.8 && h < 20.2) return "藍調暮色";
+    return "陸家嘴夜景";
+  };
+
+  const PEARL_PALETTE = [
+    ["#ff9be2", "#eb2c95", "#ff3ea6"],
+    ["#b7a8ff", "#7b39f5", "#9d5cff"],
+    ["#ffad99", "#eb3652", "#ff4f6a"],
+    ["#99f2ff", "#21a8eb", "#3cc8ff"]
+  ];
+
+  // =========================================================================
+  // 4. FRAME RENDERER
+  // =========================================================================
+
+  const render = (hour, sec) => {
+    const h = ((hour % 24) + 24) % 24;
+    const s = sampleState(h);
+
+    // 1. Sky & Horizon Gradients
+    s.sky.forEach((col, i) => skyStops[i].setAttribute("stop-color", col));
+    hzStop0.setAttribute("stop-color", s.hzCol);
+    hzStop0.setAttribute("stop-opacity", s.hzOp.toFixed(3));
+    hzStop1.setAttribute("stop-color", s.hzCol);
+    hzStop1.setAttribute("stop-opacity", (s.hzOp * 0.35).toFixed(3));
+
+    // 2. Sun Arc (rises visibly east-right at dawn, climbs cleanly above viewport during clear midday/afternoon 08:30-16:00, descends warm west-left at sunset!)
+    const sunProg = (h - 5.3) / (18.8 - 5.3);
+    if (sunProg >= -0.04 && sunProg <= 1.04) {
+      const ang = clamp01(sunProg) * Math.PI;
+      const sx = 640 - clamp01(sunProg) * 450;
+      const sy = 525 - Math.sin(ang) * 760;
+      const horizonFactor = clamp01(1 - Math.sin(ang) * 1.15);
+      const sunFade = smoothstep(-0.03, 0.08, sunProg) * (1 - smoothstep(0.92, 1.03, sunProg));
+      const topFade = smoothstep(-55, 20, sy);
+      sunGroup.setAttribute("transform", `translate(${sx.toFixed(1)}, ${sy.toFixed(1)})`);
+      sunGroup.setAttribute("opacity", (sunFade * topFade).toFixed(3));
+      sunCore.setAttribute("fill", lerpColor("#fffdf2", "#ff7733", horizonFactor * 0.88));
+      sunGlow1.setAttribute("stop-color", lerpColor("#ffe6a3", "#ff8438", horizonFactor));
+      sunGlow2.setAttribute("stop-color", lerpColor("#ffbc66", "#e84a36", horizonFactor));
+      horizonGlow.setAttribute("cx", `${(sx / 745 * 100).toFixed(1)}%`);
+      horizonGlow.setAttribute("cy", `${Math.min(88, Math.max(66, (sy + 140) / 680 * 100)).toFixed(1)}%`);
+    } else {
+      sunGroup.setAttribute("opacity", "0");
+      horizonGlow.setAttribute("cx", "52%");
+      horizonGlow.setAttribute("cy", "86%");
+    }
+
+    // 3. Crescent Moon Arc (18:30 -> 05:50)
+    const moonH = h >= 18.0 ? h - 18.0 : h + 6.0;
+    const moonProg = moonH / 12.0;
+    if (s.moon > 0.01 && moonProg >= 0 && moonProg <= 1) {
+      const mx = 170 + moonProg * 360;
+      const my = 310 - Math.sin(moonProg * Math.PI) * 212;
+      moonGroup.setAttribute("transform", `translate(${mx.toFixed(1)}, ${my.toFixed(1)})`);
+      moonGroup.setAttribute("opacity", s.moon.toFixed(3));
+    } else {
+      moonGroup.setAttribute("opacity", "0");
+    }
+
+    // 4. Twinkling Stars & Occasional Shooting Star
+    starsGroup.setAttribute("opacity", s.stars.toFixed(3));
+    if (s.stars > 0.02) {
+      for (let i = 0; i < starNodes.length; i++) {
+        const st = starNodes[i];
+        st.node.setAttribute("opacity", (st.base * (0.62 + 0.38 * Math.sin(sec * st.speed + st.phase))).toFixed(2));
+      }
+      const shootCycle = sec % 9.5;
+      if (shootCycle < 0.75) {
+        const p = shootCycle / 0.75;
+        shootingStar.setAttribute("transform", `translate(${(220 + p * 230).toFixed(1)}, ${(55 + p * 90).toFixed(1)})`);
+        shootingStar.setAttribute("opacity", (Math.sin(p * Math.PI) * s.stars * 0.92).toFixed(3));
+      } else {
+        shootingStar.setAttribute("opacity", "0");
+      }
+    } else {
+      shootingStar.setAttribute("opacity", "0");
+    }
+
+    // 5. Drifting Clouds & Distant Gulls
+    cloudsGroup.setAttribute("opacity", s.cloudOp.toFixed(3));
+    cloudShapes.forEach((p) => p.setAttribute("fill", s.cloudCol));
+    cloud1.setAttribute("transform", `translate(${(((175 + sec * 4.2) % 920) - 160).toFixed(1)}, 96)`);
+    cloud2.setAttribute("transform", `translate(${(((470 + sec * 2.8) % 920) - 160).toFixed(1)}, 134) scale(0.85)`);
+    cloud3.setAttribute("transform", `translate(${(((310 + sec * 5.6) % 920) - 160).toFixed(1)}, 212) scale(0.68)`);
+
+    const birdVis = (1 - s.night) * (s.sunGlint > 0.85 ? 0.14 : 0.46);
+    birdsGroup.setAttribute("opacity", birdVis.toFixed(2));
+    if (birdVis > 0.04) {
+      const bx = ((280 + sec * 18) % 860) - 60;
+      const f1 = Math.sin(sec * 7.5) * 2.0;
+      const f2 = Math.sin(sec * 7.5 + 1.4) * 1.8;
+      const f3 = Math.sin(sec * 7.5 + 2.6) * 1.6;
+      bird1.setAttribute("transform", `translate(${bx.toFixed(1)}, ${(235 + Math.sin(sec * 1.1) * 7).toFixed(1)})`);
+      bird1.setAttribute("d", `M -5.5 ${f1.toFixed(1)} Q -2.8 -1.8 0 1 Q 2.8 -1.8 5.5 ${f1.toFixed(1)}`);
+      bird2.setAttribute("transform", `translate(${(bx - 20).toFixed(1)}, ${(246 + Math.cos(sec * 1.2) * 6).toFixed(1)})`);
+      bird2.setAttribute("d", `M -4.8 ${f2.toFixed(1)} Q -2.4 -1.6 0 1 Q 2.4 -1.6 4.8 ${f2.toFixed(1)}`);
+      bird3.setAttribute("transform", `translate(${(bx - 11).toFixed(1)}, ${(224 + Math.sin(sec * 0.9 + 1) * 5).toFixed(1)})`);
+      bird3.setAttribute("d", `M -4.2 ${f3.toFixed(1)} Q -2 -1.4 0 0.8 Q 2 -1.4 4.2 ${f3.toFixed(1)}`);
+    }
+
+    // 6. Clean Building-Only Atmospheric Color Matrix (zero sky contamination!)
+    const [tr, tg, tb] = s.tint;
+    dayColorMatrix.setAttribute(
+      "values",
+      `${tr.toFixed(3)} 0 0 0 0  0 ${tg.toFixed(3)} 0 0 0  0 0 ${tb.toFixed(3)} 0 0  0 0 0 1 0`
+    );
+
+    // Afternoon Pearl Sphere Sunburst Glint
+    pearlSunGlint.setAttribute("opacity", s.sunGlint.toFixed(3));
+
+    // 7. Night Architectural Lights & Animations
+    nightLayer.setAttribute("opacity", s.night.toFixed(3));
+    boatLeftLights.setAttribute("opacity", s.night.toFixed(3));
+    boatRightLights.setAttribute("opacity", s.night.toFixed(3));
+
+    if (s.night > 0.01) {
+      const palPos = (sec * 0.14) % PEARL_PALETTE.length;
+      const pi0 = Math.floor(palPos);
+      const pi1 = (pi0 + 1) % PEARL_PALETTE.length;
+      const pt = smoothstep(0, 1, palPos - pi0);
+      const cHi = lerpColor(PEARL_PALETTE[pi0][0], PEARL_PALETTE[pi1][0], pt);
+      const cMid = lerpColor(PEARL_PALETTE[pi0][1], PEARL_PALETTE[pi1][1], pt);
+      const cHalo = lerpColor(PEARL_PALETTE[pi0][2], PEARL_PALETTE[pi1][2], pt);
+      pnUp0.setAttribute("stop-color", cHi);
+      pnUp1.setAttribute("stop-color", cMid);
+      pnLo0.setAttribute("stop-color", cHi);
+      pnLo1.setAttribute("stop-color", cMid);
+      pearlHaloUp.setAttribute("fill", cHalo);
+      pearlHaloLo.setAttribute("fill", cHalo);
+
+      for (let i = 0; i < pearlSparkles.length; i++) {
+        const sp = pearlSparkles[i];
+        sp.node.setAttribute("opacity", (0.28 + 0.72 * Math.pow(0.5 + 0.5 * Math.sin(sec * 3.2 + sp.phase), 2)).toFixed(2));
+      }
+
+      shSpiral1.setAttribute("stroke-dashoffset", (sec * 24).toFixed(1));
+      shSpiral2.setAttribute("stroke-dashoffset", (-sec * 16).toFixed(1));
+
+      const pulse = 0.25 + 0.75 * Math.pow(Math.max(0, Math.sin(sec * 2.8)), 4);
+      beacons.forEach((b, idx) => {
+        b.setAttribute("opacity", (0.22 + 0.78 * Math.pow(Math.max(0, Math.sin(sec * 2.6 + idx * 0.7)), 4)).toFixed(2));
+      });
+      buoyBeacon.setAttribute("opacity", (pulse * s.night).toFixed(2));
+    } else {
+      buoyBeacon.setAttribute("opacity", "0");
+    }
+
+    // 8. Huangpu River Water, Blurred-Rippled Reflections & Wave Chops
+    s.water.forEach((col, i) => watStops[i].setAttribute("stop-color", col));
+    waterDayTint.setAttribute("opacity", (1 - s.night * 0.85).toFixed(2));
+    waterPearlDayGlint.setAttribute("opacity", (0.74 * (1 - s.night)).toFixed(2));
+    waterNightRibbons.setAttribute("opacity", (s.night * 0.90).toFixed(2));
+    waterReflectionWrap.setAttribute("opacity", lerp(0.42, 0.74, s.night).toFixed(2));
+
+    const bfY = 0.155 + Math.sin(sec * 0.95) * 0.015;
+    rippleTurb.setAttribute("baseFrequency", `0.016 ${bfY.toFixed(4)}`);
+
+    const warmBias = clamp01((tr - tb) * 1.4);
+    for (let i = 0; i < rippleStreaks.length; i++) {
+      const rp = rippleStreaks[i];
+      const rx = ((rp.baseX + sec * rp.speed) % (745 + rp.w)) - rp.w;
+      rp.node.setAttribute("x", rx.toFixed(1));
+      if (rp.isDark) {
+        rp.node.setAttribute("fill", s.night > 0.5 ? "#061026" : "#12305e");
+        rp.node.setAttribute("opacity", (0.22 + rp.depth * 0.18).toFixed(2));
+      } else {
+        rp.node.setAttribute("fill", s.night > 0.5 ? "#6fa0dc" : lerpColor("#b4d3f2", "#ffb885", warmBias));
+        rp.node.setAttribute("opacity", (0.14 + 0.14 * Math.sin(sec * 2.1 + rp.phase)).toFixed(2));
+      }
+    }
+
+    // 9. Vessels & Buoy Motion (tugboat glides gently leftward and back, never hitting red buoy!)
+    const bobBuoy = Math.sin(sec * 2.1) * 1.1;
+    const tiltBuoy = Math.sin(sec * 1.7 + 0.5) * 2.8;
+    buoy.setAttribute("transform", `translate(711, ${(610 + bobBuoy).toFixed(2)}) rotate(${tiltBuoy.toFixed(2)})`);
+
+    boatLeft.setAttribute("transform", `translate(0, ${(Math.sin(sec * 1.3 + 0.8) * 0.7).toFixed(2)})`);
+
+    // 0 at h=15.0 (exact photo alignment!), drifts gently left to -52px at night and returns cleanly!
+    const tugDrift = -26 * (1 - Math.cos(((h - 15.0) / 24) * Math.PI * 2));
+    const tugBob = Math.sin(sec * 1.8) * 0.9;
+    boatRight.setAttribute("transform", `translate(${(564 + tugDrift).toFixed(1)}, ${(608 + tugBob).toFixed(2)})`);
+
+    // 10. HUD Clock & Phase
+    const hh = Math.floor(h);
+    const mm = Math.floor((h - hh) * 60);
+    clockText.textContent = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+    phaseText.textContent = getPhaseLabel(h);
+    if (!isScrubbing) scrubber.value = h.toFixed(2);
+  };
+
+  // =========================================================================
+  // 5. INFINITE LOOP & CONTROLS
+  // =========================================================================
+
+  let isScrubbing = false;
+  let lastTs = null;
+  let animSec = params.has("t") ? (parseFloat(params.get("t")) || 15.0) * 1.75 : 0;
+
+  const tick = (ts) => {
+    if (lastTs === null) lastTs = ts;
+    const dt = Math.min(0.1, (ts - lastTs) / 1000);
+    lastTs = ts;
+
+    if (!paused && !isScrubbing) {
+      simHour = (simHour + (dt * 24 * speedMult) / CYCLE_SECONDS) % 24;
+      animSec += dt * speedMult;
+    }
+    render(simHour, animSec);
+    requestAnimationFrame(tick);
+  };
+
+  btnPlay.addEventListener("click", () => {
+    paused = !paused;
+    btnPlay.textContent = paused ? "▶" : "❚❚";
+  });
+
+  btnSpeed.addEventListener("click", () => {
+    speedMult = speedMult === 1 ? 2 : (speedMult === 2 ? 0.5 : 1);
+    btnSpeed.textContent = `${speedMult}x`;
+  });
+
+  scrubber.addEventListener("pointerdown", () => { isScrubbing = true; });
+  window.addEventListener("pointerup", () => { isScrubbing = false; });
+  scrubber.addEventListener("input", () => {
+    simHour = parseFloat(scrubber.value);
+    render(simHour, animSec);
+  });
+
+  jumpButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      simHour = parseFloat(btn.dataset.jump);
+      render(simHour, animSec);
+    });
+  });
+
+  btnPlay.textContent = paused ? "▶" : "❚❚";
+  render(simHour, animSec);
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
